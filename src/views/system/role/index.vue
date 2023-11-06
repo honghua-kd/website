@@ -65,6 +65,7 @@
         :data="tableData"
         :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
         border
+        v-loading="loading"
       >
         <el-table-column type="index" width="80" label="序号" />
         <el-table-column align="center" label="角色编号" prop="id" />
@@ -133,6 +134,7 @@ const statusOpts = ref([
     value: 1
   }
 ])
+const loading = ref(false)
 const queryFormRef = ref(null)
 const queryParams = reactive({
   pageNo: 1,
@@ -158,12 +160,17 @@ const searchHandler = () => {
 
 // 获取列表
 const getList = () => {
+  loading.value = true
   getRoleList(queryParams).then(res => {
+    loading.value = false
     if (res && res.code === 200) {
       const { list, total } = res?.data
       tableData.value = list
       pageTotal.value = total
     }
+  }).catch(err => {
+    loading.value = false
+    console.log(err)
   })
 }
 const handleCurrentChange = (val) => {
@@ -186,6 +193,11 @@ const formatTag = (status, tagType) => {
   if (tagType === 'type') return type
   if (tagType === 'title') return title
 }
+
+const init = () => {
+  searchHandler()
+}
+init()
 </script>
 
 <style lang='scss' scoped>

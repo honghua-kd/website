@@ -14,8 +14,7 @@ import iconPark from './plugin/icon-park'
 // svg-icon
 import 'virtual:svg-icons-register'
 
-import { ElMessage } from 'element-plus'
-
+import { ElMessage, ElLoading } from 'element-plus'
 // 注册框架，传入项目配置和store，页面路径
 const app = createFrameApp(App, {
   options,
@@ -26,7 +25,7 @@ const app = createFrameApp(App, {
   asyncFile: import.meta.glob('./views/**/index.vue'),
   asyncConfig: import.meta.globEager('./views/**/config.js')
 })
-
+app.use(ElLoading)
 iconPark(app)
 
 app.mount('#app')

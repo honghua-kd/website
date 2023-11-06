@@ -65,6 +65,7 @@
         :data="tableData"
         :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
         border
+        v-loading="loading"
       >
         <el-table-column type="index" width="80" label="序号" />
         <el-table-column label="用户编号" align="center" key="id" prop="id" />
@@ -143,6 +144,8 @@ const statusOpts = ref([
   }
 ])
 const tableData = ref([]) // 列表数据
+const loading = ref(false)
+
 const pageTotal = ref(0) // 列表的总页数
 const queryFormRef = ref(null)
 const queryParams = reactive({
@@ -167,12 +170,17 @@ const searchHandler = () => {
 
 // 获取列表
 const getList = () => {
+  loading.value = true
   getUserList(queryParams).then(res => {
+    loading.value = false
     if (res && res.code === 200) {
       const { list, total } = res?.data
       tableData.value = list
       pageTotal.value = total
     }
+  }).catch(err => {
+    loading.value = false
+    console.log(err)
   })
 }
 const handleCurrentChange = (val) => {
@@ -191,6 +199,11 @@ const formatTag = (status, tagType) => {
   if (tagType === 'type') return type
   if (tagType === 'title') return title
 }
+
+const init = () => {
+  searchHandler()
+}
+init()
 </script>
 
 <style lang='scss' scoped>
