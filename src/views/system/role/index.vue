@@ -1,120 +1,123 @@
 <template>
-  <!-- 搜索工作栏 -->
-  <el-card class="container">
-    <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-      <el-row :gutter="15">
-        <el-col :span="5">
-          <el-form-item label="角色名称:" prop="roleName" class="widthFull">
-            <el-input
-              v-model="queryParams.roleName"
-              placeholder="请输入角色名称"
-              clearable
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="5">
-          <el-form-item label="角色标识:" prop="roleCode" class="widthFull">
-            <el-input
-              v-model="queryParams.roleCode"
-              placeholder="请输入角色标识"
-              clearable
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="4">
-          <el-form-item label="状态:" prop="status" class="widthFull">
-            <el-select
-              v-model="queryParams.status"
-              clearable
-              placeholder="请选择状态"
-            >
-              <el-option
-                v-for="item in statusOpts"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+  <div>
+    <!-- 搜索工作栏 -->
+    <el-card class="container">
+      <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+        <el-row :gutter="15">
+          <el-col :span="5">
+            <el-form-item label="角色名称:" prop="roleName" class="widthFull">
+              <el-input
+                v-model="queryParams.roleName"
+                placeholder="请输入角色名称"
+                clearable
               />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="创建时间:" prop="createTime" class="widthFull">
-            <el-date-picker
-              v-model="queryParams.createTime"
-              :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
-              end-placeholder="结束日期"
-              start-placeholder="开始日期"
-              type="daterange"
-              value-format="YYYY-MM-DD HH:mm:ss"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="4" style="text-align: right">
-          <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
-          <el-button type="primary" :icon="Search" @click="searchHandler">
-            搜索
-          </el-button>
-        </el-col>
-      </el-row>
-    </el-form>
-  </el-card>
-  <!-- 列表 -->
-  <el-card class="container">
-    <el-table
-      :data="tableData"
-      :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
-      border
-    >
-      <el-table-column align="center" label="角色编号" prop="id" />
-      <el-table-column align="center" label="角色名称" prop="name" />
-      <el-table-column align="center" label="角色类型" prop="type" />
-      <el-table-column align="center" label="角色标识" prop="code" />
-      <el-table-column align="center" label="显示顺序" prop="sort" />
-      <el-table-column align="center" label="备注" prop="remark" />
-      <el-table-column align="center" label="状态" prop="status">
-        <template #default="scope">
-          <el-tag :type="formatTag(scope.row.status, 'type')" effect="light">
-            {{ formatTag(scope.row.status, 'title') }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column
-        :formatter="dateFormatter"
-        align="center"
-        label="创建时间"
-        prop="createTime"
-        width="180"
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item label="角色标识:" prop="roleCode" class="widthFull">
+              <el-input
+                v-model="queryParams.roleCode"
+                placeholder="请输入角色标识"
+                clearable
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item label="状态:" prop="status" class="widthFull">
+              <el-select
+                v-model="queryParams.status"
+                clearable
+                placeholder="请选择状态"
+              >
+                <el-option
+                  v-for="item in statusOpts"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="创建时间:" prop="createTime" class="widthFull">
+              <el-date-picker
+                v-model="queryParams.createTime"
+                :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
+                end-placeholder="结束日期"
+                start-placeholder="开始日期"
+                type="daterange"
+                value-format="YYYY-MM-DD HH:mm:ss"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="4" style="text-align: right">
+            <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
+            <el-button type="primary" :icon="Search" @click="searchHandler">
+              搜索
+            </el-button>
+          </el-col>
+        </el-row>
+      </el-form>
+    </el-card>
+    <!-- 列表 -->
+    <el-card class="container">
+      <el-table
+        :data="tableData"
+        :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
+        border
+      >
+        <el-table-column type="index" width="80" label="序号" />
+        <el-table-column align="center" label="角色编号" prop="id" />
+        <el-table-column align="center" label="角色名称" prop="name" />
+        <el-table-column align="center" label="角色类型" prop="type" />
+        <el-table-column align="center" label="角色标识" prop="code" />
+        <el-table-column align="center" label="显示顺序" prop="sort" />
+        <el-table-column align="center" label="备注" prop="remark" />
+        <el-table-column align="center" label="状态" prop="status">
+          <template #default="scope">
+            <el-tag :type="formatTag(scope.row.status, 'type')" effect="light">
+              {{ formatTag(scope.row.status, 'title') }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column
+          :formatter="dateFormatter"
+          align="center"
+          label="创建时间"
+          prop="createTime"
+          width="180"
+        />
+        <el-table-column :width="300" align="center" label="操作">
+          <template #default="scope">
+            <el-button
+              link
+              title="数据权限"
+              type="primary"
+              @click="openDataPermissionForm(scope.row)"
+            >
+              数据权限
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <!-- 分页 -->
+      <el-pagination
+        v-if="pageTotal"
+        background
+        layout="total,sizes,prev, pager, next"
+        :page-sizes="[10, 20, 50, 100]"
+        :total="pageTotal"
+        class="table-page"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
       />
-      <el-table-column :width="300" align="center" label="操作">
-        <template #default="scope">
-          <el-button
-            link
-            title="数据权限"
-            type="primary"
-            @click="openDataPermissionForm(scope.row)"
-          >
-            数据权限
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <!-- 分页 -->
-    <el-pagination
-      v-if="pageTotal"
-      background
-      layout="sizes,prev, pager, next"
-      :page-sizes="[10, 20, 50, 100]"
-      :total="pageTotal"
-      class="table-page"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    />
-  </el-card>
+    </el-card>
+  </div>
 </template>
 
 <script setup>
 import { ref, reactive } from 'vue'
-import { getRoleList } from '@/api/role'
+import { getRoleList } from '@/api/system'
 import { dateFormatter } from '@/utils'
 import {
   Refresh,
