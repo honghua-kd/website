@@ -59,11 +59,63 @@
     </el-form>
   </el-card>
   <!-- 列表 -->
-  <el-card class="container">list</el-card>
+  <el-card class="container">
+    <el-table
+      :data="tableData"
+      :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
+      border
+    >
+      <el-table-column align="center" label="角色编号" prop="id" />
+      <el-table-column align="center" label="角色名称" prop="name" />
+      <el-table-column align="center" label="角色类型" prop="type" />
+      <el-table-column align="center" label="角色标识" prop="code" />
+      <el-table-column align="center" label="显示顺序" prop="sort" />
+      <el-table-column align="center" label="备注" prop="remark" />
+      <el-table-column align="center" label="状态" prop="status">
+        <template #default="scope">
+          <el-tag :type="formatTag(scope.row.status, 'type')" effect="light">
+            {{ formatTag(scope.row.status, 'title') }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :formatter="dateFormatter"
+        align="center"
+        label="创建时间"
+        prop="createTime"
+        width="180"
+      />
+      <el-table-column :width="300" align="center" label="操作">
+        <template #default="scope">
+          <el-button
+            link
+            title="数据权限"
+            type="primary"
+            @click="openDataPermissionForm(scope.row)"
+          >
+            数据权限
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <!-- 分页 -->
+    <el-pagination
+      v-if="pageTotal"
+      background
+      layout="sizes,prev, pager, next"
+      :page-sizes="[10, 20, 50, 100]"
+      :total="pageTotal"
+      class="table-page"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    />
+  </el-card>
 </template>
 
 <script setup>
 import { ref, reactive } from 'vue'
+import { getRoleList } from '@/api/role'
+import { dateFormatter } from '@/utils'
 import {
   Refresh,
   Search
@@ -71,28 +123,65 @@ import {
 const statusOpts = ref([
   {
     label: '开启',
-    value: 1
+    value: 0
   },
   {
     label: '关闭',
-    value: 2
+    value: 1
   }
 ])
 const queryFormRef = ref(null)
 const queryParams = reactive({
+  pageNo: 1,
+  pageSize: 10,
   roleName: '', // 角色名称
   roleCode: '', // 角色标识
-  status: 1, // 状态
+  status: undefined, // 状态
   createTime: [] // 创建时间
 })
+const tableData = ref([]) // 列表数据
+const pageTotal = ref(0) // 列表的总页数
 
 // reset
 const resetQuery = () => {
   queryFormRef.value.resetFields()
+  searchHandler()
 }
 // search
 const searchHandler = () => {
-  console.log('queryParams', queryParams)
+  queryParams.pageNo = 1
+  getList()
+}
+
+// 获取列表
+const getList = () => {
+  getRoleList(queryParams).then(res => {
+    if (res && res.code === 200) {
+      const { list, total } = res?.data
+      tableData.value = list
+      pageTotal.value = total
+    }
+  })
+}
+const handleCurrentChange = (val) => {
+  queryParams.pageNo = val
+  getList()
+}
+const handleSizeChange = (val) => {
+  queryParams.pageSize = val
+  getList()
+}
+// 操作数据权限
+const openDataPermissionForm = (row) => {
+  console.log(row)
+}
+
+// 列表tag转换
+const formatTag = (status, tagType) => {
+  const type = status === 0 ? '' : 'info'
+  const title = status === 0 ? '开启' : '关闭'
+  if (tagType === 'type') return type
+  if (tagType === 'title') return title
 }
 </script>
 

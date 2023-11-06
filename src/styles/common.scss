@@ -75,3 +75,12 @@ html {
   padding: $base-main-padding;
   background-color: $base-color-white;
 }
+
+.table-page {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 100%;
+  padding-right: 20px;
+  margin-top: 10px;
+}
