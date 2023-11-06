@@ -5,40 +5,15 @@ export default [
         children: [
           {
             children: [],
-            elements: [
-              { name: 'edit' },
-              { name: 'addNew' },
-              { name: 'preview' },
-              { name: 'tempEdit' }
-            ],
+            elements: [],
             menuType: 3,
-            menu: 'warnRuleManagementIndex'
+            menu: 'role'
           }
         ],
         elements: [],
         menuType: 5,
         sort: 1,
-        menu: 'warnRuleManagementMenu'
-      },
-      {
-        children: [
-          {
-            children: [],
-            elements: [
-              { name: 'addNew' },
-              { name: 'detail' },
-              { name: 'edit' },
-              { name: 'send' }
-
-            ],
-            menuType: 3,
-            menu: 'warnRecord'
-          }
-        ],
-        elements: [],
-        menuType: 5,
-        sort: 2,
-        menu: 'warnRecordMenu'
+        menu: 'roleMenu'
       },
       {
         children: [
@@ -46,32 +21,18 @@ export default [
             children: [],
             elements: [],
             menuType: 3,
-            menu: 'afterwardTemplate'
+            menu: 'user'
           }
         ],
         elements: [],
         menuType: 5,
         sort: 2,
-        menu: 'afterwardTemplateMenu'
-      },
-      {
-        children: [
-          {
-            children: [],
-            elements: [],
-            menuType: 3,
-            menu: 'demo2'
-          }
-        ],
-        elements: [],
-        menuType: 5,
-        sort: 2,
-        menu: 'demo2Menu'
+        menu: 'userMenu'
       }
     ],
     elements: [],
     menuType: 5,
-    sort: 7,
-    menu: 'demo1'
+    sort: 1,
+    menu: 'system'
   }
 ]

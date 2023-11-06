@@ -869,10 +869,10 @@
   dependencies:
     tinymce "^6.0.0 || ^5.5.1"
 
-"@toystory/lotso@2.0.0-rc1":
-  version "2.0.0-rc1"
-  resolved "https://registry.yarnpkg.com/@toystory/lotso/-/lotso-2.0.0-rc1.tgz#2300471d766d2f511b80ead95f6480d9c727f721"
-  integrity sha512-x/HxWN++QbkSs4dJIHpJo/nR7KBTtWheTvJs2FazlbClQwABwxSnsp/tkuLf/BYvmx1ahvsJBP1R8r5kUC/oSA==
+"@toystory/lotso@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.npmjs.org/@toystory/lotso/-/lotso-2.0.0.tgz#9783f6d2160372776a26140ad2c28a56a54e63ea"
+  integrity sha512-YMRADyU/we032C1gYeDaQHfymEed28uJVXpZL1a/CPxmvVJVEFBD2gs0H0T2ObO/BLdkFWEDQ+I2UV4t2mwTWg==
   dependencies:
     "@element-plus/icons-vue" "2.1.0"
     "@vueuse/core" "^10.5.0"
