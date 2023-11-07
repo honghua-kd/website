@@ -10,14 +10,17 @@
 import { ref, watch } from 'vue'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import { logout } from '@/api'
+import { getDict } from '@/api/system'
 import { useRouter, useRoute, mitt } from '@toystory/lotso'
+import { formatDict } from '@/utils/dict'
+import { useDictStore } from '@/store/dict'
 
 const localLanguage = ref(zhCn)
 
 const scroll = ref(null)
 
 const { router } = useRouter()
-
+const dictStore = useDictStore()
 watch(
   () => router.currentRoute.value,
   () => {
@@ -37,6 +40,23 @@ mitt.on('logout', () => {
     console.error(err)
   })
 })
+
+// 获取字典信息
+const getDictInfo = () => {
+  if (dictStore.getDictMap) return
+  getDict().then(res => {
+    if (res && res.code === 200) {
+      const dictMap = formatDict(res.data)
+      dictStore.setDictMap(dictMap)
+    }
+  }).catch(err => {
+    console.log(err)
+  })
+}
+const init = () => {
+  getDictInfo()
+}
+init()
 </script>
 
 <style lang="scss">

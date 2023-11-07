@@ -2,11 +2,12 @@ import options from '@/config/setting'
 import requestConfig from '@/config/request.config'
 
 // framework
-import { createFrameApp, useRouter, usePermission, useUserStore, useRoutesStore } from '@toystory/lotso'
+import { createFrameApp, useRouter, usePermission, useUserStore, useRoutesStore, store } from '@toystory/lotso'
 import '@toystory/lotso/dist/style.css'
 
 import { getUserInfo, getAuthData } from '@/api'
 import App from './App.vue'
+import { setActivePinia } from 'pinia'
 
 // 注册字节跳动图标
 import iconPark from './plugin/icon-park'
@@ -25,6 +26,8 @@ const app = createFrameApp(App, {
   asyncFile: import.meta.glob('./views/**/index.vue'),
   asyncConfig: import.meta.globEager('./views/**/config.js')
 })
+setActivePinia(store)
+
 app.use(ElLoading)
 iconPark(app)
 

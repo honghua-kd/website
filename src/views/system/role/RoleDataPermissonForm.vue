@@ -8,7 +8,16 @@
         <el-form-item label="角色标识">
           <el-tag>{{ formData.code }}</el-tag>
         </el-form-item>
-        <el-form-item label="权限范围"></el-form-item>
+        <el-form-item label="权限范围">
+          <el-select v-model="formData.dataScope">
+            <el-option
+              v-for="item in dataOpts"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
       </el-form>
       <template #footer>
         <el-button :disabled="formLoading" type="primary" @click="submitForm">
@@ -22,12 +31,15 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
+import { useDictStore } from '@/store/dict'
+
 defineProps({
   roleDataPerm: {
     type: Object,
     default: () => { }
   }
 })
+
 const formData = reactive({
   id: 0,
   name: '',
@@ -35,12 +47,14 @@ const formData = reactive({
   dataScope: undefined,
   dataScopeDeptIds: []
 })
+const dataOpts = ref([])
 const dialogVisible = ref(false)
 const formLoading = ref(false)
 // 打开弹窗
 const openDialog = (data) => {
-  console.log('data>>>>', data)
   dialogVisible.value = true
+  const dictStore = useDictStore()
+  dataOpts.value = dictStore?.getDictMap && dictStore?.getDictMap.get('system_data_scope')
   const { id, name, code, dataScope } = data
   formData.id = id
   formData.name = name
