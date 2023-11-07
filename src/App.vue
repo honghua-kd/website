@@ -12,7 +12,7 @@ import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import { logout } from '@/api'
 import { getDict } from '@/api/system'
 import { useRouter, useRoute, mitt } from '@toystory/lotso'
-import { formatDict } from '@/utils/dict'
+import { formatDict, reviver } from '@/utils/dict'
 import { useDictStore } from '@/store/dict'
 
 const localLanguage = ref(zhCn)
@@ -43,7 +43,11 @@ mitt.on('logout', () => {
 
 // 获取字典信息
 const getDictInfo = () => {
-  if (dictStore.getDictMap) return
+  const dictCache = JSON.parse(sessionStorage.getItem('DICTMAP'), reviver)
+  if (dictCache) {
+    dictStore.setDictMap(dictCache)
+    return
+  }
   getDict().then(res => {
     if (res && res.code === 200) {
       const dictMap = formatDict(res.data)

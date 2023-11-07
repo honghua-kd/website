@@ -1,4 +1,22 @@
-
+/** 处理 map 数据结构的序列化 */
+export const replacer = (key, value) => {
+  if (value instanceof Map) {
+    return {
+      dataType: 'Map',
+      value: Array.from(value.entries()) // or with spread: value: [...value]
+    }
+  } else {
+    return value
+  }
+}
+export const reviver = (key, value) => {
+  if (typeof value === 'object' && value !== null) {
+    if (value.dataType === 'Map') {
+      return new Map(value.value)
+    }
+  }
+  return value
+}
 export const formatDict = (list) => {
   if (!list || !list.length) return
   const keySet = new Set()
@@ -19,6 +37,6 @@ export const formatDict = (list) => {
     }
     dictMap.set(keyArr[i], arr)
   }
-
+  sessionStorage.setItem('DICTMAP', JSON.stringify(dictMap, replacer))
   return dictMap
 }
