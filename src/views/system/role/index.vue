@@ -113,6 +113,7 @@
         @current-change="handleCurrentChange"
       />
     </el-card>
+    <RoleDataPermissonForm ref="dataPermissionFormRef" @success="getList" />
   </div>
 </template>
 
@@ -120,6 +121,7 @@
 import { ref, reactive } from 'vue'
 import { getRoleList } from '@/api/system'
 import { dateFormatter } from '@/utils'
+import RoleDataPermissonForm from './RoleDataPermissonForm.vue'
 import {
   Refresh,
   Search
@@ -181,9 +183,10 @@ const handleSizeChange = (val) => {
   queryParams.pageSize = val
   getList()
 }
-// 操作数据权限
+/** 数据权限操作 */
+const dataPermissionFormRef = ref()
 const openDataPermissionForm = (row) => {
-  console.log(row)
+  dataPermissionFormRef.value.openDialog(row)
 }
 
 // 列表tag转换

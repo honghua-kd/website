@@ -22,3 +22,19 @@ export function getUserList (data) {
     data
   })
 }
+
+// 获取字典信息
+export function getDict (params) {
+  return request({
+    url: `${prefix}/system/dict-data/list-all-simple`,
+    method: 'get'
+  })
+}
+
+// 获取部门信息
+export function getDeptInfo (params) {
+  return request({
+    url: `${prefix}/system/dept/list-all-simple`,
+    method: 'get'
+  })
+}
