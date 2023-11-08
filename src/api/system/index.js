@@ -47,3 +47,12 @@ export function subDataPermission (data) {
     data
   })
 }
+
+// 字典管理-获取字典列表
+export function getDictList (data) {
+  return request({
+    url: `${prefix}/system/dict-type/page`,
+    method: 'post',
+    data
+  })
+}

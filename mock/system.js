@@ -2202,5 +2202,100 @@ export const system = [
         data: true
       }
     }
+  },
+  {
+    url: `${VITE_API}/system/dict-type/page`,
+    method: 'post',
+    response: (config) => {
+      return {
+        msg: '操作成功',
+        code: 200,
+        data: {
+          list: [
+            {
+              name: 'Banner Position',
+              status: 0,
+              remark: '',
+              id: 600,
+              type: 'promotion_banner_position',
+              createTime: 1696721065000
+            },
+            {
+              name: '拼团记录的状态',
+              status: 0,
+              remark: '',
+              id: 184,
+              type: 'promotion_combination_record_status',
+              createTime: 1696721065000
+            },
+            {
+              name: '砍价记录的状态',
+              status: 0,
+              remark: '',
+              id: 183,
+              type: 'promotion_bargain_record_status',
+              createTime: 1696473668000
+            },
+            {
+              name: '佣金提现银行',
+              status: 0,
+              remark: null,
+              id: 182,
+              type: 'brokerage_bank_name',
+              createTime: 1695840365000
+            },
+            {
+              name: '佣金提现状态',
+              status: 0,
+              remark: null,
+              id: 181,
+              type: 'brokerage_withdraw_status',
+              createTime: 1695840365000
+            },
+            {
+              name: '佣金记录状态',
+              status: 0,
+              remark: null,
+              id: 180,
+              type: 'brokerage_record_status',
+              createTime: 1695840365000
+            },
+            {
+              name: '佣金记录业务类型',
+              status: 0,
+              remark: null,
+              id: 179,
+              type: 'brokerage_record_biz_type',
+              createTime: 1695840365000
+            },
+            {
+              name: '佣金提现类型',
+              status: 0,
+              remark: null,
+              id: 178,
+              type: 'brokerage_withdraw_type',
+              createTime: 1695840365000
+            },
+            {
+              name: '分销关系绑定模式',
+              status: 0,
+              remark: null,
+              id: 177,
+              type: 'brokerage_bind_mode',
+              createTime: 1695840365000
+            },
+            {
+              name: '分佣模式',
+              status: 0,
+              remark: null,
+              id: 176,
+              type: 'brokerage_enabled_condition',
+              createTime: 1695840365000
+            }
+          ],
+          total: 69
+        }
+      }
+    }
   }
 ]
