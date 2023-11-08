@@ -2144,54 +2144,62 @@ export const system = [
           {
             id: 100,
             name: '芋道源码',
-            parentId: 0
-          },
-          {
-            id: 101,
-            name: '深圳总公司',
-            parentId: 100
-          },
-          {
-            id: 103,
-            name: '研发部门',
-            parentId: 101
-          },
-          {
-            id: 108,
-            name: '市场部门',
-            parentId: 102
-          },
-          {
-            id: 102,
-            name: '长沙分公司',
-            parentId: 100
-          },
-          {
-            id: 104,
-            name: '市场部门',
-            parentId: 101
-          },
-          {
-            id: 109,
-            name: '财务部门',
-            parentId: 102
-          },
-          {
-            id: 105,
-            name: '测试部门',
-            parentId: 101
-          },
-          {
-            id: 106,
-            name: '财务部门',
-            parentId: 101
-          },
-          {
-            id: 107,
-            name: '运维部门',
-            parentId: 101
+            children: [
+              {
+                id: 101,
+                name: '深圳总公司',
+                children: [
+                  {
+                    id: 103,
+                    name: '研发部门'
+                  },
+                  {
+                    id: 104,
+                    name: '市场部门'
+                  },
+                  {
+                    id: 105,
+                    name: '测试部门'
+                  },
+                  {
+                    id: 106,
+                    name: '财务部门'
+                  },
+                  {
+                    id: 107,
+                    name: '运维部门'
+                  }
+                ]
+              },
+
+              {
+                id: 102,
+                name: '长沙分公司',
+                children: [
+                  {
+                    id: 108,
+                    name: '市场部门'
+                  },
+                  {
+                    id: 109,
+                    name: '财务部门'
+                  }
+                ]
+              }
+            ]
           }
         ]
+      }
+    }
+  },
+  {
+    url: `${VITE_API}/system/permission/assign-role-data-scope`,
+    method: 'post',
+    response: (config) => {
+      return {
+        msg: '操作成功',
+        code: 200,
+        data: true
       }
     }
   }

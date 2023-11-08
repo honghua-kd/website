@@ -28,6 +28,34 @@ export default [
         menuType: 5,
         sort: 2,
         menu: 'userMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'dict'
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        sort: 3,
+        menu: 'dictMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'data'
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        sort: 4,
+        menu: 'dataMenu'
       }
     ],
     elements: [],

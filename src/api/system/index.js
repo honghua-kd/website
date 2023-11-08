@@ -38,3 +38,12 @@ export function getDeptInfo (params) {
     method: 'get'
   })
 }
+
+// 角色管理-数据权限提交接口
+export function subDataPermission (data) {
+  return request({
+    url: `${prefix}/system/permission/assign-role-data-scope`,
+    method: 'post',
+    data
+  })
+}
