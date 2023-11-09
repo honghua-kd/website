@@ -86,6 +86,7 @@ const openDialog = async (data) => {
 }
 defineExpose({ openDialog })
 // 提交
+const emit = defineEmits(['success'])
 const submitForm = () => {
   const { id, dataScope, dataScopeDeptIds } = formData
   const params = {
@@ -101,6 +102,8 @@ const submitForm = () => {
     console.log(err)
   })
   dialogVisible.value = false
+  // 发送操作成功的事件
+  emit('success')
 }
 const defaultProps = {
   children: 'children',

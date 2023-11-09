@@ -63,7 +63,7 @@
               type="primary"
               plain
               :icon="Plus"
-              @click="searchHandler"
+              @click="addDictHandler"
               size="small"
             >
               新增
@@ -120,7 +120,9 @@
         />
         <el-table-column align="center" label="操作">
           <template #default="scope">
-            <el-button link type="primary"> 修改 </el-button>
+            <el-button link type="primary" @click="editHandler(scope.row)">
+              修改
+            </el-button>
             <router-link :to="'/dict/type/data/' + scope.row.type">
               <el-button link type="primary">数据</el-button>
             </router-link>
@@ -140,6 +142,7 @@
         @current-change="handleCurrentChange"
       />
     </el-card>
+    <DictTypeForm ref="dictTypeRef" @success="getList" />
   </div>
 </template>
 
@@ -154,7 +157,7 @@ import {
 
 import { getDictList } from '@/api/system'
 import { dateFormatter } from '@/utils'
-
+import DictTypeForm from './DictTypeForm.vue'
 const queryFormRef = ref(null)
 const statusOpts = ref([
   {
@@ -208,6 +211,15 @@ const getList = () => {
     console.log(err)
     loading.value = false
   })
+}
+// 新增字典表
+const dictTypeRef = ref()
+const addDictHandler = () => {
+  dictTypeRef.value.open('add')
+}
+// 编辑字典
+const editHandler = (row) => {
+  dictTypeRef.value.open('edit', row)
 }
 const handleCurrentChange = (val) => {
   queryParams.pageNo = val
