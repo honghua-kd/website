@@ -1,10 +1,11 @@
 <template>
   <div>
-    <el-dialog :title="dialogTitle" v-model="dialogVisible" :rules="formRules">
+    <el-dialog :title="dialogTitle" v-model="dialogVisible">
       <el-form
         ref="formRef"
         :model="formParams"
         v-loading="formLoading"
+        :rules="formRules"
         label-width="80px"
       >
         <el-form-item label="字典名称" prop="dictName">
@@ -98,8 +99,16 @@ const formRules = reactive({
 })
 
 // 提交
-const submitForm = () => {
-  console.log('submit')
+const submitForm = async () => {
+  // 校验表单
+  if (!formRef.value) return
+  const valid = await formRef.value.validate()
+  if (!valid) return
+  // 提交请求
+  // formLoading.value = true
+  // 添加提交接口
+  console.log('submit', formParams)
+  dialogVisible.value = false
 }
 
 /** 重置表单 */
@@ -109,7 +118,9 @@ const resetForm = () => {
   formParams.dictType = ''
   formParams.status = 0
   formParams.remark = ''
+  formRef.value?.resetFields()
 }
+
 </script>
 
 <style lang='scss' scoped>

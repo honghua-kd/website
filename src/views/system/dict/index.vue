@@ -123,10 +123,12 @@
             <el-button link type="primary" @click="editHandler(scope.row)">
               修改
             </el-button>
-            <router-link :to="'/dict/type/data/' + scope.row.type">
-              <el-button link type="primary">数据</el-button>
-            </router-link>
-            <el-button link type="danger"> 删除 </el-button>
+            <el-button link type="primary" @click="jumpDataHandler(scope.row)">
+              数据
+            </el-button>
+            <el-button link type="danger" @click="delHandler(scope.row.id)">
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -158,6 +160,8 @@ import {
 import { getDictList } from '@/api/system'
 import { dateFormatter } from '@/utils'
 import DictTypeForm from './DictTypeForm.vue'
+import { ElMessageBox, ElMessage } from 'element-plus'
+
 const queryFormRef = ref(null)
 const statusOpts = ref([
   {
@@ -221,6 +225,34 @@ const addDictHandler = () => {
 const editHandler = (row) => {
   dictTypeRef.value.open('edit', row)
 }
+
+/** 删除按钮操作 */
+const delHandler = (id) => {
+  // 二次确认
+  ElMessageBox.confirm('确认要删除吗？', '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(() => {
+    // 调用删除接口
+    ElMessage({
+      type: 'success',
+      message: '删除成功'
+    })
+    searchHandler()
+  }).catch(() => {
+    ElMessage({
+      type: 'info',
+      message: '删除失败'
+    })
+  })
+}
+// 跳转数据
+const jumpDataHandler = (row) => {
+  console.log('row', row)
+}
+
+// 切换页数
 const handleCurrentChange = (val) => {
   queryParams.pageNo = val
   getList()
