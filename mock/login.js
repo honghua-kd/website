@@ -46,7 +46,7 @@ export const login = [
     }
   },
   {
-    url: `${VITE_API}/authDataOutput/frontData`,
+    url: `${VITE_API}/user/v1/getPermission`,
     type: 'post',
     response (config) {
       return {
@@ -73,7 +73,7 @@ export const login = [
     }
   },
   {
-    url: `${VITE_API}/getUserInfo`,
+    url: `${VITE_API}/user/v1/getInfo`,
     type: 'get',
     response () {
       return {

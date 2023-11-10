@@ -40,8 +40,8 @@ export default {
   proxy: {
     // 正则表达式写法
     '^/api/.*': {
-      target: 'http://testshareholding.utfinancing.com/shareholdingarch/',
-      // target: 'http://10.102.2.222:19005',
+      // target: 'https://dev-op.utfinancing.com/operations-management',
+      target: 'http://10.102.3.105:8899',
       changeOrigin: true,
       rewrite: (path) => path.replace(/^\/api/, '')
     }

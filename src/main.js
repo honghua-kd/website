@@ -58,7 +58,10 @@ const { handlePermission } = usePermission({
   getAuthData: async () => {
     const userStore = useUserStore()
     const routesStore = useRoutesStore()
-    await getAuthData().then(response => {
+    const params = {
+      systemCode: 'OPERATIONS'
+    }
+    await getAuthData(params).then(response => {
       userStore.setAuthDataFlag(true)
       if (response.data && Object.prototype.toString.call(response.data) === '[object Object]') {
         const whiteAuthData = options.whiteAuthData

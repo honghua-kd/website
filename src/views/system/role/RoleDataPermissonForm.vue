@@ -1,14 +1,19 @@
 <template>
   <div>
-    <el-dialog v-model="dialogVisible" title="数据权限">
-      <el-form ref="formRef" :model="formData" v-loading="formLoading">
-        <el-form-item label="角色名称：">
+    <el-dialog v-model="dialogVisible" :title="dialogTitle">
+      <el-form
+        ref="formRef"
+        :model="formData"
+        v-loading="formLoading"
+        label-width="100"
+      >
+        <el-form-item label="权限名称：">
           <el-tag>{{ formData.name }}</el-tag>
         </el-form-item>
-        <el-form-item label="角色标识：">
+        <el-form-item label="权限编码：">
           <el-tag>{{ formData.code }}</el-tag>
         </el-form-item>
-        <el-form-item label="权限范围：">
+        <el-form-item label="模块：">
           <el-select v-model="formData.dataScope">
             <el-option
               v-for="item in dataOpts"
@@ -18,19 +23,20 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="权限范围选择：" v-if="formData.dataScope === 2">
-          <el-card shadow="never" style="width: 80%">
-            <el-tree
-              ref="treeRef"
-              :data="deptOptions"
-              show-checkbox
-              default-expand-all
-              node-key="id"
-              highlight-current
-              :props="defaultProps"
-              @check="getCheckedNodesHandler"
-            />
-          </el-card>
+        <el-form-item label="权限规则：" prop="rule">
+          <el-row :gutter="30" class="withFull">
+            <el-col :span="16">
+              <el-input
+                v-model="formData.rule"
+                placeholder="请编辑规则"
+                type="textarea"
+                class="withFull"
+              />
+            </el-col>
+            <el-col :span="4">
+              <el-button link type="primary">编辑规则</el-button>
+            </el-col>
+          </el-row>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -46,7 +52,7 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { useDictStore } from '@/store/dict'
-import { getDeptInfo, subDataPermission } from '@/api/system'
+import { subDataPermission } from '@/api/system'
 import { ElMessage } from 'element-plus'
 
 defineProps({
@@ -56,43 +62,41 @@ defineProps({
   }
 })
 
+const dialogTitle = ref('')
 const formData = reactive({
   id: 0,
   name: '',
   code: '',
-  dataScope: undefined,
-  dataScopeDeptIds: []
+  rule: ''
 })
 const dataOpts = ref([])
-const deptOptions = ref([]) // 部门树形结构
-const treeRef = ref() // 菜单树组件 Ref
 
 const dialogVisible = ref(false)
 const formLoading = ref(false)
 // 打开弹窗
-const openDialog = async (data) => {
+const openDialog = async (type, data) => {
   dialogVisible.value = true
-  await getDeptTree()
+  dialogTitle.value = type === 'add' ? '新增数据权限列表' : '编辑数据权限列表'
+  resetForm()
   const dictStore = useDictStore()
   dataOpts.value = dictStore?.getDictMap && dictStore?.getDictMap.get('system_data_scope')
-  const { id, name, code, dataScope, dataScopeDeptIds } = data
-  formData.id = id
-  formData.name = name
-  formData.code = code
-  formData.dataScope = dataScope
-  dataScopeDeptIds?.forEach((deptId) => {
-    treeRef.value.setChecked(deptId, true, false)
-  })
+  if (type === 'edit') {
+    const { id, name, code, dataScope } = data
+    formData.id = id
+    formData.name = name
+    formData.code = code
+    formData.dataScope = dataScope
+  }
 }
 defineExpose({ openDialog })
 // 提交
 const emit = defineEmits(['success'])
 const submitForm = () => {
-  const { id, dataScope, dataScopeDeptIds } = formData
+  const { id, dataScope } = formData
   const params = {
     roleId: id,
-    dataScope,
-    dataScopeDeptIds
+    dataScope
+
   }
   subDataPermission(params).then(res => {
     if (res && res.code === 200) {
@@ -105,26 +109,19 @@ const submitForm = () => {
   // 发送操作成功的事件
   emit('success')
 }
-const defaultProps = {
-  children: 'children',
-  label: 'name'
+
+// reset Form
+const resetForm = () => {
+  formData.id = ''
+  formData.name = ''
+  formData.code = ''
+  formData.rule = ''
 }
-// 获取部门信息
-const getDeptTree = () => {
-  getDeptInfo().then(res => {
-    if (res && res.code === 200) {
-      deptOptions.value = res.data
-    }
-  }).catch(err => {
-    console.log(err)
-  })
-}
-// 获取选中节点信息
-const getCheckedNodesHandler = (item, checked) => {
-  const { checkedKeys } = checked
-  formData.dataScopeDeptIds = [...checkedKeys]
-}
+
 </script>
 
 <style lang='scss' scoped>
+.withFull {
+  width: 100%;
+}
 </style>

@@ -8,18 +8,18 @@ const prefix = import.meta.env.VITE_APP_SERVICE_API
 // 获取用户信息
 export function getUserInfo (params) {
   return request({
-    url: `${prefix}/getUserInfo`,
+    url: `${prefix}/user/v1/getInfo`,
     method: 'get',
     params
   })
 }
 
 // 获取权限数据
-export function getAuthData (data) {
+export function getAuthData (params) {
   return request({
-    url: `${prefix}/authDataOutput/frontData`,
-    method: 'post',
-    data
+    url: `${prefix}/user/v1/getPermission`,
+    method: 'get',
+    params
   })
 }
 

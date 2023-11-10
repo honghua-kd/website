@@ -92,7 +92,6 @@
           <template #default="scope">
             <el-button
               link
-              title="数据权限"
               type="primary"
               @click="openDataPermissionForm(scope.row)"
             >
@@ -113,7 +112,7 @@
         @current-change="handleCurrentChange"
       />
     </el-card>
-    <RoleDataPermissonForm ref="dataPermissionFormRef" @success="getList" />
+    <role-list-dialog ref="roleListRef" @success="getList" />
   </div>
 </template>
 
@@ -121,7 +120,7 @@
 import { ref, reactive } from 'vue'
 import { getRoleList } from '@/api/system'
 import { dateFormatter } from '@/utils'
-import RoleDataPermissonForm from './RoleDataPermissonForm.vue'
+import RoleListDialog from './RoleListDialog.vue'
 import {
   Refresh,
   Search
@@ -184,9 +183,9 @@ const handleSizeChange = (val) => {
   getList()
 }
 /** 数据权限操作 */
-const dataPermissionFormRef = ref()
+const roleListRef = ref()
 const openDataPermissionForm = (row) => {
-  dataPermissionFormRef.value.openDialog(row)
+  roleListRef.value.openDialog(row)
 }
 
 // 列表tag转换
