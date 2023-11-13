@@ -26,10 +26,10 @@
         </el-table-column>
       </el-table>
       <template #footer>
+        <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button :disabled="formLoading" type="primary" @click="submitForm">
           确 定
         </el-button>
-        <el-button @click="dialogVisible = false">取 消</el-button>
       </template>
     </el-dialog>
     <RoleDataPermissonForm ref="dataPermissionFormRef" @success="getList" />
