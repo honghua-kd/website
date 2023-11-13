@@ -32,7 +32,7 @@
         <el-button @click="dialogVisible = false">取 消</el-button>
       </template>
     </el-dialog>
-    <RoleDataPermissonForm ref="dataPermissionFormRef" />
+    <RoleDataPermissonForm ref="dataPermissionFormRef" @success="getList" />
   </div>
 </template>
 
@@ -45,8 +45,14 @@ const tableLoading = ref(false)
 const permiList = ref([])
 const dialogVisible = ref(false)
 const dialogTitle = ref('数据权限')
-defineEmits(['success'])
+const formLoading = ref(false)
 
+const emit = defineEmits(['success'])
+
+// 获取角色规则列表
+const getList = () => {
+  console.log('getlist')
+}
 /** 打开弹窗 */
 const openDialog = (type, row) => {
   dialogVisible.value = true
@@ -86,7 +92,8 @@ const delHandler = (id) => {
 
 // 提交选中数据权限
 const submitForm = () => {
-
+  dialogVisible.value = false
+  emit('success')
 }
 </script>
 
