@@ -68,8 +68,8 @@
         v-loading="loading"
       >
         <el-table-column type="index" width="80" label="序号" />
-        <el-table-column align="center" label="角色编号" prop="id" />
-        <el-table-column align="center" label="角色名称" prop="name" />
+        <el-table-column align="center" label="角色编号" prop="roleNo" />
+        <el-table-column align="center" label="角色名称" prop="roleName" />
         <el-table-column align="center" label="角色类型" prop="type" />
         <el-table-column align="center" label="角色标识" prop="code" />
         <el-table-column align="center" label="显示顺序" prop="sort" />
@@ -162,9 +162,10 @@ const searchHandler = () => {
 // 获取列表
 const getList = () => {
   loading.value = true
+  console.log('queryParams', queryParams)
   getRoleList(queryParams).then(res => {
     loading.value = false
-    if (res && res.code === 200) {
+    if (res && (res.code === 200 || res.code === 0)) {
       const { list, total } = res?.data
       tableData.value = list
       pageTotal.value = total

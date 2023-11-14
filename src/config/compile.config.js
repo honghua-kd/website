@@ -47,5 +47,5 @@ export default {
     }
   },
   // 是否使用mock数据
-  useMock: true
+  useMock: false
 }

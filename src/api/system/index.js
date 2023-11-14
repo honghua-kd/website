@@ -8,7 +8,7 @@ const prefix = import.meta.env.VITE_APP_SERVICE_API
 // 获取角色列表
 export function getRoleList (data) {
   return request({
-    url: `${prefix}/system/role/page`,
+    url: `${prefix}/admin-api/system/role/page`,
     method: 'post',
     data
   })
