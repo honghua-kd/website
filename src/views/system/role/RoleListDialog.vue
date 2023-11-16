@@ -13,7 +13,9 @@
         v-loading="tableLoading"
       >
         <el-table-column type="selection" width="80" label="全选" />
-        <el-table-column align="center" label="权限编码" prop="permiCode" />
+        <!-- <el-table-column align="center" label="工号" prop="staffCode" />
+        <el-table-column align="center" label="角色编码" prop="roleCode" /> -->
+        <el-table-column align="center" label="权限编码" prop="permissionCode" />
         <el-table-column align="center" label="操作">
           <template #default="scope">
             <el-button link type="primary" @click="editHandler(scope.row)">
@@ -32,7 +34,7 @@
         </el-button>
       </template>
     </el-dialog>
-    <RoleDataPermissonForm ref="dataPermissionFormRef" @success="getList" />
+    <RoleDataPermissonForm ref="dataPermissionFormRef" @success="getRolePerList" />
   </div>
 </template>
 
@@ -40,7 +42,7 @@
 import { ref } from 'vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import RoleDataPermissonForm from './RoleDataPermissonForm.vue'
-
+import { getRolePermiList } from '@/api/system'
 const tableLoading = ref(false)
 const permiList = ref([])
 const dialogVisible = ref(false)
@@ -49,13 +51,22 @@ const formLoading = ref(false)
 
 const emit = defineEmits(['success'])
 
-// 获取角色规则列表
-const getList = () => {
-  console.log('getlist')
+// 获取角色对应数据权限
+const getRolePerList = (roleCode) => {
+  const params = {
+    roleCode
+  }
+  getRolePermiList(params).then(res => {
+    if (res && res.code === 200) {
+      permiList.value = res.data
+    }
+  })
 }
 /** 打开弹窗 */
-const openDialog = (type, row) => {
+const openDialog = (row) => {
   dialogVisible.value = true
+  const { roleNo } = row
+  getRolePerList(roleNo)
 }
 defineExpose({ openDialog })
 

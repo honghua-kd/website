@@ -14,6 +14,32 @@ export function getRoleList (data) {
   })
 }
 
+// 获取角色对应数据权限接口
+export function getRolePermiList (params) {
+  return request({
+    url: `${prefix}/admin-api/system/role/list-permission`,
+    method: 'get',
+    params
+  })
+}
+// 查询数据权限
+export function getPermissionDetail (params) {
+  return request({
+    url: `${prefix}/admin-api/system/permission/data-scope`,
+    method: 'get',
+    params
+  })
+}
+
+// 角色管理-数据权限提交接口(赋予数据权限)
+export function subDataPermission (data) {
+  return request({
+    url: `${prefix}/admin-api/system/permission/assign-data-scope`,
+    method: 'post',
+    data
+  })
+}
+
 // 获取用户列表
 export function getUserList (data) {
   return request({
@@ -36,15 +62,6 @@ export function getDeptInfo (params) {
   return request({
     url: `${prefix}/system/dept/list-all-simple`,
     method: 'get'
-  })
-}
-
-// 角色管理-数据权限提交接口
-export function subDataPermission (data) {
-  return request({
-    url: `${prefix}/system/permission/assign-role-data-scope`,
-    method: 'post',
-    data
   })
 }
 

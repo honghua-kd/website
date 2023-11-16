@@ -162,10 +162,9 @@ const searchHandler = () => {
 // 获取列表
 const getList = () => {
   loading.value = true
-  console.log('queryParams', queryParams)
   getRoleList(queryParams).then(res => {
     loading.value = false
-    if (res && (res.code === 200 || res.code === 0)) {
+    if (res && res.code === 200) {
       const { list, total } = res?.data
       tableData.value = list
       pageTotal.value = total

@@ -7,24 +7,24 @@
         v-loading="formLoading"
         label-width="100"
       >
-        <el-form-item label="权限名称：" prop="name">
+        <el-form-item label="权限名称：" prop="permissionName">
           <el-input
-            v-model="formData.name"
+            v-model="formData.permissionName"
             placeholder="请输入权限名称"
             clearable
             style="width: 50%"
           />
         </el-form-item>
-        <el-form-item label="权限编码：" prop="code">
+        <el-form-item label="权限编码：" prop="permissionCode">
           <el-input
-            v-model="formData.code"
+            v-model="formData.permissionCode"
             placeholder="请输入权限编码"
             style="width: 50%"
             clearable
           />
         </el-form-item>
-        <el-form-item label="模块：" prop="moduleName">
-          <el-select v-model="formData.moduleName">
+        <el-form-item label="模块：" prop="modelCode">
+          <el-select v-model="formData.modelCode">
             <el-option
               v-for="item in dataOpts"
               :key="item.value"
@@ -33,11 +33,11 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="权限规则：" prop="rule">
+        <el-form-item label="权限规则：" prop="dataScope">
           <el-row :gutter="20" class="withFull">
             <el-col :span="9">
               <el-input
-                v-model="formData.rule"
+                v-model="formData.dataScope"
                 placeholder="请编辑规则"
                 type="textarea"
                 class="withFull"
@@ -78,6 +78,7 @@
 import { ref, reactive } from 'vue'
 import { useDictStore } from '@/store/dict'
 import { subDataPermission } from '@/api/system'
+// getPermissionDetail
 import { ElMessage } from 'element-plus'
 import { formulaList } from './config'
 defineProps({
