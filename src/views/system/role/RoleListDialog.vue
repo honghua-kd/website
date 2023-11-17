@@ -12,16 +12,15 @@
         border
         v-loading="tableLoading"
       >
-        <el-table-column type="selection" width="80" label="全选" />
         <!-- <el-table-column align="center" label="工号" prop="staffCode" />
         <el-table-column align="center" label="角色编码" prop="roleCode" /> -->
         <el-table-column align="center" label="权限编码" prop="permissionCode" />
         <el-table-column align="center" label="操作">
           <template #default="scope">
-            <el-button link type="primary" @click="editHandler(scope.row)">
+            <el-button link type="primary" @click="editHandler('edit',scope.row)">
               修改
             </el-button>
-            <el-button link type="warning" @click="delHandler(scope.row.id)">
+            <el-button link type="warning" @click="delHandler(scope.row)">
               删除
             </el-button>
           </template>
@@ -42,7 +41,7 @@
 import { ref } from 'vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import RoleDataPermissonForm from './RoleDataPermissonForm.vue'
-import { getRolePermiList } from '@/api/system'
+import { getRolePermiList, delPermission } from '@/api/system'
 const tableLoading = ref(false)
 const permiList = ref([])
 const dialogVisible = ref(false)
@@ -80,19 +79,27 @@ const editHandler = (type, row) => {
   dataPermissionFormRef.value.openDialog(type, row)
 }
 // 删除
-const delHandler = (id) => {
+const delHandler = (row) => {
   // 二次确认
   ElMessageBox.confirm('确认要删除吗？', '警告', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
+    const { id, roleNo } = row
+    const params = {
+      id
+    }
     // 调用删除接口
-    ElMessage({
-      type: 'success',
-      message: '删除成功'
+    delPermission(params).then(res => {
+      if (res && res.code === 200) {
+        ElMessage({
+          type: 'success',
+          message: '删除成功'
+        })
+        getRolePerList(roleNo)
+      }
     })
-    // searchHandler()
   }).catch(() => {
     ElMessage({
       type: 'info',

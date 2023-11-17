@@ -24,7 +24,7 @@
           />
         </el-form-item>
         <el-form-item label="模块：" prop="modelCode">
-          <el-select v-model="formData.modelCode">
+          <el-select v-model="formData.modelCode" multiple>
             <el-option
               v-for="item in dataOpts"
               :key="item.value"
@@ -50,6 +50,7 @@
               </el-button>
             </el-col>
             <el-col :span="12" v-if="formulaShow" class="formulaCont">
+              <!-- 这里添加一个select组件，存储现有规则模版 -->
               <p v-for="(el, ind) in formulaList" :key="ind">
                 <span
                   v-for="(e, i) in el"
@@ -62,6 +63,13 @@
               </p>
             </el-col>
           </el-row>
+        </el-form-item>
+        <el-form-item label="表达式" prop="dataScopeExpression">
+            <el-input
+              v-model="formData.dataScopeExpression"
+              type="textarea"
+              class="withFull"
+            />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -77,8 +85,7 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { useDictStore } from '@/store/dict'
-import { subDataPermission } from '@/api/system'
-// getPermissionDetail
+import { subDataPermission, getPermissionDetail } from '@/api/system'
 import { ElMessage } from 'element-plus'
 import { formulaList } from './config'
 defineProps({
@@ -90,11 +97,11 @@ defineProps({
 const formulaShow = ref(false)
 const dialogTitle = ref('')
 const formData = reactive({
-  id: 0,
-  name: '',
-  code: '',
-  moduleName: '',
-  rule: ''
+  permissionName: '', // 权限名称
+  permissionCode: '', // 权限编码
+  modelCode: '', // 模块
+  dataScope: '', // 权限规则
+  dataScopeExpression: '' // 表达式
 })
 const dataOpts = ref([])
 
@@ -108,12 +115,20 @@ const openDialog = async (type, data) => {
   const dictStore = useDictStore()
   dataOpts.value = dictStore?.getDictMap && dictStore?.getDictMap.get('system_data_scope')
   if (type === 'edit') {
-    const { id, name, code, rule, moduleName } = data
-    formData.id = id
-    formData.name = name
-    formData.code = code
-    formData.rule = rule
-    formData.moduleName = moduleName
+    const { permissionCode } = data
+    const params = {
+      permissionCode
+    }
+    getPermissionDetail(params).then(res => {
+      if (res && res.code === 200) {
+        const { modelCode, permissionCode, permissionName, dataScopeExpression, dataScope } = res.data
+        formData.permissionName = permissionName
+        formData.permissionCode = permissionCode
+        formData.modelCode = modelCode
+        formData.dataScope = dataScope
+        formData.dataScopeExpression = dataScopeExpression
+      }
+    })
   }
 }
 defineExpose({ openDialog })
@@ -147,11 +162,11 @@ const selectUnitHandler = (unit) => {
 }
 // reset Form
 const resetForm = () => {
-  formData.id = ''
-  formData.name = ''
-  formData.code = ''
-  formData.rule = ''
-  formData.moduleName = ''
+  formData.permissionName = ''
+  formData.permissionCode = ''
+  formData.modelCode = ''
+  formData.dataScope = ''
+  formData.dataScopeExpression = ''
 }
 
 </script>

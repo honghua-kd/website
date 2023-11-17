@@ -40,12 +40,13 @@ export function subDataPermission (data) {
   })
 }
 
-// 获取用户列表
-export function getUserList (data) {
+// 角色管理-数据权限-删除数据权限关系
+
+export function delPermission (params) {
   return request({
-    url: `${prefix}/system/user/page`,
-    method: 'post',
-    data
+    url: `${prefix}/admin-api/system/permission/delete`,
+    method: 'get',
+    params
   })
 }
 
@@ -57,6 +58,14 @@ export function getDict (params) {
   })
 }
 
+// 获取用户列表
+export function getUserList (data) {
+  return request({
+    url: `${prefix}/system/user/page`,
+    method: 'post',
+    data
+  })
+}
 // 获取部门信息
 export function getDeptInfo (params) {
   return request({
