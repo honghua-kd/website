@@ -2,7 +2,7 @@
   <div>
     <el-dialog v-model="dialogVisible" :title="dialogTitle">
       <el-row class="addBtn">
-        <el-button @click="addPermiHandler('add')" type="primary">
+        <el-button @click="addPermiHandler('add',currentRowNo)" type="primary">
           新 增
         </el-button>
       </el-row>
@@ -47,7 +47,7 @@ const permiList = ref([])
 const dialogVisible = ref(false)
 const dialogTitle = ref('数据权限')
 const formLoading = ref(false)
-
+const currentRowNo = ref('')
 const emit = defineEmits(['success'])
 
 // 获取角色对应数据权限
@@ -59,20 +59,23 @@ const getRolePerList = (roleCode) => {
     if (res && res.code === 200) {
       permiList.value = res.data
     }
+  }).catch(err => {
+    console.log(err)
   })
 }
 /** 打开弹窗 */
 const openDialog = (row) => {
   dialogVisible.value = true
   const { roleNo } = row
+  currentRowNo.value = roleNo
   getRolePerList(roleNo)
 }
 defineExpose({ openDialog })
 
 // 新增数据权限
 const dataPermissionFormRef = ref()
-const addPermiHandler = (type) => {
-  dataPermissionFormRef.value.openDialog(type)
+const addPermiHandler = (type, roleNo) => {
+  dataPermissionFormRef.value.openDialog(type, roleNo)
 }
 // 修改
 const editHandler = (type, row) => {
@@ -86,18 +89,19 @@ const delHandler = (row) => {
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
-    const { id, roleNo } = row
+    const { id, roleCode } = row
+
     const params = {
       id
     }
     // 调用删除接口
     delPermission(params).then(res => {
-      if (res && res.code === 200) {
+      if (res && res.code === 200 && res.data === true) {
         ElMessage({
           type: 'success',
           message: '删除成功'
         })
-        getRolePerList(roleNo)
+        getRolePerList(roleCode)
       }
     })
   }).catch(() => {

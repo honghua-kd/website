@@ -41,7 +41,6 @@ export function subDataPermission (data) {
 }
 
 // 角色管理-数据权限-删除数据权限关系
-
 export function delPermission (params) {
   return request({
     url: `${prefix}/admin-api/system/permission/delete`,
@@ -50,8 +49,70 @@ export function delPermission (params) {
   })
 }
 
+// 角色管理-数据权限-获取字典信息
+export function getSingleDict (data) {
+  return request({
+    url: `${prefix}/admin-api/system/dict-data/list`,
+    method: 'post',
+    data
+  })
+}
+
+// 角色管理-数据权限-获规则映射字典
+export function getRuleList () {
+  return request({
+    url: `${prefix}/admin-api/system/scope-mapping/all`,
+    method: 'post'
+  })
+}
+
+// 角色管理-数据权限-规则校验接口
+
+export function checkRules (data) {
+  return request({
+    url: `${prefix}/admin-api/system/permission/expression`,
+    method: 'post',
+    data
+  })
+}
+
+// 字典管理-字典类型-获取字典列表
+export function getDictList (data) {
+  return request({
+    url: `${prefix}/admin-api/system/dict-type/page`,
+    method: 'post',
+    data
+  })
+}
+// 字典管理-字典类型-新增字典
+export function createDict (data) {
+  return request({
+    url: `${prefix}/admin-api/system/dict-type/create`,
+    method: 'post',
+    data
+  })
+}
+
+// 字典管理-字典类型-修改字典
+export function updateDict (data) {
+  return request({
+    url: `${prefix}/admin-api/system/dict-type/update`,
+    method: 'post',
+    data
+  })
+}
+// 字典管理-字典类型-删除字典
+export function deleteDict (params) {
+  return request({
+    url: `${prefix}/admin-api/system/dict-type/delete`,
+    method: 'get',
+    params
+  })
+}
+
+/** 以下是mock */
 // 获取字典信息
-export function getDict (params) {
+export function getDict () {
   return request({
     url: `${prefix}/system/dict-data/list-all-simple`,
     method: 'get'
@@ -71,14 +132,5 @@ export function getDeptInfo (params) {
   return request({
     url: `${prefix}/system/dept/list-all-simple`,
     method: 'get'
-  })
-}
-
-// 字典管理-获取字典列表
-export function getDictList (data) {
-  return request({
-    url: `${prefix}/system/dict-type/page`,
-    method: 'post',
-    data
   })
 }

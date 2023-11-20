@@ -8,15 +8,15 @@
         :rules="formRules"
         label-width="80px"
       >
-        <el-form-item label="字典名称" prop="dictName">
+        <el-form-item label="字典名称" prop="name">
           <el-input
-            v-model="formParams.dictName"
+            v-model="formParams.name"
             placeholder="请输入字典名称"
           />
         </el-form-item>
-        <el-form-item label="字典类型" prop="dictType">
+        <el-form-item label="字典类型" prop="type">
           <el-input
-            v-model="formParams.dictType"
+            v-model="formParams.type"
             placeholder="请输入参数名称"
             :disabled="currentType === 'edit'"
           />
@@ -52,6 +52,8 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
+import { createDict, updateDict } from '@/api/system'
+import { ElMessage } from 'element-plus'
 
 const dialogTitle = ref('新增字典')
 const dialogVisible = ref(false)
@@ -59,8 +61,8 @@ const formLoading = ref(false)
 const currentType = ref('')
 const formParams = reactive({
   id: undefined,
-  dictName: '',
-  dictType: '',
+  name: '',
+  type: '',
   status: 0,
   remark: ''
 })
@@ -75,17 +77,17 @@ const statusOpts = ref([
     value: 1
   }
 ])
+const emit = defineEmits(['success'])
 /** 打开弹窗 */
 const open = (type, row) => {
-  console.log('row', row)
   dialogVisible.value = true
   currentType.value = type
   dialogTitle.value = type === 'add' ? '新增字典' : '编辑字典'
   resetForm()
   if (type === 'edit') {
     formParams.id = row.id
-    formParams.dictName = row.name
-    formParams.dictType = row.type
+    formParams.name = row.name
+    formParams.type = row.type
     formParams.status = row.status
     formParams.remark = row.remark
   }
@@ -93,29 +95,58 @@ const open = (type, row) => {
 defineExpose({ open })
 // 校验
 const formRules = reactive({
-  dictName: [{ required: true, message: '字典名称不能为空', trigger: 'blur' }],
-  dictType: [{ required: true, message: '字典类型不能为空', trigger: 'blur' }],
+  name: [{ required: true, message: '字典名称不能为空', trigger: 'blur' }],
+  type: [{ required: true, message: '字典类型不能为空', trigger: 'blur' }],
   status: [{ required: true, message: '状态不能为空', trigger: 'change' }]
 })
 
 // 提交
 const submitForm = async () => {
+  console.log('submit', formParams)
+
   // 校验表单
   if (!formRef.value) return
   const valid = await formRef.value.validate()
   if (!valid) return
   // 提交请求
-  // formLoading.value = true
-  // 添加提交接口
-  console.log('submit', formParams)
+  formLoading.value = true
+  const params = {
+    ...formParams
+  }
+  if (currentType.value === 'add') {
+    createDict(params).then(res => {
+      formLoading.value = false
+      if (res && res.code === 200) {
+        ElMessage({
+          type: 'success',
+          message: '操作成功'
+        })
+        emit('success')
+      }
+    }).catch(err => {
+      console.log(err)
+    })
+  } else if (currentType.value === 'edit') {
+    updateDict(params).then(res => {
+      if (res && res.code === 200) {
+        ElMessage({
+          type: 'success',
+          message: '操作成功'
+        })
+        emit('success')
+      }
+    }).catch(err => {
+      console.log(err)
+    })
+  }
   dialogVisible.value = false
 }
 
 /** 重置表单 */
 const resetForm = () => {
   formParams.id = undefined
-  formParams.dictName = ''
-  formParams.dictType = ''
+  formParams.name = ''
+  formParams.type = ''
   formParams.status = 0
   formParams.remark = ''
   formRef.value?.resetFields()

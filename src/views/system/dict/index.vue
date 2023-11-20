@@ -5,18 +5,18 @@
       <el-form ref="queryFormRef" :model="queryParams" :inline="true">
         <el-row :gutter="15">
           <el-col :span="6">
-            <el-form-item label="字典名称:" prop="dictName" class="widthFull">
+            <el-form-item label="字典名称:" prop="name" class="widthFull">
               <el-input
-                v-model="queryParams.dictName"
+                v-model="queryParams.name"
                 placeholder="请输入字典名称"
                 clearable
               />
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="字典类型:" prop="dictType" class="widthFull">
+            <el-form-item label="字典类型:" prop="type" class="widthFull">
               <el-input
-                v-model="queryParams.dictType"
+                v-model="queryParams.type"
                 placeholder="请输入字典类型"
                 clearable
               />
@@ -38,7 +38,22 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+           <el-col style="text-align: right" :span="8">
+            <el-button :icon="Refresh" @click="resetQuery"
+              >重置</el-button
+            >
+            <el-button plain :icon="Search" @click="searchHandler" >
+              搜索
+            </el-button>
+            <el-button
+              type="primary"
+              :icon="Plus"
+              @click="addDictHandler"
+            >
+              新增
+            </el-button>
+          </el-col>
+          <!-- <el-col :span="8">
             <el-form-item label="创建时间:" prop="createTime" class="widthFull">
               <el-date-picker
                 v-model="queryParams.createTime"
@@ -49,36 +64,9 @@
                 value-format="YYYY-MM-DD HH:mm:ss"
               />
             </el-form-item>
-          </el-col>
+          </el-col> -->
         </el-row>
-        <el-row>
-          <el-col style="text-align: right">
-            <el-button :icon="Refresh" @click="resetQuery" size="small"
-              >重置</el-button
-            >
-            <el-button plain :icon="Search" @click="searchHandler" size="small">
-              搜索
-            </el-button>
-            <el-button
-              type="primary"
-              plain
-              :icon="Plus"
-              @click="addDictHandler"
-              size="small"
-            >
-              新增
-            </el-button>
-            <el-button
-              type="success"
-              plain
-              :icon="Download"
-              @click="searchHandler"
-              size="small"
-            >
-              导出
-            </el-button>
-          </el-col>
-        </el-row>
+
       </el-form>
     </el-card>
     <!-- 列表 -->
@@ -153,11 +141,10 @@ import { ref, reactive } from 'vue'
 import {
   Refresh,
   Search,
-  Plus,
-  Download
+  Plus
 } from '@element-plus/icons-vue'
 
-import { getDictList } from '@/api/system'
+import { getDictList, deleteDict } from '@/api/system'
 import { dateFormatter } from '@/utils'
 import DictTypeForm from './DictTypeForm.vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
@@ -177,10 +164,9 @@ const statusOpts = ref([
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
-  dictName: '', // 字典名称
-  dictType: '', // 字典类型
-  status: undefined, // 状态
-  createTime: [] // 创建时间
+  name: '', // 字典名称
+  type: '', // 字典类型
+  status: undefined // 状态
 })
 const tableData = ref([])
 const pageTotal = ref(0) // 列表的总页数
@@ -235,14 +221,21 @@ const delHandler = (id) => {
     type: 'warning'
   }).then(() => {
     // 调用删除接口
-    ElMessage({
-      type: 'success',
-      message: '删除成功'
+    const params = {
+      id
+    }
+    deleteDict(params).then(res => {
+      if (res && res.code === 200) {
+        ElMessage({
+          type: 'success',
+          message: '删除成功'
+        })
+        searchHandler()
+      }
     })
-    searchHandler()
   }).catch(() => {
     ElMessage({
-      type: 'info',
+      type: 'danger',
       message: '删除失败'
     })
   })

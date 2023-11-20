@@ -2,6 +2,8 @@
  * @description 配置axios请求基础信息
  */
 import { getToken } from '@/utils/auth'
+// import { ElMessageBox, ElNotification } from 'element-plus'
+// import { logout } from '@/api'
 
 export default {
   // axios 基础url地址
@@ -15,7 +17,7 @@ export default {
   // 最长请求时间
   requestTimeout: 60000,
   // 请求拦截自定义函数，接收config参数
-  handleRequest: config => {
+  handleRequest: (config) => {
     // 是否需要设置 token
     const needToken = (config.headers || {}).isToken !== false
     // 这里是在本系统内进行的添加
@@ -32,6 +34,37 @@ export default {
   },
   // 返回成功拦截自定义函数，接收response参数
   handleResSuccess: undefined,
+  // handleResSuccess: (response) => {
+  //   const { code, msg } = response.data
+  //   if (code === undefined) {
+  //     // 文件流
+  //     return Promise.resolve(response)
+  //   } else if (+code === 200 || +code === 0) {
+  //     return Promise.resolve(response.data)
+  //   } else if (+code === 401) {
+  //     ElMessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {
+  //       confirmButtonText: '重新登录',
+  //       cancelButtonText: '取消',
+  //       type: 'warning'
+  //     }).then(() => {
+  //       logout().then((res) => {
+  //       window.location.href = '/'
+  //       })
+  //          .catch((err) => {
+  //            throw new Error(err)
+  //         })
+  //     })
+  //   } else if (code.includes('1002') || code.includes('50') || +code === 500) {
+  //     ElNotification({
+  //       type: 'error',
+  //       title: 'Error',
+  //       message: msg,
+  //       closable: true,
+  //       duration: 3000
+  //     })
+  //     return Promise.reject(msg)
+  //   }
+  // },
   // 返回成功拦截自定义函数，接收response error参数
   handleResError: undefined
 }
