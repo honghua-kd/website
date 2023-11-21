@@ -112,7 +112,7 @@
         />
         <el-table-column align="center" label="操作">
           <template #default="scope">
-            <el-button link type="primary" @click="editHandler(scope.row)">
+            <el-button link type="primary" @click="editHandler('edit',scope.row.id)">
               修改
             </el-button>
             <el-button link type="danger" @click="delHandler(scope.row.id)">
@@ -146,9 +146,10 @@ import {
   Plus
 } from '@element-plus/icons-vue'
 import { useRoute } from '@toystory/lotso'
-import { getDataDict } from '@/api/system'
+import { getDataDict, delDataDict } from '@/api/system'
 import { dateFormatter } from '@/utils'
 import DataDictTypeFrom from './DataDictForm.vue'
+import { ElMessageBox, ElMessage } from 'element-plus'
 
 const dictStore = useDictStore()
 const dictOpts = ref([])
@@ -227,12 +228,36 @@ const addHandler = (type, data) => {
   dataDictFormRef.value.open(type, data)
 }
 // 修改
-const editHandler = (type, row) => {
-
+const editHandler = (type, id) => {
+  dataDictFormRef.value.open(type, id)
 }
+
 // 删除
 const delHandler = (id) => {
-
+  // 二次确认
+  ElMessageBox.confirm('确认要删除吗？', '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(() => {
+    const params = {
+      id
+    }
+    delDataDict(params).then(res => {
+      if (res && res.code === 200) {
+        ElMessage({
+          type: 'success',
+          message: '删除成功'
+        })
+        searchHandler()
+      }
+    })
+  }).catch(() => {
+    ElMessage({
+      type: 'danger',
+      message: '删除失败'
+    })
+  })
 }
 
 onActivated(async () => {

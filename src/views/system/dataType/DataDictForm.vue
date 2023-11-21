@@ -20,8 +20,8 @@
       <el-form-item label="父级" prop="parentValue">
         <el-input v-model="formParams.parentValue" />
       </el-form-item>
-      <el-form-item label="层级" prop="level">
-        <el-input v-model="formParams.level" />
+      <el-form-item label="层级" prop="dataLevel">
+        <el-input v-model="formParams.dataLevel" />
       </el-form-item>
       <el-form-item label="显示排序" prop="sort">
          <el-input-number
@@ -58,10 +58,12 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
-import { addDataDict, modifyDataDict } from '@/api/system'
+import { addDataDict, modifyDataDict, getDataDictDetail } from '@/api/system'
 import { ElMessage } from 'element-plus'
 
 const dialogTitle = ref('')
+const formRef = ref(null)
+
 const dialogVisible = ref(false)
 const currentType = ref('')
 const formLoading = ref(false)
@@ -71,12 +73,11 @@ const formParams = reactive({
   label: '', // 数据标签
   value: '', // 数据键值
   parentValue: '', // 父级
-  level: '', // 层级
+  dataLevel: '', // 层级
   status: 0, // 状态
   sort: 0, // 排序
   remark: '' // 备注
 })
-const formRules = ref(null)
 const statusOpt = ref([
   {
     id: 1,
@@ -90,36 +91,85 @@ const statusOpt = ref([
   }
 ])
 const emit = defineEmits(['success'])
+// 校验
+const formRules = reactive({
+  label: [{ required: true, message: '数据标签不能为空', trigger: 'blur' }],
+  value: [{ required: true, message: '数据键值不能为空', trigger: 'blur' }],
+  parentValue: [{ required: true, message: '父级不能为空', trigger: 'blur' }],
+  dataLevel: [{ required: true, message: '层级不能为空', trigger: 'blur' }],
+  sort: [{ required: true, message: '排序不能为空', trigger: 'blur' }],
+  status: [{ required: true, message: '状态不能为空', trigger: 'change' }]
+})
 
 /** 打开弹窗 */
-const open = (type, data) => {
+const open = async (type, data) => {
   dialogVisible.value = true
   currentType.value = type
   dialogTitle.value = type === 'add' ? '新增字典数据' : '编辑字典数据'
+  resetForm()
   if (type === 'add') {
     formParams.dictType = data
+  } else if (type === 'edit') {
+    formParams.id = data
+    await getDetailHandler(data)
   }
 }
 defineExpose({ open })
+
+// 获取详情数据
+const getDetailHandler = async (id) => {
+  const params = {
+    id
+  }
+  getDataDictDetail(params).then(res => {
+    if (res && res.code === 200) {
+      const { sort, label, value, dictType, status, remark, parentValue, dataLevel } = res.data
+      formParams.dictType = dictType
+      formParams.label = label
+      formParams.value = value
+      formParams.parentValue = parentValue
+      formParams.dataLevel = dataLevel
+      formParams.status = status
+      formParams.sort = sort
+      formParams.remark = remark
+    }
+  })
+}
 // 提交
-const submitForm = () => {
+const submitForm = async () => {
   // 校验
+  if (!formRef.value) return
+  const valid = await formRef.value.validate()
+  if (!valid) return
   const { id, ...others } = formParams
   const params = currentType.value === 'add' ? { ...others } : { ...formParams }
+  formLoading.value = true
   if (currentType.value === 'add') {
     addDataDict(params).then(res => {
+      formLoading.value = false
       if (res && res.code === 200) {
-        ElMessage('新增成功')
+        ElMessage({
+          type: 'success',
+          message: '新增成功'
+        })
         emit('success')
         dialogVisible.value = false
       }
     }).catch(err => {
       console.log(err)
     })
-  } else if (currentType.value === 'edit') {
+    return
+  }
+  if (currentType.value === 'edit') {
     modifyDataDict(params).then(res => {
+      formLoading.value = false
       if (res && res.code === 200) {
-        ElMessage('修改成功')
+        ElMessage(
+          {
+            type: 'success',
+            message: '修改成功'
+          }
+        )
         emit('success')
         dialogVisible.value = false
       }
@@ -127,6 +177,19 @@ const submitForm = () => {
       console.log(err)
     })
   }
+}
+
+const resetForm = () => {
+  formParams.id = ''
+  formParams.dictType = ''
+  formParams.label = ''
+  formParams.value = ''
+  formParams.parentValue = ''
+  formParams.dataLevel = ''
+  formParams.status = 0
+  formParams.sort = 0
+  formParams.remark = ''
+  formRef.value?.resetFields()
 }
 </script>
 

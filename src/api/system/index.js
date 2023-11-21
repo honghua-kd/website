@@ -153,6 +153,15 @@ export function delDataDict (params) {
   })
 }
 
+// 字典管理-字典数据-查询字典数据详细
+export function getDataDictDetail (params) {
+  return request({
+    url: `${prefix}/admin-api/system/dict-data/get`,
+    method: 'get',
+    params
+  })
+}
+
 /** 以下是mock */
 // 获取用户列表
 export function getUserList (data) {

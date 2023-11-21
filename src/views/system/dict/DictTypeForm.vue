@@ -102,8 +102,6 @@ const formRules = reactive({
 
 // 提交
 const submitForm = async () => {
-  console.log('submit', formParams)
-
   // 校验表单
   if (!formRef.value) return
   const valid = await formRef.value.validate()
