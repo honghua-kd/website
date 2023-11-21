@@ -110,27 +110,55 @@ export function deleteDict (params) {
   })
 }
 
-/** 以下是mock */
-// 获取字典信息
-export function getDict () {
+// 字典管理-字典数据-获取字典列表
+export function getDataDict (data) {
   return request({
-    url: `${prefix}/system/dict-data/list-all-simple`,
+    url: `${prefix}/admin-api/system/dict-data/page`,
+    method: 'post',
+    data
+  })
+}
+// 获得全部字典类型列表
+export function getAllDictType () {
+  return request({
+    url: `${prefix}/admin-api/system/dict-type/list-all-simple`,
     method: 'get'
   })
 }
 
+// 字典管理-字典数据-新增字典数据
+export function addDataDict (data) {
+  return request({
+    url: `${prefix}/admin-api/system/dict-data/create`,
+    method: 'post',
+    data
+  })
+}
+
+// 字典管理-字典数据-修改字典数据
+export function modifyDataDict (data) {
+  return request({
+    url: `${prefix}/admin-api/system/dict-data/update`,
+    method: 'post',
+    data
+  })
+}
+
+// 字典管理-字典数据-删除字典数据
+export function delDataDict (params) {
+  return request({
+    url: `${prefix}/admin-api/system/dict-data/delete`,
+    method: 'get',
+    params
+  })
+}
+
+/** 以下是mock */
 // 获取用户列表
 export function getUserList (data) {
   return request({
     url: `${prefix}/system/user/page`,
     method: 'post',
     data
-  })
-}
-// 获取部门信息
-export function getDeptInfo (params) {
-  return request({
-    url: `${prefix}/system/dept/list-all-simple`,
-    method: 'get'
   })
 }

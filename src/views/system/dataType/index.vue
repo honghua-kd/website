@@ -5,19 +5,17 @@
       <el-form ref="queryFormRef" :model="queryParams" :inline="true">
         <el-row :gutter="15">
           <el-col :span="6">
-            <el-form-item label="字典名称:" prop="name" class="widthFull">
-              <el-input
-                v-model="queryParams.name"
-                placeholder="请输入字典名称"
-                clearable
-              />
+            <el-form-item label="字典名称:" prop="dictType" class="widthFull">
+              <el-select v-model="queryParams.dictType"   placeholder="请选择字典名称">
+                <el-option v-for="item in dictOpts" :key="item.id" :label="item.name" :value="item.type"/>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="字典类型:" prop="type" class="widthFull">
+            <el-form-item label="字典标签:" prop="label" class="widthFull">
               <el-input
-                v-model="queryParams.type"
-                placeholder="请输入字典类型"
+                v-model="queryParams.label"
+                placeholder="请输入字典标签"
                 clearable
               />
             </el-form-item>
@@ -38,35 +36,22 @@
               </el-select>
             </el-form-item>
           </el-col>
-           <el-col style="text-align: right" :span="8">
-            <el-button :icon="Refresh" @click="resetQuery"
-              >重置</el-button
-            >
+          <el-col style="text-align: right" :span="8">
+            <el-button :icon="Refresh" @click="resetQuery">
+              重置
+              </el-button>
             <el-button plain :icon="Search" @click="searchHandler" >
               搜索
             </el-button>
             <el-button
               type="primary"
               :icon="Plus"
-              @click="addDictHandler"
+              @click="addHandler('add',queryParams.dictType)"
             >
               新增
             </el-button>
           </el-col>
-          <!-- <el-col :span="8">
-            <el-form-item label="创建时间:" prop="createTime" class="widthFull">
-              <el-date-picker
-                v-model="queryParams.createTime"
-                :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
-                end-placeholder="结束日期"
-                start-placeholder="开始日期"
-                type="daterange"
-                value-format="YYYY-MM-DD HH:mm:ss"
-              />
-            </el-form-item>
-          </el-col> -->
         </el-row>
-
       </el-form>
     </el-card>
     <!-- 列表 -->
@@ -77,19 +62,38 @@
         border
         v-loading="loading"
       >
-        <el-table-column type="index" width="80" label="序号" align="center" />
-        <el-table-column align="center" label="字典编号" prop="id" />
+        <el-table-column align="center" label="字典编码" prop="id" width="100"/>
         <el-table-column
           align="center"
-          label="字典名称"
-          prop="name"
+          label="字典标签"
+          prop="label"
           show-overflow-tooltip
         />
         <el-table-column
           align="center"
+          label="字典键值"
+          prop="value"
+        />
+        <el-table-column
+          align="center"
           label="字典类型"
-          prop="type"
-          width="300"
+          prop="dictType"
+          width="250"
+        />
+        <el-table-column
+          align="center"
+          label="字典排序"
+          prop="sort"
+        />
+        <el-table-column
+          align="center"
+          label="字典父级"
+          prop="parentValue"
+        />
+        <el-table-column
+          align="center"
+          label="字典层级"
+          prop="dataLevel"
         />
         <el-table-column align="center" label="状态" prop="status">
           <template #default="scope">
@@ -111,16 +115,13 @@
             <el-button link type="primary" @click="editHandler(scope.row)">
               修改
             </el-button>
-            <el-button link type="primary" @click="jumpDataHandler(scope.row)">
-              数据
-            </el-button>
             <el-button link type="danger" @click="delHandler(scope.row.id)">
               删除
             </el-button>
           </template>
         </el-table-column>
-      </el-table>
-      <!-- 分页 -->
+    </el-table>
+     <!-- 分页 -->
       <el-pagination
         v-if="pageTotal"
         background
@@ -132,24 +133,26 @@
         @current-change="handleCurrentChange"
       />
     </el-card>
-    <DictTypeForm ref="dictTypeRef" @success="getList" />
+    <DataDictTypeFrom ref="dataDictFormRef" @success="getList"/>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onActivated } from 'vue'
+import { useDictStore } from '@/store/dict.js'
 import {
   Refresh,
   Search,
   Plus
 } from '@element-plus/icons-vue'
-import { useRouter } from '@toystory/lotso'
-import { getDictList, deleteDict } from '@/api/system'
+import { useRoute } from '@toystory/lotso'
+import { getDataDict } from '@/api/system'
 import { dateFormatter } from '@/utils'
-import DictTypeForm from './DictTypeForm.vue'
-import { ElMessageBox, ElMessage } from 'element-plus'
+import DataDictTypeFrom from './DataDictForm.vue'
 
-const { router } = useRouter()
+const dictStore = useDictStore()
+const dictOpts = ref([])
+const route = useRoute()
 const queryFormRef = ref(null)
 const statusOpts = ref([
   {
@@ -165,8 +168,8 @@ const statusOpts = ref([
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
-  name: '', // 字典名称
-  type: '', // 字典类型
+  dictType: '', // 字典类型
+  label: '', // 字典标签
   status: undefined // 状态
 })
 const tableData = ref([])
@@ -193,60 +196,21 @@ const formatTag = (status, tagType) => {
 // 获取字典列表
 const getList = () => {
   loading.value = true
-  getDictList(queryParams).then(res => {
+  const params = {
+    ...queryParams
+  }
+  getDataDict(params).then(res => {
     loading.value = false
-    const { list, total } = res?.data
-    tableData.value = list
-    pageTotal.value = total
-  }).catch(err => {
-    console.log(err)
-    loading.value = false
-  })
-}
-// 新增字典表
-const dictTypeRef = ref()
-const addDictHandler = () => {
-  dictTypeRef.value.open('add')
-}
-// 编辑字典
-const editHandler = (row) => {
-  dictTypeRef.value.open('edit', row)
-}
-
-/** 删除按钮操作 */
-const delHandler = (id) => {
-  // 二次确认
-  ElMessageBox.confirm('确认要删除吗？', '警告', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  }).then(() => {
-    // 调用删除接口
-    const params = {
-      id
+    if (res && res.code === 200) {
+      const { list, total } = res.data
+      tableData.value = list
+      pageTotal.value = total
     }
-    deleteDict(params).then(res => {
-      if (res && res.code === 200) {
-        ElMessage({
-          type: 'success',
-          message: '删除成功'
-        })
-        searchHandler()
-      }
-    })
-  }).catch(() => {
-    ElMessage({
-      type: 'danger',
-      message: '删除失败'
-    })
+  }).catch(err => {
+    loading.value = false
+    console.log(err)
   })
 }
-// 跳转数据
-const jumpDataHandler = (row) => {
-  const { type } = row
-  router.push({ name: 'dataType', query: { type } })
-}
-
 // 切换页数
 const handleCurrentChange = (val) => {
   queryParams.pageNo = val
@@ -257,10 +221,27 @@ const handleSizeChange = (val) => {
   getList()
 }
 
-const init = () => {
-  searchHandler()
+// 新增
+const dataDictFormRef = ref(null)
+const addHandler = (type, data) => {
+  dataDictFormRef.value.open(type, data)
 }
-init()
+// 修改
+const editHandler = (type, row) => {
+
+}
+// 删除
+const delHandler = (id) => {
+
+}
+
+onActivated(async () => {
+  dictOpts.value = dictStore.getDictMap
+  queryParams.dictType = route.value.query.type
+  if (route.value.query.type) {
+    searchHandler()
+  }
+})
 </script>
 
 <style lang='scss' scoped>

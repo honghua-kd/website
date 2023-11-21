@@ -49,13 +49,13 @@ export default [
             children: [],
             elements: [],
             menuType: 3,
-            menu: 'data'
+            menu: 'dataType'
           }
         ],
         elements: [],
         menuType: 5,
         sort: 4,
-        menu: 'dataMenu'
+        menu: 'dataTypeMenu'
       }
     ],
     elements: [],

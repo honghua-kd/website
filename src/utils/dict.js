@@ -22,16 +22,17 @@ export const formatDict = (list) => {
   const keySet = new Set()
   const dictMap = new Map()
   list.forEach(item => {
-    keySet.add(item.dictType)
+    keySet.add(item.type)
   })
   const keyArr = [...keySet]
   for (let i = 0; i < keyArr.length; i++) {
     const arr = []
     for (let j = 0; j < list.length; j++) {
-      if (list[j].dictType === keyArr[i]) {
+      if (list[j].type === keyArr[i]) {
         arr.push({
-          value: Number(list[j].value),
-          label: list[j].label
+          value: list[j].type,
+          label: list[j].name,
+          id: list[j].id
         })
       }
     }
