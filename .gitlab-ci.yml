@@ -1,14 +1,100 @@
-# You can override the included template(s) by including variable overrides
-# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
-# Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/#customizing-settings
-# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
-# Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
-# Note that environment variables can be set in several places
-# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
+include: 
+  - template: Security/SAST.gitlab-ci.yml
+  - project: ${INCLUDE_PROJECT_PATH}
+    ref: ${INCLUDE_REF_BRANCH}
+    file: 
+      - ${INCLUDE_SCA}
+      - ${INCLUDE_SONAR_CLI}
+      - ${INCLUDE_JOBS}
+
 stages:
-- test
+  - test
+  - xcheck
+  - scan
+  - build
+  - deploy  
+  - oss
+
 sast:
   stage: test
-include:
-- template: Security/SAST.gitlab-ci.yml
+  tags:
+    - RANCHER
+
+build-dev:
+  extends: .build
+  script:
+    - $BUILD_DEV
+  rules:
+    - if: $CI_COMMIT_TAG =~ $RELEASE_TAG
+
+build-test:
+  extends: .build
+  script:
+    - $BUILD_TEST
+  rules:
+    - if: $CI_COMMIT_TAG =~ $RELEASE_TAG
+
+build-prod:
+  extends: .build
+  script:
+    - $BUILD_PROD
+  rules:
+    - if: $CI_COMMIT_TAG =~ $RELEASE_TAG
+
+deploy-dev:
+  extends: .deploy-ssh
+  needs:
+    - job: build-dev
+      artifacts: true
+  script:
+    - ssh $SSH_HOST -p $SSH_PORT "rm -rf ${PUBLIC_NG_PATH}/dev/dist*"
+    - scp -P $SSH_PORT dist.tgz* $SSH_HOST:${PUBLIC_NG_PATH}/dev
+    - ssh $SSH_HOST -p $SSH_PORT "cd ${PUBLIC_NG_PATH}/dev && tar -xvf dist.tgz"
+  rules:
+    - if: $CI_COMMIT_TAG =~ $RELEASE_TAG
+  environment:
+    name: $ENV_NAME_PREFIX-dev 
+
+deploy-test:
+  extends: .deploy-ssh
+  needs:
+    - job: build-test
+      artifacts: true
+  script:
+    - ssh $SSH_HOST -p $SSH_PORT "rm -rf ${PUBLIC_NG_PATH}/test/dist*"
+    - scp -P $SSH_PORT dist.tgz* $SSH_HOST:${PUBLIC_NG_PATH}/test
+    - ssh $SSH_HOST -p $SSH_PORT "cd ${PUBLIC_NG_PATH}/test && tar -xvf dist.tgz"    
+  rules:
+    - if: $CI_COMMIT_TAG =~ $RELEASE_TAG
+      when: manual
+  environment:
+    name: $ENV_NAME_PREFIX-test     
+
+deploy-prd:
+  extends: .deploy-ssh
+  needs:
+    - job: build-prod
+      artifacts: true
+    - job: deploy-test
+  script:
+    - ssh ${DEPLOY_SSH_RELAY} "rm -f ${PRD_DEPLOY_PATH}/*.tgz*"
+    - scp dist.tgz* ${DEPLOY_SSH_RELAY}:${PRD_DEPLOY_PATH}
+    - sleep 5
+    - ssh ${DEPLOY_SSH_RELAY} "${PRD_DEPLOY_PATH}/deploy.sh"
+  rules:
+    - if: $CI_COMMIT_TAG =~ $RELEASE_TAG
+      when: manual
+  environment:
+    name: $ENV_NAME_PREFIX-prd
+
+store-artifacts:
+  extends: .store-oss
+  needs:
+    - job: build-prod
+      artifacts: true
+    - job: deploy-prd  
+  script:
+    - mc cp $ART_PATH$ART_NAME* minio/${CI_PROJECT_NAME}/${CI_COMMIT_TAG}/${CI_COMMIT_SHORT_SHA}
+  rules:
+    - if: $CI_COMMIT_TAG =~ $RELEASE_TAG
 
