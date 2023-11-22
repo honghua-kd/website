@@ -33,15 +33,19 @@
         </el-button>
       </template>
     </el-dialog>
-    <RoleDataPermissonForm ref="dataPermissionFormRef" @success="getRolePerList" />
+    <DataPermissonForm
+      ref="dataPermissionFormRef"
+      @roleList="getRolePerList"
+      @userList="getUserPerList"
+      :origin="origin"/>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import RoleDataPermissonForm from './RoleDataPermissonForm.vue'
-import { getRolePermiList, delPermission } from '@/api/system'
+import DataPermissonForm from '@/components/PermiForm/DataPermissonForm.vue'
+import { getRolePermiList, getUserPermiList, delPermission } from '@/api/system'
 const tableLoading = ref(false)
 const permiList = ref([])
 const dialogVisible = ref(false)
@@ -49,7 +53,7 @@ const dialogTitle = ref('数据权限')
 const formLoading = ref(false)
 const currentRowNo = ref('')
 const emit = defineEmits(['success'])
-
+const origin = ref('')
 // 获取角色对应数据权限
 const getRolePerList = (roleCode) => {
   const params = {
@@ -63,19 +67,40 @@ const getRolePerList = (roleCode) => {
     console.log(err)
   })
 }
+
+// 获取用户对应数据权限
+const getUserPerList = (staffCode) => {
+  const params = {
+    staffCode
+  }
+  getUserPermiList(params).then(res => {
+    if (res && res.code === 200) {
+      permiList.value = res.data
+    }
+  }).catch(err => {
+    console.log(err)
+  })
+}
 /** 打开弹窗 */
-const openDialog = (row) => {
+const openDialog = (from, row) => {
   dialogVisible.value = true
-  const { roleNo } = row
-  currentRowNo.value = roleNo
-  getRolePerList(roleNo)
+  origin.value = from
+  if (from === 'roleCode') {
+    const { roleNo } = row
+    currentRowNo.value = roleNo
+    getRolePerList(roleNo)
+  } else if (from === 'staffCode') {
+    const { staffCode } = row
+    currentRowNo.value = staffCode
+    getUserPerList(staffCode)
+  }
 }
 defineExpose({ openDialog })
 
 // 新增数据权限
 const dataPermissionFormRef = ref()
-const addPermiHandler = (type, roleNo) => {
-  dataPermissionFormRef.value.openDialog(type, roleNo)
+const addPermiHandler = (type, data) => {
+  dataPermissionFormRef.value.openDialog(type, data)
 }
 // 修改
 const editHandler = (type, row) => {

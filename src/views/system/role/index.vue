@@ -112,7 +112,7 @@
         @current-change="handleCurrentChange"
       />
     </el-card>
-    <role-list-dialog ref="roleListRef" @success="getList" />
+    <PermiListDialog ref="roleListRef" @success="getList" />
   </div>
 </template>
 
@@ -120,7 +120,7 @@
 import { ref, reactive } from 'vue'
 import { getRoleList } from '@/api/system'
 import { dateFormatter } from '@/utils'
-import RoleListDialog from './RoleListDialog.vue'
+import PermiListDialog from '@/components/PermiForm/PermiListDialog.vue'
 import {
   Refresh,
   Search
@@ -185,7 +185,7 @@ const handleSizeChange = (val) => {
 /** 数据权限操作 */
 const roleListRef = ref()
 const openDataPermissionForm = (row) => {
-  roleListRef.value.openDialog(row)
+  roleListRef.value.openDialog('roleCode', row)
 }
 
 // 列表tag转换

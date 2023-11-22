@@ -22,6 +22,16 @@ export function getRolePermiList (params) {
     params
   })
 }
+
+// 获取用户对应数据权限接口
+export function getUserPermiList (params) {
+  return request({
+    url: `${prefix}/admin-api/system/user/list-permission`,
+    method: 'get',
+    params
+  })
+}
+
 // 查询数据权限
 export function getPermissionDetail (params) {
   return request({
@@ -162,11 +172,26 @@ export function getDataDictDetail (params) {
   })
 }
 
-/** 以下是mock */
-// 获取用户列表
-export function getUserList (data) {
+// 用户管理-批量获取部门信息
+export function getAllDept (data) {
   return request({
-    url: `${prefix}/system/user/page`,
+    url: `${prefix}/admin-api/ehr/orgstructure/getAllDept`,
+    method: 'post',
+    data
+  })
+}
+// 用户管理-查询部门下员工
+export function getDepartmentStaff (data) {
+  return request({
+    url: `${prefix}/admin-api/ehr/orgstructure/getDepartmentStaff`,
+    method: 'post',
+    data
+  })
+}
+// 用户管理-查询用户的下属
+export function getStaffSubordinates (data) {
+  return request({
+    url: `${prefix}/admin-api/ehr/orgstructure/getStaffSubordinates`,
     method: 'post',
     data
   })

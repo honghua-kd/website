@@ -1,56 +1,35 @@
 <template>
-  <div>
-    <!-- 搜索工作栏 -->
-    <el-card class="container">
+  <div class="container">
+    <el-card class="treeContainer">
+      <SideTree @getSelect="getSelectNodeHandler"/>
+    </el-card>
+    <div class="right-part">
+      <!-- 搜索工作栏 -->
+    <el-card class="search-bar">
       <el-form ref="queryFormRef" :model="queryParams" :inline="true">
         <el-row :gutter="15">
-          <el-col :span="5">
-            <el-form-item label="用户名称:" prop="userName" class="widthFull">
+          <el-col :span="8">
+            <el-form-item label="员工工号:" prop="staffCode" class="widthFull">
               <el-input
-                v-model="queryParams.userName"
-                placeholder="请输入用户名称"
+                v-model="queryParams.staffCode"
+                placeholder="请输入员工工号"
+                class="widthFull"
                 clearable
               />
             </el-form-item>
           </el-col>
-          <el-col :span="5">
-            <el-form-item label="手机号码:" prop="phoneNum" class="widthFull">
+          <el-col :span="8">
+            <el-form-item label="员工姓名:" prop="staffName" class="widthFull">
               <el-input
-                v-model="queryParams.phoneNum"
-                placeholder="请输入手机号码"
+                v-model="queryParams.staffName"
+                placeholder="员工姓名"
+                class="widthFull"
                 clearable
               />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
-            <el-form-item label="状态:" prop="status" class="widthFull">
-              <el-select
-                v-model="queryParams.status"
-                clearable
-                placeholder="请选择状态"
-              >
-                <el-option
-                  v-for="item in statusOpts"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="创建时间:" prop="creatTime" class="widthFull">
-              <el-date-picker
-                v-model="queryParams.createTime"
-                :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
-                end-placeholder="结束日期"
-                start-placeholder="开始日期"
-                type="daterange"
-                value-format="YYYY-MM-DD HH:mm:ss"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="4" style="text-align: right">
+
+          <el-col :span="6" style="text-align: right">
             <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
             <el-button type="primary" :icon="Search" @click="searchHandler">
               搜索
@@ -60,7 +39,7 @@
       </el-form>
     </el-card>
     <!-- 列表 -->
-    <el-card class="container">
+    <el-card>
       <el-table
         :data="tableData"
         :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
@@ -68,46 +47,69 @@
         v-loading="loading"
       >
         <el-table-column type="index" width="80" label="序号" />
-        <el-table-column label="用户编号" align="center" key="id" prop="id" />
+        <el-table-column label="员工姓名" align="center" key="id" prop="staffName"  fixed/>
         <el-table-column
-          label="用户名称"
+          label="员工工号"
           align="center"
-          prop="username"
+          prop="staffCode"
+        />
+        <el-table-column align="center" label="管理单元名称" prop="ouidName" />
+        <el-table-column
+          label="一级部门"
+          align="center"
+          prop="org1Name"
           :show-overflow-tooltip="true"
         />
         <el-table-column
-          label="用户昵称"
+          label="二级部门"
           align="center"
-          prop="nickname"
+          prop="org2Name"
           :show-overflow-tooltip="true"
         />
         <el-table-column
-          label="部门"
+          label="三级部门"
           align="center"
-          key="deptName"
-          prop="dept.name"
+          prop="org3Name"
           :show-overflow-tooltip="true"
         />
         <el-table-column
-          label="手机号码"
+          label="岗位名称"
           align="center"
-          prop="mobile"
-          width="120"
+          prop="positionName"
+          :show-overflow-tooltip="true"
         />
-        <el-table-column align="center" label="状态" prop="status">
-          <template #default="scope">
-            <el-tag :type="formatTag(scope.row.status, 'type')" effect="light">
-              {{ formatTag(scope.row.status, 'title') }}
-            </el-tag>
-          </template>
-        </el-table-column>
         <el-table-column
-          :formatter="dateFormatter"
+          label="是否在岗"
           align="center"
-          label="创建时间"
-          prop="createTime"
-          width="180"
+          prop="onJobStatus"
+          :show-overflow-tooltip="true"
         />
+        <el-table-column
+          label="上级领导"
+          align="center"
+          prop="reportToStaffName"
+          :show-overflow-tooltip="true"
+        />
+        <el-table-column
+          label="上级领导工号"
+          align="center"
+          prop="reportToStaffCode"
+          :show-overflow-tooltip="true"
+        />
+        <el-table-column align="center" label="邮箱" prop="email" />
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="fixed-width"
+        fixed="right"
+        width="150"
+      >
+      <template #default="scope">
+        <el-button link type="primary" @click="assignPermiHandler(scope.row)">
+          数据权限
+        </el-button>
+      </template>
+     </el-table-column>
       </el-table>
       <!-- 分页 -->
       <el-pagination
@@ -121,40 +123,31 @@
         @current-change="handleCurrentChange"
       />
     </el-card>
+    </div>
+    <PermiListDialog ref="userListRef" @success="searchHandler" />
   </div>
 </template>
 
 <script setup >
 import { ref, reactive } from 'vue'
-import { getUserList } from '@/api/system'
-import { dateFormatter } from '@/utils'
-
+import { getDepartmentStaff, getStaffSubordinates } from '@/api/system'
+import SideTree from '@/components/SideTree/index.vue'
 import {
   Refresh,
   Search
 } from '@element-plus/icons-vue'
-const statusOpts = ref([
-  {
-    label: '开启',
-    value: 0
-  },
-  {
-    label: '关闭',
-    value: 1
-  }
-])
+import PermiListDialog from '@/components/PermiForm/PermiListDialog.vue'
+
+const currentOrgCode = ref('')
 const tableData = ref([]) // 列表数据
 const loading = ref(false)
-
 const pageTotal = ref(0) // 列表的总页数
 const queryFormRef = ref(null)
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
-  userName: '', // 用户名称
-  phoneNum: '', // 手机号
-  status: undefined, // 状态
-  createTime: [] // 创建时间
+  staffName: '', // 员工姓名
+  staffCode: '' // 员工工号
 })
 
 // reset
@@ -162,20 +155,31 @@ const resetQuery = () => {
   queryFormRef.value.resetFields()
   searchHandler()
 }
-// search
+// search-查询用户的下属
 const searchHandler = () => {
   queryParams.pageNo = 1
-  getList()
+  if (queryParams.staffCode || queryParams.staffName) {
+    getStaffSubHandler()
+  } else {
+    getDeptStaffList(currentOrgCode.value)
+  }
+}
+// 获取选中节点code
+const getSelectNodeHandler = (node) => {
+  const { orgCode } = node
+  currentOrgCode.value = orgCode
+  getDeptStaffList(orgCode)
 }
 
-// 获取列表
-const getList = () => {
+// 获取部门员工列表
+const getDeptStaffList = (orgCode) => {
   loading.value = true
-  getUserList(queryParams).then(res => {
+  const params = { orgCode }
+  getDepartmentStaff(params).then(res => {
     loading.value = false
     if (res && res.code === 200) {
-      const { list, total } = res?.data
-      tableData.value = list
+      const { staffList, total } = res?.data
+      tableData.value = staffList
       pageTotal.value = total
     }
   }).catch(err => {
@@ -183,35 +187,55 @@ const getList = () => {
     console.log(err)
   })
 }
+
+const getStaffSubHandler = () => {
+  const params = {
+    ...queryParams
+  }
+  getStaffSubordinates(params).then(res => {
+    if (res && res.code === 200) {
+      tableData.value = res.data?.staffList
+    }
+  })
+}
 const handleCurrentChange = (val) => {
   queryParams.pageNo = val
-  getList()
+  getStaffSubHandler()
 }
 const handleSizeChange = (val) => {
   queryParams.pageSize = val
-  getList()
+  getStaffSubHandler()
 }
 
-// 列表tag转换
-const formatTag = (status, tagType) => {
-  const type = status === 0 ? '' : 'info'
-  const title = status === 0 ? '开启' : '关闭'
-  if (tagType === 'type') return type
-  if (tagType === 'title') return title
+// 分配数据权限
+const userListRef = ref(null)
+const assignPermiHandler = (row) => {
+  userListRef.value.openDialog('staffCode', row)
 }
-
-const init = () => {
-  searchHandler()
-}
-init()
 </script>
 
 <style lang='scss' scoped>
+
 .container {
+  display: flex;
+  width: 100%;
   margin-bottom: 20px;
   font-size: 14px;
 }
+.right-part {
+  flex:1
+}
 .widthFull {
   width: 100%;
+}
+.search-bar{
+  margin-bottom: 10px;
+}
+.treeContainer {
+  width: 25%;
+  margin-right: 3%;
+  min-height: 360px;
+  max-height: 600px;
+  overflow-y: scroll;
 }
 </style>

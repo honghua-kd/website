@@ -104,11 +104,11 @@ import {
   checkRules
 } from '@/api/system'
 import { ElMessage } from 'element-plus'
-import { formulaList } from './config'
-defineProps({
-  roleDataPerm: {
-    type: Object,
-    default: () => { }
+import { formulaList } from '@/views/system/role/config'
+const props = defineProps({
+  origin: {
+    type: String,
+    default: () => ''
   }
 })
 const formRef = ref(null)
@@ -128,7 +128,7 @@ const dialogVisible = ref(false)
 const formLoading = ref(false)
 const selectedRule = ref('')
 const ruleOpts = ref([]) // 规则字典选项
-const currentRoleCode = ref('')
+const currentOriginCode = ref('')
 const editRowInfo = reactive({
   relationId: '',
   roleCode: '',
@@ -140,17 +140,16 @@ const openDialog = async (type, data) => {
   dialogTitle.value = type === 'add' ? '新增数据权限列表' : '编辑数据权限列表'
   currentType.value = type
   if (type === 'add') {
-    currentRoleCode.value = data
+    currentOriginCode.value = data
   }
   resetForm()
   await getMoudleDict()
   await getRuleDict()
   dialogVisible.value = true
   if (type === 'edit') {
-    const { permissionCode, roleCode, id, relationId, staffCode } = data
-    currentRoleCode.value = roleCode
+    const { permissionCode, roleCode, relationId, staffCode } = data
+    currentOriginCode.value = props.origin === 'roleCode' ? roleCode : staffCode
     editRowInfo.relationId = relationId
-    editRowInfo.id = id
     editRowInfo.staffCode = staffCode
     editRowInfo.roleCode = roleCode
     const params = {
@@ -158,12 +157,13 @@ const openDialog = async (type, data) => {
     }
     getPermissionDetail(params).then(res => {
       if (res && res.code === 200) {
-        const { moduleCode, permissionCode, permissionName, dataScopeExpression, dataScope } = res.data
+        const { moduleCode, permissionCode, permissionName, id, dataScopeExpression, dataScope } = res.data
         formData.permissionName = permissionName
         formData.permissionCode = permissionCode
         formData.moduleCode = [...moduleCode]
         formData.dataScope = dataScope
         formData.dataScopeExpression = dataScopeExpression
+        editRowInfo.id = id
       }
     })
   }
@@ -179,7 +179,7 @@ const formRules = reactive({
   dataScopeExpression: [{ required: true, message: '表达式不能为空', trigger: 'blur' }]
 })
 // 提交
-const emit = defineEmits(['success'])
+const emit = defineEmits(['roleList', 'userList'])
 const submitForm = async () => {
   // 校验表单
   if (!formRef.value) return
@@ -189,20 +189,21 @@ const submitForm = async () => {
   if (currentType.value === 'add') {
     params = {
       ...formData,
-      roleCode: currentRoleCode.value
+      [props.origin]: currentOriginCode.value
     }
   } else if (currentType.value === 'edit') {
     params = {
       ...formData,
       ...editRowInfo
     }
+    console.log('params', params)
   }
   subDataPermission(params).then(res => {
     if (res && res.code === 200) {
       ElMessage.success('提交成功')
       dialogVisible.value = false
       // 发送操作成功的事件
-      emit('success', currentRoleCode.value)
+      props.origin === 'roleCode' ? emit('roleList', currentOriginCode.value) : emit('userList', currentOriginCode.value)
     }
   }).catch(err => {
     dialogVisible.value = false

@@ -47,17 +47,22 @@ export const login = [
   },
   {
     url: `${VITE_API}/user/v1/getPermission`,
-    type: 'post',
+    type: 'get',
     response (config) {
       return {
-        code: 200,
+        code: 102200000,
         msg: '操作成功',
         success: true,
         data: {
-          role: [{ roleNo: '100009990001', roleName: '系统管理员' }, { roleNo: '100009990026', roleName: '福利管理员' }],
+          role: [
+            {
+              roleNo: 'admin',
+              roleName: '超级管理员'
+            }
+          ],
           data: authData
         },
-        time: '2021-11-03 18:37:24'
+        time: '2023-11-22 13:16:50'
       }
     }
   },
@@ -78,29 +83,27 @@ export const login = [
     response () {
       return {
         code: 200,
-        msg: '操作成功',
-        success: true,
+        msg: 'success',
         data: {
-          stat: '在职',
-          staffCode: '102931',
+          staffCode: '103388',
+          staffName: '郑拓',
           gender: '',
-          deptmentThrName: '',
-          staffType: null,
-          positionName: '前端开发岗',
-          deptmentSecName: '系统研发部',
-          deptmentThrId: '',
-          password: null,
-          phoneNumber: '19921070517',
-          positionId: '2304',
-          deptmentId: '545',
-          staffName: '高翔宇',
-          pwdUpdateTime: null,
-          deptmentName: '金融科技部',
           workplace: '恒信',
-          deptmentSecId: '546',
-          email: 'xiangyu.gao@utflc.com'
-        },
-        time: '2022-10-24 18:57:48'
+          staffType: null,
+          deptmentId: '545',
+          deptmentName: '金融科技部',
+          deptmentSecId: '664',
+          deptmentSecName: '系统研发二部',
+          deptmentThrId: '',
+          deptmentThrName: '',
+          positionId: '2899',
+          positionName: '前端开发岗',
+          stat: '在职',
+          email: 'hthxoa@devutflc.com',
+          phoneNumber: '18611111111',
+          pwdUpdateTime: null,
+          password: null
+        }
       }
     }
   },
