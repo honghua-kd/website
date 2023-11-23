@@ -45,8 +45,9 @@
         :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
         border
         v-loading="loading"
+        class="table-container"
       >
-        <el-table-column type="index" width="80" label="序号" />
+        <el-table-column type="index" width="60" label="序号" fixed />
         <el-table-column label="员工姓名" align="center" key="id" prop="staffName"  fixed/>
         <el-table-column
           label="员工工号"
@@ -223,7 +224,7 @@ const assignPermiHandler = (row) => {
   font-size: 14px;
 }
 .right-part {
-  flex:1
+  width:70%;
 }
 .widthFull {
   width: 100%;
@@ -232,10 +233,13 @@ const assignPermiHandler = (row) => {
   margin-bottom: 10px;
 }
 .treeContainer {
-  width: 25%;
+  width: 22%;
   margin-right: 3%;
-  min-height: 360px;
-  max-height: 600px;
+  height: 550px;
+  overflow-y: scroll;
+}
+.table-container {
+  height:410px;
   overflow-y: scroll;
 }
 </style>
