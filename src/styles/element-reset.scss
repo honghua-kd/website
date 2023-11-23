@@ -1,11 +1,11 @@
 .el-popover.el-popper {
-  min-width: 100px !important;
   padding: 5px 0 !important;
+  min-width: 100px !important;
 }
 .el-menu-item {
   &.is-active {
-    background-color: $base-color-primary-light9 !important;
     border-right: $base-border-width-small solid $base-color-primary;
+    background-color: $base-color-primary-light9 !important;
     span {
       color: $base-color-primary;
     }
@@ -18,9 +18,9 @@
 .is-black {
   .el-menu-item {
     &.is-active {
-      background-color: $base-color-primary !important;
       border-right: 0;
       color: $base-color-white;
+      background-color: $base-color-primary !important;
       span {
         color: $base-color-white;
       }
@@ -42,8 +42,8 @@
 .el-menu--horizontal {
   .el-menu-item {
     &.is-active {
-      background-color: $base-color-primary !important;
       border-right: 0;
+      background-color: $base-color-primary !important;
       span {
         color: $base-color-white;
       }
@@ -53,53 +53,48 @@
       background-color: $base-color-primary !important;
     }
   }
-  .el-sub-menu__title{
+  .el-sub-menu__title {
     color: $base-color-3 !important;
   }
  
 }
-.el-menu--horizontal.is-black{
-  .el-sub-menu__title{
+.el-menu--horizontal.is-black {
+  .el-sub-menu__title {
     color: $base-color-white !important;
   }
 }
-.el-sub-menu.is-black{
-  .el-sub-menu__title{
+.el-sub-menu.is-black {
+  .el-sub-menu__title {
     color: $base-color-white !important;
   }
 }
-.el-menu--collapse .el-menu-item{
+.el-menu--collapse .el-menu-item {
   text-align: center;
 }
-
 .el-menu--horizontal .el-menu .el-menu-item,
 .el-menu--horizontal .el-menu .el-sub-menu__title {
   height: $sub-menu__title-height !important;
   line-height: $sub-menu__title-height !important;
 }
-
 .el-header {
   --el-header-padding: 0;
 }
-
 .el-button--primary:active {
-  background-color: $base-color-primary !important;
   border-color: $base-color-primary !important;
+  background-color: $base-color-primary !important;
 }
 .el-tag--dark {
-  background-color: $base-color-primary !important;
   border-color: $base-color-primary !important;
+  background-color: $base-color-primary !important;
 }
 .el-tag__close:hover {
   background-color:  $base-color-primary !important;
 }
-
 .el-date-editor,.el-input {
-  .el-range__icon,.el-input__icon{  
+  .el-range__icon,.el-input__icon {  
     line-height: inherit;
   }
 }
-
 .el-message-box__status.el-message-box-icon--warning {
   position: absolute;
 }
@@ -118,7 +113,6 @@
     outline-color:transparent
   }
 }
-
 .el-input__suffix-inner,.el-input__prefix-inner {
   margin:auto 0;
 }

@@ -116,15 +116,12 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { getRoleList } from '@/api/system'
 import { dateFormatter } from '@/utils'
 import PermiListDialog from '@/components/PermiForm/PermiListDialog.vue'
-import {
-  Refresh,
-  Search
-} from '@element-plus/icons-vue'
+import { Refresh, Search } from '@element-plus/icons-vue'
 const statusOpts = ref([
   {
     label: '开启',
@@ -162,17 +159,19 @@ const searchHandler = () => {
 // 获取列表
 const getList = () => {
   loading.value = true
-  getRoleList(queryParams).then(res => {
-    loading.value = false
-    if (res && res.code === 200) {
-      const { list, total } = res?.data
-      tableData.value = list
-      pageTotal.value = total
-    }
-  }).catch(err => {
-    loading.value = false
-    console.log(err)
-  })
+  getRoleList(queryParams)
+    .then((res) => {
+      loading.value = false
+      if (res && res.code === 200) {
+        const { list, total } = res?.data
+        tableData.value = list
+        pageTotal.value = total
+      }
+    })
+    .catch((err) => {
+      loading.value = false
+      console.log(err)
+    })
 }
 const handleCurrentChange = (val) => {
   queryParams.pageNo = val
@@ -202,7 +201,7 @@ const init = () => {
 init()
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .container {
   margin-bottom: 20px;
   font-size: 14px;

@@ -1,12 +1,13 @@
 import { useRequest } from '@toystory/lotso'
 import requestConfig from '@/config/request.config'
+import type { BaseResponse, OrgTree } from '@/types/api'
 
 const request = useRequest(requestConfig)
 
 const prefix = import.meta.env.VITE_APP_SERVICE_API
 
 // 获取角色列表
-export function getRoleList (data) {
+export function getRoleList<T>(data?: T): Promise<BaseResponse> {
   return request({
     url: `${prefix}/admin-api/system/role/page`,
     method: 'post',
@@ -15,7 +16,7 @@ export function getRoleList (data) {
 }
 
 // 获取角色对应数据权限接口
-export function getRolePermiList (params) {
+export function getRolePermiList<T>(params?: T): Promise<BaseResponse> {
   return request({
     url: `${prefix}/admin-api/system/role/list-permission`,
     method: 'get',
@@ -24,7 +25,7 @@ export function getRolePermiList (params) {
 }
 
 // 获取用户对应数据权限接口
-export function getUserPermiList (params) {
+export function getUserPermiList<T>(params?: T): Promise<BaseResponse> {
   return request({
     url: `${prefix}/admin-api/system/user/list-permission`,
     method: 'get',
@@ -33,7 +34,7 @@ export function getUserPermiList (params) {
 }
 
 // 查询数据权限
-export function getPermissionDetail (params) {
+export function getPermissionDetail<T>(params?: T): Promise<BaseResponse> {
   return request({
     url: `${prefix}/admin-api/system/permission/data-scope`,
     method: 'get',
@@ -42,7 +43,7 @@ export function getPermissionDetail (params) {
 }
 
 // 角色管理-数据权限提交接口(赋予数据权限)
-export function subDataPermission (data) {
+export function subDataPermission<T>(data?: T): Promise<BaseResponse> {
   return request({
     url: `${prefix}/admin-api/system/permission/assign-data-scope`,
     method: 'post',
@@ -51,7 +52,7 @@ export function subDataPermission (data) {
 }
 
 // 角色管理-数据权限-删除数据权限关系
-export function delPermission (params) {
+export function delPermission<T>(params?: T): Promise<BaseResponse> {
   return request({
     url: `${prefix}/admin-api/system/permission/delete`,
     method: 'get',
@@ -60,7 +61,7 @@ export function delPermission (params) {
 }
 
 // 角色管理-数据权限-获取字典信息
-export function getSingleDict (data) {
+export function getSingleDict<T>(data?: T): Promise<BaseResponse> {
   return request({
     url: `${prefix}/admin-api/system/dict-data/list`,
     method: 'post',
@@ -69,7 +70,7 @@ export function getSingleDict (data) {
 }
 
 // 角色管理-数据权限-获规则映射字典
-export function getRuleList () {
+export function getRuleList(): Promise<BaseResponse> {
   return request({
     url: `${prefix}/admin-api/system/scope-mapping/all`,
     method: 'post'
@@ -78,7 +79,7 @@ export function getRuleList () {
 
 // 角色管理-数据权限-规则校验接口
 
-export function checkRules (data) {
+export function checkRules<T>(data?: T): Promise<BaseResponse> {
   return request({
     url: `${prefix}/admin-api/system/permission/expression`,
     method: 'post',
@@ -87,7 +88,7 @@ export function checkRules (data) {
 }
 
 // 字典管理-字典类型-获取字典列表
-export function getDictList (data) {
+export function getDictList<T>(data?: T): Promise<BaseResponse> {
   return request({
     url: `${prefix}/admin-api/system/dict-type/page`,
     method: 'post',
@@ -95,7 +96,7 @@ export function getDictList (data) {
   })
 }
 // 字典管理-字典类型-新增字典
-export function createDict (data) {
+export function createDict<T>(data?: T): Promise<BaseResponse> {
   return request({
     url: `${prefix}/admin-api/system/dict-type/create`,
     method: 'post',
@@ -104,7 +105,7 @@ export function createDict (data) {
 }
 
 // 字典管理-字典类型-修改字典
-export function updateDict (data) {
+export function updateDict<T>(data?: T): Promise<BaseResponse> {
   return request({
     url: `${prefix}/admin-api/system/dict-type/update`,
     method: 'post',
@@ -112,7 +113,7 @@ export function updateDict (data) {
   })
 }
 // 字典管理-字典类型-删除字典
-export function deleteDict (params) {
+export function deleteDict<T>(params?: T): Promise<BaseResponse> {
   return request({
     url: `${prefix}/admin-api/system/dict-type/delete`,
     method: 'get',
@@ -121,7 +122,7 @@ export function deleteDict (params) {
 }
 
 // 字典管理-字典数据-获取字典列表
-export function getDataDict (data) {
+export function getDataDict<T>(data?: T): Promise<BaseResponse> {
   return request({
     url: `${prefix}/admin-api/system/dict-data/page`,
     method: 'post',
@@ -129,7 +130,10 @@ export function getDataDict (data) {
   })
 }
 // 获得全部字典类型列表
-export function getAllDictType () {
+interface DictResponse extends BaseResponse {
+  data: Record<string, string>[]
+}
+export function getAllDictType(): Promise<DictResponse> {
   return request({
     url: `${prefix}/admin-api/system/dict-type/list-all-simple`,
     method: 'get'
@@ -137,7 +141,7 @@ export function getAllDictType () {
 }
 
 // 字典管理-字典数据-新增字典数据
-export function addDataDict (data) {
+export function addDataDict<T>(data?: T): Promise<BaseResponse> {
   return request({
     url: `${prefix}/admin-api/system/dict-data/create`,
     method: 'post',
@@ -146,7 +150,7 @@ export function addDataDict (data) {
 }
 
 // 字典管理-字典数据-修改字典数据
-export function modifyDataDict (data) {
+export function modifyDataDict<T>(data?: T): Promise<BaseResponse> {
   return request({
     url: `${prefix}/admin-api/system/dict-data/update`,
     method: 'post',
@@ -155,7 +159,7 @@ export function modifyDataDict (data) {
 }
 
 // 字典管理-字典数据-删除字典数据
-export function delDataDict (params) {
+export function delDataDict<T>(params?: T): Promise<BaseResponse> {
   return request({
     url: `${prefix}/admin-api/system/dict-data/delete`,
     method: 'get',
@@ -164,7 +168,7 @@ export function delDataDict (params) {
 }
 
 // 字典管理-字典数据-查询字典数据详细
-export function getDataDictDetail (params) {
+export function getDataDictDetail<T>(params?: T): Promise<BaseResponse> {
   return request({
     url: `${prefix}/admin-api/system/dict-data/get`,
     method: 'get',
@@ -173,7 +177,12 @@ export function getDataDictDetail (params) {
 }
 
 // 用户管理-批量获取部门信息
-export function getAllDept (data) {
+interface DeptResponse extends BaseResponse {
+  data: {
+    orgList: OrgTree[]
+  }
+}
+export function getAllDept<T>(data?: T): Promise<DeptResponse> {
   return request({
     url: `${prefix}/admin-api/ehr/orgstructure/getAllDept`,
     method: 'post',
@@ -181,7 +190,7 @@ export function getAllDept (data) {
   })
 }
 // 用户管理-查询部门下员工
-export function getDepartmentStaff (data) {
+export function getDepartmentStaff<T>(data?: T): Promise<BaseResponse> {
   return request({
     url: `${prefix}/admin-api/ehr/orgstructure/getDepartmentStaff`,
     method: 'post',
@@ -189,7 +198,7 @@ export function getDepartmentStaff (data) {
   })
 }
 // 用户管理-查询用户的下属
-export function getStaffSubordinates (data) {
+export function getStaffSubordinates<T>(data?: T): Promise<BaseResponse> {
   return request({
     url: `${prefix}/admin-api/ehr/orgstructure/getStaffSubordinates`,
     method: 'post',

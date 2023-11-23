@@ -74,6 +74,7 @@ import {
   AddFour
 } from '@icon-park/vue-next'
 import '@icon-park/vue-next/styles/index.css'
+import type { App } from 'vue'
 
 import SvgIcon from '@/components/SvgIcon/index.vue'
 // el-icon
@@ -145,7 +146,7 @@ export const components = [
   AddFour
 ]
 // 注册
-export default (app) => {
+export default (app: App) => {
   app.component('svg-icon', SvgIcon)
   components.forEach((component) => {
     app.component(component.name, component)

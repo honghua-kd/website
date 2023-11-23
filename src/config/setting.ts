@@ -1,4 +1,6 @@
-export default {
+import type { FrameSetting } from '@toystory/lotso'
+
+const frameSetting: FrameSetting = {
   // 是否显示顶部进度条
   progressBar: true,
   // 菜单栏默认打开路由
@@ -16,8 +18,10 @@ export default {
   // 系统名称
   systemName: 'HTHX-ADMIN',
   // 版权信息
-  copyrightZh: '版权所有 © 海通恒信国际融资租赁股份有限公司 未经许可不得复制、转载或摘编，违者必究！',
-  copyrightEn: 'Copyright © Haitong Unitrust International Leasing CO.,LTD.All Rights Reserved',
+  copyrightZh:
+    '版权所有 © 海通恒信国际融资租赁股份有限公司 未经许可不得复制、转载或摘编，违者必究！',
+  copyrightEn:
+    'Copyright © Haitong Unitrust International Leasing CO.,LTD.All Rights Reserved',
   // 默认主题颜色
   themeColor: '#005BAC',
   // 默认左侧菜单背景颜色
@@ -85,3 +89,5 @@ export default {
   // 登录页面路径，默认为'/login'，可配置SSO路径，建议用环境变量
   loginPath: import.meta.env.VITE_APP_SSO_URL
 }
+
+export default frameSetting

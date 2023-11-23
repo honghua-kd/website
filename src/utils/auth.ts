@@ -4,7 +4,7 @@ const TokenKey = 'lotsoUserToken'
 
 const ExpiresInKey = 'Admin-Expires-In'
 
-export function getToken () {
+export function getToken() {
   let token = Cookies.get(TokenKey)
   if (window.location.href.includes('?token')) {
     const value = getParam(window.location.href, 'token')
@@ -15,26 +15,26 @@ export function getToken () {
   return token
 }
 
-export function setToken (token) {
+export function setToken(token: string) {
   return Cookies.set(TokenKey, token)
 }
 
-export function removeToken () {
+export function removeToken() {
   return Cookies.remove(TokenKey)
 }
 
-export function getExpiresIn () {
+export function getExpiresIn() {
   return Cookies.get(ExpiresInKey) || -1
 }
 
-export function setExpiresIn (time) {
+export function setExpiresIn(time: string) {
   return Cookies.set(ExpiresInKey, time)
 }
 
-export function removeExpiresIn () {
+export function removeExpiresIn() {
   return Cookies.remove(ExpiresInKey)
 }
-function getParam (jspath, parm) {
+function getParam(jspath: string, parm: string) {
   const urlparse = jspath.split('?')
   const parms = urlparse[1].split('&')
   for (let i = 0; i < parms.length; i++) {

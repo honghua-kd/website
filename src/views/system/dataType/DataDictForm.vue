@@ -1,52 +1,56 @@
 <template>
   <div>
     <el-dialog :title="dialogTitle" v-model="dialogVisible">
-    <el-form
+      <el-form
         ref="formRef"
         :model="formParams"
         v-loading="formLoading"
         :rules="formRules"
         label-width="80px"
       >
-      <el-form-item label="字典类型" prop="dictType" >
-        <el-input v-model="formParams.dictType" disabled/>
-      </el-form-item>
-      <el-form-item label="数据标签" prop="label">
-        <el-input v-model="formParams.label" />
-      </el-form-item>
-      <el-form-item label="数据键值" prop="value">
-        <el-input v-model="formParams.value" />
-      </el-form-item>
-      <el-form-item label="父级" prop="parentValue">
-        <el-input v-model="formParams.parentValue" />
-      </el-form-item>
-      <el-form-item label="层级" prop="dataLevel">
-        <el-input v-model="formParams.dataLevel" />
-      </el-form-item>
-      <el-form-item label="显示排序" prop="sort">
-         <el-input-number
+        <el-form-item label="字典类型" prop="dictType">
+          <el-input v-model="formParams.dictType" disabled />
+        </el-form-item>
+        <el-form-item label="数据标签" prop="label">
+          <el-input v-model="formParams.label" />
+        </el-form-item>
+        <el-form-item label="数据键值" prop="value">
+          <el-input v-model="formParams.value" />
+        </el-form-item>
+        <el-form-item label="父级" prop="parentValue">
+          <el-input v-model="formParams.parentValue" />
+        </el-form-item>
+        <el-form-item label="层级" prop="dataLevel">
+          <el-input v-model="formParams.dataLevel" />
+        </el-form-item>
+        <el-form-item label="显示排序" prop="sort">
+          <el-input-number
             v-model="formParams.sort"
             class="mx-4"
             :min="1"
             controls-position="right"
-         />
-      </el-form-item>
-      <el-form-item label="状态" prop="status">
-         <el-radio-group v-model="formParams.status" class="ml-4">
-            <el-radio v-for="item in statusOpt"  :key="item.id" :label="item.value" >
+          />
+        </el-form-item>
+        <el-form-item label="状态" prop="status">
+          <el-radio-group v-model="formParams.status" class="ml-4">
+            <el-radio
+              v-for="item in statusOpt"
+              :key="item.id"
+              :label="item.value"
+            >
               {{ item.label }}
             </el-radio>
-         </el-radio-group>
-      </el-form-item>
-      <el-form-item label="备注" prop="remark">
-         <el-input
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input
             v-model="formParams.remark"
             placeholder="请输入内容"
             type="textarea"
           />
-      </el-form-item>
-    </el-form>
-    <template #footer>
+        </el-form-item>
+      </el-form>
+      <template #footer>
         <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button :disabled="formLoading" type="primary" @click="submitForm">
           确 定
@@ -56,7 +60,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { addDataDict, modifyDataDict, getDataDictDetail } from '@/api/system'
 import { ElMessage } from 'element-plus'
@@ -121,9 +125,18 @@ const getDetailHandler = async (id) => {
   const params = {
     id
   }
-  getDataDictDetail(params).then(res => {
+  getDataDictDetail(params).then((res) => {
     if (res && res.code === 200) {
-      const { sort, label, value, dictType, status, remark, parentValue, dataLevel } = res.data
+      const {
+        sort,
+        label,
+        value,
+        dictType,
+        status,
+        remark,
+        parentValue,
+        dataLevel
+      } = res.data
       formParams.dictType = dictType
       formParams.label = label
       formParams.value = value
@@ -145,37 +158,39 @@ const submitForm = async () => {
   const params = currentType.value === 'add' ? { ...others } : { ...formParams }
   formLoading.value = true
   if (currentType.value === 'add') {
-    addDataDict(params).then(res => {
-      formLoading.value = false
-      if (res && res.code === 200) {
-        ElMessage({
-          type: 'success',
-          message: '新增成功'
-        })
-        emit('success')
-        dialogVisible.value = false
-      }
-    }).catch(err => {
-      console.log(err)
-    })
+    addDataDict(params)
+      .then((res) => {
+        formLoading.value = false
+        if (res && res.code === 200) {
+          ElMessage({
+            type: 'success',
+            message: '新增成功'
+          })
+          emit('success')
+          dialogVisible.value = false
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
     return
   }
   if (currentType.value === 'edit') {
-    modifyDataDict(params).then(res => {
-      formLoading.value = false
-      if (res && res.code === 200) {
-        ElMessage(
-          {
+    modifyDataDict(params)
+      .then((res) => {
+        formLoading.value = false
+        if (res && res.code === 200) {
+          ElMessage({
             type: 'success',
             message: '修改成功'
-          }
-        )
-        emit('success')
-        dialogVisible.value = false
-      }
-    }).catch(err => {
-      console.log(err)
-    })
+          })
+          emit('success')
+          dialogVisible.value = false
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 }
 
@@ -193,6 +208,4 @@ const resetForm = () => {
 }
 </script>
 
-<style lang='scss' scoped>
-
-</style>
+<style lang="scss" scoped></style>

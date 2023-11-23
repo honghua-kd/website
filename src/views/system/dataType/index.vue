@@ -6,8 +6,16 @@
         <el-row :gutter="15">
           <el-col :span="6">
             <el-form-item label="字典名称:" prop="dictType" class="widthFull">
-              <el-select v-model="queryParams.dictType"   placeholder="请选择字典名称">
-                <el-option v-for="item in dictOpts" :key="item.id" :label="item.name" :value="item.type"/>
+              <el-select
+                v-model="queryParams.dictType"
+                placeholder="请选择字典名称"
+              >
+                <el-option
+                  v-for="item in dictOpts"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.type"
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -37,16 +45,14 @@
             </el-form-item>
           </el-col>
           <el-col style="text-align: right" :span="8">
-            <el-button :icon="Refresh" @click="resetQuery">
-              重置
-              </el-button>
-            <el-button plain :icon="Search" @click="searchHandler" >
+            <el-button :icon="Refresh" @click="resetQuery"> 重置 </el-button>
+            <el-button plain :icon="Search" @click="searchHandler">
               搜索
             </el-button>
             <el-button
               type="primary"
               :icon="Plus"
-              @click="addHandler('add',queryParams.dictType)"
+              @click="addHandler('add', queryParams.dictType)"
             >
               新增
             </el-button>
@@ -62,39 +68,28 @@
         border
         v-loading="loading"
       >
-        <el-table-column align="center" label="字典编码" prop="id" width="100"/>
+        <el-table-column
+          align="center"
+          label="字典编码"
+          prop="id"
+          width="100"
+        />
         <el-table-column
           align="center"
           label="字典标签"
           prop="label"
           show-overflow-tooltip
         />
-        <el-table-column
-          align="center"
-          label="字典键值"
-          prop="value"
-        />
+        <el-table-column align="center" label="字典键值" prop="value" />
         <el-table-column
           align="center"
           label="字典类型"
           prop="dictType"
           width="250"
         />
-        <el-table-column
-          align="center"
-          label="字典排序"
-          prop="sort"
-        />
-        <el-table-column
-          align="center"
-          label="字典父级"
-          prop="parentValue"
-        />
-        <el-table-column
-          align="center"
-          label="字典层级"
-          prop="dataLevel"
-        />
+        <el-table-column align="center" label="字典排序" prop="sort" />
+        <el-table-column align="center" label="字典父级" prop="parentValue" />
+        <el-table-column align="center" label="字典层级" prop="dataLevel" />
         <el-table-column align="center" label="状态" prop="status">
           <template #default="scope">
             <el-tag :type="formatTag(scope.row.status, 'type')" effect="light">
@@ -112,7 +107,11 @@
         />
         <el-table-column align="center" label="操作">
           <template #default="scope">
-            <el-button link type="primary" @click="editHandler('edit',scope.row.id)">
+            <el-button
+              link
+              type="primary"
+              @click="editHandler('edit', scope.row.id)"
+            >
               修改
             </el-button>
             <el-button link type="danger" @click="delHandler(scope.row.id)">
@@ -120,8 +119,8 @@
             </el-button>
           </template>
         </el-table-column>
-    </el-table>
-     <!-- 分页 -->
+      </el-table>
+      <!-- 分页 -->
       <el-pagination
         v-if="pageTotal"
         background
@@ -133,18 +132,14 @@
         @current-change="handleCurrentChange"
       />
     </el-card>
-    <DataDictTypeFrom ref="dataDictFormRef" @success="getList"/>
+    <DataDictTypeFrom ref="dataDictFormRef" @success="getList" />
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, reactive, onActivated } from 'vue'
 import { useDictStore } from '@/store/dict.js'
-import {
-  Refresh,
-  Search,
-  Plus
-} from '@element-plus/icons-vue'
+import { Refresh, Search, Plus } from '@element-plus/icons-vue'
 import { useRoute } from '@toystory/lotso'
 import { getDataDict, delDataDict } from '@/api/system'
 import { dateFormatter } from '@/utils'
@@ -200,17 +195,19 @@ const getList = () => {
   const params = {
     ...queryParams
   }
-  getDataDict(params).then(res => {
-    loading.value = false
-    if (res && res.code === 200) {
-      const { list, total } = res.data
-      tableData.value = list
-      pageTotal.value = total
-    }
-  }).catch(err => {
-    loading.value = false
-    console.log(err)
-  })
+  getDataDict(params)
+    .then((res) => {
+      loading.value = false
+      if (res && res.code === 200) {
+        const { list, total } = res.data
+        tableData.value = list
+        pageTotal.value = total
+      }
+    })
+    .catch((err) => {
+      loading.value = false
+      console.log(err)
+    })
 }
 // 切换页数
 const handleCurrentChange = (val) => {
@@ -239,25 +236,27 @@ const delHandler = (id) => {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
-  }).then(() => {
-    const params = {
-      id
-    }
-    delDataDict(params).then(res => {
-      if (res && res.code === 200) {
-        ElMessage({
-          type: 'success',
-          message: '删除成功'
-        })
-        searchHandler()
-      }
-    })
-  }).catch(() => {
-    ElMessage({
-      type: 'danger',
-      message: '删除失败'
-    })
   })
+    .then(() => {
+      const params = {
+        id
+      }
+      delDataDict(params).then((res) => {
+        if (res && res.code === 200) {
+          ElMessage({
+            type: 'success',
+            message: '删除成功'
+          })
+          searchHandler()
+        }
+      })
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'danger',
+        message: '删除失败'
+      })
+    })
 }
 
 onActivated(async () => {
@@ -269,7 +268,7 @@ onActivated(async () => {
 })
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .container {
   margin-bottom: 20px;
   font-size: 14px;

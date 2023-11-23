@@ -1,9 +1,8 @@
 <template>
-  <div class="preview" v-html="content">
-  </div>
+  <div class="preview" v-html="content"></div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const content = localStorage.getItem('__preview') || ''
 // import data from './login.json'
 // import business from './business.json'
@@ -22,13 +21,13 @@ const content = localStorage.getItem('__preview') || ''
 <style lang="scss" scoped>
 .preview {
   margin: 40px auto;
+  padding: 35px 40px;
   width: 790px;
   // min-height: 100vh;
-  border: 1px solid #EBEEF5;
-  background-color: #FFF;
-  color: #303133;
+  border: 1px solid #ebeef5;
   border-radius: 4px;
-  padding: 35px 40px;
-  box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+  color: #303133;
+  background-color: #ffffff;
+  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
 }
 </style>

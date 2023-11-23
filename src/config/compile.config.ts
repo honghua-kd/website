@@ -1,4 +1,6 @@
-export default {
+import type { ViteConfig } from '@toystory/lotso'
+
+const userViteConfig: ViteConfig = {
   // 项目部署的基础路径
   base: '/',
   // 静态资源服务的文件夹 类型 string | false
@@ -49,3 +51,5 @@ export default {
   // 是否使用mock数据
   useMock: true
 }
+
+export default userViteConfig

@@ -38,18 +38,12 @@
               </el-select>
             </el-form-item>
           </el-col>
-           <el-col style="text-align: right" :span="8">
-            <el-button :icon="Refresh" @click="resetQuery"
-              >重置</el-button
-            >
-            <el-button plain :icon="Search" @click="searchHandler" >
+          <el-col style="text-align: right" :span="8">
+            <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
+            <el-button plain :icon="Search" @click="searchHandler">
               搜索
             </el-button>
-            <el-button
-              type="primary"
-              :icon="Plus"
-              @click="addDictHandler"
-            >
+            <el-button type="primary" :icon="Plus" @click="addDictHandler">
               新增
             </el-button>
           </el-col>
@@ -66,7 +60,6 @@
             </el-form-item>
           </el-col> -->
         </el-row>
-
       </el-form>
     </el-card>
     <!-- 列表 -->
@@ -136,13 +129,9 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, reactive } from 'vue'
-import {
-  Refresh,
-  Search,
-  Plus
-} from '@element-plus/icons-vue'
+import { Refresh, Search, Plus } from '@element-plus/icons-vue'
 import { useRouter } from '@toystory/lotso'
 import { getDictList, deleteDict } from '@/api/system'
 import { dateFormatter } from '@/utils'
@@ -193,15 +182,17 @@ const formatTag = (status, tagType) => {
 // 获取字典列表
 const getList = () => {
   loading.value = true
-  getDictList(queryParams).then(res => {
-    loading.value = false
-    const { list, total } = res?.data
-    tableData.value = list
-    pageTotal.value = total
-  }).catch(err => {
-    console.log(err)
-    loading.value = false
-  })
+  getDictList(queryParams)
+    .then((res) => {
+      loading.value = false
+      const { list, total } = res?.data
+      tableData.value = list
+      pageTotal.value = total
+    })
+    .catch((err) => {
+      console.log(err)
+      loading.value = false
+    })
 }
 // 新增字典表
 const dictTypeRef = ref()
@@ -220,26 +211,28 @@ const delHandler = (id) => {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
-  }).then(() => {
-    // 调用删除接口
-    const params = {
-      id
-    }
-    deleteDict(params).then(res => {
-      if (res && res.code === 200) {
-        ElMessage({
-          type: 'success',
-          message: '删除成功'
-        })
-        searchHandler()
-      }
-    })
-  }).catch(() => {
-    ElMessage({
-      type: 'danger',
-      message: '删除失败'
-    })
   })
+    .then(() => {
+      // 调用删除接口
+      const params = {
+        id
+      }
+      deleteDict(params).then((res) => {
+        if (res && res.code === 200) {
+          ElMessage({
+            type: 'success',
+            message: '删除成功'
+          })
+          searchHandler()
+        }
+      })
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'danger',
+        message: '删除失败'
+      })
+    })
 }
 // 跳转数据
 const jumpDataHandler = (row) => {
@@ -263,7 +256,7 @@ const init = () => {
 init()
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .container {
   margin-bottom: 20px;
   font-size: 14px;

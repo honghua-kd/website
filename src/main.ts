@@ -2,7 +2,14 @@ import options from '@/config/setting'
 import requestConfig from '@/config/request.config'
 
 // framework
-import { createFrameApp, useRouter, usePermission, useUserStore, useRoutesStore, store } from '@toystory/lotso'
+import {
+  createFrameApp,
+  useRouter,
+  usePermission,
+  useUserStore,
+  useRoutesStore,
+  store
+} from '@toystory/lotso'
 import '@toystory/lotso/dist/style.css'
 
 import { getUserInfo, getAuthData } from '@/api'
@@ -21,10 +28,9 @@ const app = createFrameApp(App, {
   options,
   requestConfig,
   constantFile: import.meta.glob('./pages/**/index.vue'),
-  constantConfig: import.meta.globEager('./pages/**/config.js'),
-  // 若配置接管权限路由，无需引入asyncFile
+  constantConfig: import.meta.globEager('./pages/**/config.ts'),
   asyncFile: import.meta.glob('./views/**/index.vue'),
-  asyncConfig: import.meta.globEager('./views/**/config.js')
+  asyncConfig: import.meta.globEager('./views/**/config.ts')
 })
 setActivePinia(store)
 
@@ -61,32 +67,35 @@ const { handlePermission } = usePermission({
     const params = {
       systemCode: 'OPERATIONS'
     }
-    await getAuthData(params).then(response => {
-      userStore.setAuthDataFlag(true)
-      if (response.data && Object.prototype.toString.call(response.data) === '[object Object]') {
-        const whiteAuthData = options.whiteAuthData
-        const authData = response.data.data
-        const { role } = response.data
-        userStore.setRole(role || [])
-        const data = [
-          ...whiteAuthData,
-          ...authData
-        ]
-        if (!data || !Array.isArray(data)) {
-          console.error('权限数据错误')
+    await getAuthData(params)
+      .then((response) => {
+        userStore.setAuthDataFlag(true)
+        if (
+          response.data &&
+          Object.prototype.toString.call(response.data) === '[object Object]'
+        ) {
+          const whiteAuthData = options.whiteAuthData || []
+          const authData = response.data.data
+          const { role } = response.data
+          userStore.setRole(role || [])
+          const data = [...whiteAuthData, ...authData]
+          if (!data || !Array.isArray(data)) {
+            console.error('权限数据错误')
+          } else {
+            userStore.setAuthData(data)
+            routesStore.handleRoutes(data)
+          }
         } else {
-          userStore.setAuthData(data)
-          routesStore.handleRoutes(data)
+          const errorMsg =
+            response.msg || response.message || '系统错误，请稍后重试'
+          ElMessage.error(errorMsg)
+          throw new Error(errorMsg)
         }
-      } else {
-        const errorMsg = response.msg || response.message || '系统错误，请稍后重试'
-        ElMessage.error(errorMsg)
-        throw new Error(errorMsg)
-      }
-    }).catch(err => {
-      userStore.setAuthDataFlag(true)
-      throw new Error(err)
-    })
+      })
+      .catch((err) => {
+        userStore.setAuthDataFlag(true)
+        throw new Error(err)
+      })
   }
 })
 router.beforeEach((to, from, next) => {

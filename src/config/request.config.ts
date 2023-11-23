@@ -2,10 +2,11 @@
  * @description 配置axios请求基础信息
  */
 import { getToken } from '@/utils/auth'
+import type { RequestConfig } from '@toystory/lotso'
 // import { ElMessageBox, ElNotification } from 'element-plus'
 // import { logout } from '@/api'
 
-export default {
+const requestConfig: RequestConfig = {
   // axios 基础url地址
   baseURL: import.meta.env.VITE_APP_BASE_API,
   // 为开发服务器配置 CORS。默认启用并允许任何源，传递一个 选项对象 来调整行为或设为 false 表示禁用
@@ -18,6 +19,7 @@ export default {
   requestTimeout: 60000,
   // 请求拦截自定义函数，接收config参数
   handleRequest: (config) => {
+    if (!config) return
     // 是否需要设置 token
     const needToken = (config.headers || {}).isToken !== false
     // 这里是在本系统内进行的添加
@@ -68,3 +70,4 @@ export default {
   // 返回成功拦截自定义函数，接收response error参数
   handleResError: undefined
 }
+export default requestConfig

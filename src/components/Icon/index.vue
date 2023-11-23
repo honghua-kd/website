@@ -14,44 +14,35 @@
       :fill="color"
       class="icon"
     />
-    <el-icon v-if="type === 'el-icon'" :style="{ color, 'font-size': size + 'px' }">
+    <el-icon
+      v-if="type === 'el-icon'"
+      :style="{ color, 'font-size': size + 'px' }"
+    >
       <component :is="name" />
     </el-icon>
   </span>
 </template>
 
-<script setup>
-defineProps({
-  type: {
-    type: String,
-    default: 'icon-park'
-  },
-  size: {
-    type () {
-      return Number | String
-    },
-    default: 14
-  },
-  color: {
-    type: String,
-    default: '#333'
-  },
-  theme: {
-    type: String,
-    default: 'outline'
-  },
-  strokeWidth: {
-    type: Number,
-    default: 3
-  },
-  name: {
-    type: String,
-    default: ''
-  },
-  className: {
-    type: String,
-    default: 'icon'
+<script setup lang="ts">
+withDefaults(
+  defineProps<{
+    type: string
+    size: number | string
+    color: string
+    theme: string
+    strokeWidth: number
+    name: string
+    className: string
+  }>(),
+  {
+    type: 'icon-park',
+    size: 14,
+    color: '#333',
+    theme: 'outline',
+    strokeWidth: 3,
+    name: '',
+    className: 'icon'
   }
-})
+)
 </script>
 <style lang="scss" scoped></style>

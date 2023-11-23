@@ -1,10 +1,15 @@
 <template>
-  <svg :class="svgClass" aria-hidden="true" v-bind="$attrs" :style="{ 'font-size': size, color }">
+  <svg
+    :class="svgClass"
+    aria-hidden="true"
+    v-bind="$attrs"
+    :style="{ 'font-size': size, color }"
+  >
     <use :xlink:href="symbolId" :fill="color || ''" />
   </svg>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 
 const props = defineProps({
@@ -32,10 +37,10 @@ const svgClass = computed(() => {
 </script>
 
 <style lang="scss">
-  .svg-icon {
-    width: 1em;
-    height: 1em;
-    vertical-align: middle;
-    fill: currentColor;
-  }
+.svg-icon {
+  width: 1em;
+  height: 1em;
+  vertical-align: middle;
+  fill: currentcolor;
+}
 </style>

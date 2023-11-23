@@ -6,7 +6,7 @@
         :model="formData"
         v-loading="formLoading"
         label-width="100"
-         :rules="formRules"
+        :rules="formRules"
       >
         <el-form-item label="权限名称：" prop="permissionName">
           <el-input
@@ -24,8 +24,8 @@
             clearable
           />
         </el-form-item>
-        <el-form-item label="模块：" prop="moduleCode" >
-          <el-select v-model="formData.moduleCode" multiple  style="width: 50%;">
+        <el-form-item label="模块：" prop="moduleCode">
+          <el-select v-model="formData.moduleCode" multiple style="width: 50%">
             <el-option
               v-for="item in dataOpts"
               :key="item.value"
@@ -52,14 +52,23 @@
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item label="规则编辑：" v-if="formulaShow" >
-          <el-row :gutter="20" class="withFull" >
+        <el-form-item label="规则编辑：" v-if="formulaShow">
+          <el-row :gutter="20" class="withFull">
             <el-col :span="6">
-              <el-select v-model="selectedRule" placeholder="请选择现有规则" @change="ruleChange">
-                <el-option v-for="item in ruleOpts" :key="item.keywordCode" :value="item.keywordName" :label="item.forwordName"/>
+              <el-select
+                v-model="selectedRule"
+                placeholder="请选择现有规则"
+                @change="ruleChange"
+              >
+                <el-option
+                  v-for="item in ruleOpts"
+                  :key="item.keywordCode"
+                  :value="item.keywordName"
+                  :label="item.forwordName"
+                />
               </el-select>
             </el-col>
-            <el-col :span="12"  class="formulaCont">
+            <el-col :span="12" class="formulaCont">
               <p v-for="(el, ind) in formulaList" :key="ind">
                 <span
                   v-for="(e, i) in el"
@@ -72,16 +81,22 @@
               </p>
             </el-col>
             <el-col :span="4">
-              <el-button type="primary" :disabled="!formData.dataScope" @click="checkRulesHandler" :loading="checkLoading">校验规则</el-button>
+              <el-button
+                type="primary"
+                :disabled="!formData.dataScope"
+                @click="checkRulesHandler"
+                :loading="checkLoading"
+                >校验规则</el-button
+              >
             </el-col>
           </el-row>
         </el-form-item>
         <el-form-item label="表达式：" prop="dataScopeExpression">
-            <el-input
-              v-model="formData.dataScopeExpression"
-              type="textarea"
-              style="width:80%"
-            />
+          <el-input
+            v-model="formData.dataScopeExpression"
+            type="textarea"
+            style="width: 80%"
+          />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -94,7 +109,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, reactive } from 'vue'
 import {
   subDataPermission,
@@ -155,9 +170,16 @@ const openDialog = async (type, data) => {
     const params = {
       permissionCode
     }
-    getPermissionDetail(params).then(res => {
+    getPermissionDetail(params).then((res) => {
       if (res && res.code === 200) {
-        const { moduleCode, permissionCode, permissionName, id, dataScopeExpression, dataScope } = res.data
+        const {
+          moduleCode,
+          permissionCode,
+          permissionName,
+          id,
+          dataScopeExpression,
+          dataScope
+        } = res.data
         formData.permissionName = permissionName
         formData.permissionCode = permissionCode
         formData.moduleCode = [...moduleCode]
@@ -172,11 +194,17 @@ defineExpose({ openDialog })
 
 // 校验
 const formRules = reactive({
-  permissionName: [{ required: true, message: '权限名称不能为空', trigger: 'blur' }],
-  permissionCode: [{ required: true, message: '权限编码不能为空', trigger: 'blur' }],
+  permissionName: [
+    { required: true, message: '权限名称不能为空', trigger: 'blur' }
+  ],
+  permissionCode: [
+    { required: true, message: '权限编码不能为空', trigger: 'blur' }
+  ],
   moduleCode: [{ required: true, message: '模块不能为空', trigger: 'change' }],
   dataScope: [{ required: true, message: '权限规则不能为空', trigger: 'blur' }],
-  dataScopeExpression: [{ required: true, message: '表达式不能为空', trigger: 'blur' }]
+  dataScopeExpression: [
+    { required: true, message: '表达式不能为空', trigger: 'blur' }
+  ]
 })
 // 提交
 const emit = defineEmits(['roleList', 'userList'])
@@ -198,17 +226,21 @@ const submitForm = async () => {
     }
     console.log('params', params)
   }
-  subDataPermission(params).then(res => {
-    if (res && res.code === 200) {
-      ElMessage.success('提交成功')
+  subDataPermission(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        ElMessage.success('提交成功')
+        dialogVisible.value = false
+        // 发送操作成功的事件
+        props.origin === 'roleCode'
+          ? emit('roleList', currentOriginCode.value)
+          : emit('userList', currentOriginCode.value)
+      }
+    })
+    .catch((err) => {
       dialogVisible.value = false
-      // 发送操作成功的事件
-      props.origin === 'roleCode' ? emit('roleList', currentOriginCode.value) : emit('userList', currentOriginCode.value)
-    }
-  }).catch(err => {
-    dialogVisible.value = false
-    console.log(err)
-  })
+      console.log(err)
+    })
 }
 // 展示公式
 const editRuleHandler = () => {
@@ -236,24 +268,28 @@ const getMoudleDict = () => {
     dictType: 'data_scope_module',
     status: 0
   }
-  getSingleDict(params).then(res => {
-    if (res && res.code === 200) {
-      dataOpts.value = res.data
-    }
-  }).catch(err => {
-    console.log(err)
-  })
+  getSingleDict(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        dataOpts.value = res.data
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
 }
 
 // 获取公式映射字典
 const getRuleDict = () => {
-  getRuleList().then(res => {
-    if (res && res.code === 200) {
-      ruleOpts.value = res.data
-    }
-  }).catch(err => {
-    console.log(err)
-  })
+  getRuleList()
+    .then((res) => {
+      if (res && res.code === 200) {
+        ruleOpts.value = res.data
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
 }
 // 选中规则
 const ruleChange = (item) => {
@@ -265,44 +301,43 @@ const checkRulesHandler = () => {
   const params = {
     dataScope: formData.dataScope
   }
-  checkRules(params).then(res => {
-    checkLoading.value = false
-    if (res && res.code === 200) {
-      formData.dataScopeExpression = res?.data
-    }
-  }).catch(err => {
-    checkLoading.value = false
-    console.log(err)
-  })
+  checkRules(params)
+    .then((res) => {
+      checkLoading.value = false
+      if (res && res.code === 200) {
+        formData.dataScopeExpression = res?.data
+      }
+    })
+    .catch((err) => {
+      checkLoading.value = false
+      console.log(err)
+    })
 }
-
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .withFull {
   width: 100%;
 }
-
 .formulaCont {
-  width: 100%;
-  border-top: 1px solid #ccc;
-  border-left: 1px solid #ccc;
   padding: 0 !important;
+  width: 100%;
+  border-top: 1px solid #cccccc;
+  border-left: 1px solid #cccccc;
   p {
-    margin: 0;
     display: flex;
     justify-content: space-between;
+    margin: 0;
     span {
+      border-right: 1px solid #cccccc;
+      border-bottom: 1px solid #cccccc;
+      text-align: center;
       cursor: pointer;
       flex: 1;
-      text-align: center;
-      border-right: 1px solid #ccc;
-      border-bottom: 1px solid #ccc;
     }
     .Equals {
       flex: 2;
     }
   }
 }
-
 </style>

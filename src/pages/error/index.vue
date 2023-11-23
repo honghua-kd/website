@@ -1,20 +1,46 @@
 <template>
   <div class="page-exception">
-    <div class="exception-text">{{exceptionText}}</div>
-    <img v-if="exceptionType === '403'" src="@/assets/error/403.svg" alt="" class="exception-img">
-    <img v-if="exceptionType === '404'" src="@/assets/error/404.svg" alt="" class="exception-img">
-    <img v-if="exceptionType === '500'" src="@/assets/error/500.svg" alt="" class="exception-img">
-    <el-button v-if="hasPermission" class="pay-custom-btn exception-btn" primary @click="goHome">
+    <div class="exception-text">{{ exceptionText }}</div>
+    <img
+      v-if="exceptionType === '403'"
+      src="@/assets/error/403.svg"
+      alt=""
+      class="exception-img"
+    />
+    <img
+      v-if="exceptionType === '404'"
+      src="@/assets/error/404.svg"
+      alt=""
+      class="exception-img"
+    />
+    <img
+      v-if="exceptionType === '500'"
+      src="@/assets/error/500.svg"
+      alt=""
+      class="exception-img"
+    />
+    <el-button
+      v-if="hasPermission"
+      class="pay-custom-btn exception-btn"
+      primary
+      @click="goHome"
+    >
       返回首页
     </el-button>
-    <el-button v-else class="pay-custom-btn exception-btn" primary @click="goLogin">
+    <el-button
+      v-else
+      class="pay-custom-btn exception-btn"
+      primary
+      @click="goLogin"
+    >
       返回登录
     </el-button>
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted, computed } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted, computed, Ref } from 'vue'
+import type { LocationQueryValue } from 'vue-router'
 import { useRouter, useRoute } from '@toystory/lotso'
 // import { ElMessage } from 'element-plus'
 
@@ -22,10 +48,10 @@ const { router } = useRouter()
 const route = useRoute()
 
 const exceptionText = ref('服务器开小差了，请稍后再试')
-const exceptionType = ref('500')
+const exceptionType: Ref<string | LocationQueryValue[]> = ref('500')
 
 onMounted(() => {
-  const { type } = route.value.query
+  const type = route?.value.query?.type
   exceptionType.value = type || '500'
   if (type === '404') {
     exceptionText.value = '抱歉，您访问的页面不存在'
@@ -69,18 +95,18 @@ const goHome = () => {
 <style lang="scss" scoped>
 .page-exception {
   display: flex;
+  align-items: center;
   margin: 0 auto;
   flex-direction: column;
-  align-items: center;
   .exception-text {
-    font-size: 24px;
-    color: #333333;
-    text-align: center;
     margin-top: 130px;
+    font-size: 24px;
+    text-align: center;
+    color: #333333;
   }
   .exception-img {
-    width: 560px;
     margin-top: 40px;
+    width: 560px;
   }
   .exception-btn {
     margin-top: 88px;

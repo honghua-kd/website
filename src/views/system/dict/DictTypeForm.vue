@@ -9,10 +9,7 @@
         label-width="80px"
       >
         <el-form-item label="字典名称" prop="name">
-          <el-input
-            v-model="formParams.name"
-            placeholder="请输入字典名称"
-          />
+          <el-input v-model="formParams.name" placeholder="请输入字典名称" />
         </el-form-item>
         <el-form-item label="字典类型" prop="type">
           <el-input
@@ -50,7 +47,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { createDict, updateDict } from '@/api/system'
 import { ElMessage } from 'element-plus'
@@ -112,30 +109,34 @@ const submitForm = async () => {
     ...formParams
   }
   if (currentType.value === 'add') {
-    createDict(params).then(res => {
-      formLoading.value = false
-      if (res && res.code === 200) {
-        ElMessage({
-          type: 'success',
-          message: '操作成功'
-        })
-        emit('success')
-      }
-    }).catch(err => {
-      console.log(err)
-    })
+    createDict(params)
+      .then((res) => {
+        formLoading.value = false
+        if (res && res.code === 200) {
+          ElMessage({
+            type: 'success',
+            message: '操作成功'
+          })
+          emit('success')
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   } else if (currentType.value === 'edit') {
-    updateDict(params).then(res => {
-      if (res && res.code === 200) {
-        ElMessage({
-          type: 'success',
-          message: '操作成功'
-        })
-        emit('success')
-      }
-    }).catch(err => {
-      console.log(err)
-    })
+    updateDict(params)
+      .then((res) => {
+        if (res && res.code === 200) {
+          ElMessage({
+            type: 'success',
+            message: '操作成功'
+          })
+          emit('success')
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }
   dialogVisible.value = false
 }
@@ -149,8 +150,6 @@ const resetForm = () => {
   formParams.remark = ''
   formRef.value?.resetFields()
 }
-
 </script>
 
-<style lang='scss' scoped>
-</style>
+<style lang="scss" scoped></style>

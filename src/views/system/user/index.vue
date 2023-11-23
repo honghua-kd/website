@@ -1,142 +1,157 @@
 <template>
   <div class="container">
     <el-card class="treeContainer">
-      <SideTree @getSelect="getSelectNodeHandler"/>
+      <SideTree @getSelect="getSelectNodeHandler" />
     </el-card>
     <div class="right-part">
       <!-- 搜索工作栏 -->
-    <el-card class="search-bar">
-      <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-        <el-row :gutter="15">
-          <el-col :span="8">
-            <el-form-item label="员工工号:" prop="staffCode" class="widthFull">
-              <el-input
-                v-model="queryParams.staffCode"
-                placeholder="请输入员工工号"
+      <el-card class="search-bar">
+        <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+          <el-row :gutter="15">
+            <el-col :span="8">
+              <el-form-item
+                label="员工工号:"
+                prop="staffCode"
                 class="widthFull"
-                clearable
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="员工姓名:" prop="staffName" class="widthFull">
-              <el-input
-                v-model="queryParams.staffName"
-                placeholder="员工姓名"
+              >
+                <el-input
+                  v-model="queryParams.staffCode"
+                  placeholder="请输入员工工号"
+                  class="widthFull"
+                  clearable
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item
+                label="员工姓名:"
+                prop="staffName"
                 class="widthFull"
-                clearable
-              />
-            </el-form-item>
-          </el-col>
+              >
+                <el-input
+                  v-model="queryParams.staffName"
+                  placeholder="员工姓名"
+                  class="widthFull"
+                  clearable
+                />
+              </el-form-item>
+            </el-col>
 
-          <el-col :span="6" style="text-align: right">
-            <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
-            <el-button type="primary" :icon="Search" @click="searchHandler">
-              搜索
-            </el-button>
-          </el-col>
-        </el-row>
-      </el-form>
-    </el-card>
-    <!-- 列表 -->
-    <el-card>
-      <el-table
-        :data="tableData"
-        :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
-        border
-        v-loading="loading"
-        class="table-container"
-      >
-        <el-table-column type="index" width="60" label="序号" fixed />
-        <el-table-column label="员工姓名" align="center" key="id" prop="staffName"  fixed/>
-        <el-table-column
-          label="员工工号"
-          align="center"
-          prop="staffCode"
+            <el-col :span="6" style="text-align: right">
+              <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
+              <el-button type="primary" :icon="Search" @click="searchHandler">
+                搜索
+              </el-button>
+            </el-col>
+          </el-row>
+        </el-form>
+      </el-card>
+      <!-- 列表 -->
+      <el-card>
+        <el-table
+          :data="tableData"
+          :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
+          border
+          v-loading="loading"
+          class="table-container"
+        >
+          <el-table-column type="index" width="60" label="序号" fixed />
+          <el-table-column
+            label="员工姓名"
+            align="center"
+            key="id"
+            prop="staffName"
+            fixed
+          />
+          <el-table-column label="员工工号" align="center" prop="staffCode" />
+          <el-table-column
+            align="center"
+            label="管理单元名称"
+            prop="ouidName"
+          />
+          <el-table-column
+            label="一级部门"
+            align="center"
+            prop="org1Name"
+            :show-overflow-tooltip="true"
+          />
+          <el-table-column
+            label="二级部门"
+            align="center"
+            prop="org2Name"
+            :show-overflow-tooltip="true"
+          />
+          <el-table-column
+            label="三级部门"
+            align="center"
+            prop="org3Name"
+            :show-overflow-tooltip="true"
+          />
+          <el-table-column
+            label="岗位名称"
+            align="center"
+            prop="positionName"
+            :show-overflow-tooltip="true"
+          />
+          <el-table-column
+            label="是否在岗"
+            align="center"
+            prop="onJobStatus"
+            :show-overflow-tooltip="true"
+          />
+          <el-table-column
+            label="上级领导"
+            align="center"
+            prop="reportToStaffName"
+            :show-overflow-tooltip="true"
+          />
+          <el-table-column
+            label="上级领导工号"
+            align="center"
+            prop="reportToStaffCode"
+            :show-overflow-tooltip="true"
+          />
+          <el-table-column align="center" label="邮箱" prop="email" />
+          <el-table-column
+            label="操作"
+            align="center"
+            class-name="fixed-width"
+            fixed="right"
+            width="150"
+          >
+            <template #default="scope">
+              <el-button
+                link
+                type="primary"
+                @click="assignPermiHandler(scope.row)"
+              >
+                数据权限
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <!-- 分页 -->
+        <el-pagination
+          v-if="pageTotal"
+          background
+          layout="total,sizes,prev, pager, next"
+          :page-sizes="[10, 20, 50, 100]"
+          :total="pageTotal"
+          class="table-page"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
         />
-        <el-table-column align="center" label="管理单元名称" prop="ouidName" />
-        <el-table-column
-          label="一级部门"
-          align="center"
-          prop="org1Name"
-          :show-overflow-tooltip="true"
-        />
-        <el-table-column
-          label="二级部门"
-          align="center"
-          prop="org2Name"
-          :show-overflow-tooltip="true"
-        />
-        <el-table-column
-          label="三级部门"
-          align="center"
-          prop="org3Name"
-          :show-overflow-tooltip="true"
-        />
-        <el-table-column
-          label="岗位名称"
-          align="center"
-          prop="positionName"
-          :show-overflow-tooltip="true"
-        />
-        <el-table-column
-          label="是否在岗"
-          align="center"
-          prop="onJobStatus"
-          :show-overflow-tooltip="true"
-        />
-        <el-table-column
-          label="上级领导"
-          align="center"
-          prop="reportToStaffName"
-          :show-overflow-tooltip="true"
-        />
-        <el-table-column
-          label="上级领导工号"
-          align="center"
-          prop="reportToStaffCode"
-          :show-overflow-tooltip="true"
-        />
-        <el-table-column align="center" label="邮箱" prop="email" />
-      <el-table-column
-        label="操作"
-        align="center"
-        class-name="fixed-width"
-        fixed="right"
-        width="150"
-      >
-      <template #default="scope">
-        <el-button link type="primary" @click="assignPermiHandler(scope.row)">
-          数据权限
-        </el-button>
-      </template>
-     </el-table-column>
-      </el-table>
-      <!-- 分页 -->
-      <el-pagination
-        v-if="pageTotal"
-        background
-        layout="total,sizes,prev, pager, next"
-        :page-sizes="[10, 20, 50, 100]"
-        :total="pageTotal"
-        class="table-page"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
-    </el-card>
+      </el-card>
     </div>
     <PermiListDialog ref="userListRef" @success="searchHandler" />
   </div>
 </template>
 
-<script setup >
+<script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { getDepartmentStaff, getStaffSubordinates } from '@/api/system'
 import SideTree from '@/components/SideTree/index.vue'
-import {
-  Refresh,
-  Search
-} from '@element-plus/icons-vue'
+import { Refresh, Search } from '@element-plus/icons-vue'
 import PermiListDialog from '@/components/PermiForm/PermiListDialog.vue'
 
 const currentOrgCode = ref('')
@@ -176,24 +191,26 @@ const getSelectNodeHandler = (node) => {
 const getDeptStaffList = (orgCode) => {
   loading.value = true
   const params = { orgCode }
-  getDepartmentStaff(params).then(res => {
-    loading.value = false
-    if (res && res.code === 200) {
-      const { staffList, total } = res?.data
-      tableData.value = staffList
-      pageTotal.value = total
-    }
-  }).catch(err => {
-    loading.value = false
-    console.log(err)
-  })
+  getDepartmentStaff(params)
+    .then((res) => {
+      loading.value = false
+      if (res && res.code === 200) {
+        const { staffList, total } = res?.data
+        tableData.value = staffList
+        pageTotal.value = total
+      }
+    })
+    .catch((err) => {
+      loading.value = false
+      console.log(err)
+    })
 }
 
 const getStaffSubHandler = () => {
   const params = {
     ...queryParams
   }
-  getStaffSubordinates(params).then(res => {
+  getStaffSubordinates(params).then((res) => {
     if (res && res.code === 200) {
       tableData.value = res.data?.staffList
     }
@@ -215,31 +232,30 @@ const assignPermiHandler = (row) => {
 }
 </script>
 
-<style lang='scss' scoped>
-
+<style lang="scss" scoped>
 .container {
   display: flex;
-  width: 100%;
   margin-bottom: 20px;
+  width: 100%;
   font-size: 14px;
 }
 .right-part {
-  width:70%;
+  width: 70%;
 }
 .widthFull {
   width: 100%;
 }
-.search-bar{
+.search-bar {
   margin-bottom: 10px;
 }
 .treeContainer {
-  width: 22%;
-  margin-right: 3%;
-  height: 550px;
   overflow-y: scroll;
+  margin-right: 3%;
+  width: 22%;
+  height: 550px;
 }
 .table-container {
-  height:410px;
   overflow-y: scroll;
+  height: 410px;
 }
 </style>

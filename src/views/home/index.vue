@@ -2,12 +2,12 @@
   <div class="home-container">
     <div class="app-welcome">
       <h1>欢迎使用</h1>
-      <h1>海通恒信后台管理系统</h1>
+      <h1>海通恒信运营管理系统</h1>
     </div>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: 'Home'
 }
@@ -15,22 +15,22 @@ export default {
 
 <style lang="scss" scoped>
 .home-container {
-  background-color: #fff;
-  background-image: url('@/assets/logo/index_bg.jpg');
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: 50%;
-  margin: -30px -20px;
   overflow: hidden;
+  margin: -30px -20px;
   padding: 20px;
   height: calc(100vh - 157px);
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-color: #ffffff;
+  background-image: url('@/assets/logo/index_bg.jpg');
   .app-welcome {
     position: absolute;
     top: 40%;
     transform: translateY(-50%);
     margin: 20px;
     font-size: 1.5em;
-    color: #555;
+    color: #555555;
   }
   .constarct-view {
     .el-row {
@@ -43,24 +43,24 @@ export default {
       border-radius: 8px;
     }
     .grid-content {
-      border-radius: 4px;
-      height: 144px;
-      background: #ffffff;
       display: flex;
-      padding: 20px;
       align-items: center;
+      padding: 20px;
+      height: 144px;
+      border-radius: 4px;
+      background: #ffffff;
       .constract-num {
+        font-size: 28px;
         font-weight: bold;
         color: #4a4a4a;
-        font-size: 28px;
       }
       .constarct-name {
-        color: rgba(0, 0, 0, 0.45);
+        color: rgb(0 0 0 / 45%);
         line-height: 16px;
       }
       img {
-        width: 58px;
         margin-left: auto;
+        width: 58px;
       }
     }
     .row-bg {
@@ -73,13 +73,13 @@ export default {
     width: 100%;
     height: 230px;
     .assets-content {
-      background: #fff;
-      width: calc(100% - 305px);
-      box-shadow: 0px 0px 8px 0px #edefef;
-      border-radius: 8px;
       padding: 0 20px;
-      color: rgba(0, 0, 0, 0.45);
+      width: calc(100% - 305px);
       font-size: 16px;
+      border-radius: 8px;
+      color: rgb(0 0 0 / 45%);
+      background: #ffffff;
+      box-shadow: 0 0 8px 0 #edefef;
       .grid-content {
         margin-top: 16px;
       }
@@ -87,26 +87,26 @@ export default {
         margin-top: 40px;
       }
       .assets-total {
+        font-size: 58px;
         font-weight: bold;
         color: #4a4a4a;
-        font-size: 58px;
       }
       .assets-ratio {
+        margin-right: 5px;
+        font-size: 32px;
         font-weight: bold;
         color: #4a4a4a;
-        font-size: 32px;
-        margin-right: 5px;
       }
       .ratio-name {
+        margin-top: 17px;
         width: 64px;
         height: 30px;
-        line-height: 29px;
-        border-radius: 15px;
-        color: #fff;
-        text-align: center;
-        font-weight: 800;
         font-size: 18px;
-        margin-top: 17px;
+        font-weight: 800;
+        border-radius: 15px;
+        text-align: center;
+        color: #ffffff;
+        line-height: 29px;
       }
       .hx-bg {
         background: linear-gradient(116deg, #53a0fd 0%, #4363ef 100%);
@@ -120,38 +120,38 @@ export default {
     }
     .weather {
       margin-left: auto;
-      width: 279px;
-      background: #598cff;
-      box-shadow: 0px 0px 8px 0px rgba(89, 140, 255, 0.5);
-      border-radius: 8px;
       padding: 14px;
-      color: #fff;
+      width: 279px;
+      border-radius: 8px;
       text-align: center;
+      color: #ffffff;
+      background: #598cff;
+      box-shadow: 0 0 8px 0 rgb(89 140 255 / 50%);
       div {
         width: 100%;
       }
       ._icon {
+        margin-top: 18px;
         width: 50px;
         height: 50px;
-        margin-top: 18px;
       }
       .name {
+        margin: 13px 0 6px;
         font-size: 20px;
         font-weight: 500;
-        margin: 13px 0 6px 0;
       }
     }
   }
   .chart {
     .statistics-tab {
       display: flex;
-      padding: 14px;
       margin-top: 16px;
+      padding: 14px;
       .tab-item {
-        margin-right: 50px;
-        cursor: pointer;
-        font-size: 16px;
         position: relative;
+        margin-right: 50px;
+        font-size: 16px;
+        cursor: pointer;
       }
       .tab-default {
         font-weight: 500;
@@ -159,16 +159,16 @@ export default {
       }
       .tab-active {
         font-weight: 500;
-        color: rgba(0, 0, 0, 0.85);
+        color: rgb(0 0 0 / 85%);
         &::after {
           position: absolute;
-          content: '';
+          bottom: -10px;
+          left: 50%;
           width: 22px;
           height: 6px;
           border-radius: 6px;
           background: #598cff;
-          left: 50%;
-          bottom: -10px;
+          content: '';
           transform: translateX(-50%);
         }
       }
@@ -176,11 +176,11 @@ export default {
     .statistics-content {
       margin-top: 16px;
       .grid-item {
+        padding: 10px 00 0 20px;
         height: 288px;
-        background: #ffffff;
-        box-shadow: 0px 0px 8px 0px #edefef;
         border-radius: 8px;
-        padding: 10px 00px 0px 20px;
+        background: #ffffff;
+        box-shadow: 0 0 8px 0 #edefef;
         .bar-content {
           width: 100%;
           height: 100%;
