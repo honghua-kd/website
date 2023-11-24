@@ -134,9 +134,9 @@ import { ref, reactive } from 'vue'
 import { Refresh, Search, Plus } from '@element-plus/icons-vue'
 import { useRouter } from '@toystory/lotso'
 import { getDictList, deleteDict } from '@/api/system'
-import { dateFormatter } from '@/utils'
+import { formatDate } from '@/utils'
 import DictTypeForm from './DictTypeForm.vue'
-import { ElMessageBox, ElMessage } from 'element-plus'
+import { ElMessageBox, ElMessage, TableColumnCtx } from 'element-plus'
 
 const { router } = useRouter()
 const queryFormRef = ref(null)
@@ -160,6 +160,13 @@ const queryParams = reactive({
 })
 const tableData = ref([])
 const pageTotal = ref(0) // 列表的总页数
+
+const dateFormatter = (row:, column:TableColumnCtx, cellValue) => {
+  if (!cellValue) {
+    return
+  }
+  return formatDate(cellValue)
+}
 
 const loading = ref(false)
 // reset

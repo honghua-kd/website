@@ -1,4 +1,6 @@
 import setting from '@/config/setting'
+import dayjs from 'dayjs'
+
 const { title } = setting
 
 export const getPageTitle = (pageTitle: string) => {
@@ -371,4 +373,16 @@ export function addElementColor(str = '', el = 'a', color: string) {
       })
     }
   })
+}
+
+export function formatDate(date: Date, format?: string) {
+  // 日期不存在，则返回空
+  if (!date) {
+    return ''
+  }
+  // 日期存在，则进行格式化
+  if (format === undefined) {
+    format = 'YYYY-MM-DD HH:mm:ss'
+  }
+  return dayjs(date).format(format)
 }

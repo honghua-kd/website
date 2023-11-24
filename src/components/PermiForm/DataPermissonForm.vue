@@ -151,7 +151,7 @@ const editRowInfo = reactive({
   id: ''
 })
 // 打开弹窗
-const openDialog = async (type, data) => {
+const openDialog = async (type: 'add' | 'edit', data) => {
   dialogTitle.value = type === 'add' ? '新增数据权限列表' : '编辑数据权限列表'
   currentType.value = type
   if (type === 'add') {

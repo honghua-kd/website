@@ -112,11 +112,11 @@ defineExpose({ openDialog })
 
 // 新增数据权限
 const dataPermissionFormRef = ref()
-const addPermiHandler = (type, data) => {
+const addPermiHandler = (type: 'add' | 'edit', data) => {
   dataPermissionFormRef.value.openDialog(type, data)
 }
 // 修改
-const editHandler = (type, row) => {
+const editHandler = (type: 'add' | 'edit', row) => {
   dataPermissionFormRef.value.openDialog(type, row)
 }
 // 删除

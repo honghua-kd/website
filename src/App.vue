@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
-import { logout } from '@/api'
+import { CoreAPI } from '@/api'
 import { getAllDictType } from '@/api/system'
 import { useRouter, useRoute, mitt } from '@toystory/lotso'
 import { useDictStore } from '@/store/dict'
@@ -28,9 +28,11 @@ watch(
   }
 )
 
+const API = new CoreAPI()
+
 // 监听脚手架广播出来的登出
 mitt.on('logout', () => {
-  logout()
+  API.logout()
     .then(() => {
       const route = useRoute()
       const fullPath = route?.value.fullPath
@@ -77,3 +79,4 @@ init()
   -moz-osx-font-smoothing: grayscale;
 }
 </style>
+@/api/core

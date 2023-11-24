@@ -12,7 +12,7 @@ import {
 } from '@toystory/lotso'
 import '@toystory/lotso/dist/style.css'
 
-import { getUserInfo, getAuthData } from '@/api'
+import { CoreAPI } from '@/api'
 import App from './App.vue'
 import { setActivePinia } from 'pinia'
 
@@ -41,10 +41,11 @@ app.mount('#app')
 
 // 使用脚手架自带的守卫
 const { router } = useRouter()
+const API = new CoreAPI()
 const { handlePermission } = usePermission({
   // 需要把获取用户信息的方法和获取数据权限的方法传递给Permission hooks
   getUserInfo: async () => {
-    const { data, msg, message } = await getUserInfo()
+    const { data, msg, message } = await API.getUserInfo()
     const userStore = useUserStore()
     if (data && Object.prototype.toString.call(data) === '[object Object]') {
       userStore.setUserInfo(data)
@@ -67,7 +68,7 @@ const { handlePermission } = usePermission({
     const params = {
       systemCode: 'OPERATIONS'
     }
-    await getAuthData(params)
+    await API.getAuthData(params)
       .then((response) => {
         userStore.setAuthDataFlag(true)
         if (
