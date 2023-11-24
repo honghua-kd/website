@@ -2,27 +2,47 @@ import { useRequest } from '@toystory/lotso'
 import requestConfig from '@/config/request.config'
 import type {
   Response,
-  OrgTree,
-  DictListRequest,
+  RoleDO,
+  DictListItem,
   DictDataItem,
   PageList,
-  DictDataDetail
-} from '../types'
+  DictDataDetail,
+  RoleListPermission,
+  UserListPermission,
+  PermissionData,
+  PermissionAssign,
+  ScopeMapping,
+  DictTypePage,
+  DictTypeAllItem,
+  OrgStructure,
+  StaffList
+} from '../types/response'
+import type {
+  DictListRequest,
+  RolePageRequest,
+  RoleListPermissionRequest,
+  UserListPermissionRequest,
+  PermissionDataRequest,
+  PermissionAssignRequest,
+  PermissionDelRequest,
+  ScopeMappingRequest,
+  PermissionExpressionRequest,
+  DictTypePageRequest,
+  DictTypeCreateRequest,
+  DictTypeUpdateRequest,
+  DictTypeDelRequest,
+  DictDataPageRequest,
+  DictDataCreateRequest,
+  DictDataUpdateRequest,
+  DictDataDelRequest,
+  DictDataGetRequest,
+  GetDepartmentStaffRequest,
+  GetStaffSubordinatesRequest
+} from '../types/request'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
 
 const prefix = import.meta.env.VITE_APP_SERVICE_API
-
-// 获得全部字典类型列表
-interface DictResponse extends BaseResponse {
-  data: Record<string, string>[]
-}
-
-interface DeptResponse extends BaseResponse {
-  data: {
-    orgList: OrgTree[]
-  }
-}
 
 export class SystemAPI {
   private request: AxiosInstance
@@ -33,7 +53,7 @@ export class SystemAPI {
   }
 
   // 获取角色列表
-  getRoleList<T>(data?: T): Promise<BaseResponse> {
+  getRoleList(data: RolePageRequest): Response<PageList<RoleDO>> {
     return this.request({
       url: `${prefix}/admin-api/system/role/page`,
       method: 'post',
@@ -42,7 +62,9 @@ export class SystemAPI {
   }
 
   // 获取角色对应数据权限接口
-  getRolePermiList<T>(params?: T): Promise<BaseResponse> {
+  getRolePermiList(
+    params: RoleListPermissionRequest
+  ): Response<RoleListPermission> {
     return this.request({
       url: `${prefix}/admin-api/system/role/list-permission`,
       method: 'get',
@@ -51,7 +73,9 @@ export class SystemAPI {
   }
 
   // 获取用户对应数据权限接口
-  getUserPermiList<T>(params?: T): Promise<BaseResponse> {
+  getUserPermiList(
+    params: UserListPermissionRequest
+  ): Response<UserListPermission> {
     return this.request({
       url: `${prefix}/admin-api/system/user/list-permission`,
       method: 'get',
@@ -60,7 +84,7 @@ export class SystemAPI {
   }
 
   // 查询数据权限
-  getPermissionDetail<T>(params?: T): Promise<BaseResponse> {
+  getPermissionDetail(params: PermissionDataRequest): Response<PermissionData> {
     return this.request({
       url: `${prefix}/admin-api/system/permission/data-scope`,
       method: 'get',
@@ -69,7 +93,7 @@ export class SystemAPI {
   }
 
   // 角色管理-数据权限提交接口(赋予数据权限)
-  subDataPermission<T>(data?: T): Promise<BaseResponse> {
+  subDataPermission(data: PermissionAssignRequest): Response<PermissionAssign> {
     return this.request({
       url: `${prefix}/admin-api/system/permission/assign-data-scope`,
       method: 'post',
@@ -78,7 +102,7 @@ export class SystemAPI {
   }
 
   // 角色管理-数据权限-删除数据权限关系
-  delPermission<T>(params?: T): Promise<BaseResponse> {
+  delPermission(params: PermissionDelRequest): Response<null | undefined> {
     return this.request({
       url: `${prefix}/admin-api/system/permission/delete`,
       method: 'get',
@@ -87,9 +111,7 @@ export class SystemAPI {
   }
 
   // 角色管理-数据权限-获取字典信息
-  getSingleDict(
-    data: DictListRequest
-  ): Promise<Response<PageList<DictDataItem>>> {
+  getSingleDict(data: DictListRequest): Response<PageList<DictListItem>> {
     return this.request({
       url: `${prefix}/admin-api/system/dict-data/list`,
       method: 'post',
@@ -98,16 +120,16 @@ export class SystemAPI {
   }
 
   // 角色管理-数据权限-获规则映射字典
-  getRuleList(): Promise<BaseResponse> {
+  getRuleList(data?: ScopeMappingRequest): Response<ScopeMapping[]> {
     return this.request({
       url: `${prefix}/admin-api/system/scope-mapping/all`,
-      method: 'post'
+      method: 'post',
+      data
     })
   }
 
   // 角色管理-数据权限-规则校验接口
-
-  checkRules<T>(data?: T): Promise<BaseResponse> {
+  checkRules(data: PermissionExpressionRequest): Response<string | null> {
     return this.request({
       url: `${prefix}/admin-api/system/permission/expression`,
       method: 'post',
@@ -116,7 +138,7 @@ export class SystemAPI {
   }
 
   // 字典管理-字典类型-获取字典列表
-  getDictList<T>(data?: T): Promise<BaseResponse> {
+  getDictList(data: DictTypePageRequest): Response<PageList<DictTypePage>> {
     return this.request({
       url: `${prefix}/admin-api/system/dict-type/page`,
       method: 'post',
@@ -125,7 +147,7 @@ export class SystemAPI {
   }
 
   // 字典管理-字典类型-新增字典
-  createDict<T>(data?: T): Promise<BaseResponse> {
+  createDict(data: DictTypeCreateRequest): Response<null | undefined> {
     return this.request({
       url: `${prefix}/admin-api/system/dict-type/create`,
       method: 'post',
@@ -134,7 +156,7 @@ export class SystemAPI {
   }
 
   // 字典管理-字典类型-修改字典
-  updateDict<T>(data?: T): Promise<BaseResponse> {
+  updateDict(data: DictTypeUpdateRequest): Response<boolean | null> {
     return this.request({
       url: `${prefix}/admin-api/system/dict-type/update`,
       method: 'post',
@@ -143,7 +165,7 @@ export class SystemAPI {
   }
 
   // 字典管理-字典类型-删除字典
-  deleteDict<T>(params?: T): Promise<BaseResponse> {
+  deleteDict(params: DictTypeDelRequest): Response<boolean | null> {
     return this.request({
       url: `${prefix}/admin-api/system/dict-type/delete`,
       method: 'get',
@@ -152,7 +174,7 @@ export class SystemAPI {
   }
 
   // 字典管理-字典数据-获取字典列表
-  getDataDict<T>(data?: T): Promise<BaseResponse> {
+  getDataDict(data: DictDataPageRequest): Response<PageList<DictDataItem>> {
     return this.request({
       url: `${prefix}/admin-api/system/dict-data/page`,
       method: 'post',
@@ -160,7 +182,7 @@ export class SystemAPI {
     })
   }
 
-  getAllDictType(): Promise<DictResponse> {
+  getAllDictType(): Response<DictTypeAllItem[]> {
     return this.request({
       url: `${prefix}/admin-api/system/dict-type/list-all-simple`,
       method: 'get'
@@ -168,7 +190,7 @@ export class SystemAPI {
   }
 
   // 字典管理-字典数据-新增字典数据
-  addDataDict<T>(data?: T): Promise<BaseResponse> {
+  addDataDict(data: DictDataCreateRequest): Response<number> {
     return this.request({
       url: `${prefix}/admin-api/system/dict-data/create`,
       method: 'post',
@@ -177,7 +199,7 @@ export class SystemAPI {
   }
 
   // 字典管理-字典数据-修改字典数据
-  modifyDataDict<T>(data?: T): Promise<BaseResponse> {
+  modifyDataDict(data: DictDataUpdateRequest): Response<boolean> {
     return this.request({
       url: `${prefix}/admin-api/system/dict-data/update`,
       method: 'post',
@@ -186,7 +208,7 @@ export class SystemAPI {
   }
 
   // 字典管理-字典数据-删除字典数据
-  delDataDict<T>(params?: T): Promise<BaseResponse> {
+  delDataDict(params: DictDataDelRequest): Response<boolean> {
     return this.request({
       url: `${prefix}/admin-api/system/dict-data/delete`,
       method: 'get',
@@ -195,7 +217,7 @@ export class SystemAPI {
   }
 
   // 字典管理-字典数据-查询字典数据详细
-  getDataDictDetail<T>(params?: T): Promise<Response<DictDataDetail>> {
+  getDataDictDetail(params: DictDataGetRequest): Response<DictDataDetail> {
     return this.request({
       url: `${prefix}/admin-api/system/dict-data/get`,
       method: 'get',
@@ -205,16 +227,15 @@ export class SystemAPI {
 
   // 用户管理-批量获取部门信息
 
-  getAllDept<T>(data?: T): Promise<DeptResponse> {
+  getAllDept(): Response<OrgStructure> {
     return this.request({
       url: `${prefix}/admin-api/ehr/orgstructure/getAllDept`,
-      method: 'post',
-      data
+      method: 'post'
     })
   }
 
   // 用户管理-查询部门下员工
-  getDepartmentStaff<T>(data?: T): Promise<BaseResponse> {
+  getDepartmentStaff(data: GetDepartmentStaffRequest): Response<StaffList> {
     return this.request({
       url: `${prefix}/admin-api/ehr/orgstructure/getDepartmentStaff`,
       method: 'post',
@@ -223,7 +244,7 @@ export class SystemAPI {
   }
 
   // 用户管理-查询用户的下属
-  getStaffSubordinates<T>(data?: T): Promise<BaseResponse> {
+  getStaffSubordinates(data: GetStaffSubordinatesRequest): Response<StaffList> {
     return this.request({
       url: `${prefix}/admin-api/ehr/orgstructure/getStaffSubordinates`,
       method: 'post',
