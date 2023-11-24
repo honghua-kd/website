@@ -21,9 +21,11 @@ export interface DictListRequest {
 
 // 获得角色分页
 export interface RolePageRequest extends PageRequest {
-  roleName?: null | string
-  roleNo?: null | string
-  status?: number | null
+  roleName?: string
+  roleNo?: string
+  roleCode?: string
+  status?: number
+  createTime?: [Date, Date] // 创建时间
 }
 
 // 获取角色对应数据权限

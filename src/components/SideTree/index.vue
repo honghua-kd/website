@@ -63,9 +63,9 @@ const filterNode = (value: string, data: Tree) => {
 const init = () => {
   treeLoading.value = true
   getAllDept()
-    .then((res) => {
+    .then((res: Response) => {
       treeLoading.value = false
-      if (res && res.code === 200) {
+      if (res && res?.code === 200) {
         orgList.value = res?.data?.orgList
       }
     })

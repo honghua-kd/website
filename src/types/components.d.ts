@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    DataPermissonForm: typeof import('./../components/PermiForm/DataPermissonForm.vue')['default']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElBadge: typeof import('element-plus/es')['ElBadge']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
@@ -36,8 +37,10 @@ declare module 'vue' {
     ErrorPage: typeof import('./../components/ErrorPage/index.vue')['default']
     Icon: typeof import('./../components/Icon/index.vue')['default']
     MdEditor: typeof import('./../components/MdEditor/index.vue')['default']
+    PermiListDialog: typeof import('./../components/PermiForm/PermiListDialog.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SideTree: typeof import('./../components/SideTree/index.vue')['default']
     SvgIcon: typeof import('./../components/SvgIcon/index.vue')['default']
     Tinymce: typeof import('./../components/Tinymce/index.vue')['default']
   }

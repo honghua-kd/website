@@ -76,18 +76,21 @@
         <el-table-column align="center" label="备注" prop="remark" />
         <el-table-column align="center" label="状态" prop="status">
           <template #default="scope">
-            <el-tag :type="formatTag(scope.row.status, 'type')" effect="light">
-              {{ formatTag(scope.row.status, 'title') }}
+            <el-tag :type="fromatTagStatus(scope.row.status)" effect="light">
+              {{ formatTag(scope.row.status) }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column
-          :formatter="dateFormatter"
           align="center"
           label="创建时间"
           prop="createTime"
           width="180"
-        />
+        >
+          <template #default="scope">
+            {{ dateFormatter(scope.row.createTime, '') }}
+          </template>
+        </el-table-column>
         <el-table-column :width="300" align="center" label="操作">
           <template #default="scope">
             <el-button
@@ -117,11 +120,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import { getRoleList } from '@/api/system'
-import { dateFormatter } from '@/utils'
+import { ref, reactive, Ref } from 'vue'
+import { SystemAPI } from '@/api/system'
 import PermiListDialog from '@/components/PermiForm/PermiListDialog.vue'
 import { Refresh, Search } from '@element-plus/icons-vue'
+import dayjs from 'dayjs'
+
+import type { RolePageRequest } from '@/api/types/request'
+import type { RoleDO } from '@/api/types/response'
+
+const API = new SystemAPI()
 const statusOpts = ref([
   {
     label: '开启',
@@ -133,21 +141,32 @@ const statusOpts = ref([
   }
 ])
 const loading = ref(false)
-const queryFormRef = ref(null)
-const queryParams = reactive({
+const queryFormRef = ref()
+const queryParams = reactive<RolePageRequest>({
   pageNo: 1,
   pageSize: 10,
   roleName: '', // 角色名称
   roleCode: '', // 角色标识
   status: undefined, // 状态
-  createTime: [] // 创建时间
+  createTime: [new Date('1 00:00:00'), new Date('1 23:59:59')] // 创建时间
 })
-const tableData = ref([]) // 列表数据
-const pageTotal = ref(0) // 列表的总页数
+const tableData: Ref<RoleDO[]> = ref([]) // 列表数据
+const pageTotal = ref<number>(0) // 列表的总页数
 
+const dateFormatter = (date: Date, format: string): string => {
+  // 日期不存在，则返回空
+  if (!date) {
+    return ''
+  }
+  // 日期存在，则进行格式化
+  if (format === undefined) {
+    format = 'YYYY-MM-DD HH:mm:ss'
+  }
+  return dayjs(date).format(format)
+}
 // reset
 const resetQuery = () => {
-  queryFormRef.value.resetFields()
+  queryFormRef.value?.resetFields()
   searchHandler()
 }
 // search
@@ -157,44 +176,48 @@ const searchHandler = () => {
 }
 
 // 获取列表
-const getList = () => {
+const getList = async () => {
   loading.value = true
-  getRoleList(queryParams)
+  API.getRoleList(queryParams)
     .then((res) => {
       loading.value = false
-      if (res && res.code === 200) {
-        const { list, total } = res?.data
-        tableData.value = list
-        pageTotal.value = total
+      if (res?.code === 200) {
+        const list = res?.data?.list
+        const total = res?.data?.total
+        tableData.value = list || []
+        pageTotal.value = total || 0
       }
     })
-    .catch((err) => {
-      loading.value = false
+    .catch((err: Error) => {
       console.log(err)
+      loading.value = false
     })
 }
-const handleCurrentChange = (val) => {
+
+const handleCurrentChange = (val: number) => {
   queryParams.pageNo = val
   getList()
 }
-const handleSizeChange = (val) => {
+const handleSizeChange = (val: number) => {
   queryParams.pageSize = val
   getList()
 }
 /** 数据权限操作 */
 const roleListRef = ref()
-const openDataPermissionForm = (row) => {
+const openDataPermissionForm = (row: RoleDO) => {
   roleListRef.value.openDialog('roleCode', row)
 }
 
 // 列表tag转换
-const formatTag = (status, tagType) => {
-  const type = status === 0 ? '' : 'info'
+const formatTag = (status: number): string => {
   const title = status === 0 ? '开启' : '关闭'
-  if (tagType === 'type') return type
-  if (tagType === 'title') return title
+  return title
 }
 
+const fromatTagStatus = (status: number): '' | 'info' => {
+  const type = status === 0 ? '' : 'info'
+  return type
+}
 const init = () => {
   searchHandler()
 }

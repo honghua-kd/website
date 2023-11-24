@@ -5,7 +5,6 @@ export default {
   name: 'role',
   sort: 1
 }
-// " ( ", " ) ", " and ", " or ", " in ", " not in ", " like ", " not like ", " % ", " = ", " != ", " < ", " > ",  " <= ", " >= ", " + ", " - "," * ", " / ",  "'",  " || ", "."。
 export const formulaList = [
   [
     { label: '(' },
