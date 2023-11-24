@@ -1,6 +1,13 @@
 import { useRequest } from '@toystory/lotso'
 import requestConfig from '@/config/request.config'
-import type { BaseResponse, OrgTree } from '../types'
+import type {
+  Response,
+  OrgTree,
+  DictListRequest,
+  DictDataItem,
+  PageList,
+  DictDataDetail
+} from '../types'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
 
@@ -80,7 +87,9 @@ export class SystemAPI {
   }
 
   // 角色管理-数据权限-获取字典信息
-  getSingleDict<T>(data?: T): Promise<BaseResponse> {
+  getSingleDict(
+    data: DictListRequest
+  ): Promise<Response<PageList<DictDataItem>>> {
     return this.request({
       url: `${prefix}/admin-api/system/dict-data/list`,
       method: 'post',
@@ -186,7 +195,7 @@ export class SystemAPI {
   }
 
   // 字典管理-字典数据-查询字典数据详细
-  getDataDictDetail<T>(params?: T): Promise<BaseResponse> {
+  getDataDictDetail<T>(params?: T): Promise<Response<DictDataDetail>> {
     return this.request({
       url: `${prefix}/admin-api/system/dict-data/get`,
       method: 'get',

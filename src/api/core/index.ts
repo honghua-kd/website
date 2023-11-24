@@ -1,25 +1,19 @@
 import { useRequest } from '@toystory/lotso'
 import requestConfig from '@/config/request.config'
-import type { BaseResponse, AuthDataItem } from '../types'
+import type { Response, AuthDataItem } from '../types'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
 
 const prefix = import.meta.env.VITE_APP_SERVICE_API
-
-interface UserInfoResponse extends BaseResponse {
-  data: Record<string, string>
-}
 
 interface RoleItem {
   roleNo: string
   roleName: string
 }
 
-interface AuthDataResponse extends BaseResponse {
-  data: {
-    role: RoleItem[]
-    data: AuthDataItem[]
-  }
+interface AuthData {
+  role: RoleItem[]
+  data: AuthDataItem[]
 }
 
 export class CoreAPI {
@@ -31,7 +25,7 @@ export class CoreAPI {
   }
 
   // 获取用户信息
-  getUserInfo<T>(params?: T): Promise<UserInfoResponse> {
+  getUserInfo<T>(params?: T): Response<Record<string, string>> {
     return this.request({
       url: `${prefix}/user/v1/getInfo`,
       method: 'get',
@@ -40,7 +34,7 @@ export class CoreAPI {
   }
 
   // 获取权限数据
-  getAuthData<T extends object>(params?: T): Promise<AuthDataResponse> {
+  getAuthData<T extends object>(params?: T): Response<AuthData> {
     return this.request({
       url: `${prefix}/user/v1/getPermission`,
       method: 'get',
@@ -49,7 +43,7 @@ export class CoreAPI {
   }
 
   // 登出
-  logout(): Promise<BaseResponse> {
+  logout(): Response<null> {
     return this.request({
       url: `${prefix}/logout`,
       method: 'post'
