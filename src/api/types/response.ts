@@ -78,6 +78,7 @@ export interface RoleListPermission {
   permissionCode?: string
   roleCode?: string
   staffCode?: null | string
+  relationId?: string
 }
 
 // 获取用户的数据权限列表
@@ -86,6 +87,7 @@ export interface UserListPermission {
   permissionCode?: string
   roleCode?: null
   staffCode?: string
+  relationId?: string
 }
 
 // 查询数据权限
@@ -467,7 +469,7 @@ export interface OrgStructure {
 }
 
 // 查询部门下员工
-export interface staffListItem {
+export interface StaffListItem {
   /**
    * 区域
    */
@@ -570,5 +572,5 @@ export interface StaffList {
   /**
    * 员工列表
    */
-  staffList?: staffListItem[] | null
+  staffList?: StaffListItem[] | null
 }

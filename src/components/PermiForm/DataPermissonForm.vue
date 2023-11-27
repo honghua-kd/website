@@ -28,9 +28,9 @@
           <el-select v-model="formData.moduleCode" multiple style="width: 50%">
             <el-option
               v-for="item in dataOpts"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key="(item.value as string)"
+              :label="(item.label as string)"
+              :value="(item.value as string)"
             />
           </el-select>
         </el-form-item>
@@ -63,7 +63,7 @@
                 <el-option
                   v-for="item in ruleOpts"
                   :key="item.keywordCode"
-                  :value="item.keywordName"
+                  :value="(item.keywordName as string)"
                   :label="item.forwordName"
                 />
               </el-select>
@@ -110,84 +110,108 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import {
-  subDataPermission,
-  getPermissionDetail,
-  getSingleDict,
-  getRuleList,
-  checkRules
-} from '@/api/system'
-import { ElMessage } from 'element-plus'
+import { ref, reactive, Ref } from 'vue'
+import { SystemAPI } from '@/api'
+import { ElMessage, ElForm } from 'element-plus'
 import { formulaList } from '@/views/system/role/config'
+import type {
+  UserListPermission,
+  RoleListPermission,
+  ResponseBody,
+  PermissionData,
+  PermissionAssignRequest,
+  DictListRequest,
+  DictListItem,
+  ScopeMapping,
+  PermissionExpressionRequest
+} from '@/api'
 const props = defineProps({
   origin: {
     type: String,
     default: () => ''
   }
 })
-const formRef = ref(null)
+const systemAPI = new SystemAPI()
+const formRef = ref<InstanceType<typeof ElForm>>()
 const checkLoading = ref(false)
 const currentType = ref('')
 const formulaShow = ref(false)
 const dialogTitle = ref('')
-const formData = reactive({
+const formData: Omit<PermissionData, 'id'> = reactive({
   permissionName: '', // 权限名称
   permissionCode: '', // 权限编码
   moduleCode: [], // 模块
   dataScope: '', // 权限规则
   dataScopeExpression: '' // 表达式
 })
-const dataOpts = ref([]) // 模块字典选项
+const dataOpts: Ref<DictListItem[]> = ref([]) // 模块字典选项
 const dialogVisible = ref(false)
 const formLoading = ref(false)
 const selectedRule = ref('')
-const ruleOpts = ref([]) // 规则字典选项
-const currentOriginCode = ref('')
-const editRowInfo = reactive({
+const ruleOpts: Ref<ScopeMapping[]> = ref([]) // 规则字典选项
+const currentOriginCode = ref<string>('')
+const editRowInfo: {
+  relationId: string
+  roleCode: string
+  staffCode: string
+  id: string
+} = reactive({
   relationId: '',
   roleCode: '',
   staffCode: '',
   id: ''
 })
 // 打开弹窗
-const openDialog = async (type: 'add' | 'edit', data) => {
+
+interface ListPermission {
+  add: string
+  edit: UserListPermission | RoleListPermission
+}
+
+const openDialog = async <T extends keyof ListPermission>(
+  type: T,
+  data: ListPermission[T]
+) => {
   dialogTitle.value = type === 'add' ? '新增数据权限列表' : '编辑数据权限列表'
   currentType.value = type
   if (type === 'add') {
-    currentOriginCode.value = data
+    currentOriginCode.value = data as ListPermission['add']
   }
   resetForm()
   await getMoudleDict()
   await getRuleDict()
   dialogVisible.value = true
   if (type === 'edit') {
-    const { permissionCode, roleCode, relationId, staffCode } = data
-    currentOriginCode.value = props.origin === 'roleCode' ? roleCode : staffCode
-    editRowInfo.relationId = relationId
-    editRowInfo.staffCode = staffCode
-    editRowInfo.roleCode = roleCode
+    const { permissionCode, roleCode, relationId, staffCode } =
+      data as ListPermission['edit']
+    currentOriginCode.value =
+      props.origin === 'roleCode' ? roleCode || '' : staffCode || ''
+    editRowInfo.relationId = relationId || ''
+    editRowInfo.staffCode = staffCode || ''
+    editRowInfo.roleCode = roleCode || ''
     const params = {
       permissionCode
     }
-    getPermissionDetail(params).then((res) => {
-      if (res && res.code === 200) {
-        const {
-          moduleCode,
-          permissionCode,
-          permissionName,
-          id,
-          dataScopeExpression,
-          dataScope
-        } = res.data
-        formData.permissionName = permissionName
-        formData.permissionCode = permissionCode
-        formData.moduleCode = [...moduleCode]
-        formData.dataScope = dataScope
-        formData.dataScopeExpression = dataScopeExpression
-        editRowInfo.id = id
-      }
-    })
+    systemAPI
+      .getPermissionDetail(params)
+      .then((res: ResponseBody<PermissionData>) => {
+        if (res && res.code === 200) {
+          const {
+            moduleCode,
+            permissionCode,
+            permissionName,
+            id,
+            dataScopeExpression,
+            dataScope
+          } = res.data || {}
+          formData.permissionName = permissionName || ''
+          formData.permissionCode = permissionCode
+          formData.moduleCode = moduleCode ? [...moduleCode] : []
+          formData.dataScope = dataScope || ''
+          formData.dataScopeExpression = dataScopeExpression || ''
+          editRowInfo.id = id + ''
+        }
+      })
   }
 }
 defineExpose({ openDialog })
@@ -213,7 +237,7 @@ const submitForm = async () => {
   if (!formRef.value) return
   const valid = await formRef.value.validate()
   if (!valid) return
-  let params = {}
+  let params: PermissionAssignRequest = {}
   if (currentType.value === 'add') {
     params = {
       ...formData,
@@ -224,9 +248,9 @@ const submitForm = async () => {
       ...formData,
       ...editRowInfo
     }
-    console.log('params', params)
   }
-  subDataPermission(params)
+  systemAPI
+    .subDataPermission(params)
     .then((res) => {
       if (res && res.code === 200) {
         ElMessage.success('提交成功')
@@ -247,7 +271,7 @@ const editRuleHandler = () => {
   formulaShow.value = !formulaShow.value
 }
 // 选中公式
-const selectUnitHandler = (unit) => {
+const selectUnitHandler = (unit: string) => {
   formData.dataScope += unit
 }
 // reset Form
@@ -264,14 +288,15 @@ const resetForm = () => {
 
 // 获取模块字典信息
 const getMoudleDict = () => {
-  const params = {
+  const params: DictListRequest = {
     dictType: 'data_scope_module',
     status: 0
   }
-  getSingleDict(params)
+  systemAPI
+    .getSingleDict(params)
     .then((res) => {
       if (res && res.code === 200) {
-        dataOpts.value = res.data
+        dataOpts.value = res.data || []
       }
     })
     .catch((err) => {
@@ -281,10 +306,11 @@ const getMoudleDict = () => {
 
 // 获取公式映射字典
 const getRuleDict = () => {
-  getRuleList()
+  systemAPI
+    .getRuleList()
     .then((res) => {
       if (res && res.code === 200) {
-        ruleOpts.value = res.data
+        ruleOpts.value = res.data || []
       }
     })
     .catch((err) => {
@@ -292,20 +318,21 @@ const getRuleDict = () => {
     })
 }
 // 选中规则
-const ruleChange = (item) => {
+const ruleChange = (item: string) => {
   formData.dataScope += item
 }
 // 规则校验接口-获取表达式
 const checkRulesHandler = () => {
   checkLoading.value = true
-  const params = {
-    dataScope: formData.dataScope
+  const params: PermissionExpressionRequest = {
+    dataScope: formData.dataScope || ''
   }
-  checkRules(params)
+  systemAPI
+    .checkRules(params)
     .then((res) => {
       checkLoading.value = false
       if (res && res.code === 200) {
-        formData.dataScopeExpression = res?.data
+        formData.dataScopeExpression = res?.data || ''
       }
     })
     .catch((err) => {

@@ -51,27 +51,40 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, Ref } from 'vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import DataPermissonForm from '@/components/PermiForm/DataPermissonForm.vue'
-import { getRolePermiList, getUserPermiList, delPermission } from '@/api/system'
+import { SystemAPI } from '@/api'
+import type {
+  UserListPermissionRequest,
+  ResponseBody,
+  UserListPermission,
+  RoleListPermission,
+  PermissionDelRequest,
+  RoleDO,
+  StaffListItem
+} from '@/api'
+
 const tableLoading = ref(false)
-const permiList = ref([])
+const permiList: Ref<UserListPermission[] | RoleListPermission[]> = ref([])
 const dialogVisible = ref(false)
 const dialogTitle = ref('数据权限')
 const formLoading = ref(false)
-const currentRowNo = ref('')
+const currentRowNo: Ref<string> = ref('')
 const emit = defineEmits(['success'])
 const origin = ref('')
+
+const systemAPI = new SystemAPI()
 // 获取角色对应数据权限
-const getRolePerList = (roleCode) => {
-  const params = {
+const getRolePerList = (roleCode: string) => {
+  const params: RoleListPermission = {
     roleCode
   }
-  getRolePermiList(params)
+  systemAPI
+    .getRolePermiList(params)
     .then((res) => {
       if (res && res.code === 200) {
-        permiList.value = res.data
+        permiList.value = res.data || []
       }
     })
     .catch((err) => {
@@ -81,13 +94,14 @@ const getRolePerList = (roleCode) => {
 
 // 获取用户对应数据权限
 const getUserPerList = (staffCode: string) => {
-  const params = {
+  const params: UserListPermissionRequest = {
     staffCode
   }
-  getUserPermiList(params)
-    .then((res) => {
+  systemAPI
+    .getUserPermiList(params)
+    .then((res: ResponseBody<UserListPermission[]>) => {
       if (res && res.code === 200) {
-        permiList.value = res.data
+        permiList.value = res.data || []
       }
     })
     .catch((err) => {
@@ -95,32 +109,38 @@ const getUserPerList = (staffCode: string) => {
     })
 }
 /** 打开弹窗 */
-const openDialog = (from, row) => {
+const openDialog = (
+  from: 'roleCode' | 'staffCode',
+  row: RoleDO & StaffListItem
+) => {
   dialogVisible.value = true
   origin.value = from
   if (from === 'roleCode') {
     const { roleNo } = row
-    currentRowNo.value = roleNo
-    getRolePerList(roleNo)
+    currentRowNo.value = roleNo || ''
+    getRolePerList(roleNo || '')
   } else if (from === 'staffCode') {
     const { staffCode } = row
-    currentRowNo.value = staffCode
-    getUserPerList(staffCode)
+    currentRowNo.value = staffCode || ''
+    getUserPerList(staffCode || '')
   }
 }
 defineExpose({ openDialog })
 
 // 新增数据权限
-const dataPermissionFormRef = ref()
-const addPermiHandler = (type: 'add' | 'edit', data) => {
-  dataPermissionFormRef.value.openDialog(type, data)
+const dataPermissionFormRef = ref<InstanceType<typeof DataPermissonForm>>()
+const addPermiHandler = (type: 'add' | 'edit', data: string) => {
+  dataPermissionFormRef.value?.openDialog(type, data)
 }
 // 修改
-const editHandler = (type: 'add' | 'edit', row) => {
-  dataPermissionFormRef.value.openDialog(type, row)
+const editHandler = (
+  type: 'edit',
+  row: UserListPermission | RoleListPermission
+) => {
+  dataPermissionFormRef.value?.openDialog(type, row)
 }
 // 删除
-const delHandler = (row) => {
+const delHandler = (row: UserListPermission | RoleListPermission) => {
   // 二次确认
   ElMessageBox.confirm('确认要删除吗？', '警告', {
     confirmButtonText: '确定',
@@ -130,17 +150,17 @@ const delHandler = (row) => {
     .then(() => {
       const { id, roleCode } = row
 
-      const params = {
+      const params: PermissionDelRequest = {
         id
       }
       // 调用删除接口
-      delPermission(params).then((res) => {
+      systemAPI.delPermission(params).then((res) => {
         if (res && res.code === 200 && res.data === true) {
           ElMessage({
             type: 'success',
             message: '删除成功'
           })
-          getRolePerList(roleCode)
+          getRolePerList(roleCode || '')
         }
       })
     })

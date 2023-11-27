@@ -64,7 +64,7 @@ export class SystemAPI {
   // 获取角色对应数据权限接口
   getRolePermiList(
     params: RoleListPermissionRequest
-  ): Response<RoleListPermission> {
+  ): Response<RoleListPermission[]> {
     return this.request({
       url: `${prefix}/admin-api/system/role/list-permission`,
       method: 'get',
@@ -75,7 +75,7 @@ export class SystemAPI {
   // 获取用户对应数据权限接口
   getUserPermiList(
     params: UserListPermissionRequest
-  ): Response<UserListPermission> {
+  ): Response<UserListPermission[]> {
     return this.request({
       url: `${prefix}/admin-api/system/user/list-permission`,
       method: 'get',
@@ -102,7 +102,9 @@ export class SystemAPI {
   }
 
   // 角色管理-数据权限-删除数据权限关系
-  delPermission(params: PermissionDelRequest): Response<null | undefined> {
+  delPermission(
+    params: PermissionDelRequest
+  ): Response<boolean | null | undefined> {
     return this.request({
       url: `${prefix}/admin-api/system/permission/delete`,
       method: 'get',
@@ -111,7 +113,7 @@ export class SystemAPI {
   }
 
   // 角色管理-数据权限-获取字典信息
-  getSingleDict(data: DictListRequest): Response<PageList<DictListItem>> {
+  getSingleDict(data: DictListRequest): Response<DictListItem[]> {
     return this.request({
       url: `${prefix}/admin-api/system/dict-data/list`,
       method: 'post',
