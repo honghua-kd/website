@@ -28,11 +28,11 @@
 
 <script setup lang="ts">
 import { ref, Ref } from 'vue'
-import { getAllDept } from '@/api/system'
+import { SystemAPI } from '@/api'
 import { Search } from '@element-plus/icons-vue'
 import debounce from 'lodash.debounce'
 import { ElTree } from 'element-plus'
-import type { OrgTree } from '@/types/api'
+import type { ResponseBody, OrgStructure, OrgInfoItem } from '@/api'
 
 const emit = defineEmits(['getSelect'])
 const defaultProps = {
@@ -40,11 +40,14 @@ const defaultProps = {
   label: 'orgName'
 }
 const treeRef = ref<InstanceType<typeof ElTree>>()
-const orgList: Ref<OrgTree[]> = ref([])
+const orgList: Ref<OrgInfoItem[]> = ref([])
 const treeLoading = ref(false)
 const searchKey = ref('')
+
+const systemAPI = new SystemAPI()
+
 /** 定义方法 */
-const handleNodeClick = (data: OrgTree) => {
+const handleNodeClick = (data: OrgInfoItem) => {
   emit('getSelect', data)
 }
 const searchHandler = debounce((value) => {
@@ -62,11 +65,12 @@ const filterNode = (value: string, data: Tree) => {
 
 const init = () => {
   treeLoading.value = true
-  getAllDept()
-    .then((res: Response) => {
+  systemAPI
+    .getAllDept()
+    .then((res: ResponseBody<OrgStructure>) => {
       treeLoading.value = false
       if (res && res?.code === 200) {
-        orgList.value = res?.data?.orgList
+        orgList.value = res?.data?.orgList || []
       }
     })
     .catch((err) => {
