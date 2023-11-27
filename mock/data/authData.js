@@ -54,8 +54,22 @@ export default [
         ],
         elements: [],
         menuType: 5,
-        sort: 4,
+        sort: 5,
         menu: 'dataTypeMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'expression'
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        sort: 5,
+        menu: 'expressionMenu'
       }
     ],
     elements: [],

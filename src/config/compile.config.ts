@@ -41,11 +41,11 @@ const userViteConfig: ViteConfig = {
   // 代理后端地址
   proxy: {
     // 正则表达式写法
-    '^/api/.*': {
-      target: 'https://dev-op.utfinancing.com/operations-management',
+    '^/operations-management/.*': {
+      target: 'https://dev-op.utfinancing.com',
       // target: 'http://10.102.3.105:8899',
       changeOrigin: true,
-      rewrite: (path) => path.replace(/^\/api/, '')
+      rewrite: (path) => path.replace(/^\/operations-management/, '')
     }
   },
   // 是否使用mock数据
