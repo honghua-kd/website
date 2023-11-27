@@ -4,7 +4,7 @@ export interface PageRequest {
 }
 
 // 数据字典列表
-export interface DictListRequest extends PageRequest {
+export interface DictListRequest {
   /**
    * 字典类型
    */
@@ -12,11 +12,11 @@ export interface DictListRequest extends PageRequest {
   /**
    * 标签
    */
-  label?: null | string
+  label?: string
   /**
    * 状态
    */
-  status?: null | number | string
+  status?: number | string
 }
 
 // 获得角色分页
@@ -123,16 +123,16 @@ export interface PermissionExpressionRequest {
 
 // 获得字典类型的分页列表
 export interface DictTypePageRequest extends PageRequest {
-  name?: null | string
-  status?: null | string
-  type?: null | string
+  name?: string
+  status?: string
+  type?: string
 }
 
 // 创建字典类型
 export interface DictTypeCreateRequest {
   name?: null | string
   remark?: null | string
-  status?: number | null
+  status?: number
   type?: null | string
 }
 
@@ -141,7 +141,7 @@ export interface DictTypeUpdateRequest {
   id?: number | null
   name?: null | string
   remark?: null | string
-  status?: number | null
+  status?: number
   type?: null | string
 }
 
@@ -152,9 +152,9 @@ export interface DictTypeDelRequest {
 
 // 获得字典类型的分页列表
 export interface DictDataPageRequest extends PageRequest {
-  dictType?: null | string
-  label?: null | string
-  status?: null | string
+  dictType?: string
+  label?: string
+  status?: string | number | undefined
 }
 
 // 新增字典数据
@@ -164,21 +164,22 @@ export interface DictDataCreateRequest {
   dictType?: null | string
   label?: null | string
   level?: number | null
+  dataLevel?: string | number | null
   parentValue?: null | string
   remark?: null | string
-  sort?: number | null
-  status?: number | null
+  sort?: number
+  status?: number
   value?: null | string
 }
 
 // 修改字典数据
 export interface DictDataUpdateRequest extends DictDataCreateRequest {
-  id: number
+  id: number | string
 }
 
 // 删除字典数据
 export interface DictDataDelRequest {
-  id: number
+  id: number | string
 }
 // 查询字典数据详细
 export type DictDataGetRequest = DictDataDelRequest

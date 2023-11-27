@@ -61,17 +61,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import { addDataDict, modifyDataDict, getDataDictDetail } from '@/api/system'
-import { ElMessage } from 'element-plus'
-
-const dialogTitle = ref('')
-const formRef = ref(null)
-
-const dialogVisible = ref(false)
-const currentType = ref('')
-const formLoading = ref(false)
-const formParams = reactive({
+import { ref, reactive, Ref } from 'vue'
+import { SystemAPI } from '@/api/system'
+import { ElMessage, ElForm } from 'element-plus'
+import type { DictDataUpdateRequest } from '@/api'
+const API = new SystemAPI()
+const dialogTitle: Ref<string> = ref('')
+const formRef = ref<InstanceType<typeof ElForm>>()
+const dialogVisible: Ref<boolean> = ref(false)
+const currentType: Ref<string> = ref('')
+const formLoading: Ref<boolean> = ref(false)
+const formParams = reactive<DictDataUpdateRequest>({
   id: '',
   dictType: '', // 字典类型
   label: '', // 数据标签
@@ -106,7 +106,7 @@ const formRules = reactive({
 })
 
 /** 打开弹窗 */
-const open = async (type, data) => {
+const open = async (type: string, data: string & number) => {
   dialogVisible.value = true
   currentType.value = type
   dialogTitle.value = type === 'add' ? '新增字典数据' : '编辑字典数据'
@@ -121,30 +121,20 @@ const open = async (type, data) => {
 defineExpose({ open })
 
 // 获取详情数据
-const getDetailHandler = async (id) => {
+const getDetailHandler = async (id: string) => {
   const params = {
     id
   }
-  getDataDictDetail(params).then((res) => {
+  API.getDataDictDetail(params).then((res) => {
     if (res && res.code === 200) {
-      const {
-        sort,
-        label,
-        value,
-        dictType,
-        status,
-        remark,
-        parentValue,
-        dataLevel
-      } = res.data
-      formParams.dictType = dictType
-      formParams.label = label
-      formParams.value = value
-      formParams.parentValue = parentValue
-      formParams.dataLevel = dataLevel
-      formParams.status = status
-      formParams.sort = sort
-      formParams.remark = remark
+      formParams.dictType = res?.data?.dictType
+      formParams.label = res?.data?.label
+      formParams.value = res?.data?.value
+      formParams.parentValue = res?.data?.parentValue
+      formParams.dataLevel = res?.data?.dataLevel
+      formParams.status = res?.data?.status || 0
+      formParams.sort = res?.data?.sort || 0
+      formParams.remark = res?.data?.remark
     }
   })
 }
@@ -155,10 +145,12 @@ const submitForm = async () => {
   const valid = await formRef.value.validate()
   if (!valid) return
   const { id, ...others } = formParams
-  const params = currentType.value === 'add' ? { ...others } : { ...formParams }
+  const addParams = { ...others }
+  const editParams = { ...formParams }
+  console.log(id)
   formLoading.value = true
   if (currentType.value === 'add') {
-    addDataDict(params)
+    API.addDataDict(addParams)
       .then((res) => {
         formLoading.value = false
         if (res && res.code === 200) {
@@ -176,7 +168,7 @@ const submitForm = async () => {
     return
   }
   if (currentType.value === 'edit') {
-    modifyDataDict(params)
+    API.modifyDataDict(editParams)
       .then((res) => {
         formLoading.value = false
         if (res && res.code === 200) {

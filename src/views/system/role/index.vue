@@ -125,6 +125,7 @@ import { SystemAPI } from '@/api/system'
 import PermiListDialog from '@/components/PermiForm/PermiListDialog.vue'
 import { Refresh, Search } from '@element-plus/icons-vue'
 import { formatDate } from '@/utils'
+import { ElForm } from 'element-plus'
 import type { RolePageRequest } from '@/api/types/request'
 import type { RoleDO } from '@/api/types/response'
 
@@ -140,7 +141,7 @@ const statusOpts = ref([
   }
 ])
 const loading = ref(false)
-const queryFormRef = ref()
+const queryFormRef = ref<InstanceType<typeof ElForm>>()
 const queryParams = reactive<RolePageRequest>({
   pageNo: 1,
   pageSize: 10,

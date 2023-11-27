@@ -150,10 +150,10 @@
 <script setup lang="ts">
 import { ref, reactive, Ref } from 'vue'
 import { SystemAPI } from '@/api/system'
-
 import SideTree from '@/components/SideTree/index.vue'
 import { Refresh, Search } from '@element-plus/icons-vue'
 import PermiListDialog from '@/components/PermiForm/PermiListDialog.vue'
+import { ElForm } from 'element-plus'
 import type {
   ResponseBody,
   StaffList,
@@ -167,7 +167,7 @@ const currentOrgCode: Ref<string> = ref('')
 const tableData: Ref<StaffListItem[]> = ref([]) // 列表数据
 const loading: Ref<boolean> = ref(false)
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
-const queryFormRef = ref()
+const queryFormRef = ref<InstanceType<typeof ElForm>>()
 const queryParams = reactive<PageRequest & GetStaffSubordinatesRequest>({
   pageNo: 1,
   pageSize: 10,

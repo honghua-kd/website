@@ -11,10 +11,10 @@
                 placeholder="请选择字典名称"
               >
                 <el-option
-                  v-for="item in dictOpts"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.type"
+                  v-for="(item, index) in dictOpts"
+                  :key="index"
+                  :label="(item.name as string)"
+                  :value="(item.type as string)"
                 />
               </el-select>
             </el-form-item>
@@ -52,7 +52,7 @@
             <el-button
               type="primary"
               :icon="Plus"
-              @click="addHandler('add', queryParams.dictType)"
+              @click="addHandler('add', queryParams.dictType as string)"
             >
               新增
             </el-button>
@@ -147,18 +147,19 @@ import { useRoute } from '@toystory/lotso'
 import { SystemAPI } from '@/api/system'
 import { formatDate } from '@/utils'
 import DataDictTypeFrom from './DataDictForm.vue'
-import { ElMessageBox, ElMessage } from 'element-plus'
+import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import type {
   DictListItem,
+  DictTypePage,
   DictListRequest,
-  DictTypeUpdateRequest
+  PageRequest
 } from '@/api'
 
 const API = new SystemAPI()
 const dictStore = useDictStore()
-const dictOpts: Ref<DictTypeUpdateRequest[]> = ref([])
+const dictOpts: Ref<DictTypePage[]> = ref([])
 const route = useRoute()
-const queryFormRef = ref()
+const queryFormRef = ref<InstanceType<typeof ElForm>>()
 const statusOpts = ref([
   {
     label: '开启',
@@ -170,12 +171,12 @@ const statusOpts = ref([
   }
 ])
 
-const queryParams = reactive<DictListRequest>({
+const queryParams = reactive<PageRequest & DictListRequest>({
   pageNo: 1,
   pageSize: 10,
   dictType: '', // 字典类型
   label: '', // 字典标签
-  status: '' // 状态
+  status: undefined // 状态
 })
 const tableData: Ref<DictListItem[]> = ref([])
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
@@ -236,7 +237,7 @@ const addHandler = (type: string, data: string) => {
   dataDictFormRef.value.open(type, data)
 }
 // 修改
-const editHandler = (type: string, id: number) => {
+const editHandler = (type: string, id: number | string) => {
   dataDictFormRef.value.open(type, id)
 }
 
@@ -263,18 +264,18 @@ const delHandler = (id: number) => {
       })
     })
     .catch((err: Error) => {
-      console.log(err)
-      // ElMessage({
-      //   type: 'danger',
-      //   message: '删除失败'
-      // })
+      ElMessage({
+        type: 'error',
+        message: '删除失败'
+      })
+      throw err
     })
 }
 
 onActivated(async () => {
   dictOpts.value = dictStore.getDictMap
-  queryParams.dictType = route.value.query.type
-  if (route.value.query.type) {
+  queryParams.dictType = route?.value?.query.type as string
+  if (route?.value.query.type) {
     searchHandler()
   }
 })

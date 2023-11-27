@@ -50,7 +50,7 @@
 <script setup lang="ts">
 import { ref, reactive, Ref } from 'vue'
 import { SystemAPI } from '@/api/system'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElForm } from 'element-plus'
 import type { DictTypeUpdateRequest, DictTypePage } from '@/api'
 
 const API = new SystemAPI()
@@ -65,7 +65,7 @@ const formParams = reactive<DictTypeUpdateRequest>({
   status: 0,
   remark: ''
 })
-const formRef = ref()
+const formRef = ref<InstanceType<typeof ElForm>>()
 const statusOpts = ref([
   {
     label: '开启',
@@ -84,11 +84,11 @@ const open = (type: string, row: DictTypePage) => {
   dialogTitle.value = type === 'add' ? '新增字典' : '编辑字典'
   resetForm()
   if (type === 'edit') {
-    formParams.id = row.id
-    formParams.name = row.name
-    formParams.type = row.type
-    formParams.status = row.status
-    formParams.remark = row.remark
+    formParams.id = row?.id
+    formParams.name = row?.name
+    formParams.type = row?.type
+    formParams.status = row?.status || 0
+    formParams.remark = row?.remark
   }
 }
 defineExpose({ open })

@@ -127,12 +127,12 @@ import { useRouter } from '@toystory/lotso'
 import { SystemAPI } from '@/api/system'
 import { formatDate } from '@/utils'
 import DictTypeForm from './DictTypeForm.vue'
-import { ElMessageBox, ElMessage } from 'element-plus'
+import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import type { DictTypePage, DictTypePageRequest } from '@/api'
 
 const API = new SystemAPI()
 const { router } = useRouter()
-const queryFormRef = ref()
+const queryFormRef = ref<InstanceType<typeof ElForm>>()
 const statusOpts = ref([
   {
     label: '开启',
@@ -149,7 +149,7 @@ const queryParams = reactive<DictTypePageRequest>({
   pageSize: 10,
   name: '', // 字典名称
   type: '', // 字典类型
-  status: undefined // 状态
+  status: '' // 状态
 })
 const tableData: Ref<DictTypePage[]> = ref([])
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
@@ -223,11 +223,11 @@ const delHandler = (id: number) => {
       })
     })
     .catch((err: Error) => {
-      console.log(err)
-      // ElMessage({
-      //   type: 'danger',
-      //   message: '删除失败'
-      // })
+      ElMessage({
+        type: 'error',
+        message: '删除失败'
+      })
+      throw err
     })
 }
 // 跳转数据
