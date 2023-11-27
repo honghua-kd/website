@@ -4,7 +4,7 @@ export interface PageRequest {
 }
 
 // 数据字典列表
-export interface DictListRequest extends PageRequest {
+export interface DictListRequest {
   /**
    * 字典类型
    */
