@@ -80,6 +80,7 @@ export interface RoleListPermission {
   permissionCode?: string
   roleCode?: string
   staffCode?: null | string
+  relationId?: string
 }
 
 // 获取用户的数据权限列表
@@ -88,6 +89,7 @@ export interface UserListPermission {
   permissionCode?: string
   roleCode?: null
   staffCode?: string
+  relationId?: string
 }
 
 // 查询数据权限

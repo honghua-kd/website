@@ -16,7 +16,7 @@ export interface DictListRequest extends PageRequest {
   /**
    * 状态
    */
-  status?: null | string
+  status?: null | number | string
 }
 
 // 获得角色分页
@@ -54,31 +54,31 @@ export interface PermissionAssignRequest {
   /**
    * 权限规则
    */
-  dataScope: string
+  dataScope?: string | null
   /**
    * 规则表达式
    */
-  dataScopeExpression: string
+  dataScopeExpression?: string | null
   /**
    * 主键，新增为空
    */
-  id?: number | null
+  id?: string | number | null
   /**
    * 模块编码，多选，分号分隔
    */
-  moduleCode: string[]
+  moduleCode?: string[]
   /**
    * 权限编码，不能重复
    */
-  permissionCode: string
+  permissionCode?: string | null
   /**
    * 权限名称
    */
-  permissionName: string
+  permissionName?: string | null
   /**
    * 关系主键，新增为空
    */
-  relationId?: number | null
+  relationId?: string | number | null
   /**
    * 角色编码，为角色赋权时，不能为空
    */
