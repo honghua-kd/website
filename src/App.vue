@@ -9,8 +9,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
-import { CoreAPI } from '@/api'
-import { getAllDictType } from '@/api/system'
+import { CoreAPI, SystemAPI } from '@/api'
 import { useRouter, useRoute, mitt } from '@toystory/lotso'
 import { useDictStore } from '@/store/dict'
 import type { ElScrollbar } from 'element-plus'
@@ -28,11 +27,13 @@ watch(
   }
 )
 
-const API = new CoreAPI()
+const coreAPI = new CoreAPI()
+const systemAPI = new SystemAPI()
 
 // 监听脚手架广播出来的登出
 mitt.on('logout', () => {
-  API.logout()
+  coreAPI
+    .logout()
     .then(() => {
       const route = useRoute()
       const fullPath = route?.value.fullPath
@@ -52,11 +53,12 @@ const getDictInfo = () => {
     dictStore.setDictMap(dictCache)
     return
   }
-  getAllDictType()
+  systemAPI
+    .getAllDictType()
     .then((res) => {
       if (res && res.code === 200) {
         sessionStorage.setItem('DICTMAP', JSON.stringify(res.data))
-        const dictMap = res.data
+        const dictMap = res.data || []
         dictStore.setDictMap(dictMap)
       }
     })
