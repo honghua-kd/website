@@ -4,7 +4,7 @@ export interface PageRequest {
 }
 
 // 数据字典列表
-export interface DictListRequest {
+export interface DictListRequest extends PageRequest {
   /**
    * 字典类型
    */
@@ -142,6 +142,7 @@ export interface DictTypeUpdateRequest {
   name?: null | string
   remark?: null | string
   status?: number | null
+  type?: null | string
 }
 
 // 删除字典类型

@@ -48,22 +48,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import { createDict, updateDict } from '@/api/system'
+import { ref, reactive, Ref } from 'vue'
+import { SystemAPI } from '@/api/system'
 import { ElMessage } from 'element-plus'
+import type { DictTypeUpdateRequest, DictTypePage } from '@/api'
 
-const dialogTitle = ref('新增字典')
-const dialogVisible = ref(false)
-const formLoading = ref(false)
-const currentType = ref('')
-const formParams = reactive({
+const API = new SystemAPI()
+const dialogTitle: Ref<string> = ref('新增字典')
+const dialogVisible: Ref<boolean> = ref(false)
+const formLoading: Ref<boolean> = ref(false)
+const currentType: Ref<string> = ref('')
+const formParams = reactive<DictTypeUpdateRequest>({
   id: undefined,
   name: '',
   type: '',
   status: 0,
   remark: ''
 })
-const formRef = ref(null)
+const formRef = ref()
 const statusOpts = ref([
   {
     label: '开启',
@@ -76,7 +78,7 @@ const statusOpts = ref([
 ])
 const emit = defineEmits(['success'])
 /** 打开弹窗 */
-const open = (type, row) => {
+const open = (type: string, row: DictTypePage) => {
   dialogVisible.value = true
   currentType.value = type
   dialogTitle.value = type === 'add' ? '新增字典' : '编辑字典'
@@ -109,7 +111,7 @@ const submitForm = async () => {
     ...formParams
   }
   if (currentType.value === 'add') {
-    createDict(params)
+    API.createDict(params)
       .then((res) => {
         formLoading.value = false
         if (res && res.code === 200) {
@@ -124,7 +126,7 @@ const submitForm = async () => {
         console.log(err)
       })
   } else if (currentType.value === 'edit') {
-    updateDict(params)
+    API.updateDict(params)
       .then((res) => {
         if (res && res.code === 200) {
           ElMessage({

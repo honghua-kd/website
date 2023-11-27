@@ -31,6 +31,7 @@ export interface DictListItem {
   id?: null | number
   label?: null | string
   level?: null | number
+  dataLevel?: null | number
   parentValue?: null | string
   remark?: null | string
   sort?: null | number
@@ -47,6 +48,7 @@ export interface DictDataDetail {
   id?: number | null
   label?: null | string
   level?: number | null
+  dataLevel?: null | number
   parentValue?: null | string
   remark?: null | string
   sort?: number | null
