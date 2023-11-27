@@ -886,7 +886,7 @@
 
 "@toystory/lotso@2.1.0-rc5":
   version "2.1.0-rc5"
-  resolved "https://registry.npmjs.org/@toystory/lotso/-/lotso-2.1.0-rc5.tgz#4624b8aea757ac3144fd52196d57859b4734b042"
+  resolved "https://registry.yarnpkg.com/@toystory/lotso/-/lotso-2.1.0-rc5.tgz#4624b8aea757ac3144fd52196d57859b4734b042"
   integrity sha512-Hpkt46YA2S8gWc5/sOpZxJwvUXqsd9qnUBGSG2m0BNhTOvYyGHKFJb1eH8Ft0f9fNRzY3W3YCvEtpjtdCUoFIg==
   dependencies:
     "@element-plus/icons-vue" "2.1.0"

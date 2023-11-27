@@ -81,4 +81,3 @@ init()
   -moz-osx-font-smoothing: grayscale;
 }
 </style>
-@/api/core
