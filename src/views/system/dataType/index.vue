@@ -92,19 +92,22 @@
         <el-table-column align="center" label="字典层级" prop="dataLevel" />
         <el-table-column align="center" label="状态" prop="status">
           <template #default="scope">
-            <el-tag :type="formatTag(scope.row.status, 'type')" effect="light">
-              {{ formatTag(scope.row.status, 'title') }}
+            <el-tag :type="fromatTagStatus(scope.row.status)" effect="light">
+              {{ formatTag(scope.row.status) }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column align="center" label="备注" prop="remark" />
         <el-table-column
-          :formatter="dateFormatter"
           align="center"
           label="创建时间"
           prop="createTime"
           width="180"
-        />
+        >
+          <template #default="scope">
+            {{ formatDate(scope.row.createTime, '') }}
+          </template>
+        </el-table-column>
         <el-table-column align="center" label="操作">
           <template #default="scope">
             <el-button
@@ -137,19 +140,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onActivated } from 'vue'
+import { ref, reactive, onActivated, Ref } from 'vue'
 import { useDictStore } from '@/store/dict.js'
 import { Refresh, Search, Plus } from '@element-plus/icons-vue'
 import { useRoute } from '@toystory/lotso'
-import { getDataDict, delDataDict } from '@/api/system'
-import { dateFormatter } from '@/utils'
+import { SystemAPI } from '@/api/system'
+import { formatDate } from '@/utils'
 import DataDictTypeFrom from './DataDictForm.vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
+import type {
+  DictListItem,
+  DictListRequest,
+  DictTypeUpdateRequest
+} from '@/api'
 
+const API = new SystemAPI()
 const dictStore = useDictStore()
-const dictOpts = ref([])
+const dictOpts: Ref<DictTypeUpdateRequest[]> = ref([])
 const route = useRoute()
-const queryFormRef = ref(null)
+const queryFormRef = ref()
 const statusOpts = ref([
   {
     label: '开启',
@@ -161,20 +170,20 @@ const statusOpts = ref([
   }
 ])
 
-const queryParams = reactive({
+const queryParams = reactive<DictListRequest>({
   pageNo: 1,
   pageSize: 10,
   dictType: '', // 字典类型
   label: '', // 字典标签
-  status: undefined // 状态
+  status: '' // 状态
 })
-const tableData = ref([])
-const pageTotal = ref(0) // 列表的总页数
+const tableData: Ref<DictListItem[]> = ref([])
+const pageTotal: Ref<number> = ref(0) // 列表的总页数
 
 const loading = ref(false)
 // reset
 const resetQuery = () => {
-  queryFormRef.value.resetFields()
+  queryFormRef.value?.resetFields()
   searchHandler()
 }
 // search
@@ -183,11 +192,14 @@ const searchHandler = () => {
   getList()
 }
 // 列表tag转换
-const formatTag = (status, tagType) => {
-  const type = status === 0 ? '' : 'info'
+const formatTag = (status: number): string => {
   const title = status === 0 ? '开启' : '关闭'
-  if (tagType === 'type') return type
-  if (tagType === 'title') return title
+  return title
+}
+
+const fromatTagStatus = (status: number): '' | 'info' => {
+  const type = status === 0 ? '' : 'info'
+  return type
 }
 // 获取字典列表
 const getList = () => {
@@ -195,13 +207,12 @@ const getList = () => {
   const params = {
     ...queryParams
   }
-  getDataDict(params)
+  API.getDataDict(params)
     .then((res) => {
       loading.value = false
       if (res && res.code === 200) {
-        const { list, total } = res.data
-        tableData.value = list
-        pageTotal.value = total
+        tableData.value = res?.data?.list || []
+        pageTotal.value = res?.data?.total || 0
       }
     })
     .catch((err) => {
@@ -210,27 +221,27 @@ const getList = () => {
     })
 }
 // 切换页数
-const handleCurrentChange = (val) => {
+const handleCurrentChange = (val: number) => {
   queryParams.pageNo = val
   getList()
 }
-const handleSizeChange = (val) => {
+const handleSizeChange = (val: number) => {
   queryParams.pageSize = val
   getList()
 }
 
 // 新增
-const dataDictFormRef = ref(null)
-const addHandler = (type, data) => {
+const dataDictFormRef = ref()
+const addHandler = (type: string, data: string) => {
   dataDictFormRef.value.open(type, data)
 }
 // 修改
-const editHandler = (type, id) => {
+const editHandler = (type: string, id: number) => {
   dataDictFormRef.value.open(type, id)
 }
 
 // 删除
-const delHandler = (id) => {
+const delHandler = (id: number) => {
   // 二次确认
   ElMessageBox.confirm('确认要删除吗？', '警告', {
     confirmButtonText: '确定',
@@ -241,7 +252,7 @@ const delHandler = (id) => {
       const params = {
         id
       }
-      delDataDict(params).then((res) => {
+      API.delDataDict(params).then((res) => {
         if (res && res.code === 200) {
           ElMessage({
             type: 'success',
@@ -251,11 +262,12 @@ const delHandler = (id) => {
         }
       })
     })
-    .catch(() => {
-      ElMessage({
-        type: 'danger',
-        message: '删除失败'
-      })
+    .catch((err: Error) => {
+      console.log(err)
+      // ElMessage({
+      //   type: 'danger',
+      //   message: '删除失败'
+      // })
     })
 }
 

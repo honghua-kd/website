@@ -47,18 +47,6 @@
               新增
             </el-button>
           </el-col>
-          <!-- <el-col :span="8">
-            <el-form-item label="创建时间:" prop="createTime" class="widthFull">
-              <el-date-picker
-                v-model="queryParams.createTime"
-                :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
-                end-placeholder="结束日期"
-                start-placeholder="开始日期"
-                type="daterange"
-                value-format="YYYY-MM-DD HH:mm:ss"
-              />
-            </el-form-item>
-          </el-col> -->
         </el-row>
       </el-form>
     </el-card>
@@ -86,19 +74,22 @@
         />
         <el-table-column align="center" label="状态" prop="status">
           <template #default="scope">
-            <el-tag :type="formatTag(scope.row.status, 'type')" effect="light">
-              {{ formatTag(scope.row.status, 'title') }}
+            <el-tag :type="fromatTagStatus(scope.row.status)" effect="light">
+              {{ formatTag(scope.row.status) }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column align="center" label="备注" prop="remark" />
         <el-table-column
-          :formatter="dateFormatter"
           align="center"
           label="创建时间"
           prop="createTime"
           width="180"
-        />
+        >
+          <template #default="scope">
+            {{ formatDate(scope.row.createTime) }}
+          </template>
+        </el-table-column>
         <el-table-column align="center" label="操作">
           <template #default="scope">
             <el-button link type="primary" @click="editHandler(scope.row)">
@@ -130,16 +121,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, Ref } from 'vue'
 import { Refresh, Search, Plus } from '@element-plus/icons-vue'
 import { useRouter } from '@toystory/lotso'
-import { getDictList, deleteDict } from '@/api/system'
+import { SystemAPI } from '@/api/system'
 import { formatDate } from '@/utils'
 import DictTypeForm from './DictTypeForm.vue'
-import { ElMessageBox, ElMessage, TableColumnCtx } from 'element-plus'
+import { ElMessageBox, ElMessage } from 'element-plus'
+import type { DictTypePage, DictTypePageRequest } from '@/api'
 
+const API = new SystemAPI()
 const { router } = useRouter()
-const queryFormRef = ref(null)
+const queryFormRef = ref()
 const statusOpts = ref([
   {
     label: '开启',
@@ -151,27 +144,20 @@ const statusOpts = ref([
   }
 ])
 
-const queryParams = reactive({
+const queryParams = reactive<DictTypePageRequest>({
   pageNo: 1,
   pageSize: 10,
   name: '', // 字典名称
   type: '', // 字典类型
   status: undefined // 状态
 })
-const tableData = ref([])
-const pageTotal = ref(0) // 列表的总页数
-
-const dateFormatter = (row:, column:TableColumnCtx, cellValue) => {
-  if (!cellValue) {
-    return
-  }
-  return formatDate(cellValue)
-}
+const tableData: Ref<DictTypePage[]> = ref([])
+const pageTotal: Ref<number> = ref(0) // 列表的总页数
 
 const loading = ref(false)
 // reset
 const resetQuery = () => {
-  queryFormRef.value.resetFields()
+  queryFormRef.value?.resetFields()
   searchHandler()
 }
 // search
@@ -180,21 +166,23 @@ const searchHandler = () => {
   getList()
 }
 // 列表tag转换
-const formatTag = (status, tagType) => {
-  const type = status === 0 ? '' : 'info'
+const formatTag = (status: number): string => {
   const title = status === 0 ? '开启' : '关闭'
-  if (tagType === 'type') return type
-  if (tagType === 'title') return title
+  return title
+}
+
+const fromatTagStatus = (status: number): '' | 'info' => {
+  const type = status === 0 ? '' : 'info'
+  return type
 }
 // 获取字典列表
 const getList = () => {
   loading.value = true
-  getDictList(queryParams)
+  API.getDictList(queryParams)
     .then((res) => {
       loading.value = false
-      const { list, total } = res?.data
-      tableData.value = list
-      pageTotal.value = total
+      tableData.value = res?.data?.list || []
+      pageTotal.value = res?.data?.total || 0
     })
     .catch((err) => {
       console.log(err)
@@ -207,12 +195,12 @@ const addDictHandler = () => {
   dictTypeRef.value.open('add')
 }
 // 编辑字典
-const editHandler = (row) => {
+const editHandler = (row: DictTypePage) => {
   dictTypeRef.value.open('edit', row)
 }
 
 /** 删除按钮操作 */
-const delHandler = (id) => {
+const delHandler = (id: number) => {
   // 二次确认
   ElMessageBox.confirm('确认要删除吗？', '警告', {
     confirmButtonText: '确定',
@@ -224,7 +212,7 @@ const delHandler = (id) => {
       const params = {
         id
       }
-      deleteDict(params).then((res) => {
+      API.deleteDict(params).then((res) => {
         if (res && res.code === 200) {
           ElMessage({
             type: 'success',
@@ -234,25 +222,26 @@ const delHandler = (id) => {
         }
       })
     })
-    .catch(() => {
-      ElMessage({
-        type: 'danger',
-        message: '删除失败'
-      })
+    .catch((err: Error) => {
+      console.log(err)
+      // ElMessage({
+      //   type: 'danger',
+      //   message: '删除失败'
+      // })
     })
 }
 // 跳转数据
-const jumpDataHandler = (row) => {
+const jumpDataHandler = (row: DictTypePage) => {
   const { type } = row
   router.push({ name: 'dataType', query: { type } })
 }
 
 // 切换页数
-const handleCurrentChange = (val) => {
+const handleCurrentChange = (val: number) => {
   queryParams.pageNo = val
   getList()
 }
-const handleSizeChange = (val) => {
+const handleSizeChange = (val: number) => {
   queryParams.pageSize = val
   getList()
 }

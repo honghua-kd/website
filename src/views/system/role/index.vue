@@ -88,7 +88,7 @@
           width="180"
         >
           <template #default="scope">
-            {{ dateFormatter(scope.row.createTime, '') }}
+            {{ formatDate(scope.row.createTime, '') }}
           </template>
         </el-table-column>
         <el-table-column :width="300" align="center" label="操作">
@@ -124,8 +124,7 @@ import { ref, reactive, Ref } from 'vue'
 import { SystemAPI } from '@/api/system'
 import PermiListDialog from '@/components/PermiForm/PermiListDialog.vue'
 import { Refresh, Search } from '@element-plus/icons-vue'
-import dayjs from 'dayjs'
-
+import { formatDate } from '@/utils'
 import type { RolePageRequest } from '@/api/types/request'
 import type { RoleDO } from '@/api/types/response'
 
@@ -153,17 +152,6 @@ const queryParams = reactive<RolePageRequest>({
 const tableData: Ref<RoleDO[]> = ref([]) // 列表数据
 const pageTotal = ref<number>(0) // 列表的总页数
 
-const dateFormatter = (date: Date, format: string): string => {
-  // 日期不存在，则返回空
-  if (!date) {
-    return ''
-  }
-  // 日期存在，则进行格式化
-  if (format === undefined) {
-    format = 'YYYY-MM-DD HH:mm:ss'
-  }
-  return dayjs(date).format(format)
-}
 // reset
 const resetQuery = () => {
   queryFormRef.value?.resetFields()
