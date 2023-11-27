@@ -884,10 +884,10 @@
   dependencies:
     tinymce "^6.0.0 || ^5.5.1"
 
-"@toystory/lotso@2.1.0-rc2":
-  version "2.1.0-rc2"
-  resolved "https://registry.yarnpkg.com/@toystory/lotso/-/lotso-2.1.0-rc2.tgz#e54e61bc622b18ead590428a99d343ee4b545965"
-  integrity sha512-EbAgWLbwn1r6Co4JDVwS7rsGglQV/4UmExQgZlItE43kqEzV7q8+nTF46NVH7xNvCQ2IYBwUh07nxrL4Ip/+9w==
+"@toystory/lotso@2.1.0-rc5":
+  version "2.1.0-rc5"
+  resolved "https://registry.npmjs.org/@toystory/lotso/-/lotso-2.1.0-rc5.tgz#4624b8aea757ac3144fd52196d57859b4734b042"
+  integrity sha512-Hpkt46YA2S8gWc5/sOpZxJwvUXqsd9qnUBGSG2m0BNhTOvYyGHKFJb1eH8Ft0f9fNRzY3W3YCvEtpjtdCUoFIg==
   dependencies:
     "@element-plus/icons-vue" "2.1.0"
     "@vueuse/core" "^10.5.0"

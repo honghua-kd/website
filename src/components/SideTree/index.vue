@@ -41,8 +41,8 @@ const defaultProps = {
 }
 const treeRef = ref<InstanceType<typeof ElTree>>()
 const orgList: Ref<OrgInfoItem[]> = ref([])
-const treeLoading = ref(false)
-const searchKey = ref('')
+const treeLoading: Ref<boolean> = ref(false)
+const searchKey: Ref<string> = ref('')
 
 const systemAPI = new SystemAPI()
 
