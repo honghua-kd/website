@@ -467,7 +467,7 @@ export interface OrgStructure {
 }
 
 // 查询部门下员工
-export interface staffListItem {
+export interface StaffListItem {
   /**
    * 区域
    */
@@ -570,5 +570,6 @@ export interface StaffList {
   /**
    * 员工列表
    */
-  staffList?: staffListItem[] | null
+  staffList?: StaffListItem[] | null
+  total?: number
 }
