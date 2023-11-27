@@ -148,18 +148,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import { getDepartmentStaff, getStaffSubordinates } from '@/api/system'
+import { ref, reactive, Ref } from 'vue'
+import { SystemAPI } from '@/api/system'
+
 import SideTree from '@/components/SideTree/index.vue'
 import { Refresh, Search } from '@element-plus/icons-vue'
 import PermiListDialog from '@/components/PermiForm/PermiListDialog.vue'
-
-const currentOrgCode = ref('')
-const tableData = ref([]) // 列表数据
-const loading = ref(false)
-const pageTotal = ref(0) // 列表的总页数
-const queryFormRef = ref(null)
-const queryParams = reactive({
+import type {
+  ResponseBody,
+  StaffList,
+  StaffListItem,
+  OrgInfoItem,
+  GetStaffSubordinatesRequest,
+  PageRequest
+} from '@/api'
+const API = new SystemAPI()
+const currentOrgCode: Ref<string> = ref('')
+const tableData: Ref<StaffListItem[]> = ref([]) // 列表数据
+const loading: Ref<boolean> = ref(false)
+const pageTotal: Ref<number> = ref(0) // 列表的总页数
+const queryFormRef = ref()
+const queryParams = reactive<PageRequest & GetStaffSubordinatesRequest>({
   pageNo: 1,
   pageSize: 10,
   staffName: '', // 员工姓名
@@ -168,7 +177,7 @@ const queryParams = reactive({
 
 // reset
 const resetQuery = () => {
-  queryFormRef.value.resetFields()
+  queryFormRef.value?.resetFields()
   searchHandler()
 }
 // search-查询用户的下属
@@ -181,26 +190,25 @@ const searchHandler = () => {
   }
 }
 // 获取选中节点code
-const getSelectNodeHandler = (node) => {
-  const { orgCode } = node
-  currentOrgCode.value = orgCode
+const getSelectNodeHandler = (node: OrgInfoItem) => {
+  const orgCode = node?.orgCode || ''
+  currentOrgCode.value = node?.orgCode || ''
   getDeptStaffList(orgCode)
 }
 
 // 获取部门员工列表
-const getDeptStaffList = (orgCode) => {
+const getDeptStaffList = (orgCode: string) => {
   loading.value = true
   const params = { orgCode }
-  getDepartmentStaff(params)
-    .then((res) => {
+  API.getDepartmentStaff(params)
+    .then((res: ResponseBody<StaffList>) => {
       loading.value = false
       if (res && res.code === 200) {
-        const { staffList, total } = res?.data
-        tableData.value = staffList
-        pageTotal.value = total
+        tableData.value = res?.data?.staffList || []
+        pageTotal.value = res?.data?.total || 0
       }
     })
-    .catch((err) => {
+    .catch((err: Error) => {
       loading.value = false
       console.log(err)
     })
@@ -210,24 +218,24 @@ const getStaffSubHandler = () => {
   const params = {
     ...queryParams
   }
-  getStaffSubordinates(params).then((res) => {
+  API.getStaffSubordinates(params).then((res: ResponseBody<StaffList>) => {
     if (res && res.code === 200) {
-      tableData.value = res.data?.staffList
+      tableData.value = res.data?.staffList || []
     }
   })
 }
-const handleCurrentChange = (val) => {
+const handleCurrentChange = (val: number) => {
   queryParams.pageNo = val
   getStaffSubHandler()
 }
-const handleSizeChange = (val) => {
+const handleSizeChange = (val: number) => {
   queryParams.pageSize = val
   getStaffSubHandler()
 }
 
 // 分配数据权限
-const userListRef = ref(null)
-const assignPermiHandler = (row) => {
+const userListRef = ref()
+const assignPermiHandler = (row: StaffListItem) => {
   userListRef.value.openDialog('staffCode', row)
 }
 </script>
