@@ -4,7 +4,7 @@
 import { getToken } from '@/utils/auth'
 import type { RequestConfig } from '@toystory/lotso'
 // import { ElMessageBox, ElNotification } from 'element-plus'
-// import { logout } from '@/api'
+// import { logout } from '@/api/core'
 
 const requestConfig: RequestConfig = {
   // axios 基础url地址
