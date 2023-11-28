@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-dialog v-model="dialogVisible" :title="dialogTitle">
-      <el-row class="addBtn">
+      <el-row class="add-btn">
         <el-button @click="addPermiHandler('add', currentRowNo)" type="primary">
           新 增
         </el-button>
@@ -185,7 +185,7 @@ const submitForm = () => {
   flex-direction: row;
   justify-content: space-between;
 }
-.addBtn {
+.add-btn {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 10px;

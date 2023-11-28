@@ -35,13 +35,13 @@
           </el-select>
         </el-form-item>
         <el-form-item label="权限规则：" prop="dataScope">
-          <el-row :gutter="20" class="withFull">
+          <el-row :gutter="20" class="width-full">
             <el-col :span="9">
               <el-input
                 v-model="formData.dataScope"
                 placeholder="请编辑规则"
                 type="textarea"
-                class="withFull"
+                class="width-full"
                 clearable
               />
             </el-col>
@@ -53,7 +53,7 @@
           </el-row>
         </el-form-item>
         <el-form-item label="规则编辑：" v-if="formulaShow">
-          <el-row :gutter="20" class="withFull">
+          <el-row :gutter="20" class="width-full">
             <el-col :span="6">
               <el-select
                 v-model="selectedRule"
@@ -68,7 +68,7 @@
                 />
               </el-select>
             </el-col>
-            <el-col :span="12" class="formulaCont">
+            <el-col :span="12" class="formula-cont">
               <p v-for="(el, ind) in formulaList" :key="ind">
                 <span
                   v-for="(e, i) in el"
@@ -343,10 +343,10 @@ const checkRulesHandler = () => {
 </script>
 
 <style lang="scss" scoped>
-.withFull {
+.width-full {
   width: 100%;
 }
-.formulaCont {
+.formula-cont {
   padding: 0 !important;
   width: 100%;
   border-top: 1px solid #cccccc;
@@ -362,7 +362,7 @@ const checkRulesHandler = () => {
       cursor: pointer;
       flex: 1;
     }
-    .Equals {
+    .equals {
       flex: 2;
     }
   }

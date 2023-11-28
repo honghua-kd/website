@@ -131,7 +131,7 @@ import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import type { DictTypePage, DictTypePageRequest } from '@/api'
 
 const API = new SystemAPI()
-const { router } = useRouter()
+
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
 const statusOpts = ref([
   {
@@ -233,7 +233,8 @@ const delHandler = (id: number) => {
 // 跳转数据
 const jumpDataHandler = (row: DictTypePage) => {
   const { type } = row
-  router.push({ path: '/dataType', query: { type } })
+  const { router } = useRouter()
+  router.push({ name: 'dataType', query: { type } })
 }
 
 // 切换页数

@@ -5,7 +5,7 @@
       <el-form ref="queryFormRef" :model="queryParams" :inline="true">
         <el-row :gutter="15">
           <el-col :span="6">
-            <el-form-item label="字典名称:" prop="dictType" class="widthFull">
+            <el-form-item label="字典名称:" prop="dictType" class="width-full">
               <el-select
                 v-model="queryParams.dictType"
                 placeholder="请选择字典名称"
@@ -20,7 +20,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="字典标签:" prop="label" class="widthFull">
+            <el-form-item label="字典标签:" prop="label" class="width-full">
               <el-input
                 v-model="queryParams.label"
                 placeholder="请输入字典标签"
@@ -29,7 +29,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="4">
-            <el-form-item label="状态:" prop="status" class="widthFull">
+            <el-form-item label="状态:" prop="status" class="width-full">
               <el-select
                 v-model="queryParams.status"
                 clearable
@@ -141,7 +141,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onActivated, Ref } from 'vue'
-import { useDictStore } from '@/store/dict.js'
+import { useDictStore } from '@/store/dict'
 import { Refresh, Search, Plus } from '@element-plus/icons-vue'
 import { useRoute } from '@toystory/lotso'
 import { SystemAPI } from '@/api/system'
@@ -286,7 +286,7 @@ onActivated(async () => {
   margin-bottom: 20px;
   font-size: 14px;
 }
-.widthFull {
+.width-full {
   width: 100%;
 }
 </style>
