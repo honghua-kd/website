@@ -44,8 +44,8 @@ const userViteConfig: ViteConfig = {
     '^/operations-management/.*': {
       target: 'https://dev-op.utfinancing.com',
       // target: 'http://10.102.3.105:8899',
-      changeOrigin: true,
-      rewrite: (path) => path.replace(/^\/operations-management/, '')
+      changeOrigin: true
+      // rewrite: (path) => path.replace(/^\/operations-management/, '')
     }
   },
   // 是否使用mock数据

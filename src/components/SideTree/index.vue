@@ -83,12 +83,8 @@ init()
 
 <style lang="scss" scoped>
 .container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   padding: 10px 0;
   width: 100%;
-  flex-direction: column;
 }
 .searchbar {
   margin-bottom: 10px;

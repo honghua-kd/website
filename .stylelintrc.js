@@ -39,7 +39,8 @@ module.exports = {
     'no-duplicate-selectors': null,
     'property-no-unknown': null,
     'no-empty-source': null,
-    'selector-class-pattern': null,
+    'selector-class-pattern':
+      '^([a-z][a-z0-9]*)(-[a-z0-9]+)*$|^el-([a-z][a-z0-9]*)((-|_)+[a-z0-9]+)*$',
     'keyframes-name-pattern': null,
     'selector-pseudo-class-no-unknown': [
       true,
