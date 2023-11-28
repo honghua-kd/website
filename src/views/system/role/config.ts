@@ -33,6 +33,6 @@ export const formulaList = [
     { label: "'" },
     { label: '||' },
     { label: '.' },
-    { label: 'Equals', class: 'Equals' }
+    { label: 'Equals', class: 'equals' }
   ]
 ]

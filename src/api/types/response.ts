@@ -150,7 +150,7 @@ export interface ScopeMapping {
   /**
    * 主键
    */
-  id?: number
+  id?: number | string
   /**
    * 映射编码
    */
@@ -576,4 +576,27 @@ export interface StaffList {
    */
   staffList?: StaffListItem[] | null
   total?: number
+}
+
+export interface ExpDetail {
+  /**
+   * 显示名称
+   */
+  forwordName: string | null
+  /**
+   * 主键
+   */
+  id: number | string
+  /**
+   * 映射编码
+   */
+  keywordCode: string | null
+  /**
+   * 关键字
+   */
+  keywordName: string | null
+  /**
+   * 数据接口地址
+   */
+  url: null | string
 }

@@ -200,3 +200,35 @@ export interface GetStaffSubordinatesRequest {
    */
   staffName?: null | string
 }
+
+export interface GetExpDetailRequest {
+  /**
+   * 表达式ID
+   */
+  id: string | number | undefined
+}
+
+export type DelExpRequest = GetExpDetailRequest
+
+export interface CreateExpRequest {
+  /**
+   * 显示名称，用于前端呈现
+   */
+  forwordName?: string | undefined
+  /**
+   * 主键，新增为空
+   */
+  id?: string | number | undefined
+  /**
+   * 关键字映射编码
+   */
+  keywordCode?: string | undefined
+  /**
+   * 关键字名称
+   */
+  keywordName?: string | undefined
+  /**
+   * 数据接口地址
+   */
+  url?: string | undefined
+}

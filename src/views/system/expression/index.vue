@@ -23,8 +23,8 @@
               <span>函数</span>
             </template>
             <el-menu-item
-              v-for="item in funcArr"
-              :key="item.id"
+              v-for="(item, index) in funcArr"
+              :key="index"
               @click="selectMenuItem(item)"
               :index="item.keywordCode"
             >
@@ -38,7 +38,7 @@
         <div class="exp-container">
           <el-form :model="expForm" label-width="100">
             <el-form-item label="编辑公式：" prop="keywordName">
-              <el-row :gutter="20" class="widthFull">
+              <el-row :gutter="20" class="width-full">
                 <el-col :span="20">
                   <el-input
                     v-model="expForm.keywordName"
@@ -62,8 +62,8 @@
               <el-input v-model="expForm.keywordCode" type="textarea" />
             </el-form-item>
             <el-form-item label="编辑器：">
-              <el-row class="widthFull">
-                <el-col class="formulaCont">
+              <el-row class="width-full">
+                <el-col class="formula-cont">
                   <p v-for="(el, ind) in formulaList" :key="ind">
                     <span
                       v-for="(e, i) in el"
@@ -91,34 +91,35 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, nextTick } from 'vue'
-import { SystemAPI, getExpDetail, delExp, saveScopeMapping } from '@/api/system'
+import { ref, reactive, nextTick, Ref } from 'vue'
+import { SystemAPI } from '@/api/system'
 import { Setting } from '@element-plus/icons-vue'
 import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
 import { formulaList } from '@/views/system/role/config'
 import { ElMessageBox, ElMessage } from 'element-plus'
+import type { ScopeMapping, ExpDetail } from '@/api'
 
 const API = new SystemAPI()
-const variableArr = ref([])
-const funcArr = ref([])
-const expForm = reactive({
+const variableArr: Ref<ScopeMapping[]> = ref([])
+const funcArr: Ref<ScopeMapping[]> = ref([])
+const expForm: Omit<ScopeMapping, 'id' | 'forwordName' | 'url'> = reactive({
   keywordName: '',
   keywordCode: ''
 })
-const currentNode = reactive({
+const currentNode = reactive<ScopeMapping>({
   id: '',
   forwordName: '',
   keywordName: '',
   keywordCode: '',
   url: ''
 })
-const defaultActive = ref('')
+const defaultActive = ref<string>('')
 
 const getExprList = () => {
   API.getRuleList()
     .then((res) => {
       if (res && res.code === 200) {
-        variableArr.value = res?.data
+        variableArr.value = res?.data || []
       }
     })
     .catch((err) => {
@@ -141,7 +142,7 @@ const validateHandler = () => {
   API.checkRules(params)
     .then((res) => {
       if (res && res.code === 200) {
-        expForm.keywordCode = res.data
+        expForm.keywordCode = res?.data || ''
       }
     })
     .catch((err) => {
@@ -174,7 +175,7 @@ const delHandler = () => {
       const params = {
         id: currentNode.id
       }
-      delExp(params)
+      API.delExp(params)
         .then((res) => {
           if (res && res.code === 200) {
             ElMessage({
@@ -193,7 +194,7 @@ const delHandler = () => {
     })
     .catch(() => {
       ElMessage({
-        type: 'danger',
+        type: 'error',
         message: '删除失败'
       })
     })
@@ -202,7 +203,7 @@ const delHandler = () => {
 // 提交
 const submitForm = () => {
   const params = Object.assign(currentNode, expForm)
-  saveScopeMapping(params)
+  API.saveScopeMapping(params)
     .then((res) => {
       if (res && res.code === 200) {
         ElMessage({
@@ -216,13 +217,14 @@ const submitForm = () => {
     })
 }
 
-const selectMenuItem = (item) => {
+const selectMenuItem = (item: ScopeMapping) => {
   reset()
   const params = { id: item.id }
-  getExpDetail(params)
+  API.getExpDetail(params)
     .then((res) => {
       if (res && res.code === 200) {
-        setCurrentNode(res?.data)
+        const detail = res?.data as ExpDetail
+        setCurrentNode(detail)
       }
     })
     .catch((err) => {
@@ -230,18 +232,18 @@ const selectMenuItem = (item) => {
     })
 }
 
-const setCurrentNode = (item) => {
+const setCurrentNode = (item: ExpDetail) => {
   const { id, forwordName, keywordName, keywordCode, url } = item
-  expForm.keywordName += keywordName
-  expForm.keywordCode = keywordCode
+  expForm.keywordName += keywordName as string
+  expForm.keywordCode = keywordCode as string
   currentNode.id = id
-  currentNode.forwordName = forwordName
-  currentNode.keywordName = keywordName
-  currentNode.keywordCode = keywordCode
-  currentNode.url = url
+  currentNode.forwordName = forwordName as string
+  currentNode.keywordName = keywordName as string
+  currentNode.keywordCode = keywordCode as string
+  currentNode.url = url as string
 }
 // 选中公式
-const selectUnitHandler = (unit) => {
+const selectUnitHandler = (unit: string) => {
   expForm.keywordName += unit
 }
 
@@ -255,7 +257,7 @@ init()
 .exp-container {
   margin-top: 10px;
 }
-.formulaCont {
+.formula-cont {
   padding: 0 !important;
   width: 100%;
   border-top: 1px solid #cccccc;
@@ -271,12 +273,12 @@ init()
       cursor: pointer;
       flex: 1;
     }
-    .Equals {
+    .equals {
       flex: 2;
     }
   }
 }
-.widthFull {
+.width-full {
   width: 100%;
 }
 .btn-bar {

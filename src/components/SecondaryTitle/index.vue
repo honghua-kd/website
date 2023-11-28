@@ -1,5 +1,5 @@
 <template>
-  <div class="card_header">
+  <div class="card-header">
     <div class="clearfix">
       <span class="word">{{ title }}</span>
       <slot name="more" />
@@ -18,7 +18,7 @@ defineProps({
 </script>
 
 <style lang="scss" scoped>
-.card_header {
+.card-header {
   display: flex;
   width: 100%;
   .clearfix {

@@ -15,7 +15,8 @@ import type {
   DictTypePage,
   DictTypeAllItem,
   OrgStructure,
-  StaffList
+  StaffList,
+  ExpDetail
 } from '../types/response'
 import type {
   DictListRequest,
@@ -37,7 +38,10 @@ import type {
   DictDataDelRequest,
   DictDataGetRequest,
   GetDepartmentStaffRequest,
-  GetStaffSubordinatesRequest
+  GetStaffSubordinatesRequest,
+  GetExpDetailRequest,
+  DelExpRequest,
+  CreateExpRequest
 } from '../types/request'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
@@ -249,6 +253,33 @@ export class SystemAPI {
   getStaffSubordinates(data: GetStaffSubordinatesRequest): Response<StaffList> {
     return this.request({
       url: `${prefix}/admin-api/ehr/orgstructure/getStaffSubordinates`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 公式编辑模块-查询字典数据详细
+  getExpDetail(params: GetExpDetailRequest): Response<ExpDetail> {
+    return this.request({
+      url: `${prefix}/admin-api/system/scope-mapping/info`,
+      method: 'get',
+      params
+    })
+  }
+
+  // 公式编辑模块-删除映射
+  delExp(params: DelExpRequest): Response<boolean> {
+    return this.request({
+      url: `${prefix}/admin-api/system/scope-mapping/delete`,
+      method: 'get',
+      params
+    })
+  }
+
+  // 公式编辑模块-保存映射
+  saveScopeMapping(data: CreateExpRequest): Response<ExpDetail> {
+    return this.request({
+      url: `${prefix}/admin-api/system/scope-mapping/save`,
       method: 'post',
       data
     })
