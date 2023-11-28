@@ -7,12 +7,12 @@ export default [
             children: [],
             elements: [],
             menuType: 3,
-            menu: 'role'
+            menu: 'role',
+            sort: 1
           }
         ],
         elements: [],
         menuType: 5,
-        sort: 1,
         menu: 'roleMenu'
       },
       {
@@ -21,12 +21,12 @@ export default [
             children: [],
             elements: [],
             menuType: 3,
-            menu: 'user'
+            menu: 'user',
+            sort: 2
           }
         ],
         elements: [],
         menuType: 5,
-        sort: 2,
         menu: 'userMenu'
       },
       {
@@ -35,12 +35,12 @@ export default [
             children: [],
             elements: [],
             menuType: 3,
-            menu: 'dict'
+            menu: 'dict',
+            sort: 3
           }
         ],
         elements: [],
         menuType: 5,
-        sort: 3,
         menu: 'dictMenu'
       },
       {
@@ -49,12 +49,12 @@ export default [
             children: [],
             elements: [],
             menuType: 3,
-            menu: 'dataType'
+            menu: 'dataType',
+            sort: 4
           }
         ],
         elements: [],
         menuType: 5,
-        sort: 5,
         menu: 'dataTypeMenu'
       },
       {
@@ -63,12 +63,12 @@ export default [
             children: [],
             elements: [],
             menuType: 3,
-            menu: 'expression'
+            menu: 'expression',
+            sort: 5
           }
         ],
         elements: [],
         menuType: 5,
-        sort: 5,
         menu: 'expressionMenu'
       }
     ],

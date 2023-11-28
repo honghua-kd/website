@@ -3,5 +3,5 @@ export default {
   title: '规则管理',
   icon: 'user',
   name: 'expression',
-  sort: 4
+  sort: 5
 }
