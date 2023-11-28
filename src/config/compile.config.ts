@@ -49,7 +49,7 @@ const userViteConfig: ViteConfig = {
     }
   },
   // 是否使用mock数据
-  useMock: true
+  useMock: false
 }
 
 export default userViteConfig
