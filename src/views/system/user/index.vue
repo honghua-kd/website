@@ -1,6 +1,6 @@
 <template>
-  <div class="container">
-    <el-card class="treeContainer">
+  <div class="user-container">
+    <el-card class="tree-container">
       <SideTree @getSelect="getSelectNodeHandler" />
     </el-card>
     <div class="right-part">
@@ -31,7 +31,7 @@
                 <el-input
                   v-model="queryParams.staffName"
                   placeholder="员工姓名"
-                  class="widthFull"
+                  class="width-full"
                   clearable
                 />
               </el-form-item>
@@ -241,7 +241,7 @@ const assignPermiHandler = (row: StaffListItem) => {
 </script>
 
 <style lang="scss" scoped>
-.container {
+.user-container {
   display: flex;
   margin-bottom: 20px;
   width: 100%;
@@ -250,13 +250,13 @@ const assignPermiHandler = (row: StaffListItem) => {
 .right-part {
   width: 70%;
 }
-.widthFull {
+.width-full {
   width: 100%;
 }
 .search-bar {
   margin-bottom: 10px;
 }
-.treeContainer {
+.tree-container {
   overflow-y: scroll;
   margin-right: 3%;
   width: 22%;
