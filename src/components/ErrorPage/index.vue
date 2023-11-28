@@ -1,5 +1,5 @@
 <template>
-  <div class="errorPage-container">
+  <div class="error-page-container">
     <el-row :gutter="10" class="error-row">
       <el-col class="error-col" :xs="24" :sm="24" :md="10" :lg="10" :xl="10">
         <div class="error-img">
@@ -65,7 +65,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.errorPage-container {
+.error-page-container {
   display: flex;
   align-items: center;
   padding: $base-main-padding;

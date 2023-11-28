@@ -2,7 +2,7 @@
   <div class="home-container">
     <div class="app-welcome">
       <h1>欢迎使用</h1>
-      <h1>海通恒信运营管理系统</h1>
+      <h1>海通恒信运营中台系统</h1>
     </div>
   </div>
 </template>
@@ -116,29 +116,6 @@ export default {
       }
       .xw-bg {
         background: linear-gradient(118deg, #b4ec51 0%, #429321 100%);
-      }
-    }
-    .weather {
-      margin-left: auto;
-      padding: 14px;
-      width: 279px;
-      border-radius: 8px;
-      text-align: center;
-      color: #ffffff;
-      background: #598cff;
-      box-shadow: 0 0 8px 0 rgb(89 140 255 / 50%);
-      div {
-        width: 100%;
-      }
-      ._icon {
-        margin-top: 18px;
-        width: 50px;
-        height: 50px;
-      }
-      .name {
-        margin: 13px 0 6px;
-        font-size: 20px;
-        font-weight: 500;
       }
     }
   }

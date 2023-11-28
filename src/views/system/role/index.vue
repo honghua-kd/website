@@ -5,7 +5,7 @@
       <el-form ref="queryFormRef" :model="queryParams" :inline="true">
         <el-row :gutter="15">
           <el-col :span="5">
-            <el-form-item label="角色名称:" prop="roleName" class="widthFull">
+            <el-form-item label="角色名称:" prop="roleName" class="width-full">
               <el-input
                 v-model="queryParams.roleName"
                 placeholder="请输入角色名称"
@@ -14,7 +14,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="5">
-            <el-form-item label="角色标识:" prop="roleCode" class="widthFull">
+            <el-form-item label="角色标识:" prop="roleCode" class="width-full">
               <el-input
                 v-model="queryParams.roleCode"
                 placeholder="请输入角色标识"
@@ -23,7 +23,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="4">
-            <el-form-item label="状态:" prop="status" class="widthFull">
+            <el-form-item label="状态:" prop="status" class="width-full">
               <el-select
                 v-model="queryParams.status"
                 clearable
@@ -39,7 +39,11 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="创建时间:" prop="createTime" class="widthFull">
+            <el-form-item
+              label="创建时间:"
+              prop="createTime"
+              class="width-full"
+            >
               <el-date-picker
                 v-model="queryParams.createTime"
                 :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
@@ -218,7 +222,7 @@ init()
   margin-bottom: 20px;
   font-size: 14px;
 }
-.widthFull {
+.width-full {
   width: 100%;
 }
 </style>

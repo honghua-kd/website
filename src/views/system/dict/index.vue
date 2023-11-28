@@ -5,7 +5,7 @@
       <el-form ref="queryFormRef" :model="queryParams" :inline="true">
         <el-row :gutter="15">
           <el-col :span="6">
-            <el-form-item label="字典名称:" prop="name" class="widthFull">
+            <el-form-item label="字典名称:" prop="name" class="width-full">
               <el-input
                 v-model="queryParams.name"
                 placeholder="请输入字典名称"
@@ -14,7 +14,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="字典类型:" prop="type" class="widthFull">
+            <el-form-item label="字典类型:" prop="type" class="width-full">
               <el-input
                 v-model="queryParams.type"
                 placeholder="请输入字典类型"
@@ -23,7 +23,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="4">
-            <el-form-item label="状态:" prop="status" class="widthFull">
+            <el-form-item label="状态:" prop="status" class="width-full">
               <el-select
                 v-model="queryParams.status"
                 clearable
@@ -131,7 +131,7 @@ import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import type { DictTypePage, DictTypePageRequest } from '@/api'
 
 const API = new SystemAPI()
-const { router } = useRouter()
+
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
 const statusOpts = ref([
   {
@@ -233,6 +233,8 @@ const delHandler = (id: number) => {
 // 跳转数据
 const jumpDataHandler = (row: DictTypePage) => {
   const { type } = row
+  const { router } = useRouter()
+  debugger
   router.push({ name: 'dataType', query: { type } })
 }
 
@@ -257,7 +259,7 @@ init()
   margin-bottom: 20px;
   font-size: 14px;
 }
-.widthFull {
+.width-full {
   width: 100%;
 }
 </style>
