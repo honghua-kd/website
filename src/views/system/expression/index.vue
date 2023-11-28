@@ -36,7 +36,7 @@
       <el-col :span="18">
         <SecondaryTitle title="公式定义器" />
         <div class="exp-container">
-          <el-form :model="expForm" label-width="100">
+          <el-form :model="expForm" label-width="100" :disabled="editable">
             <el-form-item label="编辑公式：" prop="keywordName">
               <el-row :gutter="20" class="width-full">
                 <el-col :span="20">
@@ -79,10 +79,15 @@
             </el-form-item>
           </el-form>
           <div class="btn-bar">
-            <el-button @click="delHandler" type="danger" plain
-              >删除当前映射</el-button
-            >
-            <el-button @click="submitForm" type="primary">提交 </el-button>
+            <el-button @click="delHandler" type="danger" plain>
+              删除当前映射
+            </el-button>
+            <el-button v-if="editable" type="primary" @click="editHandler">
+              编辑
+            </el-button>
+            <el-button v-else @click="submitForm" type="primary">
+              提交
+            </el-button>
           </div>
         </div>
       </el-col>
@@ -114,6 +119,7 @@ const currentNode = reactive<ScopeMapping>({
   url: ''
 })
 const defaultActive = ref<string>('')
+const editable = ref<boolean>(true)
 
 const getExprList = () => {
   API.getRuleList()
@@ -125,6 +131,11 @@ const getExprList = () => {
     .catch((err) => {
       throw new Error(err)
     })
+}
+
+// 编辑
+const editHandler = () => {
+  editable.value = false
 }
 
 // 清空
@@ -210,6 +221,7 @@ const submitForm = () => {
           type: 'success',
           message: '保存成功'
         })
+        editable.value = true
       }
     })
     .catch((err) => {
@@ -244,6 +256,7 @@ const setCurrentNode = (item: ExpDetail) => {
 }
 // 选中公式
 const selectUnitHandler = (unit: string) => {
+  if (editable.value) return
   expForm.keywordName += unit
 }
 

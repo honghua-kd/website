@@ -43,7 +43,7 @@ const userViteConfig: ViteConfig = {
     // 正则表达式写法
     '^/operations-management/.*': {
       target: 'https://dev-op.utfinancing.com',
-      // target: 'http://10.102.3.105:8899',
+      // target: 'https://test-op.utfinancing.com',
       changeOrigin: true
       // rewrite: (path) => path.replace(/^\/operations-management/, '')
     }
