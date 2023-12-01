@@ -76,5 +76,20 @@ export default [
     menuType: 5,
     sort: 1,
     menu: 'system'
+  },
+  {
+    children: [
+      {
+        children: [],
+        elements: [],
+        menuType: 3,
+        sort: 10,
+        menu: 'pdfIndex'
+      }
+    ],
+    elements: [],
+    menuType: 3,
+    sort: 10,
+    menu: 'pdf'
   }
 ]
