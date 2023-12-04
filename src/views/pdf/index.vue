@@ -46,8 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import * as pdfjsLib from 'pdfjs-dist/build/pdf'
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry'
+import * as pdfjsLib from 'pdfjs-dist'
 import type { PDFDocumentProxy } from 'pdfjs-dist'
 import { ref, onMounted, nextTick, computed, reactive } from 'vue'
 import { useRoute } from '@toystory/lotso'
@@ -73,11 +72,11 @@ onMounted(() => {
     ElMessage.error('缺少pdf的路径')
     return
   }
-  loadFile(pdfUrl.value)
+  loadFile(decodeURIComponent(pdfUrl.value as string))
 })
 // 获取pdf文档流与pdf文件的页数
-const loadFile = async (url) => {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker
+const loadFile = async (url: string) => {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = require('pdfjs-dist/build/pdf.worker.entry')
   const loadingTask = pdfjsLib.getDocument(url)
   await loadingTask.promise.then((pdf) => {
     pdfDoc = pdf
@@ -88,7 +87,7 @@ const loadFile = async (url) => {
   })
 }
 // 渲染pdf文件
-const renderPage = (num) => {
+const renderPage = (num: number) => {
   pdfDoc.getPage(num).then((page) => {
     const canvasId = 'pdf-canvas-' + num
     const canvas: HTMLCanvasElement = document.getElementById(
@@ -148,7 +147,9 @@ const handleReset = () => {
   renderPage(1)
 }
 
-const handleScroll = ({ scrollTop }) => {
+const handleScroll: ({ scrollTop }: { scrollTop: number }) => void = ({
+  scrollTop
+}) => {
   let pageNumFlag = false
   const ratio = window.devicePixelRatio || 1
   pagesHeight.reduce((prev, cur, index) => {
