@@ -1,6 +1,11 @@
 <template>
   <div>
-    <el-dialog :title="dialogTitle" v-model="dialogVisible">
+    <el-dialog
+      :title="dialogTitle"
+      v-model="dialogVisible"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
       <el-form
         ref="formRef"
         :model="formParams"

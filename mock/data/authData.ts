@@ -76,5 +76,27 @@ export default [
     menuType: 5,
     sort: 1,
     menu: 'system'
+  },
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'scanAndVerify',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'scanAndVerifyMenu'
+      }
+    ],
+    elements: [],
+    menuType: 5,
+    sort: 2,
+    menu: 'archive'
   }
 ]
