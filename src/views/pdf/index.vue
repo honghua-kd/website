@@ -1,18 +1,12 @@
 <template>
   <div class="pdf-container">
-    <pdf-views :url="pdfUrl" scale rotate magnifyingGlass />
+    <pdf-views url="/static/demo.pdf" scale rotate magnifyingGlass />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRoute } from '@toystory/lotso'
-import pdfViews from './pdf.vue'
-
-const route = useRoute()
-const pdfUrl = ref<string>('') // pdf文件的链接
-
-pdfUrl.value = route?.value.query?.pdf as string
+import pdfViews from '@toystory/potato'
+import '@toystory/potato/dist/style.css'
 </script>
 
 <style lang="scss" scoped>
