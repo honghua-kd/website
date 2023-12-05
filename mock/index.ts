@@ -1,3 +1,4 @@
 import { login } from './login'
 import { system } from './system'
-export default [...login, ...system]
+import { mortgage } from './mortgageRelease'
+export default [...login, ...system, ...mortgage]

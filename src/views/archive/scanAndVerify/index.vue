@@ -27,8 +27,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="核对结果:" prop="verifyResults">
-              <el-select v-model="queryParams.verifyResults">
+            <el-form-item label="核对结果:" prop="verifyResult">
+              <el-select v-model="queryParams.verifyResult">
                 <el-option
                   v-for="(item, index) in verifyOpts"
                   :key="index"
@@ -56,8 +56,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="归档状态:" prop="archiveStatus">
-              <el-select v-model="queryParams.archiveStatus">
+            <el-form-item label="归档状态:" prop="archivalStatus">
+              <el-select v-model="queryParams.archivalStatus">
                 <el-option
                   v-for="(item, index) in archiveStatusOpts"
                   :key="index"
@@ -75,8 +75,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="车牌号:" prop="licenseNo">
-              <el-input v-model="queryParams.licenseNo" />
+            <el-form-item label="车牌号:" prop="licensePlateNo">
+              <el-input v-model="queryParams.licensePlateNo" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -85,20 +85,20 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="办事处:" prop="office">
-              <el-input v-model="queryParams.office" />
+            <el-form-item label="办事处:" prop="agencyName">
+              <el-input v-model="queryParams.agencyName" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20" v-if="expandFlag">
           <el-col :span="12">
-            <el-form-item label="挂靠商:" prop="affilMerchants">
-              <el-input v-model="queryParams.affilMerchants" />
+            <el-form-item label="挂靠商:" prop="affiliatesName">
+              <el-input v-model="queryParams.affiliatesName" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="渠道商:" prop="channelProvider">
-              <el-input v-model="queryParams.channelProvider" />
+            <el-form-item label="渠道商:" prop="channelName">
+              <el-input v-model="queryParams.channelName" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -148,42 +148,84 @@
         :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
         border
         v-loading="tableLoading"
+        row-key="id"
+        default-expand-all
+        :tree-props="{ children: 'target' }"
       >
-        <el-table-column type="selection" width="55" />
-        <el-table-column align="center" fixed label="文件名" prop="id" />
-        <el-table-column align="center" label="登记证归档序号" prop="id" />
-        <el-table-column align="center" label="核对结果" prop="id" />
-        <el-table-column align="center" label="*登记证编号" prop="id" />
-        <el-table-column align="center" label="*车架号" prop="id" />
-        <el-table-column align="center" label="*发动机号" prop="id" />
-        <el-table-column align="center" label="*发动机型号" prop="id" />
-        <el-table-column align="center" label="*车牌号" prop="id" />
-        <el-table-column align="center" label="*机动车所有人" prop="id" />
-        <el-table-column align="center" label="*车身颜色" prop="id" />
-        <el-table-column align="center" label="*使用性质" prop="id" />
-        <el-table-column align="center" label="*抵押权人" prop="id" />
-        <el-table-column align="center" label="*统一社会信用代码" prop="id" />
-        <el-table-column align="center" label="*抵押登记日期" prop="id" />
-        <el-table-column align="center" label="批次号" prop="id" />
-        <el-table-column align="center" label="关联合同号" prop="id" />
-        <el-table-column align="center" label="所属系统" prop="id" />
-        <el-table-column align="center" label="挂靠商" prop="id" />
-        <el-table-column align="center" label="办事处" prop="id" />
-        <el-table-column align="center" label="渠道商" prop="id" />
-        <el-table-column align="center" label="创建人" prop="id" />
-        <el-table-column align="center" label="创建时间" prop="id" />
+        <el-table-column
+          type="selection"
+          width="55"
+          :selectable="selectableHandler"
+        />
+
+        <el-table-column align="center" fixed label="文件名" prop="fileName" />
+        <el-table-column
+          align="center"
+          label="登记证归档序号"
+          prop="registerCardArchiveNo"
+        />
+        <el-table-column align="center" label="核对结果" prop="verifyResult" />
+
+        <el-table-column
+          align="center"
+          label="*登记证编号"
+          prop="registerCardNo"
+        />
+        <el-table-column align="center" label="*车架号" prop="vinNo" />
+        <el-table-column align="center" label="*发动机号" prop="engineNo" />
+        <el-table-column align="center" label="*发动机型号" prop="engineType" />
+        <el-table-column align="center" label="*车牌号" prop="licensePlateNo" />
+        <el-table-column
+          align="center"
+          label="*机动车所有人"
+          prop="vehicleOwner"
+        />
+        <el-table-column align="center" label="*车身颜色" prop="vehicleColor" />
+        <el-table-column align="center" label="*使用性质" prop="useType" />
+        <el-table-column align="center" label="*抵押权人" prop="mortgagee" />
+        <el-table-column
+          align="center"
+          label="*统一社会信用代码"
+          prop="mortgageeUscc"
+        />
+        <el-table-column
+          align="center"
+          label="*抵押登记日期"
+          prop="mortgageRegisterDate"
+        />
+        <el-table-column align="center" label="批次号" prop="batchNo" />
+        <el-table-column align="center" label="关联合同号" prop="contractNo" />
+        <el-table-column align="center" label="所属系统" prop="belongSystem" />
+        <el-table-column align="center" label="挂靠商" prop="affiliatesName" />
+        <el-table-column align="center" label="办事处" prop="agencyName" />
+        <el-table-column align="center" label="渠道商" prop="channelName" />
+        <el-table-column align="center" label="创建人" prop="creator" />
+        <el-table-column align="center" label="创建时间" prop="createTime" />
 
         <el-table-column align="center" label="操作" fixed="right">
           <template #default="scope">
-            <el-button link type="primary" @click="editHandler(scope.row.id)">
-              编辑
-            </el-button>
-            <el-button link type="danger" @click="delHandler(scope.row.id)">
-              删除
-            </el-button>
+            <template v-if="scope.row.id">
+              <el-button link type="primary" @click="editHandler(scope.row.id)">
+                编辑
+              </el-button>
+              <el-button link type="danger" @click="delHandler(scope.row.id)">
+                删除
+              </el-button>
+            </template>
           </template>
         </el-table-column>
       </el-table>
+      <!-- 分页 -->
+      <el-pagination
+        v-if="pageTotal"
+        background
+        layout="total,sizes,prev, pager, next"
+        :page-sizes="[10, 20, 50, 100]"
+        :total="pageTotal"
+        class="table-page"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
     </div>
     <EditForm ref="editFormRef" />
     <UploadForm ref="uploadFormRef" />
@@ -192,7 +234,7 @@
 
 <script setup lang="ts">
 import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
-import { ref, reactive } from 'vue'
+import { ref, reactive, Ref, computed } from 'vue'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import { verifyOpts, archiveStatusOpts } from './config'
 import {
@@ -205,27 +247,53 @@ import {
 } from '@element-plus/icons-vue'
 import EditForm from './EditForm.vue'
 import UploadForm from './UploadForm.vue'
-
+import { MortageAPI } from '@/api/mortgageRelease'
+import {
+  VehiRegisterCardListRequest,
+  PageRequest,
+  DateRangeRequest,
+  CardInfoIO
+} from '@/api'
+const API = new MortageAPI()
+const pageTotal: Ref<number> = ref(0) // 列表的总页数
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
 const expandFlag = ref<boolean>(false)
 const tableLoading = ref<boolean>(false)
-const tableData = ref([])
-const queryParams = reactive({
-  verifyTime: [], // 创建时间
+const tableData: Ref<CardInfoIO[]> = ref([])
+const queryParams = reactive<
+  VehiRegisterCardListRequest & PageRequest & DateRangeRequest
+>({
+  pageNo: 1,
+  pageSize: 10,
+  verifyTime: [new Date(), new Date()], // 创建时间  ?????
   creator: '', // 创建者
-  verifyResults: '', // 核对结果
+  verifyResult: '', // 核对结果
   batchNo: '', // 批次号
   engineNo: '', // 发动机号
   engineType: '', // 发动机型号
-  archiveStatus: '', // 归档状态
+  archivalStatus: '', // 归档状态
   contractNo: '', // 合同号
-  licenseNo: '', // 车牌号
+  licensePlateNo: '', // 车牌号
   vinNo: '', // 车架号
-  office: '', // 办事处
-  affilMerchants: '', // 挂靠商
-  channelProvider: '' // 渠道商
+  agencyName: '', // 办事处
+  affiliatesName: '', // 挂靠商
+  channelName: '' // 渠道商
 })
 
+const startTime = computed(() => {
+  const time = queryParams.verifyTime[0]
+
+  return time
+})
+
+const endTime = computed(() => {
+  const time = queryParams.verifyTime[1]
+  return time
+})
+// 是否可选
+const selectableHandler = (row: CardInfoIO) => {
+  return !!row.id
+}
 // 展开-收回处理
 const expandHandler = (): boolean => {
   return (expandFlag.value = !expandFlag.value)
@@ -266,93 +334,47 @@ const editHandler = (id: string) => {
   console.log(id)
   editFormRef.value.open('add', id)
 }
-// const init = () => {
-//   const res = {
-//     msg: '操作成功',
-//     code: 200,
-//     data: {
-//       pageNo: 0,
-//       pageSize: 0,
-//       total: 0,
-//       totalPage: 0,
-//       list: [
-//         {
-//           id: '123',
-//           fileCode: '123',
-//           fileName: '测试',
-//           registerCardArchiveNo: '1234',
-//           verifyResult: '12234',
-//           registerCardNo: {
-//             sourceValue: '12',
-//             targetValue: '12234',
-//             compareResult: true
-//           },
-//           vinNo: {
-//             sourceValue: 'string',
-//             targetValue: 'string',
-//             compareResult: true
-//           },
-//           engineNo: {
-//             sourceValue: '12234',
-//             targetValue: '12234',
-//             compareResult: true
-//           },
-//           engineType: {
-//             sourceValue: '12234',
-//             targetValue: '12234',
-//             compareResult: true
-//           },
-//           licensePlateNo: {
-//             sourceValue: '12234',
-//             targetValue: '12234',
-//             compareResult: true
-//           },
-//           vehicleOwner: {
-//             sourceValue: 'string',
-//             targetValue: 'string',
-//             compareResult: true
-//           },
-//           vehicleColor: {
-//             sourceValue: '12234',
-//             targetValue: '12234',
-//             compareResult: true
-//           },
-//           useType: {
-//             sourceValue: '12234',
-//             targetValue: '12234',
-//             compareResult: true
-//           },
-//           mortgagee: {
-//             sourceValue: '12234',
-//             targetValue: '12234',
-//             compareResult: true
-//           },
-//           mortgageeUscc: {
-//             sourceValue: '12234',
-//             targetValue: '12234',
-//             compareResult: true
-//           },
-//           mortgageRegisterDate: {
-//             sourceValue: '12234',
-//             targetValue: '12234',
-//             compareResult: true
-//           },
-//           batchNo: '12234',
-//           contractNo: '12234',
-//           belongSystem: '12234',
-//           affiliatesName: '12234',
-//           channelName: '12234',
-//           creator: '12234',
-//           createTime: '12234',
-//           archivalStatus: '12234',
-//           archivalDate: '12234'
-//         }
-//       ]
-//     }
-//   }
 
-//   tableData.value = res?.data?.list
-// }
+// 分页
+const handleCurrentChange = (val: number) => {
+  queryParams.pageNo = val
+  getList()
+}
+
+// 页面条数改变
+const handleSizeChange = (val: number) => {
+  queryParams.pageSize = val
+  getList()
+}
+
+// 获取列表
+const getList = () => {
+  const { verifyTime, ...others } = queryParams
+  console.log('verifyTime', verifyTime)
+  const params = {
+    startVerifyTime: startTime.value,
+    endVerifyTime: endTime.value,
+    ...others
+  }
+  tableLoading.value = true
+  API.getVehiRegisterCardList(params)
+    .then((res) => {
+      tableLoading.value = false
+      if (res && res.code === 200) {
+        tableData.value = res?.data?.list || []
+      }
+    })
+    .catch((err: Error) => {
+      tableLoading.value = false
+      console.log(err)
+    })
+}
+
+const init = () => {
+  getList()
+}
+
+init()
 </script>
 
 <style lang="scss" scoped>
