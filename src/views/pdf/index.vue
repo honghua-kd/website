@@ -1,6 +1,6 @@
 <template>
   <div class="pdf-container">
-    <pdf-views :url="pdfUrl" />
+    <pdf-views :url="pdfUrl" scale rotate magnifyingGlass />
   </div>
 </template>
 

@@ -1,5 +1,4 @@
 <template>
-  <img ref="imageRef" src="/static/image/login-bg8.jpg" />
   <div class="pdf-container">
     <div class="wrapper-todo">
       <div class="page-num">
@@ -11,22 +10,23 @@
         <span class="pageTotal">&nbsp; / {{ pageTotal }}</span>
       </div>
       <div class="page-scale">
-        <el-button
-          type="primary"
-          :icon="ZoomIn"
-          @click="handleAddscale"
-        ></el-button>
-        <el-input class="current-scale" readonly :modelValue="currentScale" />
-        <el-button
-          type="primary"
-          :icon="ZoomOut"
-          @click="handleMinus"
-        ></el-button>
-        <el-button type="primary" plain @click="handleReset">重置</el-button>
-        <el-button type="primary" @click="handleRotate"
+        <template v-if="props.scale">
+          <el-button
+            type="primary"
+            :icon="ZoomIn"
+            @click="handleAddscale"
+          ></el-button>
+          <el-input class="current-scale" readonly :modelValue="currentScale" />
+          <el-button
+            type="primary"
+            :icon="ZoomOut"
+            @click="handleMinus"
+          ></el-button>
+          <el-button type="primary" plain @click="handleReset">重置</el-button>
+        </template>
+        <el-button v-if="props.rotate" type="primary" @click="handleRotate"
           ><svg-icon name="rotate" color="#fff"
         /></el-button>
-        <el-button type="primary" @click="handleZoomIn">开启放大镜</el-button>
       </div>
     </div>
     <div class="pages-wrap">
@@ -38,6 +38,7 @@
         <!--此处根据pdf的页数动态生成相应数量的canvas画布-->
         <canvas
           v-for="pageIndex in pageTotal"
+          ref="pdfCanvasRefs"
           :id="`pdf-canvas-` + pageIndex"
           :key="pageIndex"
           style="display: block"
@@ -54,21 +55,24 @@ import { ref, onMounted, nextTick, computed, reactive } from 'vue'
 import { ElMessage, ElScrollbar } from 'element-plus'
 import { ZoomIn, ZoomOut } from '@element-plus/icons-vue'
 import pdfWorker from 'pdfjs-dist/build/pdf.worker.entry'
-import { useMagnifyingGlass } from './useMagnifyingGlass'
+import { MagnifyingGlass } from './magnifyingGlass'
 
-const imageRef = ref<HTMLImageElement | HTMLCanvasElement>()
+const pdfCanvasRefs = ref<HTMLCanvasElement[]>([])
 
 const props = withDefaults(
   defineProps<{
-    useMagnifyingGlass: boolean
+    magnifyingGlass: boolean
+    scale: boolean
+    rotate: boolean
     url: string
   }>(),
   {
-    useMagnifyingGlass: false,
+    magnifyingGlass: false,
+    scale: false,
+    rotate: false,
     url: ''
   }
 )
-
 let pdfDoc: PDFDocumentProxy // 保存加载的pdf文件流
 const pageTotal = ref(0) // pdf文件的页数
 const pdfScale = ref(1.0) // 缩放比例
@@ -88,8 +92,7 @@ onMounted(() => {
     return
   }
   loadFile(props.url)
-
-  imageRef.value && useMagnifyingGlass(imageRef.value)
+  debugger
 })
 // 获取pdf文档流与pdf文件的页数
 const loadFile = async (url: string) => {
@@ -98,14 +101,14 @@ const loadFile = async (url: string) => {
   await loadingTask.promise.then((pdf) => {
     pdfDoc = pdf
     pageTotal.value = pdf.numPages
-    nextTick(() => {
-      renderPage(1)
+    nextTick(async () => {
+      await renderPage(1)
     })
   })
 }
 // 渲染pdf文件
-const renderPage = (num: number) => {
-  pdfDoc.getPage(num).then((page) => {
+const renderPage = async (num: number) => {
+  await pdfDoc.getPage(num).then(async (page) => {
     const canvasId = 'pdf-canvas-' + num
     const canvas: HTMLCanvasElement = document.getElementById(
       canvasId
@@ -126,8 +129,12 @@ const renderPage = (num: number) => {
         canvasContext: ctx,
         viewport: viewport
       })
+    setTimeout(() => {
+      props.magnifyingGlass &&
+        new MagnifyingGlass({ el: pdfCanvasRefs.value[num - 1] })
+    }, 0)
     if (num < pageTotal.value) {
-      renderPage(num + 1)
+      await renderPage(num + 1)
     }
   })
 }
@@ -207,8 +214,6 @@ const handleRotate = () => {
   const newDeg = currentDeg + 90
   canvas!.style.transform = `rotate(${newDeg > 360 ? 0 : newDeg}deg)`
 }
-
-const handleZoomIn = () => {}
 </script>
 
 <style lang="scss" scoped>
@@ -252,3 +257,4 @@ const handleZoomIn = () => {}
   }
 }
 </style>
+./magnifyingGlass
