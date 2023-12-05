@@ -1,6 +1,7 @@
 import { useRequest } from '@toystory/lotso'
 import requestConfig from '@/config/request.config'
-import type { Response, AuthDataItem } from '../types/response'
+import type { Response } from '../types/response'
+import type { AuthDataItem } from './types/response'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
 

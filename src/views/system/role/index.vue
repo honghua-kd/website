@@ -130,8 +130,7 @@ import PermiListDialog from '@/components/PermiForm/PermiListDialog.vue'
 import { Refresh, Search } from '@element-plus/icons-vue'
 import { formatDate } from '@/utils'
 import { ElForm } from 'element-plus'
-import type { RolePageRequest } from '@/api/types/request'
-import type { RoleDO } from '@/api/types/response'
+import type { RolePageRequest, RoleDO } from '@/api'
 
 const API = new SystemAPI()
 const statusOpts = ref([

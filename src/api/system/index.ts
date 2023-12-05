@@ -1,11 +1,11 @@
 import { useRequest } from '@toystory/lotso'
 import requestConfig from '@/config/request.config'
+import type { Response, PageList } from '../types/response'
+
 import type {
-  Response,
   RoleDO,
   DictListItem,
   DictDataItem,
-  PageList,
   DictDataDetail,
   RoleListPermission,
   UserListPermission,
@@ -17,7 +17,8 @@ import type {
   OrgStructure,
   StaffList,
   ExpDetail
-} from '../types/response'
+} from './types/response'
+
 import type {
   DictListRequest,
   RolePageRequest,
@@ -42,7 +43,7 @@ import type {
   GetExpDetailRequest,
   DelExpRequest,
   CreateExpRequest
-} from '../types/request'
+} from './types/request'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
 
