@@ -550,7 +550,7 @@ export interface StaffList {
   /**
    * 员工列表
    */
-  staffList?: StaffListItem[] | null
+  records?: StaffListItem[] | null
   total?: number
 }
 

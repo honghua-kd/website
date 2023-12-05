@@ -241,10 +241,11 @@ export class SystemAPI {
     })
   }
 
-  // 用户管理-查询部门下员工
+  // 用户管理-分页查询部门下员工
   getDepartmentStaff(data: GetDepartmentStaffRequest): Response<StaffList> {
     return this.request({
-      url: `${prefix}/admin-api/ehr/orgstructure/getDepartmentStaff`,
+      // url: `${prefix}/admin-api/ehr/orgstructure/getDepartmentStaff`,
+      url: `${prefix}/admin-api/ehr/orgstructure/getDepartmentAndSubordinates`,
       method: 'post',
       data
     })

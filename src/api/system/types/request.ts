@@ -181,20 +181,26 @@ export interface DictDataDelRequest {
 export type DictDataGetRequest = DictDataDelRequest
 
 // 查询部门下员工
-export interface GetDepartmentStaffRequest {
-  orgCode: string
+export interface GetDepartmentStaffRequest extends PageRequest {
+  orgCodeList: string[]
+  onJobStatusList?: string[]
 }
 
 // 查询用户的下属
-export interface GetStaffSubordinatesRequest {
+export interface BaseStaffRequest {
+  staffName?: null | string
+
+  staffCode: string
+}
+export interface GetStaffSubordinatesRequest extends PageRequest {
   /**
    * 员工工号
    */
-  staffCode?: null | string
+  staffCodeList?: string[]
   /**
-   * 员工名称
+   * 在职状态
    */
-  staffName?: null | string
+  onJobStatusList?: null | string[]
 }
 
 export interface GetExpDetailRequest {

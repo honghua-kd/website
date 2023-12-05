@@ -266,6 +266,93 @@ const editHandler = (id: string) => {
   console.log(id)
   editFormRef.value.open('add', id)
 }
+// const init = () => {
+//   const res = {
+//     msg: '操作成功',
+//     code: 200,
+//     data: {
+//       pageNo: 0,
+//       pageSize: 0,
+//       total: 0,
+//       totalPage: 0,
+//       list: [
+//         {
+//           id: '123',
+//           fileCode: '123',
+//           fileName: '测试',
+//           registerCardArchiveNo: '1234',
+//           verifyResult: '12234',
+//           registerCardNo: {
+//             sourceValue: '12',
+//             targetValue: '12234',
+//             compareResult: true
+//           },
+//           vinNo: {
+//             sourceValue: 'string',
+//             targetValue: 'string',
+//             compareResult: true
+//           },
+//           engineNo: {
+//             sourceValue: '12234',
+//             targetValue: '12234',
+//             compareResult: true
+//           },
+//           engineType: {
+//             sourceValue: '12234',
+//             targetValue: '12234',
+//             compareResult: true
+//           },
+//           licensePlateNo: {
+//             sourceValue: '12234',
+//             targetValue: '12234',
+//             compareResult: true
+//           },
+//           vehicleOwner: {
+//             sourceValue: 'string',
+//             targetValue: 'string',
+//             compareResult: true
+//           },
+//           vehicleColor: {
+//             sourceValue: '12234',
+//             targetValue: '12234',
+//             compareResult: true
+//           },
+//           useType: {
+//             sourceValue: '12234',
+//             targetValue: '12234',
+//             compareResult: true
+//           },
+//           mortgagee: {
+//             sourceValue: '12234',
+//             targetValue: '12234',
+//             compareResult: true
+//           },
+//           mortgageeUscc: {
+//             sourceValue: '12234',
+//             targetValue: '12234',
+//             compareResult: true
+//           },
+//           mortgageRegisterDate: {
+//             sourceValue: '12234',
+//             targetValue: '12234',
+//             compareResult: true
+//           },
+//           batchNo: '12234',
+//           contractNo: '12234',
+//           belongSystem: '12234',
+//           affiliatesName: '12234',
+//           channelName: '12234',
+//           creator: '12234',
+//           createTime: '12234',
+//           archivalStatus: '12234',
+//           archivalDate: '12234'
+//         }
+//       ]
+//     }
+//   }
+
+//   tableData.value = res?.data?.list
+// }
 </script>
 
 <style lang="scss" scoped>
@@ -275,7 +362,7 @@ const editHandler = (id: string) => {
 }
 .scan-search-bar {
   padding: 10px;
-  width: 80%;
+  width: 90%;
 }
 .search-btn {
   display: flex;

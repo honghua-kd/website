@@ -8,7 +8,7 @@
       <el-card class="search-bar">
         <el-form ref="queryFormRef" :model="queryParams" :inline="true">
           <el-row :gutter="15">
-            <el-col :span="8">
+            <el-col :span="16">
               <el-form-item
                 label="员工工号:"
                 prop="staffCode"
@@ -22,7 +22,7 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            <!-- <el-col :span="8">
               <el-form-item
                 label="员工姓名:"
                 prop="staffName"
@@ -35,7 +35,7 @@
                   clearable
                 />
               </el-form-item>
-            </el-col>
+            </el-col> -->
 
             <el-col :span="6" style="text-align: right">
               <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
@@ -159,7 +159,7 @@ import type {
   StaffList,
   StaffListItem,
   OrgInfoItem,
-  GetStaffSubordinatesRequest,
+  BaseStaffRequest,
   PageRequest
 } from '@/api'
 const API = new SystemAPI()
@@ -168,7 +168,7 @@ const tableData: Ref<StaffListItem[]> = ref([]) // 列表数据
 const loading: Ref<boolean> = ref(false)
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
-const queryParams = reactive<PageRequest & GetStaffSubordinatesRequest>({
+const queryParams = reactive<PageRequest & BaseStaffRequest>({
   pageNo: 1,
   pageSize: 10,
   staffName: '', // 员工姓名
@@ -193,18 +193,24 @@ const searchHandler = () => {
 const getSelectNodeHandler = (node: OrgInfoItem) => {
   const orgCode = node?.orgCode || ''
   currentOrgCode.value = node?.orgCode || ''
+  queryParams.staffCode = ''
+  queryParams.staffName = ''
   getDeptStaffList(orgCode)
 }
 
-// 获取部门员工列表
+// 获取分页部门员工列表
 const getDeptStaffList = (orgCode: string) => {
   loading.value = true
-  const params = { orgCode }
+  const params = {
+    orgCodeList: [orgCode],
+    pageNo: queryParams.pageNo,
+    pageSize: queryParams.pageSize
+  }
   API.getDepartmentStaff(params)
     .then((res: ResponseBody<StaffList>) => {
       loading.value = false
       if (res && res.code === 200) {
-        tableData.value = res?.data?.staffList || []
+        tableData.value = res?.data?.records || []
         pageTotal.value = res?.data?.total || 0
       }
     })
@@ -216,21 +222,32 @@ const getDeptStaffList = (orgCode: string) => {
 
 const getStaffSubHandler = () => {
   const params = {
-    ...queryParams
+    pageNo: queryParams.pageNo,
+    pageSize: queryParams.pageSize,
+    staffCodeList: [queryParams.staffCode]
   }
   API.getStaffSubordinates(params).then((res: ResponseBody<StaffList>) => {
     if (res && res.code === 200) {
-      tableData.value = res.data?.staffList || []
+      tableData.value = res.data?.records || []
+      pageTotal.value = res?.data?.total || 0
     }
   })
 }
 const handleCurrentChange = (val: number) => {
   queryParams.pageNo = val
-  getStaffSubHandler()
+  if (queryParams.staffCode || queryParams.staffName) {
+    getStaffSubHandler()
+  } else {
+    getDeptStaffList(currentOrgCode.value)
+  }
 }
 const handleSizeChange = (val: number) => {
   queryParams.pageSize = val
-  getStaffSubHandler()
+  if (queryParams.staffCode || queryParams.staffName) {
+    getStaffSubHandler()
+  } else {
+    getDeptStaffList(currentOrgCode.value)
+  }
 }
 
 // 分配数据权限
