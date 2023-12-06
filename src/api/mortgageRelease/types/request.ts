@@ -63,3 +63,9 @@ export interface VehiRegisterCardListRequest extends PageRequest {
 export interface DateRangeRequest {
   verifyTime: [Date, Date]
 }
+
+export interface SortParamsRequest {
+  fileNameSort?: string
+  registerCardArchiveNoSort?: string
+  verifyResultSort?: string
+}

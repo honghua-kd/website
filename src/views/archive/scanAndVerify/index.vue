@@ -141,7 +141,6 @@
         <el-button type="primary" :icon="Check">选择 & 归档</el-button>
         <el-button type="primary" :icon="Delete">删除</el-button>
         <el-button type="primary" :icon="Download">导出</el-button>
-        <el-button type="primary" @click="editHandler('1')">编辑</el-button>
       </el-row>
       <el-table
         :data="tableData"
@@ -149,8 +148,8 @@
         border
         v-loading="tableLoading"
         row-key="id"
-        default-expand-all
         :tree-props="{ children: 'target' }"
+        @sort-change="sortChangeHandler"
       >
         <el-table-column
           type="selection"
@@ -158,51 +157,207 @@
           :selectable="selectableHandler"
         />
 
-        <el-table-column align="center" fixed label="文件名" prop="fileName" />
         <el-table-column
-          align="center"
+          fixed
+          label="文件名"
+          prop="fileName"
+          width="150"
+          show-overflow-tooltip
+          sortable="custom"
+        >
+          <template #default="scope">
+            <span :class="scope.row.id ? '' : 'font-color-system'">
+              {{ scope.row.fileName }}
+            </span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="登记证归档序号"
           prop="registerCardArchiveNo"
-        />
-        <el-table-column align="center" label="核对结果" prop="verifyResult" />
-
+          width="150"
+          show-overflow-tooltip
+          sortable="custom"
+        >
+          <template #default="scope">
+            <span :class="scope.row.id ? '' : 'font-color-system'">
+              {{ scope.row.registerCardArchiveNo }}
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column
-          align="center"
+          label="核对结果"
+          prop="verifyResult"
+          width="150"
+          show-overflow-tooltip
+          sortable="custom"
+        >
+          <template #default="scope">
+            <span :class="scope.row.id ? '' : 'font-color-system'">
+              <!-- 换成图形 -->
+              {{ scope.row.verifyResult }}
+            </span>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="*登记证编号"
           prop="registerCardNo"
-        />
-        <el-table-column align="center" label="*车架号" prop="vinNo" />
-        <el-table-column align="center" label="*发动机号" prop="engineNo" />
-        <el-table-column align="center" label="*发动机型号" prop="engineType" />
-        <el-table-column align="center" label="*车牌号" prop="licensePlateNo" />
+          width="150"
+          show-overflow-tooltip
+        >
+          <template #default="scope">
+            <TableSlotItem :rowInfo="scope.row" rowKey="registerCardNo" />
+          </template>
+        </el-table-column>
         <el-table-column
-          align="center"
+          label="*车架号"
+          prop="vinNo"
+          width="150"
+          show-overflow-tooltip
+        >
+          <template #default="scope">
+            <TableSlotItem :rowInfo="scope.row" rowKey="vinNo" />
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="*发动机号"
+          prop="engineNo"
+          width="150"
+          show-overflow-tooltip
+        >
+          <template #default="scope">
+            <TableSlotItem :rowInfo="scope.row" rowKey="engineNo" />
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="*发动机型号"
+          prop="engineType"
+          width="150"
+          show-overflow-tooltip
+        >
+          <template #default="scope">
+            <TableSlotItem :rowInfo="scope.row" rowKey="engineType" />
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="*车牌号"
+          prop="licensePlateNo"
+          width="150"
+          show-overflow-tooltip
+        >
+          <template #default="scope">
+            <TableSlotItem :rowInfo="scope.row" rowKey="licensePlateNo" />
+          </template>
+        </el-table-column>
+        <el-table-column
           label="*机动车所有人"
           prop="vehicleOwner"
-        />
-        <el-table-column align="center" label="*车身颜色" prop="vehicleColor" />
-        <el-table-column align="center" label="*使用性质" prop="useType" />
-        <el-table-column align="center" label="*抵押权人" prop="mortgagee" />
+          width="150"
+          show-overflow-tooltip
+        >
+          <template #default="scope">
+            <TableSlotItem :rowInfo="scope.row" rowKey="vehicleOwner" />
+          </template>
+        </el-table-column>
         <el-table-column
-          align="center"
+          label="*车身颜色"
+          prop="vehicleColor"
+          width="150"
+          show-overflow-tooltip
+        >
+          <template #default="scope">
+            <TableSlotItem :rowInfo="scope.row" rowKey="vehicleColor" />
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="*使用性质"
+          prop="useType"
+          width="150"
+          show-overflow-tooltip
+        >
+          <template #default="scope">
+            <TableSlotItem :rowInfo="scope.row" rowKey="useType" />
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="*抵押权人"
+          prop="mortgagee"
+          width="150"
+          show-overflow-tooltip
+        >
+          <template #default="scope">
+            <TableSlotItem :rowInfo="scope.row" rowKey="mortgagee" />
+          </template>
+        </el-table-column>
+        <el-table-column
           label="*统一社会信用代码"
           prop="mortgageeUscc"
-        />
+          width="150"
+          show-overflow-tooltip
+        >
+          <template #default="scope">
+            <TableSlotItem :rowInfo="scope.row" rowKey="mortgageeUscc" />
+          </template>
+        </el-table-column>
         <el-table-column
-          align="center"
           label="*抵押登记日期"
           prop="mortgageRegisterDate"
+          width="150"
+          show-overflow-tooltip
+        >
+          <template #default="scope">
+            <TableSlotItem :rowInfo="scope.row" rowKey="mortgageRegisterDate" />
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="批次号"
+          prop="batchNo"
+          width="150"
+          show-overflow-tooltip
         />
-        <el-table-column align="center" label="批次号" prop="batchNo" />
-        <el-table-column align="center" label="关联合同号" prop="contractNo" />
-        <el-table-column align="center" label="所属系统" prop="belongSystem" />
-        <el-table-column align="center" label="挂靠商" prop="affiliatesName" />
-        <el-table-column align="center" label="办事处" prop="agencyName" />
-        <el-table-column align="center" label="渠道商" prop="channelName" />
-        <el-table-column align="center" label="创建人" prop="creator" />
-        <el-table-column align="center" label="创建时间" prop="createTime" />
+        <el-table-column
+          label="关联合同号"
+          prop="contractNo"
+          width="150"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="所属系统"
+          prop="belongSystem"
+          width="150"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="挂靠商"
+          prop="affiliatesName"
+          width="150"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="办事处"
+          prop="agencyName"
+          width="150"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="渠道商"
+          prop="channelName"
+          width="150"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="创建人"
+          prop="creator"
+          width="150"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="创建时间"
+          prop="createTime"
+          width="150"
+          show-overflow-tooltip
+        />
 
-        <el-table-column align="center" label="操作" fixed="right">
+        <el-table-column label="操作" fixed="right" width="150" align="center">
           <template #default="scope">
             <template v-if="scope.row.id">
               <el-button link type="primary" @click="editHandler(scope.row.id)">
@@ -252,8 +407,11 @@ import {
   VehiRegisterCardListRequest,
   PageRequest,
   DateRangeRequest,
+  SortParamsRequest,
   CardInfoIO
 } from '@/api'
+import TableSlotItem from './components/TableSlotItem.vue'
+
 const API = new MortageAPI()
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
@@ -282,7 +440,6 @@ const queryParams = reactive<
 
 const startTime = computed(() => {
   const time = queryParams.verifyTime[0]
-
   return time
 })
 
@@ -335,6 +492,18 @@ const editHandler = (id: string) => {
   editFormRef.value.open('add', id)
 }
 
+// 排序
+const sortChangeHandler = (item: { prop: string; order: string }) => {
+  const sortParams =
+    item.order === 'ascending'
+      ? {
+          [`${item.prop}Sort`]: 'ASC'
+        }
+      : { [`${item.prop}Sort`]: 'DESC' }
+  getList(sortParams)
+  // console.log('sortParams', sortParams)
+}
+
 // 分页
 const handleCurrentChange = (val: number) => {
   queryParams.pageNo = val
@@ -348,20 +517,24 @@ const handleSizeChange = (val: number) => {
 }
 
 // 获取列表
-const getList = () => {
+const getList = (sortParams?: SortParamsRequest) => {
   const { verifyTime, ...others } = queryParams
   console.log('verifyTime', verifyTime)
   const params = {
     startVerifyTime: startTime.value,
     endVerifyTime: endTime.value,
-    ...others
+    ...others,
+    ...sortParams
   }
+  console.log('params>>>>', params)
+
   tableLoading.value = true
   API.getVehiRegisterCardList(params)
     .then((res) => {
       tableLoading.value = false
       if (res && res.code === 200) {
         tableData.value = res?.data?.list || []
+        pageTotal.value = res?.data?.total || 0
       }
     })
     .catch((err: Error) => {
@@ -403,5 +576,8 @@ init()
 }
 .table-btn {
   margin-bottom: 10px;
+}
+.font-color-system {
+  color: #1893ff;
 }
 </style>
