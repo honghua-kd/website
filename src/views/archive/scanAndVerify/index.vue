@@ -23,12 +23,12 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="创建人:" prop="creator">
-              <el-input v-model="queryParams.creator" />
+              <el-input v-model="queryParams.creator" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="核对结果:" prop="verifyResult">
-              <el-select v-model="queryParams.verifyResult">
+              <el-select v-model="queryParams.verifyResult" style="width: 100%">
                 <el-option
                   v-for="(item, index) in verifyOpts"
                   :key="index"
@@ -42,22 +42,25 @@
         <el-row :gutter="20">
           <el-col :span="6">
             <el-form-item label="批次号:" prop="batchNo">
-              <el-input v-model="queryParams.batchNo" />
+              <el-input v-model="queryParams.batchNo" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="发动机号:" prop="engineNo">
-              <el-input v-model="queryParams.engineNo" />
+              <el-input v-model="queryParams.engineNo" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="发动机型号:" prop="engineType">
-              <el-input v-model="queryParams.engineType" />
+              <el-input v-model="queryParams.engineType" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="归档状态:" prop="archivalStatus">
-              <el-select v-model="queryParams.archivalStatus">
+              <el-select
+                v-model="queryParams.archivalStatus"
+                style="width: 100%"
+              >
                 <el-option
                   v-for="(item, index) in archiveStatusOpts"
                   :key="index"
@@ -71,64 +74,52 @@
         <el-row :gutter="20">
           <el-col :span="6">
             <el-form-item label="合同号:" prop="contractNo">
-              <el-input v-model="queryParams.contractNo" />
+              <el-input v-model="queryParams.contractNo" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="车牌号:" prop="licensePlateNo">
-              <el-input v-model="queryParams.licensePlateNo" />
+              <el-input v-model="queryParams.licensePlateNo" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="车架号:" prop="vinNo">
-              <el-input v-model="queryParams.vinNo" />
+              <el-input v-model="queryParams.vinNo" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="办事处:" prop="agencyName">
-              <el-input v-model="queryParams.agencyName" />
+              <el-input v-model="queryParams.agencyName" clearable />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20" v-if="expandFlag">
           <el-col :span="12">
             <el-form-item label="挂靠商:" prop="affiliatesName">
-              <el-input v-model="queryParams.affiliatesName" />
+              <el-input v-model="queryParams.affiliatesName" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="渠道商:" prop="channelName">
-              <el-input v-model="queryParams.channelName" />
+              <el-input v-model="queryParams.channelName" clearable />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row justify="end">
           <el-col :span="6" class="btn-row">
             <el-form-item>
-              <el-button type="primary">查询</el-button>
-              <el-button>重置</el-button>
+              <el-button type="primary" @click="searchHandler">查询</el-button>
+              <el-button @click="reset">重置</el-button>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <div class="search-btn">
-        <div class="arrow">
+        <div class="arrow" @click="expandHandler">
           <el-icon v-if="!expandFlag"><ArrowDownBold /></el-icon>
           <el-icon v-if="expandFlag"><ArrowUpBold /></el-icon>
-          <span
-            v-if="!expandFlag"
-            @click="expandHandler"
-            style="margin-left: 4px"
-          >
-            展开
-          </span>
-          <span
-            v-if="expandFlag"
-            @click="expandHandler"
-            style="margin-left: 4px"
-          >
-            收回
-          </span>
+          <span v-if="!expandFlag" style="margin-left: 4px"> 展开 </span>
+          <span v-if="expandFlag" style="margin-left: 4px"> 收回 </span>
         </div>
       </div>
     </div>
@@ -139,7 +130,14 @@
           上传车辆登记证
         </el-button>
         <el-button type="primary" :icon="Check">选择 & 归档</el-button>
-        <el-button type="primary" :icon="Delete">删除</el-button>
+        <el-button
+          type="primary"
+          :icon="Delete"
+          @click="delHandler(selectIds)"
+          :disabled="!selectIds.length"
+        >
+          删除
+        </el-button>
         <el-button type="primary" :icon="Download">导出</el-button>
       </el-row>
       <el-table
@@ -150,6 +148,7 @@
         row-key="id"
         :tree-props="{ children: 'target' }"
         @sort-change="sortChangeHandler"
+        @selection-change="selectionChangeHandler"
       >
         <el-table-column
           type="selection"
@@ -363,7 +362,7 @@
               <el-button link type="primary" @click="editHandler(scope.row.id)">
                 编辑
               </el-button>
-              <el-button link type="danger" @click="delHandler(scope.row.id)">
+              <el-button link type="danger" @click="delHandler([scope.row.id])">
                 删除
               </el-button>
             </template>
@@ -408,7 +407,7 @@ import {
   PageRequest,
   DateRangeRequest,
   SortParamsRequest,
-  CardInfoIO
+  CardListItem
 } from '@/api'
 import TableSlotItem from './components/TableSlotItem.vue'
 
@@ -417,7 +416,7 @@ const pageTotal: Ref<number> = ref(0) // 列表的总页数
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
 const expandFlag = ref<boolean>(false)
 const tableLoading = ref<boolean>(false)
-const tableData: Ref<CardInfoIO[]> = ref([])
+const tableData: Ref<CardListItem[]> = ref([])
 const queryParams = reactive<
   VehiRegisterCardListRequest & PageRequest & DateRangeRequest
 >({
@@ -438,17 +437,27 @@ const queryParams = reactive<
   channelName: '' // 渠道商
 })
 
-const startTime = computed(() => {
-  const time = queryParams.verifyTime[0]
-  return time
+const selectData: Ref<CardListItem[]> = ref([])
+
+// 选择的数据
+const selectionChangeHandler = (item: CardListItem[]) => {
+  selectData.value.splice(0, selectData.value.length)
+  selectData.value.push(...item)
+  console.log('selectionChangeHandler', selectData.value)
+}
+
+const selectIds = computed(() => {
+  const ids: string[] = []
+  selectData.value.forEach((item) => {
+    if (item.id) {
+      ids.push(item.id)
+    }
+  })
+  return ids
 })
 
-const endTime = computed(() => {
-  const time = queryParams.verifyTime[1]
-  return time
-})
 // 是否可选
-const selectableHandler = (row: CardInfoIO) => {
+const selectableHandler = (row: CardListItem) => {
   return !!row.id
 }
 // 展开-收回处理
@@ -463,7 +472,7 @@ const uploadHandler = () => {
 }
 
 // 删除
-const delHandler = (id: string) => {
+const delHandler = (ids: string[]) => {
   // 二次确认
   ElMessageBox.confirm('确认要删除吗？', '警告', {
     confirmButtonText: '确定',
@@ -473,9 +482,17 @@ const delHandler = (id: string) => {
     .then(() => {
       // 调用删除接口
       const params = {
-        id
+        ids
       }
       console.log(params)
+      API.delRegisterCard(params).then((res) => {
+        if (res && res.code === 200) {
+          ElMessage({
+            type: 'success',
+            message: '删除成功'
+          })
+        }
+      })
     })
     .catch((err: Error) => {
       ElMessage({
@@ -489,7 +506,7 @@ const delHandler = (id: string) => {
 const editFormRef = ref()
 const editHandler = (id: string) => {
   console.log(id)
-  editFormRef.value.open('add', id)
+  editFormRef.value.open(id)
 }
 
 // 排序
@@ -516,13 +533,36 @@ const handleSizeChange = (val: number) => {
   getList()
 }
 
+// 查询
+const searchHandler = () => {
+  queryParams.pageNo = 1
+  getList()
+}
+
+// 重置
+const reset = () => {
+  queryParams.pageNo = 1
+  queryParams.pageSize = 10
+  queryParams.verifyTime = [new Date(), new Date()] // 创建时间  ?????
+  queryParams.creator = '' // 创建者
+  queryParams.verifyResult = '' // 核对结果
+  queryParams.batchNo = '' // 批次号
+  queryParams.engineNo = '' // 发动机号
+  queryParams.engineType = '' // 发动机型号
+  queryParams.archivalStatus = '' // 归档状态
+  queryParams.contractNo = '' // 合同号
+  queryParams.licensePlateNo = '' // 车牌号
+  queryParams.vinNo = '' // 车架号
+  queryParams.agencyName = '' // 办事处
+  queryParams.affiliatesName = '' // 挂靠商
+  queryParams.channelName = '' // 渠道商
+}
 // 获取列表
 const getList = (sortParams?: SortParamsRequest) => {
   const { verifyTime, ...others } = queryParams
-  console.log('verifyTime', verifyTime)
   const params = {
-    startVerifyTime: startTime.value,
-    endVerifyTime: endTime.value,
+    startVerifyTime: new Date(verifyTime[0]).getTime(),
+    endVerifyTime: new Date(verifyTime[1]).getTime(),
     ...others,
     ...sortParams
   }
@@ -561,7 +601,7 @@ init()
 }
 .search-btn {
   display: flex;
-  margin-top: 7%;
+  margin-top: 6%;
   padding: 20px 10px;
   height: 60px;
   flex-direction: column;

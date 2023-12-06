@@ -19,7 +19,7 @@ export const mortgage = [
               fileName: '测试',
               registerCardArchiveNo: 'sourceValue',
               verifyResult: '12234',
-              registerCardNo: '121223412234122341223412234',
+              registerCardNo: '1212234122341223412234',
               vinNo: '7880',
               engineNo: '12234',
               engineType: '12234',
@@ -126,6 +126,65 @@ export const mortgage = [
               ]
             }
           ]
+        }
+      }
+    }
+  },
+  {
+    url: `${VITE_API}/admin-api/mortgage/vehicleRegisterCard/getInfo`,
+    method: 'post',
+    response: () => {
+      return {
+        msg: '操作成功',
+        code: 200,
+        data: {
+          id: 'string',
+          fileCode: 'string',
+          fileName: 'string',
+          registerCardNo: {
+            sourceValue: 'string',
+            targetValue: 'string'
+          },
+          vinNo: {
+            sourceValue: 'string',
+            targetValue: 'string'
+          },
+          licensePlateNo: {
+            sourceValue: 'string',
+            targetValue: 'string'
+          },
+          engineNo: {
+            sourceValue: 'string',
+            targetValue: 'string'
+          },
+          engineType: {
+            sourceValue: 'string',
+            targetValue: 'string'
+          },
+          vehicleOwner: {
+            sourceValue: 'string',
+            targetValue: 'string'
+          },
+          vehicleColor: {
+            sourceValue: 'string',
+            targetValue: 'string'
+          },
+          useType: {
+            sourceValue: 'string',
+            targetValue: 'string'
+          },
+          mortgagee: {
+            sourceValue: 'string',
+            targetValue: 'string'
+          },
+          mortgageeUscc: {
+            sourceValue: 'string',
+            targetValue: 'string'
+          },
+          mortgageRegisterDate: {
+            sourceValue: 'string',
+            targetValue: 'string'
+          }
         }
       }
     }

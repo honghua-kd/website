@@ -42,18 +42,18 @@ export const archiveStatusOpts = [
 export const mortOpts = [
   {
     label: '海通恒信国际融资租赁股份有限公司',
-    value: 1
+    value: '1'
   },
   {
     label: '海通恒信国际融资租赁（天津）有限公司',
-    value: 2
+    value: '2'
   },
   {
     label: '海通恒运融资租赁（上海）有限公司',
-    value: 3
+    value: '3'
   },
   {
     label: '海通恒信小微融资租赁（上海）有限公司',
-    value: 4
+    value: '4'
   }
 ]

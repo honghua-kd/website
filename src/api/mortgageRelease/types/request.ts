@@ -32,7 +32,7 @@ export interface VehiRegisterCardListRequest extends PageRequest {
   /**
    * 核验结束时间
    */
-  endVerifyTime?: Date
+  endVerifyTime?: number
   /**
    * 发动机号
    */
@@ -49,7 +49,7 @@ export interface VehiRegisterCardListRequest extends PageRequest {
   /**
    * 核验开始时间
    */
-  startVerifyTime?: Date
+  startVerifyTime?: number
   /**
    * 核验结果
    */
@@ -68,4 +68,62 @@ export interface SortParamsRequest {
   fileNameSort?: string
   registerCardArchiveNoSort?: string
   verifyResultSort?: string
+}
+export interface DelRegisterCardRequest {
+  ids: string[]
+}
+
+export interface GetRegisterCardInfoRequest {
+  id: string
+}
+
+export interface EditRegisterCardInfoRequest {
+  /**
+   * 发动机号
+   */
+  engineNo?: string
+  /**
+   * 发动机型号
+   */
+  engineType?: string
+  /**
+   * 主表数据id
+   */
+  id: string
+  /**
+   * 车牌号
+   */
+  licensePlateNo?: string
+  /**
+   * 抵押权人
+   */
+  mortgagee?: string
+  /**
+   * 抵押权人统一社会信用代码
+   */
+  mortgageeUscc?: string
+  /**
+   * 抵押登记日期
+   */
+  mortgageRegisterDate?: number | Date
+  /**
+   * 登记证编号
+   */
+  registerCardNo?: string
+  /**
+   * 使用性质
+   */
+  useType?: string
+  /**
+   * 车身颜色
+   */
+  vehicleColor?: string
+  /**
+   * 机动车所有人
+   */
+  vehicleOwner?: string
+  /**
+   * 车架号
+   */
+  vinNo?: string
 }
