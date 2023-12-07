@@ -8,34 +8,34 @@ export default {
 export const verifyOpts = [
   {
     label: '全部',
-    value: 1
+    value: 'all'
   },
   {
     label: '处理中',
-    value: 2
+    value: 'OCR_STATUS_PRO'
   },
   {
     label: '未通过',
-    value: 3
+    value: 'OCR_STATUS_NO'
   },
   {
     label: '通过',
-    value: 4
+    value: 'OCR_STATUS_YES'
   }
 ]
 
 export const archiveStatusOpts = [
   {
     label: '全部',
-    value: 1
+    value: 'all'
   },
   {
     label: '已归档',
-    value: 2
+    value: 'ARCHIVE_STATUS_YES'
   },
   {
     label: '未归档',
-    value: 3
+    value: 'ARCHIVE_STATUS_NO'
   }
 ]
 

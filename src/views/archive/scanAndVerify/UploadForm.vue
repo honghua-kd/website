@@ -16,7 +16,11 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="处理批次号" prop="batchNo">
-              <el-input v-model="formParams.batchNo" />
+              <el-input
+                v-model="formParams.batchNo"
+                clearable
+                placeholder="请输入"
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -73,9 +77,10 @@ const chooseFileNum = computed(() => {
 })
 
 /** 打开弹窗 */
-const open = (type: string) => {
+const open = (type: string, title: string) => {
   dialogVisible.value = true
-  console.log(type)
+  formParams.batchNo = title
+  console.log(type, title)
 }
 
 defineExpose({ open })

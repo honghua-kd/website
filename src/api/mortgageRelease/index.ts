@@ -61,4 +61,15 @@ export class MortageAPI {
       data
     })
   }
+
+  // 归档
+  achiveRegisterCard(
+    data: DelRegisterCardRequest
+  ): Response<boolean | null | undefined> {
+    return this.request({
+      url: `${prefix}/admin-api/mortgage/vehicleRegisterCard/archive`,
+      method: 'post',
+      data
+    })
+  }
 }

@@ -14,7 +14,6 @@
             <el-form-item label="核验时间:" prop="verifyTime">
               <el-date-picker
                 v-model="queryParams.verifyTime"
-                value-format="YYYY-MM-DD HH:mm:ss"
                 type="datetimerange"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
@@ -22,8 +21,12 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="创建人:" prop="creator">
-              <el-input v-model="queryParams.creator" clearable />
+            <el-form-item label="创建人:" prop="creatorName">
+              <el-input
+                v-model="queryParams.creatorName"
+                clearable
+                placeholder="请输入"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -42,17 +45,29 @@
         <el-row :gutter="20">
           <el-col :span="6">
             <el-form-item label="批次号:" prop="batchNo">
-              <el-input v-model="queryParams.batchNo" clearable />
+              <el-input
+                v-model="queryParams.batchNo"
+                clearable
+                placeholder="请输入"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="发动机号:" prop="engineNo">
-              <el-input v-model="queryParams.engineNo" clearable />
+              <el-input
+                v-model="queryParams.engineNo"
+                clearable
+                placeholder="请输入"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="发动机型号:" prop="engineType">
-              <el-input v-model="queryParams.engineType" clearable />
+              <el-input
+                v-model="queryParams.engineType"
+                clearable
+                placeholder="请输入"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -74,34 +89,58 @@
         <el-row :gutter="20">
           <el-col :span="6">
             <el-form-item label="合同号:" prop="contractNo">
-              <el-input v-model="queryParams.contractNo" clearable />
+              <el-input
+                v-model="queryParams.contractNo"
+                clearable
+                placeholder="请输入"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="车牌号:" prop="licensePlateNo">
-              <el-input v-model="queryParams.licensePlateNo" clearable />
+              <el-input
+                v-model="queryParams.licensePlateNo"
+                clearable
+                placeholder="请输入"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="车架号:" prop="vinNo">
-              <el-input v-model="queryParams.vinNo" clearable />
+              <el-input
+                v-model="queryParams.vinNo"
+                clearable
+                placeholder="请输入"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="办事处:" prop="agencyName">
-              <el-input v-model="queryParams.agencyName" clearable />
+              <el-input
+                v-model="queryParams.agencyName"
+                clearable
+                placeholder="请输入"
+              />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20" v-if="expandFlag">
           <el-col :span="12">
             <el-form-item label="挂靠商:" prop="affiliatesName">
-              <el-input v-model="queryParams.affiliatesName" clearable />
+              <el-input
+                v-model="queryParams.affiliatesName"
+                clearable
+                placeholder="请输入"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="渠道商:" prop="channelName">
-              <el-input v-model="queryParams.channelName" clearable />
+              <el-input
+                v-model="queryParams.channelName"
+                clearable
+                placeholder="请输入"
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -129,13 +168,10 @@
         <el-button type="primary" :icon="Plus" @click="uploadHandler">
           上传车辆登记证
         </el-button>
-        <el-button type="primary" :icon="Check">选择 & 归档</el-button>
-        <el-button
-          type="primary"
-          :icon="Delete"
-          @click="delHandler(selectIds)"
-          :disabled="!selectIds.length"
-        >
+        <el-button type="primary" :icon="Check" @click="achiveHandler">
+          选择 & 归档
+        </el-button>
+        <el-button type="primary" :icon="Delete" @click="delHandler(selectIds)">
           删除
         </el-button>
         <el-button type="primary" :icon="Download">导出</el-button>
@@ -193,7 +229,7 @@
           <template #default="scope">
             <span :class="scope.row.id ? '' : 'font-color-system'">
               <!-- 换成图形 -->
-              {{ scope.row.verifyResult }}
+              {{ getVerifyResult(scope.row.verifyResult) }}
             </span>
           </template>
         </el-table-column>
@@ -354,11 +390,40 @@
           prop="createTime"
           width="150"
           show-overflow-tooltip
-        />
+        >
+          <template #default="scope">
+            {{ formatDate(scope.row.createTime, '') }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="归档状态"
+          prop="archivalStatus"
+          width="150"
+          show-overflow-tooltip
+        >
+          <template #default="scope">
+            {{ getAchivalStatus(scope.row.archivalStatus) }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="归档时间"
+          prop="archivalDate"
+          width="150"
+          show-overflow-tooltip
+        >
+          <template #default="scope">
+            {{ formatDate(scope.row.archivalDate, '') }}
+          </template>
+        </el-table-column>
 
         <el-table-column label="操作" fixed="right" width="150" align="center">
           <template #default="scope">
-            <template v-if="scope.row.id">
+            <template
+              v-if="
+                scope.row.id &&
+                scope.row.archivalStatus !== ARCHIVE_STATUS.ACHIVED
+              "
+            >
               <el-button link type="primary" @click="editHandler(scope.row.id)">
                 编辑
               </el-button>
@@ -388,7 +453,7 @@
 
 <script setup lang="ts">
 import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
-import { ref, reactive, Ref, computed } from 'vue'
+import { ref, reactive, Ref, computed, onMounted } from 'vue'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import { verifyOpts, archiveStatusOpts } from './config'
 import {
@@ -410,6 +475,10 @@ import {
   CardListItem
 } from '@/api'
 import TableSlotItem from './components/TableSlotItem.vue'
+import { formatDate } from '@/utils'
+import { ARCHIVE_STATUS, VERIFY_RESULTS } from '@/constants'
+import { useUserStore } from '@toystory/lotso'
+import dayjs from 'dayjs'
 
 const API = new MortageAPI()
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
@@ -422,8 +491,9 @@ const queryParams = reactive<
 >({
   pageNo: 1,
   pageSize: 10,
-  verifyTime: [new Date(), new Date()], // 创建时间  ?????
-  creator: '', // 创建者
+  verifyTime: [dayjs().startOf('day').toDate(), dayjs().endOf('day').toDate()], // 创建时间
+  creatorName: '', // 创建者
+  creator: '', // 创建者工号
   verifyResult: '', // 核对结果
   batchNo: '', // 批次号
   engineNo: '', // 发动机号
@@ -437,7 +507,34 @@ const queryParams = reactive<
   channelName: '' // 渠道商
 })
 
+console.log('queryParams', queryParams.verifyTime)
+
 const selectData: Ref<CardListItem[]> = ref([])
+
+// 归档状态处理
+const getAchivalStatus = (status: string) => {
+  let topic = ''
+  if (status === ARCHIVE_STATUS.ACHIVED) {
+    topic = '已归档'
+  } else if (status === ARCHIVE_STATUS.UNACHIVED) {
+    topic = '未归档'
+  }
+
+  return topic
+}
+
+// 核验结果处理
+const getVerifyResult = (result: string) => {
+  if (result === VERIFY_RESULTS.PASS) {
+    return '通过'
+  }
+  if (result === VERIFY_RESULTS.PROCESSING) {
+    return '处理中'
+  }
+  if (result === VERIFY_RESULTS.FAIL) {
+    return '未通过'
+  }
+}
 
 // 选择的数据
 const selectionChangeHandler = (item: CardListItem[]) => {
@@ -458,7 +555,7 @@ const selectIds = computed(() => {
 
 // 是否可选
 const selectableHandler = (row: CardListItem) => {
-  return !!row.id
+  return !!(row.id && row.archivalStatus !== ARCHIVE_STATUS.ACHIVED)
 }
 // 展开-收回处理
 const expandHandler = (): boolean => {
@@ -468,11 +565,19 @@ const expandHandler = (): boolean => {
 // 上传车辆登记证
 const uploadFormRef = ref()
 const uploadHandler = () => {
-  uploadFormRef.value.open('upload')
+  const title = `${queryParams.creator}-${dayjs().format('YYYYMMDDHHmmss')}`
+  uploadFormRef.value.open('upload', title)
 }
 
 // 删除
 const delHandler = (ids: string[]) => {
+  if (!ids.length) {
+    ElMessage({
+      type: 'error',
+      message: '请选择要删除的内容'
+    })
+    return
+  }
   // 二次确认
   ElMessageBox.confirm('确认要删除吗？', '警告', {
     confirmButtonText: '确定',
@@ -505,7 +610,6 @@ const delHandler = (ids: string[]) => {
 // 编辑
 const editFormRef = ref()
 const editHandler = (id: string) => {
-  console.log(id)
   editFormRef.value.open(id)
 }
 
@@ -537,6 +641,33 @@ const handleSizeChange = (val: number) => {
 const searchHandler = () => {
   queryParams.pageNo = 1
   getList()
+}
+
+// 归档处理
+const achiveHandler = () => {
+  if (!selectIds.value.length) {
+    ElMessage({
+      type: 'error',
+      message: '请选择要归档的内容'
+    })
+    return
+  }
+  const params = {
+    ids: selectIds.value
+  }
+  API.achiveRegisterCard(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        ElMessage({
+          type: 'success',
+          message: '操作成功'
+        })
+        getList()
+      }
+    })
+    .catch((err: Error) => {
+      throw err
+    })
 }
 
 // 重置
@@ -588,6 +719,12 @@ const init = () => {
 }
 
 init()
+
+onMounted(() => {
+  const userStore = useUserStore()
+  queryParams.creatorName = userStore.userInfo?.staffName as string
+  queryParams.creator = userStore.userInfo?.staffCode as string
+})
 </script>
 
 <style lang="scss" scoped>

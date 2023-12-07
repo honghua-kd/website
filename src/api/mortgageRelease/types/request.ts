@@ -28,6 +28,10 @@ export interface VehiRegisterCardListRequest extends PageRequest {
   /**
    * 创建人
    */
+  creatorName?: string | null | undefined
+  /**
+   * 创建人工号
+   */
   creator?: string | null | undefined
   /**
    * 核验结束时间

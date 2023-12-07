@@ -5,6 +5,10 @@ export interface EngineNo {
   compareResult?: boolean | null
   sourceValue?: string | null
   targetValue?: string | null
+  /**
+   * 最终选中数据
+   */
+  tempValue?: string | null
 }
 
 /**
@@ -14,6 +18,10 @@ export interface EngineType {
   compareResult?: boolean | null
   sourceValue?: string | null
   targetValue?: string | null
+  /**
+   * 最终选中数据
+   */
+  tempValue?: string | null
 }
 
 /**
@@ -23,6 +31,10 @@ export interface LicensePlateNo {
   compareResult?: boolean | null
   sourceValue?: string | null
   targetValue?: string | null
+  /**
+   * 最终选中数据
+   */
+  tempValue?: string | null
 }
 
 /**
@@ -32,6 +44,10 @@ export interface MortgageRegisterDate {
   compareResult?: boolean | null
   sourceValue?: string
   targetValue?: string
+  /**
+   * 最终选中数据
+   */
+  tempValue?: string | null
 }
 
 /**
@@ -41,6 +57,10 @@ export interface Mortgagee {
   compareResult?: boolean | null
   sourceValue?: string
   targetValue?: string
+  /**
+   * 最终选中数据
+   */
+  tempValue?: string | null
 }
 
 /**
@@ -50,6 +70,10 @@ export interface MortgageeUscc {
   compareResult?: boolean | null
   sourceValue?: string | null
   targetValue?: string | null
+  /**
+   * 最终选中数据
+   */
+  tempValue?: string | null
 }
 
 /**
@@ -68,6 +92,10 @@ export interface RegisterCardNo {
    * 同步表数据
    */
   targetValue?: string | null
+  /**
+   * 最终选中数据
+   */
+  tempValue?: string | null
 }
 
 /**
@@ -77,6 +105,10 @@ export interface UseType {
   compareResult?: boolean | null
   sourceValue?: string | null
   targetValue?: string | null
+  /**
+   * 最终选中数据
+   */
+  tempValue?: string | null
 }
 
 /**
@@ -86,6 +118,10 @@ export interface VehicleColor {
   compareResult?: boolean | null
   sourceValue?: string | null
   targetValue?: string | null
+  /**
+   * 最终选中数据
+   */
+  tempValue?: string | null
 }
 
 /**
@@ -95,6 +131,10 @@ export interface VehicleOwner {
   compareResult?: boolean | null
   sourceValue?: string | null
   targetValue?: string | null
+  /**
+   * 最终选中数据
+   */
+  tempValue?: string | null
 }
 
 /**
@@ -104,6 +144,10 @@ export interface VinNo {
   compareResult?: boolean | null
   sourceValue?: string | null
   targetValue?: string | null
+  /**
+   * 最终选中数据
+   */
+  tempValue?: string | null
 }
 
 export interface CardInfoIO {
@@ -312,43 +356,7 @@ export interface CardCell {
   vinNo?: string | null
 }
 
-export interface CardListItem {
-  /**
-   * 挂靠商
-   */
-  affiliatesName?: string | null
-  /**
-   * 归档时间
-   */
-  archivalDate?: string | null
-  /**
-   * 归档状态
-   */
-  archivalStatus?: string | null
-  /**
-   * 处理批次号
-   */
-  batchNo?: string | null
-  /**
-   * 所属系统
-   */
-  belongSystem?: string | null
-  /**
-   * 渠道商
-   */
-  channelName?: string | null
-  /**
-   * 合同号
-   */
-  contractNo?: string | null
-  /**
-   * 创建时间
-   */
-  createTime: string | null
-  /**
-   * 创建人
-   */
-  creator: string | null
+export interface ModifiyInfo {
   /**
    * 发动机号
    */
@@ -357,18 +365,7 @@ export interface CardListItem {
    * 发动机型号
    */
   engineType?: string | null
-  /**
-   * 文件编号
-   */
-  fileCode: string | null
-  /**
-   * 文件名称
-   */
-  fileName: string | null
-  /**
-   * id
-   */
-  id: string | null
+
   /**
    * 车牌号
    */
@@ -376,7 +373,7 @@ export interface CardListItem {
   /**
    * 抵押权人
    */
-  mortgagee?: string | null
+  mortgagee?: string
   /**
    * 抵押权人统一社会信用代码
    */
@@ -384,11 +381,8 @@ export interface CardListItem {
   /**
    * 抵押登记日期
    */
-  mortgageRegisterDate?: string | null
-  /**
-   * 登记证归档序号
-   */
-  registerCardArchiveNo?: null | string
+  mortgageRegisterDate?: string
+
   /**
    * 登记证编号
    */
@@ -405,14 +399,14 @@ export interface CardListItem {
    * 机动车所有人
    */
   vehicleOwner?: string | null
-  /**
-   * 核验结果
-   */
-  verifyResult?: string | null
+
   /**
    * 车架号
    */
   vinNo?: string | null
+}
+
+export interface CardListItem extends CardCell {
   target: CardCell[]
   compareResult: string[]
 }

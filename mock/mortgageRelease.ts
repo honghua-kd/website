@@ -18,12 +18,12 @@ export const mortgage = [
               fileCode: '123',
               fileName: '测试',
               registerCardArchiveNo: 'sourceValue',
-              verifyResult: '12234',
+              verifyResult: 'OCR_STATUS_YES',
               registerCardNo: '1212234122341223412234',
               vinNo: '7880',
               engineNo: '12234',
               engineType: '12234',
-              licensePlateNo: '12234',
+              licensePlateNo: '沪A09789',
               vehicleOwner: '12234',
               vehicleColor: '12234',
               useType: '12234',
@@ -37,35 +37,35 @@ export const mortgage = [
               channelName: '12234',
               creator: '12234',
               createTime: '12234',
-              archivalStatus: '12234',
+              archivalStatus: 'ARCHIVE_STATUS_NO',
               archivalDate: '12234',
               compareResult: ['registerCardNo', 'vinNo', 'useType'],
               target: [
                 {
                   fileCode: '123',
                   fileName: '系统文件',
-                  registerCardArchiveNo: 'targetValue',
-                  verifyResult: '12234',
+                  registerCardArchiveNo: '',
+                  verifyResult: '',
                   registerCardNo: '12',
                   vinNo: '12',
                   engineNo: '12234',
                   engineType: '12234',
-                  licensePlateNo: '12234',
+                  licensePlateNo: '浙B0978E',
                   vehicleOwner: '12234',
                   vehicleColor: '12234',
                   useType: '12234',
                   mortgagee: '12234',
                   mortgageeUscc: '12234',
                   mortgageRegisterDate: '12234',
-                  batchNo: '12234',
-                  contractNo: '12234',
-                  belongSystem: '12234',
-                  affiliatesName: '12234',
-                  channelName: '12234',
-                  creator: '12234',
-                  createTime: '12234',
-                  archivalStatus: '12234',
-                  archivalDate: '12234'
+                  batchNo: '',
+                  contractNo: '',
+                  belongSystem: '',
+                  affiliatesName: '',
+                  channelName: '',
+                  creator: '',
+                  createTime: '',
+                  archivalStatus: '',
+                  archivalDate: ''
                 }
               ]
             },
@@ -74,7 +74,7 @@ export const mortgage = [
               fileCode: '123',
               fileName: '测试',
               registerCardArchiveNo: 'sourceValue',
-              verifyResult: '12234',
+              verifyResult: 'OCR_STATUS_PRO',
               registerCardNo: '12',
               vinNo: '12',
               engineNo: '12234',
@@ -93,35 +93,35 @@ export const mortgage = [
               channelName: '12234',
               creator: '12234',
               createTime: '12234',
-              archivalStatus: '12234',
+              archivalStatus: 'ARCHIVE_STATUS_YES',
               archivalDate: '12234',
               compareResult: ['registerCardArchiveNo', 'vinNo'],
               target: [
                 {
                   fileCode: '123',
                   fileName: '系统文件',
-                  registerCardArchiveNo: 'targetValue',
-                  verifyResult: '12234',
+                  registerCardArchiveNo: '',
+                  verifyResult: '',
                   registerCardNo: '12',
                   vinNo: '12',
                   engineNo: '12234',
                   engineType: '12234',
-                  licensePlateNo: '12234',
+                  licensePlateNo: '浙B0978E',
                   vehicleOwner: '12234',
                   vehicleColor: '12234',
                   useType: '12234',
                   mortgagee: '12234',
                   mortgageeUscc: '12234',
                   mortgageRegisterDate: '12234',
-                  batchNo: '12234',
-                  contractNo: '12234',
-                  belongSystem: '12234',
-                  affiliatesName: '12234',
-                  channelName: '12234',
-                  creator: '12234',
-                  createTime: '12234',
-                  archivalStatus: '12234',
-                  archivalDate: '12234'
+                  batchNo: '',
+                  contractNo: '',
+                  belongSystem: '',
+                  affiliatesName: '',
+                  channelName: '',
+                  creator: '',
+                  createTime: '',
+                  archivalStatus: '',
+                  archivalDate: ''
                 }
               ]
             }
@@ -143,15 +143,15 @@ export const mortgage = [
           fileName: 'string',
           registerCardNo: {
             sourceValue: 'string',
-            targetValue: 'string'
+            targetValue: '123'
           },
           vinNo: {
             sourceValue: 'string',
-            targetValue: 'string'
+            targetValue: '456'
           },
           licensePlateNo: {
             sourceValue: 'string',
-            targetValue: 'string'
+            targetValue: '789'
           },
           engineNo: {
             sourceValue: 'string',
