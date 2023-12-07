@@ -183,8 +183,8 @@
         v-loading="tableLoading"
         row-key="id"
         :tree-props="{ children: 'target' }"
-        @sort-change="sortChangeHandler"
         @selection-change="selectionChangeHandler"
+        @header-click="sortChangeHandler"
       >
         <el-table-column
           type="selection"
@@ -194,12 +194,17 @@
 
         <el-table-column
           fixed
-          label="文件名"
           prop="fileName"
           width="150"
           show-overflow-tooltip
-          sortable="custom"
         >
+          <template #header>
+            文件名
+            <svg-icon
+              :name="setSortFlag(queryParams?.fileNameSort || '')"
+              size="20"
+            />
+          </template>
           <template #default="scope">
             <span :class="scope.row.id ? '' : 'font-color-system'">
               {{ scope.row.fileName }}
@@ -211,8 +216,14 @@
           prop="registerCardArchiveNo"
           width="150"
           show-overflow-tooltip
-          sortable="custom"
         >
+          <template #header>
+            登记证归档序号
+            <svg-icon
+              :name="setSortFlag(queryParams?.registerCardArchiveNoSort || '')"
+              size="20"
+            />
+          </template>
           <template #default="scope">
             <span :class="scope.row.id ? '' : 'font-color-system'">
               {{ scope.row.registerCardArchiveNo }}
@@ -224,12 +235,18 @@
           prop="verifyResult"
           width="150"
           show-overflow-tooltip
-          sortable="custom"
+          align="center"
         >
+          <template #header>
+            核对结果
+            <svg-icon
+              :name="setSortFlag(queryParams?.verifyResultSort || '')"
+              size="20"
+            />
+          </template>
           <template #default="scope">
-            <span :class="scope.row.id ? '' : 'font-color-system'">
-              <!-- 换成图形 -->
-              {{ getVerifyResult(scope.row.verifyResult) }}
+            <span v-if="scope.row.id">
+              <svg-icon :name="getVerifyResult(scope.row)" size="20" />
             </span>
           </template>
         </el-table-column>
@@ -455,6 +472,7 @@
 import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
 import { ref, reactive, Ref, computed, onMounted } from 'vue'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
+import type { TableColumnCtx } from 'element-plus'
 import { verifyOpts, archiveStatusOpts } from './config'
 import {
   ArrowDownBold,
@@ -486,9 +504,11 @@ const queryFormRef = ref<InstanceType<typeof ElForm>>()
 const expandFlag = ref<boolean>(false)
 const tableLoading = ref<boolean>(false)
 const tableData: Ref<CardListItem[]> = ref([])
-const queryParams = reactive<
-  VehiRegisterCardListRequest & PageRequest & DateRangeRequest
->({
+type QueryParams = VehiRegisterCardListRequest &
+  PageRequest &
+  DateRangeRequest &
+  SortParamsRequest
+const queryParams = reactive<QueryParams>({
   pageNo: 1,
   pageSize: 10,
   verifyTime: [dayjs().startOf('day').toDate(), dayjs().endOf('day').toDate()], // 创建时间
@@ -504,10 +524,11 @@ const queryParams = reactive<
   vinNo: '', // 车架号
   agencyName: '', // 办事处
   affiliatesName: '', // 挂靠商
-  channelName: '' // 渠道商
+  channelName: '', // 渠道商
+  fileNameSort: '', // 文件名排序
+  registerCardArchiveNoSort: '', // 注册车辆排序
+  verifyResultSort: '' // 核验结果排序
 })
-
-console.log('queryParams', queryParams.verifyTime)
 
 const selectData: Ref<CardListItem[]> = ref([])
 
@@ -524,23 +545,24 @@ const getAchivalStatus = (status: string) => {
 }
 
 // 核验结果处理
-const getVerifyResult = (result: string) => {
+const getVerifyResult = (row: CardListItem) => {
+  const result = row.verifyResult
   if (result === VERIFY_RESULTS.PASS) {
-    return '通过'
+    return 'pass'
   }
   if (result === VERIFY_RESULTS.PROCESSING) {
-    return '处理中'
+    return 'processing'
   }
   if (result === VERIFY_RESULTS.FAIL) {
-    return '未通过'
+    return 'fail'
   }
+  return ''
 }
 
 // 选择的数据
 const selectionChangeHandler = (item: CardListItem[]) => {
   selectData.value.splice(0, selectData.value.length)
   selectData.value.push(...item)
-  console.log('selectionChangeHandler', selectData.value)
 }
 
 const selectIds = computed(() => {
@@ -589,7 +611,7 @@ const delHandler = (ids: string[]) => {
       const params = {
         ids
       }
-      console.log(params)
+
       API.delRegisterCard(params).then((res) => {
         if (res && res.code === 200) {
           ElMessage({
@@ -614,17 +636,36 @@ const editHandler = (id: string) => {
 }
 
 // 排序
-const sortChangeHandler = (item: { prop: string; order: string }) => {
-  const sortParams =
-    item.order === 'ascending'
-      ? {
-          [`${item.prop}Sort`]: 'ASC'
-        }
-      : { [`${item.prop}Sort`]: 'DESC' }
-  getList(sortParams)
-  // console.log('sortParams', sortParams)
+const sortCols = ['fileName', 'registerCardArchiveNo', 'verifyResult']
+const sortChangeHandler = (column: TableColumnCtx<CardListItem>) => {
+  const prop = column?.property
+  if (sortCols.indexOf(prop) === -1) {
+    return
+  }
+  const typeArr = ['', 'ASC', 'DESC']
+  const key = (prop + 'Sort') as keyof SortParamsRequest
+  if (queryParams) {
+    const index = typeArr.indexOf(queryParams[key] as string)
+    queryParams[key] = typeArr[index === 2 ? 0 : index + 1]
+  }
+  getList()
+  // console.log('queryParams>>>>>>', queryParams)
 }
 
+const setSortFlag = (type: string): string => {
+  let name = 'sortDefault'
+  switch (type) {
+    case 'ASC':
+      name = 'sortAsc'
+      break
+    case 'DESC':
+      name = 'sortDesc'
+      break
+    default:
+      name = 'sortDefault'
+  }
+  return name
+}
 // 分页
 const handleCurrentChange = (val: number) => {
   queryParams.pageNo = val
@@ -675,7 +716,8 @@ const reset = () => {
   queryParams.pageNo = 1
   queryParams.pageSize = 10
   queryParams.verifyTime = [new Date(), new Date()] // 创建时间  ?????
-  queryParams.creator = '' // 创建者
+  queryParams.creatorName = '' // 创建者
+  queryParams.creator = '' // 创建者工号
   queryParams.verifyResult = '' // 核对结果
   queryParams.batchNo = '' // 批次号
   queryParams.engineNo = '' // 发动机号
@@ -687,15 +729,17 @@ const reset = () => {
   queryParams.agencyName = '' // 办事处
   queryParams.affiliatesName = '' // 挂靠商
   queryParams.channelName = '' // 渠道商
+  queryParams.fileNameSort = '' // 文件名排序
+  queryParams.registerCardArchiveNoSort = '' // 注册车辆排序
+  queryParams.verifyResultSort = '' // 核验结果排序
 }
 // 获取列表
-const getList = (sortParams?: SortParamsRequest) => {
+const getList = () => {
   const { verifyTime, ...others } = queryParams
   const params = {
     startVerifyTime: new Date(verifyTime[0]).getTime(),
     endVerifyTime: new Date(verifyTime[1]).getTime(),
-    ...others,
-    ...sortParams
+    ...others
   }
   console.log('params>>>>', params)
 
@@ -745,7 +789,7 @@ onMounted(() => {
 }
 .arrow {
   cursor: pointer;
-  color: #1893ff;
+  color: $base-color-primary;
 }
 .btn-row {
   display: flex;
@@ -755,6 +799,6 @@ onMounted(() => {
   margin-bottom: 10px;
 }
 .font-color-system {
-  color: #1893ff;
+  color: $base-color-primary;
 }
 </style>

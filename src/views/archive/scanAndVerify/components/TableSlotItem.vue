@@ -39,9 +39,9 @@ const compareHandler = (prop: string, compArray: string[]): boolean => {
 
 <style lang="scss" scoped>
 .font-color-error {
-  color: red;
+  color: $base-color-red;
 }
 .font-color-system {
-  color: #1893ff;
+  color: $base-color-primary;
 }
 </style>
