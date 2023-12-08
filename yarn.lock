@@ -917,10 +917,10 @@
     vue "^3.3.4"
     vue-router "^4.2.5"
 
-"@toystory/potato@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@toystory/potato/-/potato-0.1.0.tgz#a86e4df0b3e36563664adda536609c9a84a83c60"
-  integrity sha512-JNWJ4mP93ZDcnHXXM6KJdGBUE10Q8eKjqdS170AC2Fj3MZ0o5HuCrhvnkj+PILDHzkwJSTgJ2QIZ+wwz7G77ow==
+"@toystory/potato@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.npmjs.org/@toystory/potato/-/potato-0.1.1.tgz#393d794b840bdc37d7cec779dbac7425ba45bf28"
+  integrity sha512-YRg4WHrsrcgMiD6grmUGjwdQf6oEzXRjxuaZPJAYhclNqdIdKVU2jVJG0nJdtlNJNt48AA2R2C4gwdiPlqYwhQ==
   dependencies:
     "@element-plus/icons-vue" "2.1.0"
     "@vueuse/core" "^10.5.0"

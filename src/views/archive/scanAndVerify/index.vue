@@ -31,7 +31,11 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="核对结果:" prop="verifyResult">
-              <el-select v-model="queryParams.verifyResult" style="width: 100%">
+              <el-select
+                v-model="queryParams.verifyResult"
+                style="width: 100%"
+                placeholder="请选择核对结果"
+              >
                 <el-option
                   v-for="(item, index) in verifyOpts"
                   :key="index"
@@ -48,7 +52,7 @@
               <el-input
                 v-model="queryParams.batchNo"
                 clearable
-                placeholder="请输入"
+                placeholder="请输入批次号"
               />
             </el-form-item>
           </el-col>
@@ -57,7 +61,7 @@
               <el-input
                 v-model="queryParams.engineNo"
                 clearable
-                placeholder="请输入"
+                placeholder="请输入发动机号"
               />
             </el-form-item>
           </el-col>
@@ -66,7 +70,7 @@
               <el-input
                 v-model="queryParams.engineType"
                 clearable
-                placeholder="请输入"
+                placeholder="请输入发动机型号"
               />
             </el-form-item>
           </el-col>
@@ -75,6 +79,8 @@
               <el-select
                 v-model="queryParams.archivalStatus"
                 style="width: 100%"
+                clearable
+                placeholder="请选择归档状态"
               >
                 <el-option
                   v-for="(item, index) in archiveStatusOpts"
@@ -92,7 +98,7 @@
               <el-input
                 v-model="queryParams.contractNo"
                 clearable
-                placeholder="请输入"
+                placeholder="请输入合同号"
               />
             </el-form-item>
           </el-col>
@@ -101,7 +107,7 @@
               <el-input
                 v-model="queryParams.licensePlateNo"
                 clearable
-                placeholder="请输入"
+                placeholder="请输入车牌号"
               />
             </el-form-item>
           </el-col>
@@ -110,7 +116,7 @@
               <el-input
                 v-model="queryParams.vinNo"
                 clearable
-                placeholder="请输入"
+                placeholder="请输入车架号"
               />
             </el-form-item>
           </el-col>
@@ -119,7 +125,7 @@
               <el-input
                 v-model="queryParams.agencyName"
                 clearable
-                placeholder="请输入"
+                placeholder="请输入办事处"
               />
             </el-form-item>
           </el-col>
@@ -130,7 +136,7 @@
               <el-input
                 v-model="queryParams.affiliatesName"
                 clearable
-                placeholder="请输入"
+                placeholder="请输入挂靠商"
               />
             </el-form-item>
           </el-col>
@@ -139,7 +145,7 @@
               <el-input
                 v-model="queryParams.channelName"
                 clearable
-                placeholder="请输入"
+                placeholder="请输入渠道商"
               />
             </el-form-item>
           </el-col>
@@ -531,7 +537,7 @@ const queryParams = reactive<QueryParams>({
 })
 
 const selectData: Ref<CardListItem[]> = ref([])
-
+const curStaffCode = ref<string>('')
 // 归档状态处理
 const getAchivalStatus = (status: string) => {
   let topic = ''
@@ -587,7 +593,7 @@ const expandHandler = (): boolean => {
 // 上传车辆登记证
 const uploadFormRef = ref()
 const uploadHandler = () => {
-  const title = `${queryParams.creator}-${dayjs().format('YYYYMMDDHHmmss')}`
+  const title = `${curStaffCode.value}-${dayjs().format('YYYYMMDDHHmmss')}`
   uploadFormRef.value.open('upload', title)
 }
 
@@ -715,8 +721,11 @@ const achiveHandler = () => {
 const reset = () => {
   queryParams.pageNo = 1
   queryParams.pageSize = 10
-  queryParams.verifyTime = [new Date(), new Date()] // 创建时间  ?????
-  queryParams.creatorName = '' // 创建者
+  queryParams.verifyTime = [
+    dayjs().startOf('day').toDate(),
+    dayjs().endOf('day').toDate()
+  ] // 创建时间
+  queryParams.creatorName = '' // 创建者姓名
   queryParams.creator = '' // 创建者工号
   queryParams.verifyResult = '' // 核对结果
   queryParams.batchNo = '' // 批次号
@@ -768,6 +777,7 @@ onMounted(() => {
   const userStore = useUserStore()
   queryParams.creatorName = userStore.userInfo?.staffName as string
   queryParams.creator = userStore.userInfo?.staffCode as string
+  curStaffCode.value = userStore.userInfo?.staffCode as string
 })
 </script>
 

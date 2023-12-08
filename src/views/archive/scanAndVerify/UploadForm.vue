@@ -52,14 +52,20 @@
         </el-button>
       </template>
     </el-dialog>
+    <Preview ref="previewRef" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
 import { UploadFilled } from '@element-plus/icons-vue'
+import Preview from '@/components/Preview/index.vue'
+
+import type { UploadFile } from 'element-plus'
+
 const dialogTitle = ref<string>('上传车辆登记证')
 const dialogVisible = ref<boolean>(false)
+
 const formLoading = ref<boolean>(false)
 const formParams = reactive({
   batchNo: '', // 处理批次号
@@ -89,7 +95,10 @@ defineExpose({ open })
 const checkHandler = () => {}
 
 // 预览
-const handlePictureCardPreview = () => {}
+const previewRef = ref()
+const handlePictureCardPreview = (uploadFile: UploadFile) => {
+  previewRef.value.open(uploadFile)
+}
 
 // 删除
 const handleRemove = () => {}

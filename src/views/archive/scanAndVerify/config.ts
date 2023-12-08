@@ -1,15 +1,11 @@
 export default {
   hidden: false,
-  title: '核验车辆登记证',
+  title: '大本扫描核验',
   icon: 'scan',
   name: 'scanAndVerify'
 }
 
 export const verifyOpts = [
-  {
-    label: '全部',
-    value: 'all'
-  },
   {
     label: '处理中',
     value: 'OCR_STATUS_PRO'
@@ -25,10 +21,6 @@ export const verifyOpts = [
 ]
 
 export const archiveStatusOpts = [
-  {
-    label: '全部',
-    value: 'all'
-  },
   {
     label: '已归档',
     value: 'ARCHIVE_STATUS_YES'
