@@ -40,6 +40,46 @@
               </div>
               <span class="tip-choose"> 已选择文件：{{ chooseFileNum }} </span>
             </template>
+            <template #file="{ file }">
+              <div>
+                <img
+                  v-if="isPdf(file.url)"
+                  class="el-upload-list__item-thumbnail"
+                  :src="pdfImg"
+                  alt=""
+                />
+                <el-image
+                  v-else
+                  :src="file.url"
+                  :zoom-rate="1.2"
+                  :max-scale="5"
+                  :min-scale="0.2"
+                  :preview-src-list="[file.url]"
+                  fit="cover"
+                />
+                <span class="el-upload-list__item-actions">
+                  <span
+                    class="el-upload-list__item-preview"
+                    @click="handlePictureCardPreview(file)"
+                  >
+                    <el-icon><zoom-in /></el-icon>
+                  </span>
+                  <!-- <span
+                    v-if="!disabled"
+                    class="el-upload-list__item-delete"
+                    @click="handleDownload(file)"
+                  >
+                    <el-icon><Download /></el-icon>
+                  </span> -->
+                  <span
+                    class="el-upload-list__item-delete"
+                    @click="handleRemove"
+                  >
+                    <el-icon><Delete /></el-icon>
+                  </span>
+                </span>
+              </div>
+            </template>
           </el-upload>
         </el-form-item>
       </el-form>
@@ -52,17 +92,17 @@
         </el-button>
       </template>
     </el-dialog>
-    <Preview ref="previewRef" />
+    <Preview v-model="previewVisible" :fileUrl="previewUrl" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
-import { UploadFilled } from '@element-plus/icons-vue'
+import { UploadFilled, Delete, ZoomIn } from '@element-plus/icons-vue'
 import Preview from '@/components/Preview/index.vue'
-
-import type { UploadFile } from 'element-plus'
-
+import pdfImg from '@/assets/images/pdf.png'
+import { ElMessage, type UploadFile } from 'element-plus'
+// ElImageViewer
 const dialogTitle = ref<string>('上传车辆登记证')
 const dialogVisible = ref<boolean>(false)
 
@@ -72,7 +112,13 @@ const formParams = reactive({
   fileList: [
     {
       name: 'food.jpeg',
+      fileCode: 'ssa',
+      createTime: '111',
       url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+    },
+    {
+      name: 'food.pdf',
+      url: '/static/demo.pdf'
     }
   ]
 })
@@ -95,9 +141,21 @@ defineExpose({ open })
 const checkHandler = () => {}
 
 // 预览
-const previewRef = ref()
+const previewVisible = ref<boolean>(false)
+const previewUrl = ref<string>('')
+const pdfReg = /^.+(\.pdf)(\?.+)?$/
+const isPdf = (url: string) => {
+  return pdfReg.test(url)
+}
+
 const handlePictureCardPreview = (uploadFile: UploadFile) => {
-  previewRef.value.open(uploadFile)
+  if (!uploadFile.url) {
+    ElMessage.error('读取上传文件URL出错')
+    return
+  }
+  debugger
+  previewVisible.value = true
+  previewUrl.value = uploadFile.url
 }
 
 // 删除
