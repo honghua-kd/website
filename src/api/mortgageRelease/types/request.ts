@@ -1,5 +1,5 @@
 import { PageRequest } from '@/api/types/request'
-
+import { UploadUserFile } from 'element-plus'
 export interface VehiRegisterCardListRequest extends PageRequest {
   /**
    * 挂靠商
@@ -130,4 +130,15 @@ export interface EditRegisterCardInfoRequest {
    * 车架号
    */
   vinNo?: string
+}
+
+export interface UploadFileListItemRequest extends UploadUserFile {
+  fileName?: string
+  fileCode?: string
+  fileCreateTime?: number | string
+  url?: string
+}
+export interface UploadFileRequest {
+  batchNo: string
+  fileInfoList: UploadFileListItemRequest[]
 }

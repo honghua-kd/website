@@ -410,3 +410,12 @@ export interface CardListItem extends CardCell {
   target: CardCell[]
   compareResult: string[]
 }
+
+export interface UploadFile {
+  fileCode: string
+  fileCodes?: string[]
+}
+
+export interface ExportFile {
+  data: string | ArrayBuffer | ArrayBufferView | Blob
+}

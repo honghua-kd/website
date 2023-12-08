@@ -7,10 +7,10 @@ import type {
   VehiRegisterCardListRequest,
   DelRegisterCardRequest,
   GetRegisterCardInfoRequest,
-  EditRegisterCardInfoRequest
+  EditRegisterCardInfoRequest,
+  UploadFileRequest
 } from './types/request'
-import type { CardInfoIO, CardListItem } from './types/response'
-
+import type { CardInfoIO, CardListItem, UploadFile } from './types/response'
 const prefix = import.meta.env.VITE_APP_SERVICE_API
 
 export class MortageAPI {
@@ -69,6 +69,42 @@ export class MortageAPI {
     return this.request({
       url: `${prefix}/admin-api/mortgage/vehicleRegisterCard/archive`,
       method: 'post',
+      data
+    })
+  }
+
+  // 上传文件
+  uploadFiles(data: FormData): Response<UploadFile> {
+    return this.request({
+      url: `${prefix}/admin-api/file/attachment/uploadAttachment`,
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/form-data'
+      },
+      data
+    })
+  }
+
+  // 识别 & 核验接口
+
+  uploadRegisterCard(
+    data: UploadFileRequest
+  ): Response<boolean | null | undefined> {
+    return this.request({
+      url: `${prefix}/admin-api/mortgage/vehicleRegisterCard/upload`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 导出识别结果接口
+  downLoadFiles(
+    data: Omit<VehiRegisterCardListRequest, 'pageNo' | 'pageSize'>
+  ): Promise<string | ArrayBuffer | ArrayBufferView | Blob> {
+    return this.request({
+      url: `${prefix}/admin-api/mortgage/vehicleRegisterCard/export`,
+      method: 'post',
+      responseType: 'blob',
       data
     })
   }

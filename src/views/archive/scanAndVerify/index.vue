@@ -180,7 +180,9 @@
         <el-button type="primary" :icon="Delete" @click="delHandler(selectIds)">
           删除
         </el-button>
-        <el-button type="primary" :icon="Download">导出</el-button>
+        <el-button type="primary" :icon="Download" @click="exportHandler">
+          导出
+        </el-button>
       </el-row>
       <el-table
         :data="tableData"
@@ -491,7 +493,7 @@ import {
 import EditForm from './EditForm.vue'
 import UploadForm from './UploadForm.vue'
 import { MortageAPI } from '@/api/mortgageRelease'
-import {
+import type {
   VehiRegisterCardListRequest,
   PageRequest,
   DateRangeRequest,
@@ -503,6 +505,7 @@ import { formatDate } from '@/utils'
 import { ARCHIVE_STATUS, VERIFY_RESULTS } from '@/constants'
 import { useUserStore } from '@toystory/lotso'
 import dayjs from 'dayjs'
+import fileDownload from 'js-file-download'
 
 const API = new MortageAPI()
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
@@ -710,6 +713,27 @@ const achiveHandler = () => {
           message: '操作成功'
         })
         getList()
+      }
+    })
+    .catch((err: Error) => {
+      throw err
+    })
+}
+
+// 导出
+const exportHandler = () => {
+  const { verifyTime, pageNo, pageSize, ...others } = queryParams
+  console.log(pageNo, pageSize)
+  const params = {
+    startVerifyTime: new Date(verifyTime[0]).getTime(),
+    endVerifyTime: new Date(verifyTime[1]).getTime(),
+    ...others
+  }
+
+  API.downLoadFiles(params)
+    .then((res) => {
+      if (res) {
+        fileDownload(res, '导出文件.zip')
       }
     })
     .catch((err: Error) => {
