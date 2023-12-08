@@ -133,7 +133,6 @@ export interface EditRegisterCardInfoRequest {
 }
 
 export interface UploadFileListItemRequest extends UploadUserFile {
-  fileName?: string
   fileCode?: string
   fileCreateTime?: number | string
   url?: string
