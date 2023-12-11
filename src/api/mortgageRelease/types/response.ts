@@ -360,16 +360,16 @@ export interface ModifiyInfo {
   /**
    * 发动机号
    */
-  engineNo?: string | null
+  engineNo?: string
   /**
    * 发动机型号
    */
-  engineType?: string | null
+  engineType?: string
 
   /**
    * 车牌号
    */
-  licensePlateNo?: string | null
+  licensePlateNo?: string
   /**
    * 抵押权人
    */
@@ -377,7 +377,7 @@ export interface ModifiyInfo {
   /**
    * 抵押权人统一社会信用代码
    */
-  mortgageeUscc?: string | null
+  mortgageeUscc?: string
   /**
    * 抵押登记日期
    */
@@ -386,26 +386,108 @@ export interface ModifiyInfo {
   /**
    * 登记证编号
    */
-  registerCardNo?: string | null
+  registerCardNo?: string
   /**
    * 使用性质
    */
-  useType?: string | null
+  useType?: string
   /**
    * 车身颜色
    */
-  vehicleColor?: string | null
+  vehicleColor?: string
   /**
    * 机动车所有人
    */
-  vehicleOwner?: string | null
+  vehicleOwner?: string
 
   /**
    * 车架号
    */
-  vinNo?: string | null
+  vinNo?: string
 }
 
+export interface FormOrigin {
+  /**
+   * 发动机号
+   */
+  engineNo: {
+    sourceValue: string
+    targetValue: string
+  }
+  /**
+   * 发动机型号
+   */
+  engineType: {
+    sourceValue: string
+    targetValue: string
+  }
+
+  /**
+   * 车牌号
+   */
+  licensePlateNo: {
+    sourceValue: string
+    targetValue: string
+  }
+  /**
+   * 抵押权人
+   */
+  mortgagee: {
+    sourceValue: string
+    targetValue: string
+  }
+  /**
+   * 抵押权人统一社会信用代码
+   */
+  mortgageeUscc: {
+    sourceValue: string
+    targetValue: string
+  }
+  /**
+   * 抵押登记日期
+   */
+  mortgageRegisterDate: {
+    sourceValue: string
+    targetValue: string
+  }
+
+  /**
+   * 登记证编号
+   */
+  registerCardNo: {
+    sourceValue: string
+    targetValue: string
+  }
+  /**
+   * 使用性质
+   */
+  useType: {
+    sourceValue: string
+    targetValue: string
+  }
+  /**
+   * 车身颜色
+   */
+  vehicleColor: {
+    sourceValue: string
+    targetValue: string
+  }
+  /**
+   * 机动车所有人
+   */
+  vehicleOwner: {
+    sourceValue: string
+    targetValue: string
+  }
+
+  /**
+   * 车架号
+   */
+  vinNo: {
+    sourceValue: string
+    targetValue: string
+  }
+}
 export interface CardListItem extends CardCell {
   target: CardCell[]
   compareResult: string[]

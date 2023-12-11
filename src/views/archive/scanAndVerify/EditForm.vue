@@ -154,7 +154,8 @@ import { mortOpts } from './config'
 import type {
   CardInfoIO,
   EditRegisterCardInfoRequest,
-  ModifiyInfo
+  ModifiyInfo,
+  FormOrigin
 } from '@/api'
 import { MortageAPI } from '@/api/mortgageRelease'
 import { ElMessage } from 'element-plus'
@@ -187,7 +188,7 @@ const formParamsRequest = reactive<ModifiyInfo>({
 })
 
 // 存放原始数据
-const formParams = reactive<CardInfoIO>({
+const formParams = reactive<FormOrigin>({
   registerCardNo: {
     sourceValue: '',
     targetValue: ''
@@ -246,43 +247,18 @@ const open = (id: string) => {
       if (res && res.code === 200) {
         fileParams.fileName = res?.data?.fileName
         fileParams.fileCode = res?.data?.fileCode
+        const keysArr = Object.keys(formParams)
 
-        formParams.registerCardNo = res?.data?.registerCardNo
-        formParamsRequest.registerCardNo =
-          res?.data?.registerCardNo?.sourceValue
-
-        formParams.vinNo = res?.data?.vinNo
-        formParamsRequest.vinNo = res?.data?.vinNo?.sourceValue
-
-        formParams.licensePlateNo = res?.data?.licensePlateNo
-        formParamsRequest.licensePlateNo =
-          res?.data?.licensePlateNo?.sourceValue
-
-        formParams.engineNo = res?.data?.engineNo
-        formParamsRequest.engineNo = res?.data?.engineNo?.sourceValue
-
-        formParams.engineType = res?.data?.engineType
-        formParamsRequest.engineType = res?.data?.engineType?.sourceValue
-
-        formParams.vehicleOwner = res?.data?.vehicleOwner
-        formParamsRequest.vehicleOwner = res?.data?.vehicleOwner?.sourceValue
-
-        formParams.vehicleColor = res?.data?.vehicleColor
-        formParamsRequest.vehicleColor = res?.data?.vehicleColor?.sourceValue
-
-        formParams.useType = res?.data?.useType
-        formParamsRequest.useType = res?.data?.useType?.sourceValue
-
-        formParams.mortgagee = res?.data?.mortgagee
-        formParamsRequest.mortgagee = res?.data?.mortgagee?.sourceValue
-
-        formParams.mortgageeUscc = res?.data?.mortgageeUscc
-        formParamsRequest.mortgageeUscc = res?.data?.mortgageeUscc?.sourceValue
-
-        formParams.mortgageRegisterDate = res?.data?.mortgageRegisterDate
-
-        formParamsRequest.mortgageRegisterDate =
-          res?.data?.mortgageRegisterDate?.sourceValue
+        for (let i = 0; i < keysArr.length; i++) {
+          const keyModify = keysArr[i] as keyof ModifiyInfo
+          formParamsRequest[keyModify] =
+            res?.data?.[keyModify]?.sourceValue || ''
+          const keyFormOrigin = keysArr[i] as keyof FormOrigin
+          formParams[keyFormOrigin].sourceValue =
+            res?.data?.[keyFormOrigin]?.sourceValue || ''
+          formParams[keyFormOrigin].targetValue =
+            res?.data?.[keyFormOrigin]?.targetValue || ''
+        }
       }
     })
     .catch((err: Error) => {
@@ -316,49 +292,13 @@ const submitForm = () => {
 
 // 覆盖功能
 const coverChangeHandler = () => {
-  if (formParams?.registerCardNo?.targetValue) {
-    formParamsRequest.registerCardNo = formParams?.registerCardNo?.targetValue
-  }
-
-  if (formParams?.vinNo?.targetValue) {
-    formParamsRequest.vinNo = formParams?.vinNo?.targetValue
-  }
-
-  if (formParams?.licensePlateNo?.targetValue) {
-    formParamsRequest.licensePlateNo = formParams?.licensePlateNo?.targetValue
-  }
-
-  if (formParams?.engineNo?.targetValue) {
-    formParamsRequest.engineNo = formParams?.engineNo?.targetValue
-  }
-
-  if (formParams?.engineType?.targetValue) {
-    formParamsRequest.engineType = formParams?.engineType?.targetValue
-  }
-
-  if (formParams?.vehicleOwner?.targetValue) {
-    formParamsRequest.vehicleOwner = formParams?.vehicleOwner?.targetValue
-  }
-
-  if (formParams?.vehicleColor?.targetValue) {
-    formParamsRequest.vehicleColor = formParams?.vehicleColor?.targetValue
-  }
-
-  if (formParams?.useType?.targetValue) {
-    formParamsRequest.useType = formParams?.useType?.targetValue
-  }
-
-  if (formParams?.mortgagee?.targetValue) {
-    formParamsRequest.mortgagee = formParams?.mortgagee?.targetValue
-  }
-
-  if (formParams?.mortgageeUscc?.targetValue) {
-    formParamsRequest.mortgageeUscc = formParams?.mortgageeUscc?.targetValue
-  }
-
-  if (formParams?.mortgageRegisterDate?.targetValue) {
-    formParamsRequest.mortgageRegisterDate =
-      formParams?.mortgageRegisterDate?.targetValue
+  const keysArr = Object.keys(formParams)
+  for (let i = 0; i < keysArr.length; i++) {
+    const keyOrigin = keysArr[i] as keyof FormOrigin
+    const keyModify = keysArr[i] as keyof ModifiyInfo
+    if (formParams[keyOrigin].targetValue) {
+      formParamsRequest[keyModify] = formParams[keyOrigin].targetValue
+    }
   }
 }
 </script>
