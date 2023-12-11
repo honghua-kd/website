@@ -5,7 +5,6 @@
       v-model="dialogVisible"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
-      width="60%"
     >
       <el-form
         ref="formRef"
@@ -15,7 +14,9 @@
         label-width="130px"
       >
         <el-form-item label="文件名">
-          <el-link type="primary">{{ fileParams.fileName }}</el-link>
+          <div class="file-name" @click="openFileHandler">
+            {{ fileParams.fileName }}
+          </div>
         </el-form-item>
         <el-row :gutter="20">
           <el-col :span="8">
@@ -145,6 +146,7 @@
         </el-button>
       </template>
     </el-dialog>
+    <Preview v-model="previewVisible" :fileUrl="previewUrl" title="文件预览" />
   </div>
 </template>
 
@@ -159,6 +161,7 @@ import type {
 } from '@/api'
 import { MortageAPI } from '@/api/mortgageRelease'
 import { ElMessage } from 'element-plus'
+import Preview from '@/components/Preview/index.vue'
 
 const API = new MortageAPI()
 const dialogTitle = ref<string>('编辑扫描结果')
@@ -168,6 +171,12 @@ const formRules = reactive({})
 const formRef = ref()
 const infoId = ref<string>('')
 
+const props = defineProps({
+  getFileUrl: {
+    type: Function,
+    default: () => {}
+  }
+})
 const fileParams = reactive<Pick<CardInfoIO, 'fileCode' | 'fileName'>>({
   fileName: '',
   fileCode: ''
@@ -301,6 +310,14 @@ const coverChangeHandler = () => {
     }
   }
 }
+
+// 打开预览功能
+const previewVisible = ref<boolean>(false)
+const previewUrl = ref<string>('')
+const openFileHandler = async () => {
+  previewUrl.value = await props.getFileUrl(fileParams.fileCode)
+  previewVisible.value = true
+}
 </script>
 
 <style lang="scss" scoped>
@@ -310,5 +327,19 @@ const coverChangeHandler = () => {
 }
 .width-full {
   width: 100%;
+}
+.file-name {
+  display: inline-block;
+  padding-bottom: 10px;
+  width: 100%;
+  font-size: 16px;
+  font-weight: bold;
+  color: $base-color-primary;
+  cursor: pointer;
+}
+.file-name:hover {
+  text-decoration: underline;
+  text-underline-position: under;
+  text-underline-offset: 4px;
 }
 </style>

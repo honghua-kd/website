@@ -200,12 +200,7 @@
           :selectable="selectableHandler"
         />
 
-        <el-table-column
-          fixed
-          prop="fileName"
-          width="150"
-          show-overflow-tooltip
-        >
+        <el-table-column fixed prop="fileName" width="180" align="center">
           <template #header>
             文件名
             <svg-icon
@@ -229,8 +224,8 @@
         <el-table-column
           label="登记证归档序号"
           prop="registerCardArchiveNo"
-          width="150"
-          show-overflow-tooltip
+          width="180"
+          align="center"
         >
           <template #header>
             登记证归档序号
@@ -249,7 +244,6 @@
           label="核对结果"
           prop="verifyResult"
           width="150"
-          show-overflow-tooltip
           align="center"
         >
           <template #header>
@@ -272,8 +266,8 @@
         <el-table-column
           label="*登记证编号"
           prop="registerCardNo"
-          width="150"
-          show-overflow-tooltip
+          width="180"
+          align="center"
         >
           <template #default="scope">
             <TableSlotItem :rowInfo="scope.row" rowKey="registerCardNo" />
@@ -282,8 +276,8 @@
         <el-table-column
           label="*车架号"
           prop="vinNo"
-          width="150"
-          show-overflow-tooltip
+          width="180"
+          align="center"
         >
           <template #default="scope">
             <TableSlotItem :rowInfo="scope.row" rowKey="vinNo" />
@@ -292,8 +286,8 @@
         <el-table-column
           label="*发动机号"
           prop="engineNo"
-          width="150"
-          show-overflow-tooltip
+          width="180"
+          align="center"
         >
           <template #default="scope">
             <TableSlotItem :rowInfo="scope.row" rowKey="engineNo" />
@@ -302,8 +296,8 @@
         <el-table-column
           label="*发动机型号"
           prop="engineType"
-          width="150"
-          show-overflow-tooltip
+          width="180"
+          align="center"
         >
           <template #default="scope">
             <TableSlotItem :rowInfo="scope.row" rowKey="engineType" />
@@ -312,8 +306,8 @@
         <el-table-column
           label="*车牌号"
           prop="licensePlateNo"
-          width="150"
-          show-overflow-tooltip
+          width="180"
+          align="center"
         >
           <template #default="scope">
             <TableSlotItem :rowInfo="scope.row" rowKey="licensePlateNo" />
@@ -322,19 +316,14 @@
         <el-table-column
           label="*机动车所有人"
           prop="vehicleOwner"
-          width="150"
-          show-overflow-tooltip
+          width="180"
+          align="center"
         >
           <template #default="scope">
             <TableSlotItem :rowInfo="scope.row" rowKey="vehicleOwner" />
           </template>
         </el-table-column>
-        <el-table-column
-          label="*车身颜色"
-          prop="vehicleColor"
-          width="150"
-          show-overflow-tooltip
-        >
+        <el-table-column label="*车身颜色" prop="vehicleColor" width="150">
           <template #default="scope">
             <TableSlotItem :rowInfo="scope.row" rowKey="vehicleColor" />
           </template>
@@ -343,7 +332,7 @@
           label="*使用性质"
           prop="useType"
           width="150"
-          show-overflow-tooltip
+          align="center"
         >
           <template #default="scope">
             <TableSlotItem :rowInfo="scope.row" rowKey="useType" />
@@ -353,7 +342,7 @@
           label="*抵押权人"
           prop="mortgagee"
           width="150"
-          show-overflow-tooltip
+          align="center"
         >
           <template #default="scope">
             <TableSlotItem :rowInfo="scope.row" rowKey="mortgagee" />
@@ -362,8 +351,8 @@
         <el-table-column
           label="*统一社会信用代码"
           prop="mortgageeUscc"
-          width="150"
-          show-overflow-tooltip
+          width="200"
+          align="center"
         >
           <template #default="scope">
             <TableSlotItem :rowInfo="scope.row" rowKey="mortgageeUscc" />
@@ -372,8 +361,8 @@
         <el-table-column
           label="*抵押登记日期"
           prop="mortgageRegisterDate"
-          width="150"
-          show-overflow-tooltip
+          width="180"
+          align="center"
         >
           <template #default="scope">
             <TableSlotItem :rowInfo="scope.row" rowKey="mortgageRegisterDate" />
@@ -382,50 +371,50 @@
         <el-table-column
           label="批次号"
           prop="batchNo"
-          width="150"
-          show-overflow-tooltip
+          width="180"
+          align="center"
         />
         <el-table-column
           label="关联合同号"
           prop="contractNo"
-          width="150"
-          show-overflow-tooltip
+          width="200"
+          align="center"
         />
         <el-table-column
           label="所属系统"
           prop="belongSystem"
-          width="150"
-          show-overflow-tooltip
+          width="180"
+          align="center"
         />
         <el-table-column
           label="挂靠商"
           prop="affiliatesName"
-          width="150"
-          show-overflow-tooltip
+          width="180"
+          align="center"
         />
         <el-table-column
           label="办事处"
           prop="agencyName"
-          width="150"
-          show-overflow-tooltip
+          width="180"
+          align="center"
         />
         <el-table-column
           label="渠道商"
           prop="channelName"
-          width="150"
-          show-overflow-tooltip
+          width="180"
+          align="center"
         />
         <el-table-column
           label="创建人"
           prop="creator"
           width="150"
-          show-overflow-tooltip
+          align="center"
         />
         <el-table-column
           label="创建时间"
           prop="createTime"
-          width="150"
-          show-overflow-tooltip
+          width="180"
+          align="center"
         >
           <template #default="scope">
             {{ formatDate(scope.row.createTime, '') }}
@@ -435,7 +424,7 @@
           label="归档状态"
           prop="archivalStatus"
           width="150"
-          show-overflow-tooltip
+          align="center"
         >
           <template #default="scope">
             {{ getAchivalStatus(scope.row.archivalStatus) }}
@@ -444,8 +433,8 @@
         <el-table-column
           label="归档时间"
           prop="archivalDate"
-          width="150"
-          show-overflow-tooltip
+          width="180"
+          align="center"
         >
           <template #default="scope">
             {{ formatDate(scope.row.archivalDate, '') }}
@@ -482,7 +471,7 @@
         @current-change="handleCurrentChange"
       />
     </div>
-    <EditForm ref="editFormRef" />
+    <EditForm ref="editFormRef" :getFileUrl="getFileUrl" />
     <UploadForm ref="uploadFormRef" :getFileUrl="getFileUrl" />
     <Preview v-model="previewVisible" :fileUrl="previewUrl" title="文件预览" />
   </div>
@@ -702,7 +691,6 @@ const sortChangeHandler = (column: TableColumnCtx<CardListItem>) => {
     queryParams[key] = typeArr[index === 2 ? 0 : index + 1]
   }
   getList()
-  // console.log('queryParams>>>>>>', queryParams)
 }
 
 const setSortFlag = (type: string): string => {

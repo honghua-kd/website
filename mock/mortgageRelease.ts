@@ -46,7 +46,7 @@ export const mortgage = [
                   fileName: '系统文件',
                   registerCardArchiveNo: '',
                   verifyResult: '',
-                  registerCardNo: '12',
+                  registerCardNo: '1212234122341223412234',
                   vinNo: '12',
                   engineNo: '12234',
                   engineType: '12234',
@@ -126,7 +126,7 @@ export const mortgage = [
               ]
             },
             {
-              id: '123',
+              id: '789',
               fileCode: '123',
               fileName: '测试',
               registerCardArchiveNo: 'sourceValue',
