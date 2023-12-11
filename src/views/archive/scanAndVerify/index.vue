@@ -261,7 +261,11 @@
           </template>
           <template #default="scope">
             <span v-if="scope.row.id">
-              <svg-icon :name="getVerifyResult(scope.row)" size="20" />
+              <svg-icon
+                :name="getVerifyResult(scope.row)"
+                size="20"
+                color="#f39b1c"
+              />
             </span>
           </template>
         </el-table-column>

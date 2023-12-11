@@ -124,6 +124,62 @@ export const mortgage = [
                   archivalDate: ''
                 }
               ]
+            },
+            {
+              id: '123',
+              fileCode: '123',
+              fileName: '测试',
+              registerCardArchiveNo: 'sourceValue',
+              verifyResult: 'OCR_STATUS_NO',
+              registerCardNo: '1212234122341223412234',
+              vinNo: '7880',
+              engineNo: '12234',
+              engineType: '12234',
+              licensePlateNo: '沪A09789',
+              vehicleOwner: '12234',
+              vehicleColor: '12234',
+              useType: '12234',
+              mortgagee: '12234',
+              mortgageeUscc: '12234',
+              mortgageRegisterDate: '12234',
+              batchNo: '12234',
+              contractNo: '12234',
+              belongSystem: '12234',
+              affiliatesName: '12234',
+              channelName: '12234',
+              creator: '12234',
+              createTime: '12234',
+              archivalStatus: 'ARCHIVE_STATUS_NO',
+              archivalDate: '12234',
+              compareResult: ['registerCardNo', 'vinNo', 'useType'],
+              target: [
+                {
+                  fileCode: '123',
+                  fileName: '系统文件',
+                  registerCardArchiveNo: '',
+                  verifyResult: '',
+                  registerCardNo: '12',
+                  vinNo: '12',
+                  engineNo: '12234',
+                  engineType: '12234',
+                  licensePlateNo: '浙B0978E',
+                  vehicleOwner: '12234',
+                  vehicleColor: '12234',
+                  useType: '12234',
+                  mortgagee: '12234',
+                  mortgageeUscc: '12234',
+                  mortgageRegisterDate: '12234',
+                  batchNo: '',
+                  contractNo: '',
+                  belongSystem: '',
+                  affiliatesName: '',
+                  channelName: '',
+                  creator: '',
+                  createTime: '',
+                  archivalStatus: '',
+                  archivalDate: ''
+                }
+              ]
             }
           ]
         }
