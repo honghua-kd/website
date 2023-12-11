@@ -214,7 +214,14 @@
             />
           </template>
           <template #default="scope">
-            <span :class="scope.row.id ? '' : 'font-color-system'">
+            <span
+              v-if="scope.row.id"
+              @click="openPreview(scope.row.fileCode)"
+              class="file-name"
+            >
+              {{ scope.row.fileName }}
+            </span>
+            <span v-else class="font-color-system">
               {{ scope.row.fileName }}
             </span>
           </template>
@@ -472,7 +479,8 @@
       />
     </div>
     <EditForm ref="editFormRef" />
-    <UploadForm ref="uploadFormRef" />
+    <UploadForm ref="uploadFormRef" :getFileUrl="getFileUrl" />
+    <Preview v-model="previewVisible" :fileUrl="previewUrl" title="文件预览" />
   </div>
 </template>
 
@@ -481,7 +489,6 @@ import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
 import { ref, reactive, Ref, computed, onMounted } from 'vue'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import type { TableColumnCtx } from 'element-plus'
-import { verifyOpts, archiveStatusOpts } from './config'
 import {
   ArrowDownBold,
   ArrowUpBold,
@@ -498,7 +505,8 @@ import type {
   PageRequest,
   DateRangeRequest,
   SortParamsRequest,
-  CardListItem
+  CardListItem,
+  DictItem
 } from '@/api'
 import TableSlotItem from './components/TableSlotItem.vue'
 import { formatDate } from '@/utils'
@@ -506,6 +514,7 @@ import { ARCHIVE_STATUS, VERIFY_RESULTS } from '@/constants'
 import { useUserStore } from '@toystory/lotso'
 import dayjs from 'dayjs'
 import fileDownload from 'js-file-download'
+import Preview from '@/components/Preview/index.vue'
 
 const API = new MortageAPI()
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
@@ -541,6 +550,7 @@ const queryParams = reactive<QueryParams>({
 
 const selectData: Ref<CardListItem[]> = ref([])
 const curStaffCode = ref<string>('')
+
 // 归档状态处理
 const getAchivalStatus = (status: string) => {
   let topic = ''
@@ -551,6 +561,36 @@ const getAchivalStatus = (status: string) => {
   }
 
   return topic
+}
+
+// 根据fileCode 换取 文件预览地址
+const getFileUrl = (fileCode: string | undefined): string => {
+  let previewUrl = ''
+  const fileUrlParams = {
+    fileCodes: [fileCode]
+  }
+  API.getPreviewUrl(fileUrlParams)
+    .then((res) => {
+      if (res && res.code === 200) {
+        const fileInfo = res?.data?.previewInfoList[0]
+        previewUrl = fileInfo?.filePreview || ''
+      }
+    })
+    .catch((err: Error) => {
+      console.log(err)
+    })
+  return previewUrl
+}
+// 打开文件预览
+const previewVisible = ref<boolean>(false)
+const previewUrl = ref<string>('')
+const openPreview = async (fileCode: string | undefined) => {
+  const url = await getFileUrl(fileCode)
+  if (!url) {
+    ElMessage.error('读取上传文件URL出错')
+  }
+  previewVisible.value = true
+  previewUrl.value = url
 }
 
 // 核验结果处理
@@ -791,8 +831,29 @@ const getList = () => {
     })
 }
 
+// 批量获取数据字典
+const verifyOpts: Ref<DictItem[]> = ref([])
+const archiveStatusOpts: Ref<DictItem[]> = ref([])
+const getDicts = () => {
+  const dictTypes = ['ARCHIVE_STATUS', 'OCR_STATUS']
+  const params = {
+    dictTypes
+  }
+  API.getDictsList(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        archiveStatusOpts.value = res?.data?.ARCHIVE_STATUS as DictItem[]
+        verifyOpts.value = res?.data?.OCR_STATUS as DictItem[]
+      }
+    })
+    .catch((err: Error) => {
+      throw err
+    })
+}
+
 const init = () => {
   getList()
+  getDicts()
 }
 
 init()
@@ -834,5 +895,9 @@ onMounted(() => {
 }
 .font-color-system {
   color: $base-color-primary;
+}
+.file-name {
+  cursor: pointer;
+  text-decoration: underline;
 }
 </style>

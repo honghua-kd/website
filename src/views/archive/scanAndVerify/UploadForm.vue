@@ -93,7 +93,7 @@
         </el-button>
       </template>
     </el-dialog>
-    <Preview v-model="previewVisible" :fileUrl="previewUrl" />
+    <Preview v-model="previewVisible" :fileUrl="previewUrl" title="文件预览" />
   </div>
 </template>
 
@@ -125,6 +125,13 @@ const formParams = reactive<UploadFileRequest>({
       url: '/static/demo.pdf'
     }
   ]
+})
+
+const props = defineProps({
+  getFileUrl: {
+    type: Function,
+    default: () => {}
+  }
 })
 
 const fileType = ref<string>('.pdf, .jpg, .jpeg, .png, .JPG, .JPEG')
@@ -162,7 +169,7 @@ const checkHandler = () => {
 }
 
 // 上传前校验
-const beforeUpload = (file: UploadRawFile) => {
+const beforeUpload = async (file: UploadRawFile) => {
   console.log('file>>>>', file)
 
   // 校验文件大小
@@ -174,20 +181,26 @@ const beforeUpload = (file: UploadRawFile) => {
   const formData = new FormData()
   formData.append('file', file)
   formData.append('bizCode', 'test')
-  API.uploadFiles(formData).then((res) => {
-    if (res && res.code === 200) {
-      const fileCode = res.data?.fileCode
-      // 换URL 接口
-      const fileCreateTime = file.lastModified
-      const name = file.name
-      const obj = {
-        name,
-        fileCode,
-        fileCreateTime
-      } as UploadFileListItemRequest
-      formParams.fileInfoList.push(obj)
-    }
-  })
+  API.uploadFiles(formData)
+    .then(async (res) => {
+      if (res && res.code === 200) {
+        const fileCode = res.data?.fileCode
+        // 拿到fileCode 换取 文件地址 URL
+        const url = await props.getFileUrl(fileCode)
+        const fileCreateTime = file.lastModified
+        const name = file.name
+        const obj = {
+          name,
+          fileCode,
+          fileCreateTime,
+          url
+        } as UploadFileListItemRequest
+        formParams.fileInfoList.push(obj)
+      }
+    })
+    .catch((err: Error) => {
+      throw err
+    })
 }
 
 // 预览
@@ -203,15 +216,17 @@ const handlePictureCardPreview = (uploadFile: UploadFile) => {
     ElMessage.error('读取上传文件URL出错')
     return
   }
-  debugger
   previewVisible.value = true
   previewUrl.value = uploadFile.url
 }
 
-// 删除
+// 删除文件缩略图
 const handleRemove = (file: UploadFile) => {
-  console.log('handleRemove', file)
-  // 删除处理
+  for (let i = 0, l = formParams.fileInfoList.length; i < l; i++) {
+    if (formParams?.fileInfoList[i]?.url === file.url) {
+      formParams.fileInfoList.splice(i, 1)
+    }
+  }
   console.log(formParams.fileInfoList)
 }
 </script>

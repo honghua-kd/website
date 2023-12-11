@@ -141,3 +141,7 @@ export interface UploadFileRequest {
   batchNo: string
   fileInfoList: UploadFileListItemRequest[]
 }
+
+export interface FilePreviewUrlRequest {
+  fileCodes: Array<string | undefined>
+}

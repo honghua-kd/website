@@ -39,7 +39,6 @@ const dialogVisible = ref<boolean>(props.modelValue)
 watch(
   () => props.modelValue,
   (newValue) => {
-    debugger
     dialogVisible.value = newValue
   }
 )

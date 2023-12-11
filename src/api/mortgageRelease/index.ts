@@ -1,6 +1,8 @@
 import { useRequest } from '@toystory/lotso'
 import requestConfig from '@/config/request.config'
 import type { Response, PageList } from '../types/response'
+import type { DictsRequest } from '../types/request'
+
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
 import type {
@@ -8,9 +10,16 @@ import type {
   DelRegisterCardRequest,
   GetRegisterCardInfoRequest,
   EditRegisterCardInfoRequest,
-  UploadFileRequest
+  UploadFileRequest,
+  FilePreviewUrlRequest
 } from './types/request'
-import type { CardInfoIO, CardListItem, UploadFile } from './types/response'
+import type {
+  CardInfoIO,
+  CardListItem,
+  UploadFile,
+  FilePreviewList,
+  DictList
+} from './types/response'
 const prefix = import.meta.env.VITE_APP_SERVICE_API
 
 export class MortageAPI {
@@ -105,6 +114,24 @@ export class MortageAPI {
       url: `${prefix}/admin-api/mortgage/vehicleRegisterCard/export`,
       method: 'post',
       responseType: 'blob',
+      data
+    })
+  }
+
+  // 批量获取附件预览链接
+  getPreviewUrl(data: FilePreviewUrlRequest): Response<FilePreviewList> {
+    return this.request({
+      url: `${prefix}/admin-api/file/attachment/batchGetAttachmentPreview`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 批量获取数据字典
+  getDictsList(data: DictsRequest): Response<DictList> {
+    return this.request({
+      url: `${prefix}/admin-api/system/dict-data/batchList`,
+      method: 'post',
       data
     })
   }

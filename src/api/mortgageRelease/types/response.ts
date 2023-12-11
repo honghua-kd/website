@@ -419,3 +419,24 @@ export interface UploadFile {
 export interface ExportFile {
   data: string | ArrayBuffer | ArrayBufferView | Blob
 }
+
+export interface FilePreviewItem {
+  fileCode?: string
+  fileName?: string
+  filePreview?: string
+}
+export interface FilePreviewList {
+  previewInfoList: FilePreviewItem[]
+}
+
+export interface DictItem {
+  dictType?: string
+  value: string
+  label: string
+  colorType?: string
+  cssClass?: string
+}
+export interface DictList {
+  ARCHIVE_STATUS?: DictItem[] | null
+  OCR_STATUS?: DictItem[] | null
+}
