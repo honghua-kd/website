@@ -202,12 +202,12 @@ const openDataPermissionForm = (row: RoleDO) => {
 
 // 列表tag转换
 const formatTag = (status: number): string => {
-  const title = status === 0 ? '开启' : '关闭'
+  const title = status === 1 ? '开启' : '关闭'
   return title
 }
 
 const fromatTagStatus = (status: number): '' | 'info' => {
-  const type = status === 0 ? '' : 'info'
+  const type = status === 1 ? '' : 'info'
   return type
 }
 const init = () => {

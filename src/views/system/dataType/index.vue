@@ -194,7 +194,7 @@ const searchHandler = () => {
 }
 // 列表tag转换
 const formatTag = (status: number): string => {
-  const title = status === 0 ? '开启' : '关闭'
+  const title = status === 1 ? '开启' : '关闭'
   return title
 }
 

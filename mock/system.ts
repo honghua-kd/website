@@ -1,4 +1,4 @@
-const VITE_API = '/operations-management'
+const VITE_API = '/api/operations-management'
 
 export const system = [
   {

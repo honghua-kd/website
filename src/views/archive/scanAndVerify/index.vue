@@ -739,6 +739,7 @@ const achiveHandler = () => {
     })
     return
   }
+  console.log('selectData>>>', selectData.value)
   // 二次确认
   ElMessageBox.confirm('确认要归档吗？', '警告', {
     confirmButtonText: '确定',

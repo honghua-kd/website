@@ -1,7 +1,7 @@
 import authData from './data/authData'
 
 // const VITE_APP_SERVER_SER = '/api/portalBackend'
-const VITE_API = '/operations-management'
+const VITE_API = '/api/operations-management'
 export const login = [
   {
     url: `${VITE_API}/user/v1/getPermission`,
