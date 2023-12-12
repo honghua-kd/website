@@ -443,16 +443,21 @@
 
         <el-table-column label="操作" fixed="right" width="150" align="center">
           <template #default="scope">
-            <template
-              v-if="
-                scope.row.id &&
-                scope.row.archivalStatus !== ARCHIVE_STATUS.ACHIVED
-              "
-            >
-              <el-button link type="primary" @click="editHandler(scope.row.id)">
+            <template v-if="scope.row.id">
+              <el-button
+                v-if="scope.row.archivalStatus === ARCHIVE_STATUS.UNACHIVED"
+                link
+                type="primary"
+                @click="editHandler(scope.row.id)"
+              >
                 编辑
               </el-button>
-              <el-button link type="danger" @click="delHandler([scope.row.id])">
+              <el-button
+                v-if="scope.row.archivalStatus !== ARCHIVE_STATUS.ACHIVED"
+                link
+                type="danger"
+                @click="delHandler([scope.row.id])"
+              >
                 删除
               </el-button>
             </template>
@@ -734,20 +739,35 @@ const achiveHandler = () => {
     })
     return
   }
-  const params = {
-    ids: selectIds.value
-  }
-  API.achiveRegisterCard(params)
-    .then((res) => {
-      if (res && res.code === 200) {
-        ElMessage({
-          type: 'success',
-          message: '操作成功'
-        })
-        getList()
+  // 二次确认
+  ElMessageBox.confirm('确认要归档吗？', '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(() => {
+      const params = {
+        ids: selectIds.value
       }
+      API.achiveRegisterCard(params)
+        .then((res) => {
+          if (res && res.code === 200) {
+            ElMessage({
+              type: 'success',
+              message: '操作成功'
+            })
+            getList()
+          }
+        })
+        .catch((err: Error) => {
+          throw err
+        })
     })
     .catch((err: Error) => {
+      ElMessage({
+        type: 'error',
+        message: '归档失败'
+      })
       throw err
     })
 }

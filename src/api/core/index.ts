@@ -46,8 +46,8 @@ export class CoreAPI {
   // 登出
   logout(): Response<null> {
     return this.request({
-      url: `${prefix}/logout`,
-      method: 'post'
+      url: `${prefix}/user/v1/loginout`,
+      method: 'get'
     })
   }
 }

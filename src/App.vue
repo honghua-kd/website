@@ -10,7 +10,7 @@
 import { ref, watch } from 'vue'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import { CoreAPI, SystemAPI } from '@/api'
-import { useRouter, useRoute, mitt } from '@toystory/lotso'
+import { useRouter, mitt } from '@toystory/lotso'
 import { useDictStore } from '@/store/dict'
 import type { ElScrollbar } from 'element-plus'
 
@@ -35,11 +35,10 @@ mitt.on('logout', () => {
   coreAPI
     .logout()
     .then(() => {
-      const route = useRoute()
-      const fullPath = route?.value.fullPath
-      fullPath && router.push(`/login?redirect=${encodeURIComponent(fullPath)}`)
       // SSO跳转
-      // window.location.href = `${import.meta.env.VITE_APP_SSO_URL}?redirect_url=${window.location.href}`
+      window.location.href = `${
+        import.meta.env.VITE_APP_SSO_URL
+      }?redirect_url=${window.location.href}`
     })
     .catch((err) => {
       console.error(err)
