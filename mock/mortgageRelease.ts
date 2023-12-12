@@ -18,7 +18,7 @@ export const mortgage = [
               fileCode: '123',
               fileName: '测试',
               registerCardArchiveNo: 'sourceValue',
-              verifyResult: 'OCR_STATUS_YES',
+              verifyResult: 'OCR_STATUS_PRO',
               registerCardNo: '1212234122341223412234',
               vinNo: '7880',
               engineNo: '12234',

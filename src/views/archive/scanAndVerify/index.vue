@@ -445,7 +445,10 @@
           <template #default="scope">
             <template v-if="scope.row.id">
               <el-button
-                v-if="scope.row.archivalStatus === ARCHIVE_STATUS.UNACHIVED"
+                v-if="
+                  scope.row.archivalStatus === ARCHIVE_STATUS.UNACHIVED &&
+                  scope.row.verifyResult !== VERIFY_RESULTS.PROCESSING
+                "
                 link
                 type="primary"
                 @click="editHandler(scope.row.id)"
@@ -730,6 +733,24 @@ const searchHandler = () => {
   getList()
 }
 
+/**
+ * 归档&删除校验处理
+ * 归档-处理中不可归档
+ * **/
+const checkRulesHandler = (
+  selectArr: CardListItem[],
+  compareKey: keyof CardListItem,
+  key: string
+) => {
+  const result = false
+  for (let i = 0; i < selectArr.length; i++) {
+    if (selectArr[i][compareKey] === key) {
+      return true
+    }
+  }
+  return result
+}
+
 // 归档处理
 const achiveHandler = () => {
   if (!selectIds.value.length) {
@@ -739,7 +760,20 @@ const achiveHandler = () => {
     })
     return
   }
-  console.log('selectData>>>', selectData.value)
+  if (
+    checkRulesHandler(
+      selectData.value,
+      'verifyResult',
+      VERIFY_RESULTS.PROCESSING
+    )
+  ) {
+    ElMessage({
+      type: 'error',
+      message:
+        '所选数据核对结果含有处理中数据，处理中数据不可归档，请重新选择！'
+    })
+    return
+  }
   // 二次确认
   ElMessageBox.confirm('确认要归档吗？', '警告', {
     confirmButtonText: '确定',
@@ -767,7 +801,7 @@ const achiveHandler = () => {
     .catch((err: Error) => {
       ElMessage({
         type: 'error',
-        message: '归档失败'
+        message: '操作失败'
       })
       throw err
     })
