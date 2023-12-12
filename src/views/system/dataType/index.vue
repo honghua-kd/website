@@ -199,7 +199,7 @@ const formatTag = (status: number): string => {
 }
 
 const fromatTagStatus = (status: number): '' | 'info' => {
-  const type = status === 0 ? '' : 'info'
+  const type = status === 1 ? '' : 'info'
   return type
 }
 // 获取字典列表
