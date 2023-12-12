@@ -15,12 +15,13 @@ import type {
   MortgageeType
 } from './types/request'
 import type {
-  CardInfoIO,
+  FormOrigin,
   CardListItem,
   UploadFile,
   FilePreviewList,
   DictList,
-  MortgageeItem
+  MortgageeItem,
+  CardCell
 } from './types/response'
 const prefix = import.meta.env.VITE_APP_SERVICE_API
 
@@ -54,7 +55,9 @@ export class MortageAPI {
   }
 
   // 获取车辆登记证信息
-  getRegisterCardInfo(data: GetRegisterCardInfoRequest): Response<CardInfoIO> {
+  getRegisterCardInfo(
+    data: GetRegisterCardInfoRequest
+  ): Response<FormOrigin & Pick<CardCell, 'fileName' | 'fileCode'>> {
     return this.request({
       url: `${prefix}/admin-api/mortgage/vehicleRegisterCard/getInfo`,
       method: 'post',

@@ -41,7 +41,7 @@ const userViteConfig: ViteConfig = {
   // 代理后端地址
   proxy: {
     // 正则表达式写法
-    '^/operations-management/.*': {
+    '^/api/operations-management/.*': {
       target: 'https://dev-op.utfinancing.com',
       // target: 'https://test-op.utfinancing.com',
       changeOrigin: true
@@ -49,7 +49,7 @@ const userViteConfig: ViteConfig = {
     }
   },
   // 是否使用mock数据
-  useMock: false
+  useMock: true
 }
 
 export default userViteConfig

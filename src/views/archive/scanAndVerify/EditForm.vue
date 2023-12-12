@@ -218,11 +218,11 @@
 <script setup lang="ts">
 import { ref, reactive, Ref, watch } from 'vue'
 import type {
-  CardInfoIO,
   EditRegisterCardInfoRequest,
   ModifiyInfo,
   FormOrigin,
-  MortgageeItem
+  MortgageeItem,
+  CardCell
 } from '@/api'
 import { MortageAPI } from '@/api/mortgageRelease'
 import { ElMessage } from 'element-plus'
@@ -242,7 +242,7 @@ const props = defineProps({
     default: () => {}
   }
 })
-const fileParams = reactive<Pick<CardInfoIO, 'fileCode' | 'fileName'>>({
+const fileParams = reactive<Pick<CardCell, 'fileCode' | 'fileName'>>({
   fileName: '',
   fileCode: ''
 })
@@ -385,8 +385,8 @@ const getCardInfo = (id: string) => {
     .then((res) => {
       formLoading.value = false
       if (res && res.code === 200) {
-        fileParams.fileName = res?.data?.fileName
-        fileParams.fileCode = res?.data?.fileCode
+        fileParams.fileName = res?.data?.fileName || ''
+        fileParams.fileCode = res?.data?.fileCode || ''
         const keysArr = Object.keys(formParams)
         for (let i = 0; i < keysArr.length; i++) {
           const keyModify = keysArr[i] as keyof ModifiyInfo
