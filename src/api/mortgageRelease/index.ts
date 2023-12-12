@@ -11,14 +11,16 @@ import type {
   GetRegisterCardInfoRequest,
   EditRegisterCardInfoRequest,
   UploadFileRequest,
-  FilePreviewUrlRequest
+  FilePreviewUrlRequest,
+  MortgageeType
 } from './types/request'
 import type {
   CardInfoIO,
   CardListItem,
   UploadFile,
   FilePreviewList,
-  DictList
+  DictList,
+  MortgageeItem
 } from './types/response'
 const prefix = import.meta.env.VITE_APP_SERVICE_API
 
@@ -131,6 +133,14 @@ export class MortageAPI {
   getDictsList(data: DictsRequest): Response<DictList> {
     return this.request({
       url: `${prefix}/admin-api/system/dict-data/batchList`,
+      method: 'post',
+      data
+    })
+  }
+
+  getMortgageList(data: MortgageeType): Response<MortgageeItem[]> {
+    return this.request({
+      url: `${prefix}/admin-api/mortgage/mortgagee/list`,
       method: 'post',
       data
     })

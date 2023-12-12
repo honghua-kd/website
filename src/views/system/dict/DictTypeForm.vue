@@ -74,11 +74,11 @@ const formRef = ref<InstanceType<typeof ElForm>>()
 const statusOpts = ref([
   {
     label: '开启',
-    value: 0
+    value: 1
   },
   {
     label: '关闭',
-    value: 1
+    value: 0
   }
 ])
 const emit = defineEmits(['success'])

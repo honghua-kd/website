@@ -20,8 +20,16 @@
         </el-form-item>
         <el-row :gutter="20">
           <el-col :span="8">
-            <el-form-item label="登记证编号" prop="registerNo">
-              <el-input v-model="formParamsRequest.registerCardNo" />
+            <el-form-item
+              label="登记证编号"
+              prop="registerNo"
+              class="width-full"
+            >
+              <el-input
+                v-model="formParamsRequest.registerCardNo"
+                class="width-full"
+                clearable
+              />
               <span class="detail">
                 {{ formParams.registerCardNo?.targetValue }}
               </span>
@@ -29,12 +37,20 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="车架号" prop="vinNo">
-              <el-input v-model="formParamsRequest.vinNo" />
+              <el-input
+                v-model="formParamsRequest.vinNo"
+                clearable
+                class="width-full"
+              />
               <span class="detail">{{ formParams.vinNo?.targetValue }}</span>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="车牌号" prop="licensePlateNo">
+            <el-form-item
+              label="车牌号"
+              prop="licensePlateNo"
+              class="width-full"
+            >
               <el-input v-model="formParamsRequest.licensePlateNo" />
               <span class="detail">
                 {{ formParams.licensePlateNo?.targetValue }}
@@ -44,14 +60,26 @@
         </el-row>
         <el-row>
           <el-col :span="8">
-            <el-form-item label="发动机号" prop="engineNo">
-              <el-input v-model="formParamsRequest.engineNo" />
+            <el-form-item label="发动机号" prop="engineNo" class="width-full">
+              <el-input
+                v-model="formParamsRequest.engineNo"
+                class="width-full"
+                clearable
+              />
               <span class="detail">{{ formParams.engineNo?.targetValue }}</span>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="发动机型号" prop="engineType">
-              <el-input v-model="formParamsRequest.engineType" />
+            <el-form-item
+              label="发动机型号"
+              prop="engineType"
+              class="width-full"
+            >
+              <el-input
+                v-model="formParamsRequest.engineType"
+                class="width-full"
+                clearable
+              />
               <span class="detail">
                 {{ formParams.engineType?.targetValue }}
               </span>
@@ -60,8 +88,16 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="机动车所有人" prop="vehicleOwner">
-              <el-input v-model="formParamsRequest.vehicleOwner" />
+            <el-form-item
+              label="机动车所有人"
+              prop="vehicleOwner"
+              class="width-full"
+            >
+              <el-input
+                v-model="formParamsRequest.vehicleOwner"
+                class="width-full"
+                clearable
+              />
               <span class="detail">
                 {{ formParams.vehicleOwner?.targetValue }}
               </span>
@@ -70,29 +106,45 @@
         </el-row>
         <el-row>
           <el-col :span="8">
-            <el-form-item label="车身颜色" prop="vehicleColor">
-              <el-input v-model="formParamsRequest.vehicleColor" />
+            <el-form-item
+              label="车身颜色"
+              prop="vehicleColor"
+              class="width-full"
+            >
+              <el-input
+                v-model="formParamsRequest.vehicleColor"
+                class="width-full"
+                clearable
+              />
               <span class="detail">
                 {{ formParams.vehicleColor?.targetValue }}
               </span>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="使用性质" prop="useType">
-              <el-input v-model="formParamsRequest.useType" />
+            <el-form-item label="使用性质" prop="useType" class="width-full">
+              <el-input
+                v-model="formParamsRequest.useType"
+                class="width-full"
+                clearable
+              />
               <span class="detail">{{ formParams.useType?.targetValue }}</span>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="8">
-            <el-form-item label="抵押权人" prop="mortgagee">
-              <el-select v-model="formParamsRequest.mortgagee">
+            <el-form-item label="抵押权人" prop="mortgagee" class="width-full">
+              <el-select
+                v-model="formParamsRequest.mortgagee"
+                class="width-full"
+                clearable
+              >
                 <el-option
-                  v-for="(item, index) in mortOpts"
+                  v-for="(item, index) in mortgageeOpts"
                   :key="index"
-                  :label="item.label"
-                  :value="item.value"
+                  :label="item.mortgagee"
+                  :value="item.mortgagee"
                 />
               </el-select>
               <span class="detail">
@@ -103,8 +155,16 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="统一社会信用代码" prop="mortgageeUscc">
-              <el-input v-model="formParamsRequest.mortgageeUscc" />
+            <el-form-item
+              label="统一社会信用代码"
+              prop="mortgageeUscc"
+              class="width-full"
+            >
+              <el-input
+                v-model="formParamsRequest.mortgageeUscc"
+                class="width-full"
+                clearable
+              />
               <span class="detail">
                 {{ formParams.mortgageeUscc?.targetValue }}
               </span>
@@ -113,12 +173,17 @@
         </el-row>
         <el-row>
           <el-col :span="8">
-            <el-form-item label="抵押日期" prop="mortgageRegisterDate">
+            <el-form-item
+              label="抵押日期"
+              prop="mortgageRegisterDate"
+              class="width-full"
+            >
               <el-date-picker
                 v-model="formParamsRequest.mortgageRegisterDate"
                 type="date"
                 placeholder="请选择日期"
                 class="width-full"
+                clearable
               />
               <div class="detail">
                 {{ formParams.mortgageRegisterDate?.targetValue }}
@@ -151,13 +216,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import { mortOpts } from './config'
+import { ref, reactive, Ref, watch } from 'vue'
 import type {
   CardInfoIO,
   EditRegisterCardInfoRequest,
   ModifiyInfo,
-  FormOrigin
+  FormOrigin,
+  MortgageeItem
 } from '@/api'
 import { MortageAPI } from '@/api/mortgageRelease'
 import { ElMessage } from 'element-plus'
@@ -245,35 +310,12 @@ const formParams = reactive<FormOrigin>({
 })
 
 /** 打开弹窗 */
-const open = (id: string) => {
+const open = async (id: string) => {
   dialogVisible.value = true
   infoId.value = id
-  const params = { id }
   formLoading.value = true
-  API.getRegisterCardInfo(params)
-    .then((res) => {
-      formLoading.value = false
-      if (res && res.code === 200) {
-        fileParams.fileName = res?.data?.fileName
-        fileParams.fileCode = res?.data?.fileCode
-        const keysArr = Object.keys(formParams)
-
-        for (let i = 0; i < keysArr.length; i++) {
-          const keyModify = keysArr[i] as keyof ModifiyInfo
-          formParamsRequest[keyModify] =
-            res?.data?.[keyModify]?.sourceValue || ''
-          const keyFormOrigin = keysArr[i] as keyof FormOrigin
-          formParams[keyFormOrigin].sourceValue =
-            res?.data?.[keyFormOrigin]?.sourceValue || ''
-          formParams[keyFormOrigin].targetValue =
-            res?.data?.[keyFormOrigin]?.targetValue || ''
-        }
-      }
-    })
-    .catch((err: Error) => {
-      formLoading.value = false
-      throw err
-    })
+  await getCardInfo(id)
+  await getMortList()
 }
 
 defineExpose({ open })
@@ -318,6 +360,67 @@ const openFileHandler = async () => {
   previewUrl.value = await props.getFileUrl(fileParams.fileCode)
   previewVisible.value = true
 }
+
+// 获取抵押人字典信息
+const mortgageeOpts: Ref<MortgageeItem[]> = ref([])
+const getMortList = () => {
+  const params = {
+    mortgageeType: 'HAITONG'
+  }
+  API.getMortgageList(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        mortgageeOpts.value = res?.data || []
+      }
+    })
+    .catch((err: Error) => {
+      throw err
+    })
+}
+
+// 获取详情接口
+const getCardInfo = (id: string) => {
+  const params = { id }
+  API.getRegisterCardInfo(params)
+    .then((res) => {
+      formLoading.value = false
+      if (res && res.code === 200) {
+        fileParams.fileName = res?.data?.fileName
+        fileParams.fileCode = res?.data?.fileCode
+        const keysArr = Object.keys(formParams)
+        for (let i = 0; i < keysArr.length; i++) {
+          const keyModify = keysArr[i] as keyof ModifiyInfo
+          formParamsRequest[keyModify] =
+            res?.data?.[keyModify]?.sourceValue || ''
+          const keyFormOrigin = keysArr[i] as keyof FormOrigin
+          formParams[keyFormOrigin].sourceValue =
+            res?.data?.[keyFormOrigin]?.sourceValue || ''
+          formParams[keyFormOrigin].targetValue =
+            res?.data?.[keyFormOrigin]?.targetValue || ''
+        }
+      }
+    })
+    .catch((err: Error) => {
+      formLoading.value = false
+      throw err
+    })
+}
+
+// 监听 抵解押切换
+watch(
+  () => formParamsRequest.mortgagee,
+  () => {
+    const filterCell = mortgageeOpts.value.filter((item) => {
+      return item.mortgagee === formParamsRequest.mortgagee
+    })
+    formParamsRequest.mortgageeUscc =
+      filterCell && filterCell[0]?.unifiedSocialCreditCode
+  },
+  {
+    immediate: true,
+    deep: true
+  }
+)
 </script>
 
 <style lang="scss" scoped>

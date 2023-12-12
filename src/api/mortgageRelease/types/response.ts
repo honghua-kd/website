@@ -518,7 +518,12 @@ export interface DictItem {
   colorType?: string
   cssClass?: string
 }
-export interface DictList {
-  ARCHIVE_STATUS?: DictItem[] | null
-  OCR_STATUS?: DictItem[] | null
+
+type DictTypes = 'ARCHIVE_STATUS' | 'OCR_STATUS'
+
+export type DictList = Record<DictTypes, DictItem[]>
+
+export interface MortgageeItem {
+  mortgagee: string
+  unifiedSocialCreditCode: string
 }

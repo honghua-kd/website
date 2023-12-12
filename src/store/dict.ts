@@ -8,6 +8,7 @@ export const useDictStore = defineStore('dict', () => {
   const getDictMap = computed(() => {
     return dictMap.value
   })
+
   function setDictMap(val: DictTypeAllItem[]) {
     dictMap.value.splice(0, dictMap.value.length)
     dictMap.value.push(...val)

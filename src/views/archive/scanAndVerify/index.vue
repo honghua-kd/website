@@ -806,7 +806,6 @@ const getList = () => {
     endVerifyTime: new Date(verifyTime[1]).getTime(),
     ...others
   }
-  console.log('params>>>>', params)
 
   tableLoading.value = true
   API.getVehiRegisterCardList(params)

@@ -145,3 +145,7 @@ export interface UploadFileRequest {
 export interface FilePreviewUrlRequest {
   fileCodes: Array<string | undefined>
 }
+
+export interface MortgageeType {
+  mortgageeType: string
+}
