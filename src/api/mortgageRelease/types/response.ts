@@ -181,23 +181,6 @@ export interface FilePreviewList {
   previewInfoList: FilePreviewItem[]
 }
 
-export interface DictItem {
-  dictType?: string
-  value: string
-  label: string
-  colorType?: string
-  cssClass?: string
-}
-
-interface DictTypes {
-  ARCHIVE_STATUS: string
-  OCR_STATUS: string
-}
-
-type DictType = keyof DictTypes
-
-export type DictList = Record<DictType, DictItem[]>
-
 export interface MortgageeItem {
   mortgagee: string
   unifiedSocialCreditCode: string

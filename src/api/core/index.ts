@@ -1,11 +1,11 @@
 import { useRequest } from '@toystory/lotso'
 import requestConfig from '@/config/request.config'
 import type { Response } from '../types/response'
-import type { AuthDataItem } from './types/response'
+import type { AuthDataItem, UploadFile } from './types/response'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
 
-const prefix = import.meta.env.VITE_APP_SERVICE_API
+const prefix = '/operations-management'
 
 interface RoleItem {
   roleNo: string
@@ -48,6 +48,18 @@ export class CoreAPI {
     return this.request({
       url: `${prefix}/user/v1/loginout`,
       method: 'get'
+    })
+  }
+
+  // 上传文件 Response<UploadFile>
+  uploadFiles(data: FormData): Response<UploadFile> {
+    return this.request({
+      url: `${prefix}/admin-api/file/attachment/uploadAttachment`,
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/form-data'
+      },
+      data
     })
   }
 }

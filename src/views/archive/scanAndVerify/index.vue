@@ -217,7 +217,7 @@
               {{ scope.row.fileName }}
             </span>
             <span v-else class="font-color-system">
-              {{ scope.row.fileName }}
+              {{ scope.row.fileName || '系统文件' }}
             </span>
           </template>
         </el-table-column>
@@ -406,7 +406,7 @@
         />
         <el-table-column
           label="创建人"
-          prop="creator"
+          prop="creatorName"
           width="150"
           align="center"
         />
@@ -417,7 +417,9 @@
           align="center"
         >
           <template #default="scope">
-            {{ formatDate(scope.row.createTime, '') }}
+            <template v-if="scope.row.id">
+              {{ formatDate(scope.row.createTime, '') }}
+            </template>
           </template>
         </el-table-column>
         <el-table-column
@@ -501,6 +503,7 @@ import {
 import EditForm from './EditForm.vue'
 import UploadForm from './UploadForm.vue'
 import { MortageAPI } from '@/api/mortgageRelease'
+import { SystemAPI } from '@/api/system'
 import type {
   VehiRegisterCardListRequest,
   PageRequest,
@@ -518,6 +521,7 @@ import fileDownload from 'js-file-download'
 import Preview from '@/components/Preview/index.vue'
 
 const API = new MortageAPI()
+const SystemApi = new SystemAPI()
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
 const expandFlag = ref<boolean>(false)
@@ -857,8 +861,8 @@ const reset = () => {
 const getList = () => {
   const { verifyTime, ...others } = queryParams
   const params = {
-    startVerifyTime: new Date(verifyTime[0]).getTime(),
-    endVerifyTime: new Date(verifyTime[1]).getTime(),
+    startVerifyTime: dayjs(verifyTime[0]).format('YYYY-MM-DD HH:mm:ss'),
+    endVerifyTime: dayjs(verifyTime[1]).format('YYYY-MM-DD HH:mm:ss'),
     ...others
   }
 
@@ -885,7 +889,7 @@ const getDicts = () => {
   const params = {
     dictTypes
   }
-  API.getDictsList(params)
+  SystemApi.getDictsList(params)
     .then((res) => {
       if (res && res.code === 200) {
         archiveStatusOpts.value = res?.data?.ARCHIVE_STATUS as DictItem[]

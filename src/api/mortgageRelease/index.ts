@@ -1,7 +1,6 @@
 import { useRequest } from '@toystory/lotso'
 import requestConfig from '@/config/request.config'
 import type { Response, PageList } from '../types/response'
-import type { DictsRequest } from '../types/request'
 
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
@@ -17,13 +16,11 @@ import type {
 import type {
   FormOrigin,
   CardListItem,
-  UploadFile,
   FilePreviewList,
-  DictList,
   MortgageeItem,
   CardCell
 } from './types/response'
-const prefix = import.meta.env.VITE_APP_SERVICE_API
+const prefix = '/operations-mortgage'
 
 export class MortageAPI {
   private request: AxiosInstance
@@ -39,6 +36,10 @@ export class MortageAPI {
     return this.request({
       url: `${prefix}/admin-api/mortgage/vehicleRegisterCard/list`,
       method: 'post',
+      headers: {
+        token: 'cb7716a22374ad4bc3acd59621f80b4d',
+        'SSO-TOKEN': 'test103388'
+      },
       data
     })
   }
@@ -87,18 +88,6 @@ export class MortageAPI {
     })
   }
 
-  // 上传文件
-  uploadFiles(data: FormData): Response<UploadFile> {
-    return this.request({
-      url: `${prefix}/admin-api/file/attachment/uploadAttachment`,
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/form-data'
-      },
-      data
-    })
-  }
-
   // 识别 & 核验接口
 
   uploadRegisterCard(
@@ -132,19 +121,14 @@ export class MortageAPI {
     })
   }
 
-  // 批量获取数据字典
-  getDictsList(data: DictsRequest): Response<DictList> {
-    return this.request({
-      url: `${prefix}/admin-api/system/dict-data/batchList`,
-      method: 'post',
-      data
-    })
-  }
-
   getMortgageList(data: MortgageeType): Response<MortgageeItem[]> {
     return this.request({
       url: `${prefix}/admin-api/mortgage/mortgagee/list`,
       method: 'post',
+      headers: {
+        token: 'cb7716a22374ad4bc3acd59621f80b4d',
+        'SSO-TOKEN': 'test103388'
+      },
       data
     })
   }

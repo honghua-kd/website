@@ -29,10 +29,11 @@
           <el-upload
             v-model:file-list="formParams.fileInfoList"
             list-type="picture-card"
-            action="#"
             :on-preview="handlePictureCardPreview"
-            :before-upload="beforeUpload"
+            :before-upload="beforeUploadHandler"
+            :http-request="uploadHandler"
             :accept="fileType"
+            action="#"
           >
             <el-icon><UploadFilled /></el-icon>
             <template #tip>
@@ -103,11 +104,19 @@ import { UploadFilled, Delete, ZoomIn } from '@element-plus/icons-vue'
 import Preview from '@/components/Preview/index.vue'
 import pdfImg from '@/assets/images/pdf.png'
 import { MortageAPI } from '@/api/mortgageRelease'
+import { CoreAPI } from '@/api/core'
 import { ElMessage, ElForm } from 'element-plus'
-import type { UploadFile, UploadRawFile } from 'element-plus'
+import dayjs from 'dayjs'
+
+import type {
+  UploadFile,
+  UploadRawFile,
+  UploadRequestOptions
+} from 'element-plus'
 import type { UploadFileRequest, UploadFileListItemRequest } from '@/api'
 
 const API = new MortageAPI()
+const CoreApi = new CoreAPI()
 const dialogTitle = ref<string>('上传车辆登记证')
 const dialogVisible = ref<boolean>(false)
 const formLoading = ref<boolean>(false)
@@ -169,25 +178,31 @@ const checkHandler = () => {
 }
 
 // 上传前校验
-const beforeUpload = async (file: UploadRawFile) => {
-  console.log('file>>>>', file)
-
+const beforeUploadHandler = (file: UploadRawFile) => {
   // 校验文件大小
   if (file.size / 1024 / 1024 > 8) {
     ElMessage.error('单个图片和单页PDF文件不超过8MB!')
     return false
   }
+  return true
+}
 
+// 上传
+const uploadHandler = async (options: UploadRequestOptions) => {
+  const file = options.file
+  console.log('options.file', options.file)
   const formData = new FormData()
   formData.append('file', file)
-  formData.append('bizCode', 'test')
-  API.uploadFiles(formData)
+  formData.append('bizCode', 'VEHICLE_REGISTER_UPLOAD')
+  CoreApi.uploadFiles(formData)
     .then(async (res) => {
       if (res && res.code === 200) {
         const fileCode = res.data?.fileCode
         // 拿到fileCode 换取 文件地址 URL
         const url = await props.getFileUrl(fileCode)
-        const fileCreateTime = file.lastModified
+        const fileCreateTime = dayjs(file.lastModified).format(
+          'YYYY-MM-DD HH:mm:ss'
+        )
         const name = file.name
         const obj = {
           name,

@@ -1,4 +1,4 @@
-const VITE_API = '/api/operations-management'
+const VITE_API = '/api/operations-mortgage'
 export const mortgage = [
   {
     url: `${VITE_API}/admin-api/mortgage/vehicleRegisterCard/list`,

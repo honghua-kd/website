@@ -5,3 +5,8 @@ export interface AuthDataItem {
   sort: number
   menu: string
 }
+
+export interface UploadFile {
+  fileCode: string
+  fileCodes?: string[]
+}

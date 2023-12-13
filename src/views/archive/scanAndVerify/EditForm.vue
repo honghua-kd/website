@@ -5,6 +5,7 @@
       v-model="dialogVisible"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
+      width="60%"
     >
       <el-form
         ref="formRef"
@@ -18,31 +19,35 @@
             {{ fileParams.fileName }}
           </div>
         </el-form-item>
-        <el-row :gutter="20">
+        <el-row>
           <el-col :span="8">
             <el-form-item
               label="登记证编号"
               prop="registerNo"
               class="width-full"
             >
-              <el-input
-                v-model="formParamsRequest.registerCardNo"
-                class="width-full"
-                clearable
-              />
-              <span class="detail">
-                {{ formParams.registerCardNo?.targetValue }}
-              </span>
+              <div class="detail-container">
+                <el-input
+                  v-model="formParamsRequest.registerCardNo"
+                  class="width-full"
+                  clearable
+                />
+                <span class="detail">
+                  {{ formParams.registerCardNo?.targetValue }}
+                </span>
+              </div>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="车架号" prop="vinNo">
-              <el-input
-                v-model="formParamsRequest.vinNo"
-                clearable
-                class="width-full"
-              />
-              <span class="detail">{{ formParams.vinNo?.targetValue }}</span>
+              <div class="detail-container">
+                <el-input
+                  v-model="formParamsRequest.vinNo"
+                  clearable
+                  class="width-full"
+                />
+                <span class="detail">{{ formParams.vinNo?.targetValue }}</span>
+              </div>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -61,12 +66,16 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="发动机号" prop="engineNo" class="width-full">
-              <el-input
-                v-model="formParamsRequest.engineNo"
-                class="width-full"
-                clearable
-              />
-              <span class="detail">{{ formParams.engineNo?.targetValue }}</span>
+              <div class="detail-container">
+                <el-input
+                  v-model="formParamsRequest.engineNo"
+                  class="width-full"
+                  clearable
+                />
+                <span class="detail">{{
+                  formParams.engineNo?.targetValue
+                }}</span>
+              </div>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -75,32 +84,36 @@
               prop="engineType"
               class="width-full"
             >
-              <el-input
-                v-model="formParamsRequest.engineType"
-                class="width-full"
-                clearable
-              />
-              <span class="detail">
-                {{ formParams.engineType?.targetValue }}
-              </span>
+              <div class="detail-container">
+                <el-input
+                  v-model="formParamsRequest.engineType"
+                  class="width-full"
+                  clearable
+                />
+                <span class="detail">
+                  {{ formParams.engineType?.targetValue }}
+                </span>
+              </div>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item
               label="机动车所有人"
               prop="vehicleOwner"
               class="width-full"
             >
-              <el-input
-                v-model="formParamsRequest.vehicleOwner"
-                class="width-full"
-                clearable
-              />
-              <span class="detail">
-                {{ formParams.vehicleOwner?.targetValue }}
-              </span>
+              <div class="detail-container">
+                <el-input
+                  v-model="formParamsRequest.vehicleOwner"
+                  class="width-full"
+                  clearable
+                />
+                <span class="detail">
+                  {{ formParams.vehicleOwner?.targetValue }}
+                </span>
+              </div>
             </el-form-item>
           </el-col>
         </el-row>
@@ -111,45 +124,53 @@
               prop="vehicleColor"
               class="width-full"
             >
-              <el-input
-                v-model="formParamsRequest.vehicleColor"
-                class="width-full"
-                clearable
-              />
-              <span class="detail">
-                {{ formParams.vehicleColor?.targetValue }}
-              </span>
+              <div class="detail-container">
+                <el-input
+                  v-model="formParamsRequest.vehicleColor"
+                  class="width-full"
+                  clearable
+                />
+                <span class="detail">
+                  {{ formParams.vehicleColor?.targetValue }}
+                </span>
+              </div>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="使用性质" prop="useType" class="width-full">
-              <el-input
-                v-model="formParamsRequest.useType"
-                class="width-full"
-                clearable
-              />
-              <span class="detail">{{ formParams.useType?.targetValue }}</span>
+              <div class="detail-container">
+                <el-input
+                  v-model="formParamsRequest.useType"
+                  class="width-full"
+                  clearable
+                />
+                <span class="detail">{{
+                  formParams.useType?.targetValue
+                }}</span>
+              </div>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="8">
+          <el-col :span="12">
             <el-form-item label="抵押权人" prop="mortgagee" class="width-full">
-              <el-select
-                v-model="formParamsRequest.mortgagee"
-                class="width-full"
-                clearable
-              >
-                <el-option
-                  v-for="(item, index) in mortgageeOpts"
-                  :key="index"
-                  :label="item.mortgagee"
-                  :value="item.mortgagee"
-                />
-              </el-select>
-              <span class="detail">
-                {{ formParams.mortgagee?.targetValue }}
-              </span>
+              <div class="detail-container">
+                <el-select
+                  v-model="formParamsRequest.mortgagee"
+                  class="width-full"
+                  clearable
+                >
+                  <el-option
+                    v-for="(item, index) in mortgageeOpts"
+                    :key="index"
+                    :label="item.mortgagee"
+                    :value="item.mortgagee"
+                  />
+                </el-select>
+                <div class="detail">
+                  {{ formParams.mortgagee?.targetValue }}
+                </div>
+              </div>
             </el-form-item>
           </el-col>
         </el-row>
@@ -160,33 +181,37 @@
               prop="mortgageeUscc"
               class="width-full"
             >
-              <el-input
-                v-model="formParamsRequest.mortgageeUscc"
-                class="width-full"
-                clearable
-              />
-              <span class="detail">
-                {{ formParams.mortgageeUscc?.targetValue }}
-              </span>
+              <div class="detail-container">
+                <el-input
+                  v-model="formParamsRequest.mortgageeUscc"
+                  class="width-full"
+                  clearable
+                />
+                <div class="detail" style="display: inline">
+                  {{ formParams.mortgageeUscc?.targetValue }}
+                </div>
+              </div>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="8">
+          <el-col :span="12">
             <el-form-item
               label="抵押日期"
               prop="mortgageRegisterDate"
               class="width-full"
             >
-              <el-date-picker
-                v-model="formParamsRequest.mortgageRegisterDate"
-                type="date"
-                placeholder="请选择日期"
-                class="width-full"
-                clearable
-              />
-              <div class="detail">
-                {{ formParams.mortgageRegisterDate?.targetValue }}
+              <div class="detail-container">
+                <el-date-picker
+                  v-model="formParamsRequest.mortgageRegisterDate"
+                  type="date"
+                  placeholder="请选择日期"
+                  class="width-full"
+                  clearable
+                />
+                <div class="detail">
+                  {{ formParams.mortgageRegisterDate?.targetValue }}
+                </div>
               </div>
             </el-form-item>
           </el-col>
@@ -424,6 +449,10 @@ watch(
 </script>
 
 <style lang="scss" scoped>
+.detail-container {
+  display: flex;
+  flex-direction: column;
+}
 .detail {
   color: #1893ff;
   line-height: 16px;
