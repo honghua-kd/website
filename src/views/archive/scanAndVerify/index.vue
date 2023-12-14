@@ -415,13 +415,8 @@
           prop="createTime"
           width="180"
           align="center"
-        >
-          <template #default="scope">
-            <template v-if="scope.row.id">
-              {{ formatDate(scope.row.createTime, '') }}
-            </template>
-          </template>
-        </el-table-column>
+        />
+
         <el-table-column
           label="归档状态"
           prop="archivalStatus"
@@ -437,11 +432,7 @@
           prop="archivalDate"
           width="180"
           align="center"
-        >
-          <template #default="scope">
-            {{ formatDate(scope.row.archivalDate, '') }}
-          </template>
-        </el-table-column>
+        />
 
         <el-table-column label="操作" fixed="right" width="150" align="center">
           <template #default="scope">
@@ -481,9 +472,14 @@
         @current-change="handleCurrentChange"
       />
     </div>
-    <EditForm ref="editFormRef" :getFileUrl="getFileUrl" />
-    <UploadForm ref="uploadFormRef" :getFileUrl="getFileUrl" />
-    <Preview v-model="previewVisible" :fileUrl="previewUrl" title="文件预览" />
+    <EditForm ref="editFormRef" />
+    <UploadForm ref="uploadFormRef" @success="getList()" />
+    <Preview
+      v-model="previewVisible"
+      :fileUrl="previewUrl"
+      title="文件预览"
+      :fileName="preFileName"
+    />
   </div>
 </template>
 
@@ -502,8 +498,7 @@ import {
 } from '@element-plus/icons-vue'
 import EditForm from './EditForm.vue'
 import UploadForm from './UploadForm.vue'
-import { MortageAPI } from '@/api/mortgageRelease'
-import { SystemAPI } from '@/api/system'
+import { CommonAPI, MortageAPI } from '@/api'
 import type {
   VehiRegisterCardListRequest,
   PageRequest,
@@ -513,7 +508,6 @@ import type {
   DictItem
 } from '@/api'
 import TableSlotItem from './components/TableSlotItem.vue'
-import { formatDate } from '@/utils'
 import { ARCHIVE_STATUS, VERIFY_RESULTS } from '@/constants'
 import { useUserStore } from '@toystory/lotso'
 import dayjs from 'dayjs'
@@ -521,7 +515,8 @@ import fileDownload from 'js-file-download'
 import Preview from '@/components/Preview/index.vue'
 
 const API = new MortageAPI()
-const SystemApi = new SystemAPI()
+const CommonApi = new CommonAPI()
+
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
 const expandFlag = ref<boolean>(false)
@@ -568,34 +563,29 @@ const getAchivalStatus = (status: string) => {
   return topic
 }
 
-// 根据fileCode 换取 文件预览地址
-const getFileUrl = (fileCode: string | undefined): string => {
-  let previewUrl = ''
+// 打开文件预览
+const previewVisible = ref<boolean>(false)
+const previewUrl = ref<string>('')
+const preFileName = ref<string>('')
+const openPreview = async (fileCode: string | undefined) => {
   const fileUrlParams = {
     fileCodes: [fileCode]
   }
-  API.getPreviewUrl(fileUrlParams)
+  CommonApi.getPreviewUrl(fileUrlParams)
     .then((res) => {
       if (res && res.code === 200) {
         const fileInfo = res?.data?.previewInfoList[0]
-        previewUrl = fileInfo?.filePreview || ''
+        previewUrl.value = fileInfo?.filePreview || ''
+        preFileName.value = fileInfo?.fileName || ''
+        if (!previewUrl.value) {
+          ElMessage.error('读取上传文件URL出错')
+        }
+        previewVisible.value = true
       }
     })
     .catch((err: Error) => {
       console.log(err)
     })
-  return previewUrl
-}
-// 打开文件预览
-const previewVisible = ref<boolean>(false)
-const previewUrl = ref<string>('')
-const openPreview = async (fileCode: string | undefined) => {
-  const url = await getFileUrl(fileCode)
-  if (!url) {
-    ElMessage.error('读取上传文件URL出错')
-  }
-  previewVisible.value = true
-  previewUrl.value = url
 }
 
 // 核验结果处理
@@ -642,7 +632,7 @@ const expandHandler = (): boolean => {
 const uploadFormRef = ref()
 const uploadHandler = () => {
   const title = `${curStaffCode.value}-${dayjs().format('YYYYMMDDHHmmss')}`
-  uploadFormRef.value.open('upload', title)
+  uploadFormRef.value.open('upload', title, curStaffCode.value)
 }
 
 // 删除
@@ -672,6 +662,7 @@ const delHandler = (ids: string[]) => {
             type: 'success',
             message: '删除成功'
           })
+          getList()
         }
       })
     })
@@ -796,6 +787,7 @@ const achiveHandler = () => {
               message: '操作成功'
             })
             getList()
+            selectData.value.splice(0, selectData.value.length)
           }
         })
         .catch((err: Error) => {
@@ -889,7 +881,7 @@ const getDicts = () => {
   const params = {
     dictTypes
   }
-  SystemApi.getDictsList(params)
+  CommonApi.getDictsList(params)
     .then((res) => {
       if (res && res.code === 200) {
         archiveStatusOpts.value = res?.data?.ARCHIVE_STATUS as DictItem[]

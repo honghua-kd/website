@@ -4,7 +4,7 @@
 import { getToken } from '@/utils/auth'
 import type { RequestConfig } from '@toystory/lotso'
 // import { ElMessageBox, ElNotification } from 'element-plus'
-// import { logout } from '@/api/core'
+// import { CoreAPI } from '@/api/core'
 
 const requestConfig: RequestConfig = {
   // axios 基础url地址
@@ -37,6 +37,7 @@ const requestConfig: RequestConfig = {
   // 返回成功拦截自定义函数，接收response参数
   handleResSuccess: undefined,
   // handleResSuccess: (response) => {
+  //   const API = new CoreAPI()
   //   const { code, msg } = response.data
   //   if (code === undefined) {
   //     // 文件流
@@ -44,24 +45,30 @@ const requestConfig: RequestConfig = {
   //   } else if (+code === 200 || +code === 0) {
   //     return Promise.resolve(response.data)
   //   } else if (+code === 401) {
-  //     ElMessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {
-  //       confirmButtonText: '重新登录',
-  //       cancelButtonText: '取消',
-  //       type: 'warning'
-  //     }).then(() => {
-  //       logout().then((res) => {
-  //       window.location.href = '/'
-  //       })
-  //          .catch((err) => {
-  //            throw new Error(err)
+  //     ElMessageBox.confirm(
+  //       '登录状态已过期，您可以继续留在该页面，或者重新登录',
+  //       '系统提示',
+  //       {
+  //         confirmButtonText: '重新登录',
+  //         cancelButtonText: '取消',
+  //         type: 'warning'
+  //       }
+  //     ).then(() => {
+  //       API.logout()
+  //         .then((res) => {
+  //           console.log(res)
+  //           window.location.href = '/'
+  //         })
+  //         .catch((err: Error) => {
+  //           throw err
   //         })
   //     })
-  //   } else if (code.includes('1002') || code.includes('50') || +code === 500) {
+  //   } else if (code.includes('100') || code.includes('50') || +code === 500) {
   //     ElNotification({
   //       type: 'error',
   //       title: 'Error',
   //       message: msg,
-  //       closable: true,
+  //       // closable: true,
   //       duration: 3000
   //     })
   //     return Promise.reject(msg)

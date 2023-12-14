@@ -236,7 +236,12 @@
         </el-button>
       </template>
     </el-dialog>
-    <Preview v-model="previewVisible" :fileUrl="previewUrl" title="文件预览" />
+    <Preview
+      v-model="previewVisible"
+      :fileUrl="previewUrl"
+      title="文件预览"
+      :fileName="preFileName"
+    />
   </div>
 </template>
 
@@ -249,11 +254,12 @@ import type {
   MortgageeItem,
   CardCell
 } from '@/api'
-import { MortageAPI } from '@/api/mortgageRelease'
+import { MortageAPI, CommonAPI } from '@/api'
 import { ElMessage } from 'element-plus'
 import Preview from '@/components/Preview/index.vue'
 
 const API = new MortageAPI()
+const CommonApi = new CommonAPI()
 const dialogTitle = ref<string>('编辑扫描结果')
 const dialogVisible = ref<boolean>(false)
 const formLoading = ref<boolean>(false)
@@ -261,12 +267,6 @@ const formRules = reactive({})
 const formRef = ref()
 const infoId = ref<string>('')
 
-const props = defineProps({
-  getFileUrl: {
-    type: Function,
-    default: () => {}
-  }
-})
 const fileParams = reactive<Pick<CardCell, 'fileCode' | 'fileName'>>({
   fileName: '',
   fileCode: ''
@@ -381,8 +381,27 @@ const coverChangeHandler = () => {
 // 打开预览功能
 const previewVisible = ref<boolean>(false)
 const previewUrl = ref<string>('')
+const preFileName = ref<string>('')
 const openFileHandler = async () => {
-  previewUrl.value = await props.getFileUrl(fileParams.fileCode)
+  const fileCode = fileParams?.fileCode || ''
+  const fileUrlParams = {
+    fileCodes: [fileCode]
+  }
+  CommonApi.getPreviewUrl(fileUrlParams)
+    .then((res) => {
+      if (res && res.code === 200) {
+        const fileInfo = res?.data?.previewInfoList[0]
+        previewUrl.value = fileInfo?.filePreview || ''
+        preFileName.value = fileInfo?.fileName || ''
+        if (!previewUrl.value) {
+          ElMessage.error('读取上传文件URL出错')
+        }
+        previewVisible.value = true
+      }
+    })
+    .catch((err: Error) => {
+      console.log(err)
+    })
   previewVisible.value = true
 }
 
@@ -454,6 +473,7 @@ watch(
   flex-direction: column;
 }
 .detail {
+  padding: 4px;
   color: #1893ff;
   line-height: 16px;
 }

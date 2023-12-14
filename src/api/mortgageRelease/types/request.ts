@@ -136,15 +136,11 @@ export interface EditRegisterCardInfoRequest {
 export interface UploadFileListItemRequest extends UploadUserFile {
   fileCode?: string
   fileCreateTime?: number | string
-  url?: string
+  url: string
 }
 export interface UploadFileRequest {
   batchNo: string
   fileInfoList: UploadFileListItemRequest[]
-}
-
-export interface FilePreviewUrlRequest {
-  fileCodes: Array<string | undefined>
 }
 
 export interface MortgageeType {

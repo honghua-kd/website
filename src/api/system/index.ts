@@ -1,7 +1,6 @@
 import { useRequest } from '@toystory/lotso'
 import requestConfig from '@/config/request.config'
 import type { Response, PageList } from '../types/response'
-import type { DictsRequest } from '../types/request'
 
 import type {
   RoleDO,
@@ -17,8 +16,7 @@ import type {
   DictTypeAllItem,
   OrgStructure,
   StaffList,
-  ExpDetail,
-  DictList
+  ExpDetail
 } from './types/response'
 
 import type {
@@ -245,7 +243,6 @@ export class SystemAPI {
   // 用户管理-分页查询部门下员工
   getDepartmentStaff(data: GetDepartmentStaffRequest): Response<StaffList> {
     return this.request({
-      // url: `${prefix}/admin-api/ehr/orgstructure/getDepartmentStaff`,
       url: `${prefix}/admin-api/ehr/orgstructure/getDepartmentAndSubordinates`,
       method: 'post',
       data
@@ -284,19 +281,6 @@ export class SystemAPI {
     return this.request({
       url: `${prefix}/admin-api/system/scope-mapping/save`,
       method: 'post',
-      data
-    })
-  }
-
-  // 批量获取数据字典
-  getDictsList(data: DictsRequest): Response<DictList> {
-    return this.request({
-      url: `${prefix}/admin-api/system/dict-data/batchList`,
-      method: 'post',
-      headers: {
-        token: 'cb7716a22374ad4bc3acd59621f80b4d',
-        'SSO-TOKEN': 'test103388'
-      },
       data
     })
   }

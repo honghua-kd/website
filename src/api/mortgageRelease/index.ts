@@ -10,13 +10,11 @@ import type {
   GetRegisterCardInfoRequest,
   EditRegisterCardInfoRequest,
   UploadFileRequest,
-  FilePreviewUrlRequest,
   MortgageeType
 } from './types/request'
 import type {
   FormOrigin,
   CardListItem,
-  FilePreviewList,
   MortgageeItem,
   CardCell
 } from './types/response'
@@ -51,6 +49,10 @@ export class MortageAPI {
     return this.request({
       url: `${prefix}/admin-api/mortgage/vehicleRegisterCard/delete`,
       method: 'post',
+      headers: {
+        token: 'cb7716a22374ad4bc3acd59621f80b4d', // 联调
+        'SSO-TOKEN': 'test103388'
+      },
       data
     })
   }
@@ -62,6 +64,10 @@ export class MortageAPI {
     return this.request({
       url: `${prefix}/admin-api/mortgage/vehicleRegisterCard/getInfo`,
       method: 'post',
+      headers: {
+        token: 'cb7716a22374ad4bc3acd59621f80b4d', // 联调
+        'SSO-TOKEN': 'test103388'
+      },
       data
     })
   }
@@ -73,6 +79,10 @@ export class MortageAPI {
     return this.request({
       url: `${prefix}/admin-api/mortgage/vehicleRegisterCard/edit`,
       method: 'post',
+      headers: {
+        token: 'cb7716a22374ad4bc3acd59621f80b4d',
+        'SSO-TOKEN': 'test103388'
+      },
       data
     })
   }
@@ -84,6 +94,10 @@ export class MortageAPI {
     return this.request({
       url: `${prefix}/admin-api/mortgage/vehicleRegisterCard/archive`,
       method: 'post',
+      headers: {
+        token: 'cb7716a22374ad4bc3acd59621f80b4d',
+        'SSO-TOKEN': 'test103388'
+      },
       data
     })
   }
@@ -96,6 +110,10 @@ export class MortageAPI {
     return this.request({
       url: `${prefix}/admin-api/mortgage/vehicleRegisterCard/upload`,
       method: 'post',
+      headers: {
+        token: 'cb7716a22374ad4bc3acd59621f80b4d', // 联调
+        'SSO-TOKEN': 'test103388'
+      },
       data
     })
   }
@@ -108,15 +126,10 @@ export class MortageAPI {
       url: `${prefix}/admin-api/mortgage/vehicleRegisterCard/export`,
       method: 'post',
       responseType: 'blob',
-      data
-    })
-  }
-
-  // 批量获取附件预览链接
-  getPreviewUrl(data: FilePreviewUrlRequest): Response<FilePreviewList> {
-    return this.request({
-      url: `${prefix}/admin-api/file/attachment/batchGetAttachmentPreview`,
-      method: 'post',
+      headers: {
+        token: 'cb7716a22374ad4bc3acd59621f80b4d', // 联调
+        'SSO-TOKEN': 'test103388'
+      },
       data
     })
   }
@@ -126,7 +139,7 @@ export class MortageAPI {
       url: `${prefix}/admin-api/mortgage/mortgagee/list`,
       method: 'post',
       headers: {
-        token: 'cb7716a22374ad4bc3acd59621f80b4d',
+        token: 'cb7716a22374ad4bc3acd59621f80b4d', // 联调
         'SSO-TOKEN': 'test103388'
       },
       data

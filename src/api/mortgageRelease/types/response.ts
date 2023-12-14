@@ -163,22 +163,8 @@ export interface CardListItem extends CardCell {
   compareResult: string[]
 }
 
-export interface UploadFile {
-  fileCode: string
-  fileCodes?: string[]
-}
-
 export interface ExportFile {
   data: string | ArrayBuffer | ArrayBufferView | Blob
-}
-
-export interface FilePreviewItem {
-  fileCode?: string
-  fileName?: string
-  filePreview?: string
-}
-export interface FilePreviewList {
-  previewInfoList: FilePreviewItem[]
 }
 
 export interface MortgageeItem {
