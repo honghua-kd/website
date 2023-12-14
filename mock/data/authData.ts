@@ -14,6 +14,35 @@ export default [
         elements: [],
         menuType: 5,
         menu: 'scanAndVerifyMenu'
+      },
+      {
+        children: [
+          {
+            children: [
+              {
+                children: [],
+                elements: [],
+                menuType: 2,
+                menu: 'register',
+                sort: 1
+              },
+              {
+                children: [],
+                elements: [],
+                menuType: 2,
+                menu: 'address',
+                sort: 2
+              }
+            ],
+            elements: [],
+            menuType: 3,
+            menu: 'logistics',
+            sort: 2
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'logisticsMenu'
       }
     ],
     elements: [],
