@@ -569,9 +569,10 @@ const previewUrl = ref<string>('')
 const preFileName = ref<string>('')
 const openPreview = async (fileCode: string | undefined) => {
   const fileUrlParams = {
-    fileCodes: [fileCode]
+    // fileCodes: [fileCode]
+    fileCode
   }
-  CommonApi.getPreviewUrl(fileUrlParams)
+  CommonApi.getSinglePreviewURL(fileUrlParams)
     .then((res) => {
       if (res && res.code === 200) {
         const fileInfo = res?.data?.previewInfoList[0]
