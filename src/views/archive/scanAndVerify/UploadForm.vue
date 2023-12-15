@@ -267,6 +267,11 @@ const handlePictureCardPreview = (uploadFile: UploadFileListItemRequest) => {
     ElMessage.error('读取上传文件URL出错')
     return
   }
+  // 临时添加，PDF 文件直接打开预览
+  if (isPdf(uploadFile.name)) {
+    window.open(uploadFile.url, '_blank')
+    return
+  }
   previewVisible.value = true
   previewUrl.value = uploadFile.url
   preFileName.value = uploadFile.name
@@ -279,7 +284,6 @@ const handleRemove = (file: UploadFileListItemRequest) => {
       formParams.fileInfoList.splice(i, 1)
     }
   }
-  console.log(formParams.fileInfoList)
 }
 </script>
 

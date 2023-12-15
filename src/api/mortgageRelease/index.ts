@@ -18,6 +18,9 @@ import type {
   MortgageeItem,
   CardCell
 } from './types/response'
+
+import type { FileDownload } from '../common/types/response'
+
 const prefix = '/operations-mortgage'
 
 export class MortageAPI {
@@ -35,8 +38,8 @@ export class MortageAPI {
       url: `${prefix}/admin-api/mortgage/vehicleRegisterCard/list`,
       method: 'post',
       headers: {
-        token: 'cb7716a22374ad4bc3acd59621f80b4d',
-        'SSO-TOKEN': 'test103388'
+        token: 'cb7716a22374ad4bc3acd59621f80b4d', // 联调
+        'SSO-TOKEN': 'cb7716a22374ad4bc3acd59621f80b4d' // 联调
       },
       data
     })
@@ -51,7 +54,7 @@ export class MortageAPI {
       method: 'post',
       headers: {
         token: 'cb7716a22374ad4bc3acd59621f80b4d', // 联调
-        'SSO-TOKEN': 'test103388'
+        'SSO-TOKEN': 'cb7716a22374ad4bc3acd59621f80b4d' // 联调
       },
       data
     })
@@ -66,7 +69,7 @@ export class MortageAPI {
       method: 'post',
       headers: {
         token: 'cb7716a22374ad4bc3acd59621f80b4d', // 联调
-        'SSO-TOKEN': 'test103388'
+        'SSO-TOKEN': 'cb7716a22374ad4bc3acd59621f80b4d' // 联调
       },
       data
     })
@@ -80,8 +83,8 @@ export class MortageAPI {
       url: `${prefix}/admin-api/mortgage/vehicleRegisterCard/edit`,
       method: 'post',
       headers: {
-        token: 'cb7716a22374ad4bc3acd59621f80b4d',
-        'SSO-TOKEN': 'test103388'
+        token: 'cb7716a22374ad4bc3acd59621f80b4d', // 联调
+        'SSO-TOKEN': 'cb7716a22374ad4bc3acd59621f80b4d' // 联调
       },
       data
     })
@@ -95,8 +98,8 @@ export class MortageAPI {
       url: `${prefix}/admin-api/mortgage/vehicleRegisterCard/archive`,
       method: 'post',
       headers: {
-        token: 'cb7716a22374ad4bc3acd59621f80b4d',
-        'SSO-TOKEN': 'test103388'
+        token: 'cb7716a22374ad4bc3acd59621f80b4d', // 联调
+        'SSO-TOKEN': 'cb7716a22374ad4bc3acd59621f80b4d' // 联调
       },
       data
     })
@@ -112,7 +115,7 @@ export class MortageAPI {
       method: 'post',
       headers: {
         token: 'cb7716a22374ad4bc3acd59621f80b4d', // 联调
-        'SSO-TOKEN': 'test103388'
+        'SSO-TOKEN': 'cb7716a22374ad4bc3acd59621f80b4d' // 联调
       },
       data
     })
@@ -121,14 +124,14 @@ export class MortageAPI {
   // 导出识别结果接口
   downLoadFiles(
     data: Omit<VehiRegisterCardListRequest, 'pageNo' | 'pageSize'>
-  ): Promise<string | ArrayBuffer | ArrayBufferView | Blob> {
+  ): Promise<FileDownload> {
     return this.request({
       url: `${prefix}/admin-api/mortgage/vehicleRegisterCard/export`,
       method: 'post',
       responseType: 'blob',
       headers: {
         token: 'cb7716a22374ad4bc3acd59621f80b4d', // 联调
-        'SSO-TOKEN': 'test103388'
+        'SSO-TOKEN': 'cb7716a22374ad4bc3acd59621f80b4d' // 联调
       },
       data
     })
@@ -140,7 +143,7 @@ export class MortageAPI {
       method: 'post',
       headers: {
         token: 'cb7716a22374ad4bc3acd59621f80b4d', // 联调
-        'SSO-TOKEN': 'test103388'
+        'SSO-TOKEN': 'cb7716a22374ad4bc3acd59621f80b4d' // 联调
       },
       data
     })

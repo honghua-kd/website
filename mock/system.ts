@@ -69,7 +69,7 @@ export const system = [
     }
   },
   {
-    url: `${VITE_API}/admin-api/file/attachment/upload`,
+    url: `${VITE_API}/admin-api/file/attachment/upload1`,
     method: 'post',
     response: () => {
       return {
@@ -83,7 +83,7 @@ export const system = [
     }
   },
   {
-    url: `${VITE_API}/admin-api/file/attachment/batchGetAttachmentPreview`,
+    url: `${VITE_API}/admin-api/file/attachment/batchGetAttachmentPreview1`,
     method: 'post',
     response: () => {
       return {

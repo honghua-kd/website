@@ -712,6 +712,7 @@ const setSortFlag = (type: string): string => {
 }
 // 分页
 const handleCurrentChange = (val: number) => {
+  console.log('value>>>>>', val)
   queryParams.pageNo = val
   getList()
 }
@@ -808,15 +809,22 @@ const exportHandler = () => {
   const { verifyTime, pageNo, pageSize, ...others } = queryParams
   console.log(pageNo, pageSize)
   const params = {
-    startVerifyTime: new Date(verifyTime[0]).getTime(),
-    endVerifyTime: new Date(verifyTime[1]).getTime(),
+    startVerifyTime: dayjs(verifyTime[0]).format('YYYY-MM-DD HH:mm:ss'),
+    endVerifyTime: dayjs(verifyTime[1]).format('YYYY-MM-DD HH:mm:ss'),
     ...others
   }
 
   API.downLoadFiles(params)
     .then((res) => {
       if (res) {
-        fileDownload(res, '导出文件.zip')
+        const fileStream = res?.data
+        const headers = res?.headers
+        const files =
+          headers &&
+          headers['content-disposition'] &&
+          decodeURI(headers['content-disposition'].split(';')[1])
+        const fileName = files && files.split('=')[1]
+        fileDownload(fileStream, fileName)
       }
     })
     .catch((err: Error) => {

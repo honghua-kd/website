@@ -27,3 +27,10 @@ interface DictTypes {
 type DictType = keyof DictTypes
 
 export type DictList = Record<DictType, DictItem[]>
+
+export interface FileDownload {
+  data: string | ArrayBuffer | ArrayBufferView | Blob
+  headers: {
+    'content-disposition': string
+  }
+}
