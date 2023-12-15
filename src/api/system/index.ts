@@ -191,6 +191,10 @@ export class SystemAPI {
   getAllDictType(): Response<DictTypeAllItem[]> {
     return this.request({
       url: `${prefix}/admin-api/system/dict-type/list-all-simple`,
+      headers: {
+        token: 'cb7716a22374ad4bc3acd59621f80b4d', // 联调使用
+        'SSO-TOKEN': 'cb7716a22374ad4bc3acd59621f80b4d' // 联调使用
+      },
       method: 'get'
     })
   }
