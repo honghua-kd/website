@@ -823,7 +823,7 @@ const exportHandler = () => {
           headers &&
           headers['content-disposition'] &&
           decodeURI(headers['content-disposition'].split(';')[1])
-        const fileName = files && files.split('=')[1]
+        const fileName = (files && files.split('=')[1]) || ''
         fileDownload(fileStream, fileName)
       }
     })
