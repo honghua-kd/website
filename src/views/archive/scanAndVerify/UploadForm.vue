@@ -124,7 +124,7 @@
 import { ref, reactive, computed } from 'vue'
 import { UploadFilled, Delete, ZoomIn } from '@element-plus/icons-vue'
 import Preview from '@/components/Preview/index.vue'
-import pdfImg from '@/assets/images/pdf.png'
+import pdfImg from '@/assets/common/pdf.png'
 import { ElMessage, ElForm } from 'element-plus'
 import dayjs from 'dayjs'
 import { MortageAPI, CommonAPI } from '@/api'
