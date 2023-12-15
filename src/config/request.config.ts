@@ -43,7 +43,7 @@ const requestConfig: RequestConfig = {
     if (code === undefined) {
       // 文件流
       return Promise.resolve(response)
-    } else if (+code === 200 || +code === 0) {
+    } else if (+code === 200 || +code === 0 || +code === 102200000) {
       return Promise.resolve(response.data)
     } else if (+code === 401) {
       ElMessageBox.confirm(
