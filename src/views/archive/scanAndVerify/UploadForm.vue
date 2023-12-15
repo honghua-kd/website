@@ -128,6 +128,7 @@ import pdfImg from '@/assets/images/pdf.png'
 import { ElMessage, ElForm } from 'element-plus'
 import dayjs from 'dayjs'
 import { MortageAPI, CommonAPI } from '@/api'
+import { openLink } from '@/utils'
 import type { UploadRawFile, UploadRequestOptions } from 'element-plus'
 import type { UploadFileRequest, UploadFileListItemRequest } from '@/api'
 
@@ -140,18 +141,12 @@ const emit = defineEmits(['success'])
 const formParams = reactive<UploadFileRequest>({
   batchNo: '', // 处理批次号
   fileInfoList: [
-    {
-      name: 'food.jpeg',
-      fileCode: 'LX_1731921571582316630_1',
-      fileCreateTime: '2023-12-05 14:20:54',
-      url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-    },
-    {
-      name: 'food.pdf',
-      url: '/static/demo.pdf',
-      fileCode: 'LX_1730150244252913758 1',
-      fileCreateTime: '2023-12-05 14:20:54'
-    }
+    // {
+    //   name: 'food.jpeg',
+    //   fileCode: 'LX_1731921571582316630_1',
+    //   fileCreateTime: '2023-12-05 14:20:54',
+    //   url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+    // },
   ]
 })
 
@@ -165,6 +160,7 @@ const chooseFileNum = computed(() => {
 const tenantUser = ref<string>('')
 const open = (type: string, title: string, user: string) => {
   dialogVisible.value = true
+  reset()
   formParams.batchNo = title
   tenantUser.value = user
 }
@@ -269,12 +265,17 @@ const handlePictureCardPreview = (uploadFile: UploadFileListItemRequest) => {
   }
   // 临时添加，PDF 文件直接打开预览
   if (isPdf(uploadFile.name)) {
-    window.open(uploadFile.url, '_blank')
+    openLink(uploadFile.url, '_blank')
     return
   }
   previewVisible.value = true
   previewUrl.value = uploadFile.url
   preFileName.value = uploadFile.name
+}
+// reset
+const reset = () => {
+  formParams.batchNo = ''
+  formParams.fileInfoList = []
 }
 
 // 删除文件缩略图

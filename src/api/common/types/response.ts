@@ -1,3 +1,5 @@
+import { RawAxiosRequestHeaders } from 'axios'
+
 export interface UploadFile {
   fileCode: string
   fileCodes?: string[]
@@ -28,9 +30,10 @@ type DictType = keyof DictTypes
 
 export type DictList = Record<DictType, DictItem[]>
 
+interface FileHeader extends RawAxiosRequestHeaders {
+  'content-disposition'?: string
+}
 export interface FileDownload {
   data: string | ArrayBuffer | ArrayBufferView | Blob
-  headers: {
-    'content-disposition': string
-  }
+  headers: FileHeader
 }
