@@ -136,282 +136,65 @@
           width="55"
           :selectable="selectableHandler"
         />
-        <el-table-column label="快递状态" prop="expressStatus" width="180" align="center">
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="expressStatus" />
-          </template>
-        </el-table-column>
-        <el-table-column label="快递单号" prop="expressNo" width="180" align="center">
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="expressNo" />
-          </template>
-        </el-table-column>
-        <el-table-column label="快递公司" prop="expressCompany" width="180" align="center">
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="expressCompany" />
-          </template>
-        </el-table-column>
-        <el-table-column label="寄送/接收" prop="postOrReceive" width="180" align="center">
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="postOrReceive" />
-          </template>
-        </el-table-column>
+        <el-table-column label="快递状态" prop="expressStatus" width="180" align="center"/>
+        <el-table-column label="快递单号" prop="expressNo" width="180" align="center"/>
+        <el-table-column label="快递公司" prop="expressCompany" width="180" align="center"/>
+        <el-table-column label="寄送/接收" prop="postOrReceive" width="180" align="center"/>
         <el-table-column label="寄送日期" prop="postTime" width="180" align="center">
           <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="postTime" />
+            {{ formatDate(scope.row.postTime, '') }}
           </template>
         </el-table-column>
-        <el-table-column label="寄送日期" prop="postTime" width="180" align="center">
+        <el-table-column label="收件日期" prop="receiveTime" width="180" align="center">
           <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="postTime" />
+            {{ formatDate(scope.row.receiveTime, '') }}
           </template>
         </el-table-column>
+        <el-table-column label="快递主要内容" prop="expressContent" width="180" align="center"/>
+        <el-table-column label="内容备注" prop="contentRemark" width="180" align="center"/>
+        <el-table-column label="寄送人" prop="sender" width="180" align="center"/>
+        <el-table-column label="收件人" prop="recipient" width="180" align="center"/>
+        <el-table-column label="登记时间" prop="registerTime" width="180" align="center">
+          <template #default="scope">
+            {{ formatDate(scope.row.registerTime, 'YYYY-MM-DD') }}
+          </template>
+        </el-table-column>
+        <el-table-column label="登记人" prop="registrant" width="180" align="center"/>
+        <el-table-column label="更新时间" prop="updateTime" width="180" align="center">
+          <template #default="scope">
+            {{ formatDate(scope.row.updateTime, '') }}
+          </template>
+        </el-table-column>
+        <el-table-column label="更新人" prop="updater" width="180" align="center"/>
 
-        <el-table-column
-          label="登记证归档序号"
-          prop="registerCardArchiveNo"
-          width="180"
-          align="center"
-        >
-          <template #header>
-            登记证归档序号
-            <svg-icon
-              :name="setSortFlag(queryParams?.registerCardArchiveNoSort || '')"
-              size="20"
-            />
-          </template>
-          <template #default="scope">
-            <span :class="scope.row.id ? '' : 'font-color-system'">
-              {{ scope.row.registerCardArchiveNo }}
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="核对结果"
-          prop="verifyResult"
-          width="150"
-          align="center"
-        >
-          <template #header>
-            核对结果
-            <svg-icon
-              :name="setSortFlag(queryParams?.verifyResultSort || '')"
-              size="20"
-            />
-          </template>
-          <template #default="scope">
-            <span v-if="scope.row.id">
-              <svg-icon
-                :name="getVerifyResult(scope.row)"
-                size="20"
-                color="#f39b1c"
-              />
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="*登记证编号"
-          prop="registerCardNo"
-          width="180"
-          align="center"
-        >
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="registerCardNo" />
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="*车架号"
-          prop="vinNo"
-          width="180"
-          align="center"
-        >
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="vinNo" />
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="*发动机号"
-          prop="engineNo"
-          width="180"
-          align="center"
-        >
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="engineNo" />
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="*发动机型号"
-          prop="engineType"
-          width="180"
-          align="center"
-        >
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="engineType" />
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="*车牌号"
-          prop="licensePlateNo"
-          width="180"
-          align="center"
-        >
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="licensePlateNo" />
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="*机动车所有人"
-          prop="vehicleOwner"
-          width="180"
-          align="center"
-        >
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="vehicleOwner" />
-          </template>
-        </el-table-column>
-        <el-table-column label="*车身颜色" prop="vehicleColor" width="150">
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="vehicleColor" />
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="*使用性质"
-          prop="useType"
-          width="150"
-          align="center"
-        >
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="useType" />
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="*抵押权人"
-          prop="mortgagee"
-          width="150"
-          align="center"
-        >
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="mortgagee" />
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="*统一社会信用代码"
-          prop="mortgageeUscc"
-          width="200"
-          align="center"
-        >
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="mortgageeUscc" />
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="*抵押登记日期"
-          prop="mortgageRegisterDate"
-          width="180"
-          align="center"
-        >
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="mortgageRegisterDate" />
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="批次号"
-          prop="batchNo"
-          width="180"
-          align="center"
-        />
-        <el-table-column
-          label="关联合同号"
-          prop="contractNo"
-          width="200"
-          align="center"
-        />
-        <el-table-column
-          label="所属系统"
-          prop="belongSystem"
-          width="180"
-          align="center"
-        />
-        <el-table-column
-          label="挂靠商"
-          prop="affiliatesName"
-          width="180"
-          align="center"
-        />
-        <el-table-column
-          label="办事处"
-          prop="agencyName"
-          width="180"
-          align="center"
-        />
-        <el-table-column
-          label="渠道商"
-          prop="channelName"
-          width="180"
-          align="center"
-        />
-        <el-table-column
-          label="创建人"
-          prop="creator"
-          width="150"
-          align="center"
-        />
-        <el-table-column
-          label="创建时间"
-          prop="createTime"
-          width="180"
-          align="center"
-        >
-          <template #default="scope">
-            {{ formatDate(scope.row.createTime, '') }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="归档状态"
-          prop="archivalStatus"
-          width="150"
-          align="center"
-        >
-          <template #default="scope">
-            {{ getAchivalStatus(scope.row.archivalStatus) }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="归档时间"
-          prop="archivalDate"
-          width="180"
-          align="center"
-        >
-          <template #default="scope">
-            {{ formatDate(scope.row.archivalDate, '') }}
-          </template>
-        </el-table-column>
-
-        <el-table-column label="操作" fixed="right" width="150" align="center">
+        <el-table-column label="操作" fixed="right" width="240" align="center">
           <template #default="scope">
             <template v-if="scope.row.id">
               <el-button
-                v-if="
-                  scope.row.archivalStatus === ARCHIVE_STATUS.UNACHIVED &&
-                  scope.row.verifyResult !== VERIFY_RESULTS.PROCESSING
-                "
+                v-if="scope.row.postOrReceive == '寄送'"
                 link
                 type="primary"
-                @click="editHandler(scope.row.id)"
-              >
-                编辑
+                @click="logisticsInfo(scope.row.id)"
+              > 
+                物流信息
               </el-button>
               <el-button
-                v-if="scope.row.archivalStatus !== ARCHIVE_STATUS.ACHIVED"
                 link
-                type="danger"
-                @click="delHandler([scope.row.id])"
+                type="primary"
+                @click="checkHandler(scope.row.id)"
               >
+                查看
+              </el-button>
+              <el-button link type="primary" @click="editHandler(scope.row.id)">
+                编辑
+              </el-button>
+              <el-button link type="danger" @click="delHandler([scope.row.id])">
                 删除
               </el-button>
             </template>
           </template>
         </el-table-column>
+
       </el-table>
       <!-- 分页 -->
       <el-pagination
@@ -424,6 +207,11 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
+
+      <ImportForm ref="importFormRef" />
+      <!-- <CheckForm ref="checkFormRef" /> -->
+      <EditForm ref="editFormRef" />
+      <!-- <LogisticsInfoForm ref="logisticsInfoFormRef" /> -->
     </div>
   </div>
 </template>
@@ -440,6 +228,10 @@ import {
   Download,
   Check
 } from '@element-plus/icons-vue'
+import EditForm from './EditForm.vue'
+import LogisticsInfoForm from './LogisticsInfoForm.vue'
+import CheckForm from './CheckForm.vue'
+import ImportForm from './ImportForm.vue'
 import type {
   PostMessageRegisterCardListRequest,
   PageRequest,
@@ -448,6 +240,7 @@ import type {
   CardListItem,
   DictItem
 } from '@/api'
+import { formatDate } from '@/utils'
 import dayjs from 'dayjs'
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
 type QueryParams = PostMessageRegisterCardListRequest &
@@ -464,7 +257,25 @@ const queryParams = reactive<QueryParams>({
   expressContentStatus: '',
   expressNote: ''
 })
-const tableData: Ref<CardListItem[]> = ref([])
+const tableData = ref([
+  {
+    id: '111',
+    expressStatus: '已接收',
+    expressNo: 'SF1685550901301',
+    expressCompany: '顺丰',
+    postOrReceive: '寄送',
+    postTime: '1702605614729',
+    receiveTime: '1702605614729',
+    expressContent: '登记证、发票',
+    contentRemark: 'KCG23112983',
+    sender: '王五',
+    recipient: '王五',
+    registerTime: '1702605614729',
+    registrant: '王五',
+    updateTime: '1702605614729',
+    updater: '王五'
+  }
+])
 
 
 
@@ -477,9 +288,27 @@ const searchHandler = () => {
 // 重置
 const reset = () => {}
 
-const addHandler = () => {}
+const logisticsInfoFormRef = ref()
+const logisticsInfo = (id: string) => {
+  logisticsInfoFormRef.value.open(id)
+}
+const editFormRef = ref()
+const editHandler = (id: string) => {
+  editFormRef.value.open(id)
+}
+const addHandler = () => {
+  editFormRef.value.open()
+}
+const checkFormRef = ref()
+const checkHandler = (id: string) => {
+  checkFormRef.value.open(id)
+}
+
 const achiveHandler = (ids: string[]) => {}
-const importHandler = () => {}
+const importFormRef = ref()
+const importHandler = () => {
+  importFormRef.value.open()
+}
 const exportHandler = () => {}
 const delHandler = (ids: string[]) => {}
 </script>
