@@ -375,7 +375,7 @@ export function addElementColor(str = '', el = 'a', color: string) {
   })
 }
 
-export function formatDate(date: Date, format?: string) {
+export function formatDate(date: Date | string, format?: string) {
   // 日期不存在，则返回空
   if (!date) {
     return ''

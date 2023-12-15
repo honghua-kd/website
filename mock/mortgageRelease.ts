@@ -1,7 +1,7 @@
-const VITE_API = '/api/operations-management'
+const VITE_API = '/api/operations-mortgage'
 export const mortgage = [
   {
-    url: `${VITE_API}/admin-api/mortgage/vehicleRegisterCard/list`,
+    url: `${VITE_API}/admin-api/mortgage/vehicleRegisterCard/list1`,
     method: 'post',
     response: () => {
       return {
@@ -187,7 +187,7 @@ export const mortgage = [
     }
   },
   {
-    url: `${VITE_API}/admin-api/mortgage/vehicleRegisterCard/getInfo`,
+    url: `${VITE_API}/admin-api/mortgage/vehicleRegisterCard/getInfo1`,
     method: 'post',
     response: () => {
       return {

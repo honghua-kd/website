@@ -47,8 +47,7 @@ import type {
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
 
-const prefix = import.meta.env.VITE_APP_SERVICE_API
-
+const prefix = '/operations-management'
 export class SystemAPI {
   private request: AxiosInstance
 
@@ -244,7 +243,6 @@ export class SystemAPI {
   // 用户管理-分页查询部门下员工
   getDepartmentStaff(data: GetDepartmentStaffRequest): Response<StaffList> {
     return this.request({
-      // url: `${prefix}/admin-api/ehr/orgstructure/getDepartmentStaff`,
       url: `${prefix}/admin-api/ehr/orgstructure/getDepartmentAndSubordinates`,
       method: 'post',
       data

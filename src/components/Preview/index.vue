@@ -25,6 +25,7 @@ const props = withDefaults(
     modelValue: boolean
     title: string
     fileUrl: string
+    fileName: string
   }>(),
   {
     title: '文件预览'
@@ -52,8 +53,8 @@ watch(
 // 判断是否PDF
 const pdfReg = /^.+(\.pdf)(\?.+)?$/
 const isPdf = computed(() => {
-  if (props.fileUrl) {
-    return pdfReg.test(props.fileUrl)
+  if (props.fileName) {
+    return pdfReg.test(props.fileName)
   }
   return false
 })

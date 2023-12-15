@@ -5,7 +5,7 @@ import type { AuthDataItem } from './types/response'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
 
-const prefix = import.meta.env.VITE_APP_SERVICE_API
+const prefix = '/operations-management'
 
 interface RoleItem {
   roleNo: string

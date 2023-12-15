@@ -1,7 +1,6 @@
 import { useRequest } from '@toystory/lotso'
 import requestConfig from '@/config/request.config'
 import type { Response, PageList } from '../types/response'
-import type { DictsRequest } from '../types/request'
 
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
@@ -11,19 +10,18 @@ import type {
   GetRegisterCardInfoRequest,
   EditRegisterCardInfoRequest,
   UploadFileRequest,
-  FilePreviewUrlRequest,
   MortgageeType
 } from './types/request'
 import type {
   FormOrigin,
   CardListItem,
-  UploadFile,
-  FilePreviewList,
-  DictList,
   MortgageeItem,
   CardCell
 } from './types/response'
-const prefix = import.meta.env.VITE_APP_SERVICE_API
+
+import type { FileDownload } from '../common/types/response'
+
+const prefix = '/operations-mortgage'
 
 export class MortageAPI {
   private request: AxiosInstance
@@ -87,18 +85,6 @@ export class MortageAPI {
     })
   }
 
-  // 上传文件
-  uploadFiles(data: FormData): Response<UploadFile> {
-    return this.request({
-      url: `${prefix}/admin-api/file/attachment/uploadAttachment`,
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/form-data'
-      },
-      data
-    })
-  }
-
   // 识别 & 核验接口
 
   uploadRegisterCard(
@@ -114,29 +100,11 @@ export class MortageAPI {
   // 导出识别结果接口
   downLoadFiles(
     data: Omit<VehiRegisterCardListRequest, 'pageNo' | 'pageSize'>
-  ): Promise<string | ArrayBuffer | ArrayBufferView | Blob> {
+  ): Promise<FileDownload> {
     return this.request({
       url: `${prefix}/admin-api/mortgage/vehicleRegisterCard/export`,
       method: 'post',
       responseType: 'blob',
-      data
-    })
-  }
-
-  // 批量获取附件预览链接
-  getPreviewUrl(data: FilePreviewUrlRequest): Response<FilePreviewList> {
-    return this.request({
-      url: `${prefix}/admin-api/file/attachment/batchGetAttachmentPreview`,
-      method: 'post',
-      data
-    })
-  }
-
-  // 批量获取数据字典
-  getDictsList(data: DictsRequest): Response<DictList> {
-    return this.request({
-      url: `${prefix}/admin-api/system/dict-data/batchList`,
-      method: 'post',
       data
     })
   }

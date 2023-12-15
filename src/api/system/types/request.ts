@@ -25,9 +25,7 @@ export interface RolePageRequest extends PageRequest {
 }
 
 // 获取角色对应数据权限
-export interface RoleListPermissionRequest {
-  roleCode?: string
-}
+export type RoleListPermissionRequest = Pick<RolePageRequest, 'roleCode'>
 
 // 获取用户的数据权限列表
 export interface UserListPermissionRequest {
