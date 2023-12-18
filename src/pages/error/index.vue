@@ -42,7 +42,10 @@
 import { ref, onMounted, computed, Ref } from 'vue'
 import type { LocationQueryValue } from 'vue-router'
 import { useRouter, useRoute } from '@toystory/lotso'
-// import { ElMessage } from 'element-plus'
+import { CoreAPI } from '@/api/core'
+import { ElMessage } from 'element-plus'
+
+const API = new CoreAPI()
 
 const { router } = useRouter()
 const route = useRoute()
@@ -75,17 +78,18 @@ const hasPermission = computed(() => {
 })
 
 const goLogin = () => {
-  // store.dispatch('user/logout').then(() => {
-  //   router.push({ path: '/login' })
-  // }).catch(err => {
-  //   ElMessage(
-  //     {
-  //       type: 'error',
-  //       message: '服务器开小差了，请稍后再试'
-  //     }
-  //   )
-  //   console.log(err)
-  // })
+  API.logout()
+    .then((res) => {
+      console.log(res)
+      window.location.href = '/'
+    })
+    .catch((err: Error) => {
+      ElMessage({
+        type: 'error',
+        message: '服务器开小差了，请稍后再试'
+      })
+      throw err
+    })
 }
 
 const goHome = () => {
