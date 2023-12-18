@@ -26,7 +26,7 @@
               prop="registerNo"
               class="width-full"
             >
-              <div class="detail-container">
+              <div class="detail-container width-full">
                 <el-input
                   v-model="formParamsRequest.registerCardNo"
                   class="width-full"
@@ -40,7 +40,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="车架号" prop="vinNo">
-              <div class="detail-container">
+              <div class="detail-container width-full">
                 <el-input
                   v-model="formParamsRequest.vinNo"
                   clearable
@@ -56,17 +56,23 @@
               prop="licensePlateNo"
               class="width-full"
             >
-              <el-input v-model="formParamsRequest.licensePlateNo" />
-              <span class="detail">
-                {{ formParams.licensePlateNo?.targetValue }}
-              </span>
+              <div class="detail-container width-full">
+                <el-input
+                  v-model="formParamsRequest.licensePlateNo"
+                  class="width-full"
+                  clearable
+                />
+                <span class="detail">
+                  {{ formParams.licensePlateNo?.targetValue }}
+                </span>
+              </div>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="8">
             <el-form-item label="发动机号" prop="engineNo" class="width-full">
-              <div class="detail-container">
+              <div class="detail-container width-full">
                 <el-input
                   v-model="formParamsRequest.engineNo"
                   class="width-full"
@@ -84,7 +90,7 @@
               prop="engineType"
               class="width-full"
             >
-              <div class="detail-container">
+              <div class="detail-container width-full">
                 <el-input
                   v-model="formParamsRequest.engineType"
                   class="width-full"
@@ -104,7 +110,7 @@
               prop="vehicleOwner"
               class="width-full"
             >
-              <div class="detail-container">
+              <div class="detail-container width-full">
                 <el-input
                   v-model="formParamsRequest.vehicleOwner"
                   class="width-full"
@@ -124,7 +130,7 @@
               prop="vehicleColor"
               class="width-full"
             >
-              <div class="detail-container">
+              <div class="detail-container width-full">
                 <el-input
                   v-model="formParamsRequest.vehicleColor"
                   class="width-full"
@@ -138,7 +144,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="使用性质" prop="useType" class="width-full">
-              <div class="detail-container">
+              <div class="detail-container width-full">
                 <el-input
                   v-model="formParamsRequest.useType"
                   class="width-full"
@@ -154,7 +160,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="抵押权人" prop="mortgagee" class="width-full">
-              <div class="detail-container">
+              <div class="detail-container width-full">
                 <el-select
                   v-model="formParamsRequest.mortgagee"
                   class="width-full"
@@ -181,7 +187,7 @@
               prop="mortgageeUscc"
               class="width-full"
             >
-              <div class="detail-container">
+              <div class="detail-container width-full">
                 <el-input
                   v-model="formParamsRequest.mortgageeUscc"
                   class="width-full"
@@ -201,7 +207,7 @@
               prop="mortgageRegisterDate"
               class="width-full"
             >
-              <div class="detail-container">
+              <div class="detail-container width-full">
                 <el-date-picker
                   v-model="formParamsRequest.mortgageRegisterDate"
                   type="date"

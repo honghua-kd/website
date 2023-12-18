@@ -33,6 +33,8 @@ const requestConfig: RequestConfig = {
       config.headers.Authorization = 'Bearer ' + token // 让每个请求携带自定义token 请根据实际情况自行修改
       config.headers.token = token
     }
+    // config.headers.token = 'cb7716a22374ad4bc3acd59621f80b4d' // 调试
+    // config.headers['SSO-TOKEN'] = 'cb7716a22374ad4bc3acd59621f80b4d'// 调试
   },
   // 返回成功拦截自定义函数，接收response参数
   // handleResSuccess: undefined,
