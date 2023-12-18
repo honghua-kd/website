@@ -257,8 +257,8 @@ import type {
 import { MortageAPI } from '@/api'
 import { ElMessage } from 'element-plus'
 import Preview from '@/components/Preview/index.vue'
-import { openLink } from '@/utils'
-import useGetPreViewURL from '@/hooks/useGetPreviewURL'
+import { openLink, isPdf } from '@/utils'
+import { useGetPreviewURL } from '@/hooks'
 
 const API = new MortageAPI()
 const dialogTitle = ref<string>('编辑扫描结果')
@@ -383,17 +383,10 @@ const coverChangeHandler = () => {
 const previewVisible = ref<boolean>(false)
 const previewUrl = ref<string>('')
 const preFileName = ref<string>('')
-const pdfReg = /^.+(\.pdf)(\?.+)?$/
-const isPdf = (fileName: string) => {
-  return pdfReg.test(fileName)
-}
+
 const openFileHandler = async () => {
   const fileCode = fileParams?.fileCode || ''
-  const fileUrlParams = {
-    // fileCodes: [fileCode]
-    fileCode
-  }
-  const { preUrl, fileName } = await useGetPreViewURL(fileUrlParams)
+  const { preUrl, fileName } = await useGetPreviewURL(fileCode)
   previewUrl.value = preUrl
   preFileName.value = fileName
   if (!previewUrl.value) {

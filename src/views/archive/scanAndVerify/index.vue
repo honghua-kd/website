@@ -487,12 +487,11 @@
 import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
 import { ref, reactive, Ref, computed, onMounted } from 'vue'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
-import { openLink } from '@/utils'
+import { openLink, isPdf, handleDownloadFile } from '@/utils'
 import EditForm from './EditForm.vue'
 import UploadForm from './UploadForm.vue'
 import { CommonAPI, MortageAPI } from '@/api'
-import useGetPreViewURL from '@/hooks/useGetPreviewURL'
-
+import { useGetPreviewURL } from '@/hooks'
 import type { TableColumnCtx } from 'element-plus'
 import {
   ArrowDownBold,
@@ -514,7 +513,6 @@ import TableSlotItem from './components/TableSlotItem.vue'
 import { ARCHIVE_STATUS, VERIFY_RESULTS } from '@/constants'
 import { useUserStore } from '@toystory/lotso'
 import dayjs from 'dayjs'
-import fileDownload from 'js-file-download'
 import Preview from '@/components/Preview/index.vue'
 
 const API = new MortageAPI()
@@ -570,16 +568,9 @@ const getAchivalStatus = (status: string) => {
 const previewVisible = ref<boolean>(false)
 const previewUrl = ref<string>('')
 const preFileName = ref<string>('')
-const pdfReg = /^.+(\.pdf)(\?.+)?$/
-const isPdf = (fileName: string) => {
-  return pdfReg.test(fileName)
-}
-const openPreview = async (fileCode: string | undefined) => {
-  const fileUrlParams = {
-    // fileCodes: [fileCode]
-    fileCode
-  }
-  const { preUrl, fileName } = await useGetPreViewURL(fileUrlParams)
+
+const openPreview = async (fileCode: string) => {
+  const { preUrl, fileName } = await useGetPreviewURL(fileCode)
   previewUrl.value = preUrl
   preFileName.value = fileName
   if (!previewUrl.value) {
@@ -810,7 +801,7 @@ const achiveHandler = () => {
 }
 
 // 导出
-const exportHandler = () => {
+const exportHandler = async () => {
   const { verifyTime, pageNo, pageSize, ...others } = queryParams
   console.log(pageNo, pageSize)
   const params = {
@@ -820,16 +811,9 @@ const exportHandler = () => {
   }
 
   API.downLoadFiles(params)
-    .then((res) => {
+    .then(async (res) => {
       if (res) {
-        const fileStream = res?.data
-        const headers = res?.headers
-        const files =
-          headers &&
-          headers['content-disposition'] &&
-          decodeURI(headers['content-disposition'].split(';')[1])
-        const fileName = (files && files.split('=')[1]) || ''
-        fileDownload(fileStream, fileName)
+        handleDownloadFile(res)
       }
     })
     .catch((err: Error) => {
@@ -866,7 +850,7 @@ const reset = () => {
 const getList = () => {
   const { verifyTime, ...others } = queryParams
   const params = {
-    startVerifyTime: dayjs(verifyTime[0]).format('YYYY-MM-DD HH:mm:ss'),
+    startVerifyTime: '', // dayjs(verifyTime[0]).format('YYYY-MM-DD HH:mm:ss'),
     endVerifyTime: dayjs(verifyTime[1]).format('YYYY-MM-DD HH:mm:ss'),
     ...others
   }

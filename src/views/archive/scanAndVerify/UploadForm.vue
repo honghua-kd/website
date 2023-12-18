@@ -130,8 +130,8 @@ import pdfImg from '@/assets/common/pdf.png'
 import { ElMessage, ElForm } from 'element-plus'
 import dayjs from 'dayjs'
 import { MortageAPI, CommonAPI } from '@/api'
-import { openLink } from '@/utils'
-import useGetPreViewURL from '@/hooks/useGetPreviewURL'
+import { openLink, isPdf } from '@/utils'
+import { useGetPreviewURL } from '@/hooks'
 import type { UploadRawFile, UploadRequestOptions } from 'element-plus'
 import type { UploadFileRequest, UploadFileListItemRequest } from '@/api'
 
@@ -219,11 +219,8 @@ const uploadHandler = async (options: UploadRequestOptions) => {
       if (res && res.code === 200) {
         const fileCode = res.data?.fileCode
         // 拿到fileCode 换取 文件地址 URL
-        const fileUrlParams = {
-          // fileCodes: [fileCode] // 原来接口参数
-          fileCode
-        }
-        const { preUrl, fileName } = await useGetPreViewURL(fileUrlParams)
+
+        const { preUrl, fileName } = await useGetPreviewURL(fileCode)
         upLoading.value = false
         previewUrl.value = preUrl
         preFileName.value = fileName
@@ -248,11 +245,6 @@ const uploadHandler = async (options: UploadRequestOptions) => {
 // 预览
 const previewVisible = ref<boolean>(false)
 const previewUrl = ref<string>('')
-const pdfReg = /^.+(\.pdf)(\?.+)?$/
-const isPdf = (fileName: string) => {
-  return pdfReg.test(fileName)
-}
-
 const handlePictureCardPreview = (uploadFile: UploadFileListItemRequest) => {
   if (!uploadFile.url) {
     ElMessage.error('读取上传文件URL出错')
