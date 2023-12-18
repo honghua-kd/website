@@ -7,19 +7,18 @@
       :close-on-press-escape="false"
       width="50%"
     >
-    <el-upload>
-      上传文件: &nbsp;&nbsp;&nbsp;<el-button type="primary">选择文件</el-button>
-    </el-upload>
-    <template #footer>
-      <el-button >
-        模板下载
-      </el-button>
-      <el-button type="primary" @click="dialogVisible = false">
-        导入
-      </el-button>
-    </template>
-  </el-dialog>
-    
+      <el-upload>
+        上传文件: &nbsp;&nbsp;&nbsp;<el-button type="primary"
+          >选择文件</el-button
+        >
+      </el-upload>
+      <template #footer>
+        <el-button> 模板下载 </el-button>
+        <el-button type="primary" @click="dialogVisible = false">
+          导入
+        </el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -38,6 +37,4 @@ const open = () => {
 defineExpose({ open })
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

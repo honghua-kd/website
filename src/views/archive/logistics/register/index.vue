@@ -105,10 +105,11 @@
         <el-button type="primary" :icon="Plus" @click="addHandler">
           添加
         </el-button>
-        <el-button 
-          type="primary" 
-          :icon="Check" 
-          @click="achiveHandler(selectIds)">
+        <el-button
+          type="primary"
+          :icon="Check"
+          @click="achiveHandler(selectIds)"
+        >
           批量接收
         </el-button>
         <el-button type="primary" :icon="Upload" @click="importHandler">
@@ -136,36 +137,106 @@
           width="55"
           :selectable="selectableHandler"
         />
-        <el-table-column label="快递状态" prop="expressStatus" width="180" align="center"/>
-        <el-table-column label="快递单号" prop="expressNo" width="180" align="center"/>
-        <el-table-column label="快递公司" prop="expressCompany" width="180" align="center"/>
-        <el-table-column label="寄送/接收" prop="postOrReceive" width="180" align="center"/>
-        <el-table-column label="寄送日期" prop="postTime" width="180" align="center">
+        <el-table-column
+          label="快递状态"
+          prop="expressStatus"
+          width="180"
+          align="center"
+        />
+        <el-table-column
+          label="快递单号"
+          prop="expressNo"
+          width="180"
+          align="center"
+        />
+        <el-table-column
+          label="快递公司"
+          prop="expressCompany"
+          width="180"
+          align="center"
+        />
+        <el-table-column
+          label="寄送/接收"
+          prop="postOrReceive"
+          width="180"
+          align="center"
+        />
+        <el-table-column
+          label="寄送日期"
+          prop="postTime"
+          width="180"
+          align="center"
+        >
           <template #default="scope">
             {{ formatDate(scope.row.postTime, '') }}
           </template>
         </el-table-column>
-        <el-table-column label="收件日期" prop="receiveTime" width="180" align="center">
+        <el-table-column
+          label="收件日期"
+          prop="receiveTime"
+          width="180"
+          align="center"
+        >
           <template #default="scope">
             {{ formatDate(scope.row.receiveTime, '') }}
           </template>
         </el-table-column>
-        <el-table-column label="快递主要内容" prop="expressContent" width="180" align="center"/>
-        <el-table-column label="内容备注" prop="contentRemark" width="180" align="center"/>
-        <el-table-column label="寄送人" prop="sender" width="180" align="center"/>
-        <el-table-column label="收件人" prop="recipient" width="180" align="center"/>
-        <el-table-column label="登记时间" prop="registerTime" width="180" align="center">
+        <el-table-column
+          label="快递主要内容"
+          prop="expressContent"
+          width="180"
+          align="center"
+        />
+        <el-table-column
+          label="内容备注"
+          prop="contentRemark"
+          width="180"
+          align="center"
+        />
+        <el-table-column
+          label="寄送人"
+          prop="sender"
+          width="180"
+          align="center"
+        />
+        <el-table-column
+          label="收件人"
+          prop="recipient"
+          width="180"
+          align="center"
+        />
+        <el-table-column
+          label="登记时间"
+          prop="registerTime"
+          width="180"
+          align="center"
+        >
           <template #default="scope">
             {{ formatDate(scope.row.registerTime, 'YYYY-MM-DD') }}
           </template>
         </el-table-column>
-        <el-table-column label="登记人" prop="registrant" width="180" align="center"/>
-        <el-table-column label="更新时间" prop="updateTime" width="180" align="center">
+        <el-table-column
+          label="登记人"
+          prop="registrant"
+          width="180"
+          align="center"
+        />
+        <el-table-column
+          label="更新时间"
+          prop="updateTime"
+          width="180"
+          align="center"
+        >
           <template #default="scope">
             {{ formatDate(scope.row.updateTime, '') }}
           </template>
         </el-table-column>
-        <el-table-column label="更新人" prop="updater" width="180" align="center"/>
+        <el-table-column
+          label="更新人"
+          prop="updater"
+          width="180"
+          align="center"
+        />
 
         <el-table-column label="操作" fixed="right" width="240" align="center">
           <template #default="scope">
@@ -175,7 +246,7 @@
                 link
                 type="primary"
                 @click="logisticsInfo(scope.row.id)"
-              > 
+              >
                 物流信息
               </el-button>
               <el-button
@@ -194,7 +265,6 @@
             </template>
           </template>
         </el-table-column>
-
       </el-table>
       <!-- 分页 -->
       <el-pagination
@@ -207,12 +277,11 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
-
-      <ImportForm ref="importFormRef" />
-      <!-- <CheckForm ref="checkFormRef" /> -->
-      <EditForm ref="editFormRef" />
-      <!-- <LogisticsInfoForm ref="logisticsInfoFormRef" /> -->
     </div>
+    <ImportForm ref="importFormRef" />
+    <!-- <CheckForm ref="checkFormRef" /> -->
+    <EditForm ref="editFormRef" />
+    <LogisticsInfoForm ref="logisticsInfoFormRef" />
   </div>
 </template>
 
@@ -247,6 +316,7 @@ type QueryParams = PostMessageRegisterCardListRequest &
   PageRequest &
   DateRangeRequest &
   SortParamsRequest
+const pageTotal: Ref<number> = ref(0) // 列表的总页数
 const queryParams = reactive<QueryParams>({
   pageNo: 1,
   pageSize: 10,
@@ -277,13 +347,9 @@ const tableData = ref([
   }
 ])
 
-
-
-
-
-
 // 查询
 const searchHandler = () => {
+  queryParams.pageNo = 1
 }
 // 重置
 const reset = () => {}
@@ -311,6 +377,11 @@ const importHandler = () => {
 }
 const exportHandler = () => {}
 const delHandler = (ids: string[]) => {}
+
+// 页面条数改变
+const handleSizeChange = (val: number) => {
+  queryParams.pageSize = val
+}
 </script>
 
 <style lang="scss" scoped>
