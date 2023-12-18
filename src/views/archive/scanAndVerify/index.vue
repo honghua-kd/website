@@ -217,7 +217,7 @@
               {{ scope.row.fileName }}
             </span>
             <span v-else class="font-color-system">
-              {{ scope.row.fileName }}
+              {{ scope.row.fileName || '系统文件' }}
             </span>
           </template>
         </el-table-column>
@@ -406,7 +406,7 @@
         />
         <el-table-column
           label="创建人"
-          prop="creator"
+          prop="creatorName"
           width="150"
           align="center"
         />
@@ -415,11 +415,8 @@
           prop="createTime"
           width="180"
           align="center"
-        >
-          <template #default="scope">
-            {{ formatDate(scope.row.createTime, '') }}
-          </template>
-        </el-table-column>
+        />
+
         <el-table-column
           label="归档状态"
           prop="archivalStatus"
@@ -435,11 +432,7 @@
           prop="archivalDate"
           width="180"
           align="center"
-        >
-          <template #default="scope">
-            {{ formatDate(scope.row.archivalDate, '') }}
-          </template>
-        </el-table-column>
+        />
 
         <el-table-column label="操作" fixed="right" width="150" align="center">
           <template #default="scope">
@@ -479,9 +472,14 @@
         @current-change="handleCurrentChange"
       />
     </div>
-    <EditForm ref="editFormRef" :getFileUrl="getFileUrl" />
-    <UploadForm ref="uploadFormRef" :getFileUrl="getFileUrl" />
-    <Preview v-model="previewVisible" :fileUrl="previewUrl" title="文件预览" />
+    <EditForm ref="editFormRef" />
+    <UploadForm ref="uploadFormRef" @success="getList()" />
+    <Preview
+      v-model="previewVisible"
+      :fileUrl="previewUrl"
+      title="文件预览"
+      :fileName="preFileName"
+    />
   </div>
 </template>
 
@@ -500,7 +498,7 @@ import {
 } from '@element-plus/icons-vue'
 import EditForm from './EditForm.vue'
 import UploadForm from './UploadForm.vue'
-import { MortageAPI } from '@/api/mortgageRelease'
+import { CommonAPI, MortageAPI } from '@/api'
 import type {
   VehiRegisterCardListRequest,
   PageRequest,
@@ -510,7 +508,6 @@ import type {
   DictItem
 } from '@/api'
 import TableSlotItem from './components/TableSlotItem.vue'
-import { formatDate } from '@/utils'
 import { ARCHIVE_STATUS, VERIFY_RESULTS } from '@/constants'
 import { useUserStore } from '@toystory/lotso'
 import dayjs from 'dayjs'
@@ -518,6 +515,8 @@ import fileDownload from 'js-file-download'
 import Preview from '@/components/Preview/index.vue'
 
 const API = new MortageAPI()
+const CommonApi = new CommonAPI()
+
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
 const expandFlag = ref<boolean>(false)
@@ -564,34 +563,29 @@ const getAchivalStatus = (status: string) => {
   return topic
 }
 
-// 根据fileCode 换取 文件预览地址
-const getFileUrl = (fileCode: string | undefined): string => {
-  let previewUrl = ''
+// 打开文件预览
+const previewVisible = ref<boolean>(false)
+const previewUrl = ref<string>('')
+const preFileName = ref<string>('')
+const openPreview = async (fileCode: string | undefined) => {
   const fileUrlParams = {
     fileCodes: [fileCode]
   }
-  API.getPreviewUrl(fileUrlParams)
+  CommonApi.getPreviewUrl(fileUrlParams)
     .then((res) => {
       if (res && res.code === 200) {
         const fileInfo = res?.data?.previewInfoList[0]
-        previewUrl = fileInfo?.filePreview || ''
+        previewUrl.value = fileInfo?.filePreview || ''
+        preFileName.value = fileInfo?.fileName || ''
+        if (!previewUrl.value) {
+          ElMessage.error('读取上传文件URL出错')
+        }
+        previewVisible.value = true
       }
     })
     .catch((err: Error) => {
       console.log(err)
     })
-  return previewUrl
-}
-// 打开文件预览
-const previewVisible = ref<boolean>(false)
-const previewUrl = ref<string>('')
-const openPreview = async (fileCode: string | undefined) => {
-  const url = await getFileUrl(fileCode)
-  if (!url) {
-    ElMessage.error('读取上传文件URL出错')
-  }
-  previewVisible.value = true
-  previewUrl.value = url
 }
 
 // 核验结果处理
@@ -638,7 +632,7 @@ const expandHandler = (): boolean => {
 const uploadFormRef = ref()
 const uploadHandler = () => {
   const title = `${curStaffCode.value}-${dayjs().format('YYYYMMDDHHmmss')}`
-  uploadFormRef.value.open('upload', title)
+  uploadFormRef.value.open('upload', title, curStaffCode.value)
 }
 
 // 删除
@@ -668,6 +662,7 @@ const delHandler = (ids: string[]) => {
             type: 'success',
             message: '删除成功'
           })
+          getList()
         }
       })
     })
@@ -717,6 +712,7 @@ const setSortFlag = (type: string): string => {
 }
 // 分页
 const handleCurrentChange = (val: number) => {
+  console.log('value>>>>>', val)
   queryParams.pageNo = val
   getList()
 }
@@ -792,6 +788,7 @@ const achiveHandler = () => {
               message: '操作成功'
             })
             getList()
+            selectData.value.splice(0, selectData.value.length)
           }
         })
         .catch((err: Error) => {
@@ -812,15 +809,22 @@ const exportHandler = () => {
   const { verifyTime, pageNo, pageSize, ...others } = queryParams
   console.log(pageNo, pageSize)
   const params = {
-    startVerifyTime: new Date(verifyTime[0]).getTime(),
-    endVerifyTime: new Date(verifyTime[1]).getTime(),
+    startVerifyTime: dayjs(verifyTime[0]).format('YYYY-MM-DD HH:mm:ss'),
+    endVerifyTime: dayjs(verifyTime[1]).format('YYYY-MM-DD HH:mm:ss'),
     ...others
   }
 
   API.downLoadFiles(params)
     .then((res) => {
       if (res) {
-        fileDownload(res, '导出文件.zip')
+        const fileStream = res?.data
+        const headers = res?.headers
+        const files =
+          headers &&
+          headers['content-disposition'] &&
+          decodeURI(headers['content-disposition'].split(';')[1])
+        const fileName = (files && files.split('=')[1]) || ''
+        fileDownload(fileStream, fileName)
       }
     })
     .catch((err: Error) => {
@@ -857,8 +861,8 @@ const reset = () => {
 const getList = () => {
   const { verifyTime, ...others } = queryParams
   const params = {
-    startVerifyTime: new Date(verifyTime[0]).getTime(),
-    endVerifyTime: new Date(verifyTime[1]).getTime(),
+    startVerifyTime: dayjs(verifyTime[0]).format('YYYY-MM-DD HH:mm:ss'),
+    endVerifyTime: dayjs(verifyTime[1]).format('YYYY-MM-DD HH:mm:ss'),
     ...others
   }
 
@@ -885,7 +889,7 @@ const getDicts = () => {
   const params = {
     dictTypes
   }
-  API.getDictsList(params)
+  CommonApi.getDictsList(params)
     .then((res) => {
       if (res && res.code === 200) {
         archiveStatusOpts.value = res?.data?.ARCHIVE_STATUS as DictItem[]

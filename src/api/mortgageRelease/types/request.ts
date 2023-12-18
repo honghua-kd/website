@@ -33,10 +33,7 @@ export interface VehiRegisterCardListRequest extends PageRequest {
    * 创建人工号
    */
   creator?: string | null | undefined
-  /**
-   * 核验结束时间
-   */
-  endVerifyTime?: number
+
   /**
    * 发动机号
    */
@@ -53,7 +50,11 @@ export interface VehiRegisterCardListRequest extends PageRequest {
   /**
    * 核验开始时间
    */
-  startVerifyTime?: number
+  startVerifyTime?: string | number
+  /**
+   * 核验结束时间
+   */
+  endVerifyTime?: string | number
   /**
    * 核验结果
    */
@@ -135,15 +136,11 @@ export interface EditRegisterCardInfoRequest {
 export interface UploadFileListItemRequest extends UploadUserFile {
   fileCode?: string
   fileCreateTime?: number | string
-  url?: string
+  url: string
 }
 export interface UploadFileRequest {
   batchNo: string
   fileInfoList: UploadFileListItemRequest[]
-}
-
-export interface FilePreviewUrlRequest {
-  fileCodes: Array<string | undefined>
 }
 
 export interface MortgageeType {

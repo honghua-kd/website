@@ -45,7 +45,6 @@
     "mockjs": "^1.1.0",
     "moment": "^2.29.4",
     "nprogress": "^0.2.0",
-    "pdfjs-dist": "3.11.174",
     "pinia": "^2.1.7",
     "qs": "^6.10.1",
     "screenfull": "^6.0.2",
