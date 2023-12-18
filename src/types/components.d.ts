@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    DataPermissonForm: typeof import('./../components/PermiForm/DataPermissonForm.vue')['default']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCard: typeof import('element-plus/es')['ElCard']
@@ -39,8 +40,16 @@ declare module 'vue' {
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElUpload: typeof import('element-plus/es')['ElUpload']
+    ErrorPage: typeof import('./../components/ErrorPage/index.vue')['default']
+    Icon: typeof import('./../components/Icon/index.vue')['default']
+    MdEditor: typeof import('./../components/MdEditor/index.vue')['default']
+    PermiListDialog: typeof import('./../components/PermiForm/PermiListDialog.vue')['default']
+    Preview: typeof import('./../components/Preview/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SecondaryTitle: typeof import('./../components/SecondaryTitle/index.vue')['default']
+    SideTree: typeof import('./../components/SideTree/index.vue')['default']
+    SvgIcon: typeof import('./../components/SvgIcon/index.vue')['default']
   }
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']
