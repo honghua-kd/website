@@ -487,6 +487,12 @@
 import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
 import { ref, reactive, Ref, computed, onMounted } from 'vue'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
+import { openLink } from '@/utils'
+import EditForm from './EditForm.vue'
+import UploadForm from './UploadForm.vue'
+import { CommonAPI, MortageAPI } from '@/api'
+import useGetPreViewURL from '@/hooks/useGetPreviewURL'
+
 import type { TableColumnCtx } from 'element-plus'
 import {
   ArrowDownBold,
@@ -496,9 +502,6 @@ import {
   Download,
   Check
 } from '@element-plus/icons-vue'
-import EditForm from './EditForm.vue'
-import UploadForm from './UploadForm.vue'
-import { CommonAPI, MortageAPI } from '@/api'
 import type {
   VehiRegisterCardListRequest,
   PageRequest,
@@ -567,26 +570,27 @@ const getAchivalStatus = (status: string) => {
 const previewVisible = ref<boolean>(false)
 const previewUrl = ref<string>('')
 const preFileName = ref<string>('')
+const pdfReg = /^.+(\.pdf)(\?.+)?$/
+const isPdf = (fileName: string) => {
+  return pdfReg.test(fileName)
+}
 const openPreview = async (fileCode: string | undefined) => {
   const fileUrlParams = {
     // fileCodes: [fileCode]
     fileCode
   }
-  CommonApi.getSinglePreviewURL(fileUrlParams)
-    .then((res) => {
-      if (res && res.code === 200) {
-        const fileInfo = res?.data?.previewInfoList[0]
-        previewUrl.value = fileInfo?.filePreview || ''
-        preFileName.value = fileInfo?.fileName || ''
-        if (!previewUrl.value) {
-          ElMessage.error('读取上传文件URL出错')
-        }
-        previewVisible.value = true
-      }
-    })
-    .catch((err: Error) => {
-      console.log(err)
-    })
+  const { preUrl, fileName } = await useGetPreViewURL(fileUrlParams)
+  previewUrl.value = preUrl
+  preFileName.value = fileName
+  if (!previewUrl.value) {
+    ElMessage.error('读取上传文件URL出错')
+  }
+  // 临时添加，PDF 文件直接打开预览
+  if (isPdf(preFileName.value)) {
+    openLink(previewUrl.value, '_blank')
+    return
+  }
+  previewVisible.value = true
 }
 
 // 核验结果处理

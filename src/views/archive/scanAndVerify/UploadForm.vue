@@ -131,6 +131,7 @@ import { ElMessage, ElForm } from 'element-plus'
 import dayjs from 'dayjs'
 import { MortageAPI, CommonAPI } from '@/api'
 import { openLink } from '@/utils'
+import useGetPreViewURL from '@/hooks/useGetPreviewURL'
 import type { UploadRawFile, UploadRequestOptions } from 'element-plus'
 import type { UploadFileRequest, UploadFileListItemRequest } from '@/api'
 
@@ -222,30 +223,21 @@ const uploadHandler = async (options: UploadRequestOptions) => {
           // fileCodes: [fileCode] // 原来接口参数
           fileCode
         }
-        CommonApi.getSinglePreviewURL(fileUrlParams)
-          .then((res) => {
-            upLoading.value = false
-            if (res && res.code === 200) {
-              const fileInfo = res?.data?.previewInfoList[0]
-              previewUrl.value = fileInfo?.filePreview || ''
-              preFileName.value = fileInfo?.fileName || ''
-              const fileCreateTime = dayjs(file.lastModified).format(
-                'YYYY-MM-DD HH:mm:ss'
-              )
-              const name = file.name
-              const obj = {
-                name,
-                fileCode,
-                fileCreateTime,
-                url: fileInfo?.filePreview
-              } as UploadFileListItemRequest
-              formParams.fileInfoList.push(obj)
-            }
-          })
-          .catch((err: Error) => {
-            upLoading.value = false
-            console.log(err)
-          })
+        const { preUrl, fileName } = await useGetPreViewURL(fileUrlParams)
+        upLoading.value = false
+        previewUrl.value = preUrl
+        preFileName.value = fileName
+        const fileCreateTime = dayjs(file.lastModified).format(
+          'YYYY-MM-DD HH:mm:ss'
+        )
+        const name = file.name
+        const obj = {
+          name,
+          fileCode,
+          fileCreateTime,
+          url: preUrl
+        } as UploadFileListItemRequest
+        formParams.fileInfoList.push(obj)
       }
     })
     .catch((err: Error) => {
