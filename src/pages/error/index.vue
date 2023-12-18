@@ -43,7 +43,6 @@ import { ref, onMounted, computed, Ref } from 'vue'
 import type { LocationQueryValue } from 'vue-router'
 import { useRouter, useRoute } from '@toystory/lotso'
 import { CoreAPI } from '@/api/core'
-import { ElMessage } from 'element-plus'
 
 const API = new CoreAPI()
 
@@ -79,16 +78,14 @@ const hasPermission = computed(() => {
 
 const goLogin = () => {
   API.logout()
-    .then((res) => {
-      console.log(res)
-      window.location.href = '/'
+    .then(() => {
+      // SSO跳转
+      window.location.href = `${
+        import.meta.env.VITE_APP_SSO_URL
+      }?redirect_url=${window.location.origin}`
     })
-    .catch((err: Error) => {
-      ElMessage({
-        type: 'error',
-        message: '服务器开小差了，请稍后再试'
-      })
-      throw err
+    .catch((err) => {
+      console.error(err)
     })
 }
 
