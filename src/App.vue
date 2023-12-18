@@ -76,10 +76,12 @@ const isAsyncRoute = computed(() => {
   )
 })
 
-const init = () => {
-  isAsyncRoute.value && getDictInfo()
-}
-init()
+watch(
+  () => isAsyncRoute.value,
+  (newVal) => {
+    if (newVal === true) getDictInfo()
+  }
+)
 </script>
 
 <style lang="scss">
