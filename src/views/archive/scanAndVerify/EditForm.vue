@@ -254,12 +254,13 @@ import type {
   MortgageeItem,
   CardCell
 } from '@/api'
-import { MortageAPI, CommonAPI } from '@/api'
+import { MortageAPI } from '@/api'
 import { ElMessage } from 'element-plus'
 import Preview from '@/components/Preview/index.vue'
+import { openLink, isPdf } from '@/utils'
+import { useGetPreviewURL } from '@/hooks'
 
 const API = new MortageAPI()
-const CommonApi = new CommonAPI()
 const dialogTitle = ref<string>('编辑扫描结果')
 const dialogVisible = ref<boolean>(false)
 const formLoading = ref<boolean>(false)
@@ -382,26 +383,21 @@ const coverChangeHandler = () => {
 const previewVisible = ref<boolean>(false)
 const previewUrl = ref<string>('')
 const preFileName = ref<string>('')
+
 const openFileHandler = async () => {
   const fileCode = fileParams?.fileCode || ''
-  const fileUrlParams = {
-    fileCodes: [fileCode]
+  const { preUrl, fileName } = await useGetPreviewURL(fileCode)
+  previewUrl.value = preUrl
+  preFileName.value = fileName
+  if (!previewUrl.value) {
+    ElMessage.error('读取上传文件URL出错')
   }
-  CommonApi.getPreviewUrl(fileUrlParams)
-    .then((res) => {
-      if (res && res.code === 200) {
-        const fileInfo = res?.data?.previewInfoList[0]
-        previewUrl.value = fileInfo?.filePreview || ''
-        preFileName.value = fileInfo?.fileName || ''
-        if (!previewUrl.value) {
-          ElMessage.error('读取上传文件URL出错')
-        }
-        previewVisible.value = true
-      }
-    })
-    .catch((err: Error) => {
-      console.log(err)
-    })
+  // 临时添加，PDF 文件直接打开预览
+  if (isPdf(preFileName.value)) {
+    openLink(previewUrl.value, '_blank')
+    return
+  }
+
   previewVisible.value = true
 }
 

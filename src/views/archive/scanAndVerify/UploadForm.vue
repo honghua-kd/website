@@ -43,57 +43,59 @@
           <el-col>
             <div class="tip-choose">已选择文件：{{ chooseFileNum }}</div>
           </el-col>
-          <div v-loading="upLoading" class="el-upload">
-            <template v-for="item of formParams.fileInfoList" :key="item.url">
-              <div
-                style="margin-right: 10px"
-                class="el-upload-list el-upload-list--picture-card"
-              >
-                <div class="el-upload-list__item">
-                  <div v-if="isPdf(item.name)" class="card-list-img">
-                    <img
-                      class="el-upload-list__item-thumbnail"
-                      :src="pdfImg"
-                      alt=""
+          <el-col>
+            <div v-loading="upLoading" class="el-upload">
+              <template v-for="item of formParams.fileInfoList" :key="item.url">
+                <div
+                  style="margin-right: 10px"
+                  class="el-upload-list el-upload-list--picture-card"
+                >
+                  <div class="el-upload-list__item">
+                    <div v-if="isPdf(item.name)" class="card-list-img">
+                      <img
+                        class="el-upload-list__item-thumbnail"
+                        :src="pdfImg"
+                        alt=""
+                      />
+                    </div>
+
+                    <el-image
+                      v-else
+                      :src="item.url"
+                      :zoom-rate="1.2"
+                      :max-scale="5"
+                      :min-scale="0.2"
+                      :preview-src-list="[item.url]"
+                      fit="cover"
                     />
                   </div>
 
-                  <el-image
-                    v-else
-                    :src="item.url"
-                    :zoom-rate="1.2"
-                    :max-scale="5"
-                    :min-scale="0.2"
-                    :preview-src-list="[item.url]"
-                    fit="cover"
-                  />
-                </div>
-
-                <span class="el-upload-list__item-actions">
-                  <span
-                    class="el-upload-list__item-preview"
-                    @click="handlePictureCardPreview(item)"
-                  >
-                    <el-icon><zoom-in /></el-icon>
-                  </span>
-                  <!-- <span
+                  <span class="el-upload-list__item-actions">
+                    <span
+                      class="el-upload-list__item-preview"
+                      @click="handlePictureCardPreview(item)"
+                    >
+                      <el-icon><zoom-in /></el-icon>
+                    </span>
+                    <!-- <span
                     v-if="!disabled"
                     class="el-upload-list__item-delete"
                     @click="handleDownload(file)"
                   >
                     <el-icon><Download /></el-icon>
                   </span> -->
-                  <span
-                    class="el-upload-list__item-delete"
-                    style="z-index: 1000"
-                    @click="handleRemove(item)"
-                  >
-                    <el-icon><Delete /></el-icon>
+                    <span
+                      class="el-upload-list__item-delete"
+                      style="z-index: 1000"
+                      @click="handleRemove(item)"
+                    >
+                      <el-icon><Delete /></el-icon>
+                    </span>
                   </span>
-                </span>
-              </div>
-            </template>
-          </div>
+                </div>
+              </template>
+            </div>
+          </el-col>
 
           <el-col>
             <div class="el-upload__tip tip-notice">
@@ -128,7 +130,8 @@ import pdfImg from '@/assets/common/pdf.png'
 import { ElMessage, ElForm } from 'element-plus'
 import dayjs from 'dayjs'
 import { MortageAPI, CommonAPI } from '@/api'
-import { openLink } from '@/utils'
+import { openLink, isPdf } from '@/utils'
+import { useGetPreviewURL } from '@/hooks'
 import type { UploadRawFile, UploadRequestOptions } from 'element-plus'
 import type { UploadFileRequest, UploadFileListItemRequest } from '@/api'
 
@@ -216,33 +219,22 @@ const uploadHandler = async (options: UploadRequestOptions) => {
       if (res && res.code === 200) {
         const fileCode = res.data?.fileCode
         // 拿到fileCode 换取 文件地址 URL
-        const fileUrlParams = {
-          fileCodes: [fileCode]
-        }
-        CommonApi.getPreviewUrl(fileUrlParams)
-          .then((res) => {
-            upLoading.value = false
-            if (res && res.code === 200) {
-              const fileInfo = res?.data?.previewInfoList[0]
-              previewUrl.value = fileInfo?.filePreview || ''
-              preFileName.value = fileInfo?.fileName || ''
-              const fileCreateTime = dayjs(file.lastModified).format(
-                'YYYY-MM-DD HH:mm:ss'
-              )
-              const name = file.name
-              const obj = {
-                name,
-                fileCode,
-                fileCreateTime,
-                url: fileInfo?.filePreview
-              } as UploadFileListItemRequest
-              formParams.fileInfoList.push(obj)
-            }
-          })
-          .catch((err: Error) => {
-            upLoading.value = false
-            console.log(err)
-          })
+
+        const { preUrl, fileName } = await useGetPreviewURL(fileCode)
+        upLoading.value = false
+        previewUrl.value = preUrl
+        preFileName.value = fileName
+        const fileCreateTime = dayjs(file.lastModified).format(
+          'YYYY-MM-DD HH:mm:ss'
+        )
+        const name = file.name
+        const obj = {
+          name,
+          fileCode,
+          fileCreateTime,
+          url: preUrl
+        } as UploadFileListItemRequest
+        formParams.fileInfoList.push(obj)
       }
     })
     .catch((err: Error) => {
@@ -253,11 +245,6 @@ const uploadHandler = async (options: UploadRequestOptions) => {
 // 预览
 const previewVisible = ref<boolean>(false)
 const previewUrl = ref<string>('')
-const pdfReg = /^.+(\.pdf)(\?.+)?$/
-const isPdf = (fileName: string) => {
-  return pdfReg.test(fileName)
-}
-
 const handlePictureCardPreview = (uploadFile: UploadFileListItemRequest) => {
   if (!uploadFile.url) {
     ElMessage.error('读取上传文件URL出错')

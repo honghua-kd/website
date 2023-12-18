@@ -40,9 +40,21 @@ const userViteConfig: ViteConfig = {
   dropDebugger: process.env.NODE_ENV === 'production',
   // 代理后端地址
   proxy: {
-    // 正则表达式写法
     '^/api/.*': {
       target: 'https://dev-op.utfinancing.com',
+      changeOrigin: true
+      // rewrite: (path) => path.replace(/^\/operations-management/, '')
+    },
+    // 正则表达式写法
+    '^/operations-mortgage/.*': {
+      // target: 'https://dev-op.utfinancing.com',
+      target: 'http://10.102.3.168:28080',
+      changeOrigin: true
+      // rewrite: (path) => path.replace(/^\/operations-management/, '')
+    },
+    '^/operations-management/.*': {
+      // target: 'https://dev-op.utfinancing.com',
+      target: 'http://10.102.3.168:18080',
       changeOrigin: true
       // rewrite: (path) => path.replace(/^\/operations-management/, '')
     }
@@ -60,7 +72,7 @@ const userViteConfig: ViteConfig = {
     // }
   },
   // 是否使用mock数据
-  useMock: false
+  useMock: true
 }
 
 export default userViteConfig
