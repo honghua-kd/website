@@ -663,10 +663,6 @@ const delHandler = (ids: string[]) => {
       })
     })
     .catch((err: Error) => {
-      ElMessage({
-        type: 'error',
-        message: '删除失败'
-      })
       throw err
     })
 }
@@ -792,10 +788,6 @@ const achiveHandler = () => {
         })
     })
     .catch((err: Error) => {
-      ElMessage({
-        type: 'error',
-        message: '操作失败'
-      })
       throw err
     })
 }

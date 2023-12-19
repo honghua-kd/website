@@ -203,12 +203,7 @@ const delHandler = () => {
           throw new Error(err)
         })
     })
-    .catch(() => {
-      ElMessage({
-        type: 'error',
-        message: '删除失败'
-      })
-    })
+    .catch(() => {})
 }
 
 // 提交

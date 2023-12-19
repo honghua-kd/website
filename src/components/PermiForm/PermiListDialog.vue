@@ -169,12 +169,7 @@ const delHandler = (row: UserListPermission | RoleListPermission) => {
         }
       })
     })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: '删除失败'
-      })
-    })
+    .catch(() => {})
 }
 
 // 提交选中数据权限
