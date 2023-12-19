@@ -217,7 +217,7 @@
               {{ scope.row.fileName }}
             </span>
             <span v-else class="font-color-system">
-              {{ scope.row.fileName || '系统文件' }}
+              {{ scope.row.fileName || '系统数据' }}
             </span>
           </template>
         </el-table-column>
@@ -819,14 +819,15 @@ const exportHandler = async () => {
 
 // 重置
 const reset = () => {
+  const userStore = useUserStore()
   queryParams.pageNo = 1
   queryParams.pageSize = 10
   queryParams.verifyTime = [
     dayjs().startOf('day').toDate(),
     dayjs().endOf('day').toDate()
   ] // 创建时间
-  queryParams.creatorName = '' // 创建者姓名
-  queryParams.creator = '' // 创建者工号
+  queryParams.creatorName = userStore.userInfo?.staffName as string // 创建者姓名
+  queryParams.creator = userStore.userInfo?.staffCode as string // 创建者工号
   queryParams.verifyResult = '' // 核对结果
   queryParams.batchNo = '' // 批次号
   queryParams.engineNo = '' // 发动机号

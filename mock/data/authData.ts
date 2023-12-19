@@ -92,6 +92,28 @@ export default [
         elements: [],
         menuType: 5,
         menu: 'expressionMenu'
+      }
+    ],
+    elements: [],
+    menuType: 5,
+    sort: 3,
+    menu: 'system'
+  },
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'downloadRecord',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'downloadRecordMenu'
       },
       {
         children: [
@@ -99,18 +121,18 @@ export default [
             children: [],
             elements: [],
             menuType: 3,
-            menu: 'downloadCenter',
-            sort: 6
+            menu: 'downloadMaintain',
+            sort: 2
           }
         ],
         elements: [],
         menuType: 5,
-        menu: 'downloadCenterMenu'
+        menu: 'downloadMaintainMenu'
       }
     ],
     elements: [],
     menuType: 5,
     sort: 2,
-    menu: 'system'
+    menu: 'downloadCenter'
   }
 ]
