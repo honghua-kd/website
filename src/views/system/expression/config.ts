@@ -1,7 +1,7 @@
 export default {
   hidden: false,
   title: '规则管理',
-  icon: 'user',
+  icon: 'rules',
   name: 'expression',
   sort: 5
 }
