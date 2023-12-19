@@ -44,7 +44,7 @@
             <div class="tip-choose">已选择文件：{{ chooseFileNum }}</div>
           </el-col>
           <el-col>
-            <div v-loading="upLoading" class="el-upload">
+            <div v-loading="upLoading" class="el-upload pre-list">
               <template v-for="item of formParams.fileInfoList" :key="item.url">
                 <div
                   style="margin-right: 10px"
@@ -172,6 +172,13 @@ defineExpose({ open })
 
 // 识别 & 核验
 const checkHandler = () => {
+  if (!chooseFileNum.value) {
+    ElMessage({
+      type: 'error',
+      message: '您还未上传要识别的文件，请上传后再点击识别&核验'
+    })
+    return
+  }
   formLoading.value = true
   const params = { ...formParams }
   API.uploadRegisterCard(params)
@@ -194,9 +201,14 @@ const checkHandler = () => {
 
 // 上传前校验
 const beforeUploadHandler = (file: UploadRawFile) => {
+  // 校验文件格式
+  if (!fileType.value.includes(file.type)) {
+    ElMessage.error('上传文件支持 jpg/jpeg/png/pdf 格式，请重新选择！')
+    return false
+  }
   // 校验文件大小
-  if (file.size / 1024 / 1024 > 8) {
-    ElMessage.error('单个图片和单页PDF文件不超过8MB!')
+  if (file.size / 1024 / 1024 > 300) {
+    ElMessage.error('单个图片和单页PDF文件不超过8M，多页PDF文件单个不超过300M')
     return false
   }
   return true
@@ -285,5 +297,9 @@ const handleRemove = (file: UploadFileListItemRequest) => {
 }
 .card-list-img {
   padding: 40px;
+}
+.pre-list {
+  flex-wrap: wrap;
+  justify-content: flex-start;
 }
 </style>
