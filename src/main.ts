@@ -81,7 +81,7 @@ const { handlePermission } = usePermission({
           userStore.setRole(role || [])
           const data = [...whiteAuthData, ...authData]
           if (!data || !Array.isArray(data)) {
-            console.error('权限数据错误')
+            console.error('权限数据错误！')
           } else {
             userStore.setAuthData(data)
             routesStore.handleRoutes(data)
