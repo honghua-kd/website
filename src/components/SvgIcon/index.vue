@@ -12,19 +12,15 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-const props = defineProps({
-  name: {
-    type: String,
-    required: true
-  },
-  color: {
-    type: String,
-    default: '#333'
-  },
-  size: {
-    type: String,
-    default: '14px'
-  }
+interface Props {
+  name: string
+  color?: string
+  size?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  color: '#333',
+  size: '14px'
 })
 
 const symbolId = computed(() => `#icon-${props.name}`)
