@@ -95,7 +95,12 @@ const { handlePermission } = usePermission({
         }
       })
       .catch((err) => {
-        router.replace('/error?type=500')
+        const status = err?.response?.status
+        if (+status === 403) {
+          router.replace('/error?type=403')
+        } else {
+          router.replace('/error?type=500')
+        }
         userStore.setAuthDataFlag(true)
         throw new Error(err)
       })
