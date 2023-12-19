@@ -94,18 +94,14 @@
             <el-row :gutter="20">
               <el-col :span="8">
                 <el-form-item label="寄件人名称:" prop="senderName">
-                  <!-- <el-input
-                    v-model="basicInfoForm.senderName"
-                    clearable
-                    placeholder="请输入寄件人名称"
-                  /> -->
                   <el-autocomplete
                     v-model="basicInfoForm.senderName"
-                    :fetch-suggestions="querySearch"
+                    :fetch-suggestions="queryContractsSearch"
                     :trigger-on-focus="false"
                     clearable
                     placeholder="请输入寄件人名称"
                     @select="handleSelect"
+                    :debounce="500"
                   />
                 </el-form-item>
               </el-col>
@@ -397,7 +393,7 @@ import {
   Download,
   Check
 } from '@element-plus/icons-vue'
-import { ref, reactive, Ref, watch } from 'vue'
+import { ref, reactive, Ref, watch, onMounted } from 'vue'
 const dialogTitle = ref<string>('编辑邮寄信息')
 const dialogVisible = ref<boolean>(false)
 const basicInfoForm = reactive({
@@ -421,6 +417,37 @@ const basicInfoForm = reactive({
       remark: '合同'
     }
   ]
+})
+
+const commonContracts = ref([])
+const loadAll = ref([
+  { name: '曾三', number: '13724513588', address: '桥街大北路420号' },
+  { name: '曾四', number: '13824513588', address: '桥街大北路421号' },
+  { name: '张三', number: '13924513588', address: '桥街大北路422号' }
+])
+
+const queryContractsSearch = (queryString: string, cb: any) => {
+  const results = queryString
+    ? commonContracts.value.filter(createFilter(queryString))
+    : commonContracts.value
+  cb(results)
+}
+const createFilter = (queryString: string) => {
+  return (res) => {
+    return res.value.indexOf(queryString) !== -1
+  }
+}
+const handleSelect = (item) => {
+  basicInfoForm.senderName = item.name
+  basicInfoForm.senderPhone = item.number
+  basicInfoForm.senderAddress = item.address
+}
+
+onMounted(() => {
+  commonContracts.value = JSON.parse(JSON.stringify(loadAll.value))
+  commonContracts.value.forEach(item => {
+    item.value = '常用联系人-' + item.name + '-' + item.number
+  })
 })
 
 /** 打开弹窗 */
