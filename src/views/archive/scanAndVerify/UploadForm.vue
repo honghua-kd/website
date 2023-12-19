@@ -44,7 +44,7 @@
             <div class="tip-choose">已选择文件：{{ chooseFileNum }}</div>
           </el-col>
           <el-col>
-            <div v-loading="upLoading" class="el-upload">
+            <div v-loading="upLoading" class="el-upload pre-list">
               <template v-for="item of formParams.fileInfoList" :key="item.url">
                 <div
                   style="margin-right: 10px"
@@ -285,5 +285,9 @@ const handleRemove = (file: UploadFileListItemRequest) => {
 }
 .card-list-img {
   padding: 40px;
+}
+.pre-list {
+  flex-wrap: wrap;
+  justify-content: flex-start;
 }
 </style>

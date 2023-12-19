@@ -92,6 +92,20 @@ export default [
         elements: [],
         menuType: 5,
         menu: 'expressionMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'downloadCenter',
+            sort: 6
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'downloadCenterMenu'
       }
     ],
     elements: [],
