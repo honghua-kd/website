@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     width="80%"
-    :title="dialogTitle"
+    :title="title"
     v-model="dialogVisible"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -418,7 +418,12 @@ const basicInfoForm = reactive({
     }
   ]
 })
-
+defineProps({
+  title: {
+    type: String,
+    default: ''
+  }
+})
 const commonContracts = ref([])
 const loadAll = ref([
   { name: '曾三', number: '13724513588', address: '桥街大北路420号' },
@@ -445,8 +450,8 @@ const handleSelect = (item) => {
 
 onMounted(() => {
   commonContracts.value = JSON.parse(JSON.stringify(loadAll.value))
-  commonContracts.value.forEach(item => {
-    item.value = '常用联系人-' + item.name + '-' + item.number
+  commonContracts.value.forEach((item) => {
+    item.value = '常用联系-' + item.name + '-' + item.number
   })
 })
 

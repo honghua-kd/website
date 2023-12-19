@@ -279,8 +279,8 @@
       />
     </div>
     <ImportForm ref="importFormRef" />
-    <!-- <CheckForm ref="checkFormRef" /> -->
-    <EditForm ref="editFormRef" />
+    <CheckForm ref="checkFormRef" />
+    <EditForm ref="editFormRef" :title="dialogTitle" />
     <LogisticsInfoForm ref="logisticsInfoFormRef" />
   </div>
 </template>
@@ -316,6 +316,7 @@ type QueryParams = PostMessageRegisterCardListRequest &
   PageRequest &
   DateRangeRequest &
   SortParamsRequest
+const dialogTitle = ref<string>('')
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
 const queryParams = reactive<QueryParams>({
   pageNo: 1,
@@ -360,9 +361,11 @@ const logisticsInfo = (id: string) => {
 }
 const editFormRef = ref()
 const editHandler = (id: string) => {
+  dialogTitle.value = '编辑邮寄信息'
   editFormRef.value.open(id)
 }
 const addHandler = () => {
+  dialogTitle.value = '新增邮寄信息'
   editFormRef.value.open()
 }
 const checkFormRef = ref()
