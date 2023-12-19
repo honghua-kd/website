@@ -94,10 +94,18 @@
             <el-row :gutter="20">
               <el-col :span="8">
                 <el-form-item label="寄件人名称:" prop="senderName">
-                  <el-input
+                  <!-- <el-input
                     v-model="basicInfoForm.senderName"
                     clearable
                     placeholder="请输入寄件人名称"
+                  /> -->
+                  <el-autocomplete
+                    v-model="basicInfoForm.senderName"
+                    :fetch-suggestions="querySearch"
+                    :trigger-on-focus="false"
+                    clearable
+                    placeholder="请输入寄件人名称"
+                    @select="handleSelect"
                   />
                 </el-form-item>
               </el-col>
