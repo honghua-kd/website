@@ -41,18 +41,18 @@ const userViteConfig: ViteConfig = {
   // 代理后端地址
   proxy: {
     // 正则表达式写法
-    '^/api/operations-mortgage/.*': {
+    '^/api/.*': {
       target: 'https://test-op.utfinancing.com',
       // target: 'http://10.102.3.168:28080',
       changeOrigin: true
       // rewrite: (path) => path.replace(/^\/operations-management/, '')
-    },
-    '^/api/operations-management/.*': {
-      target: 'https://test-op.utfinancing.com',
-      // target: 'http://10.102.3.168:18080',
-      changeOrigin: true
-      // rewrite: (path) => path.replace(/^\/operations-management/, '')
     }
+    // '^/api/operations-management/.*': {
+    //   target: 'https://test-op.utfinancing.com',
+    //   // target: 'http://10.102.3.168:18080',
+    //   changeOrigin: true
+    //   // rewrite: (path) => path.replace(/^\/operations-management/, '')
+    // }
   },
   // 是否使用mock数据
   useMock: false

@@ -850,8 +850,12 @@ const reset = () => {
 const getList = () => {
   const { verifyTime, ...others } = queryParams
   const params = {
-    startVerifyTime: dayjs(verifyTime[0]).format('YYYY-MM-DD HH:mm:ss'),
-    endVerifyTime: dayjs(verifyTime[1]).format('YYYY-MM-DD HH:mm:ss'),
+    startVerifyTime: verifyTime
+      ? dayjs(verifyTime[0]).format('YYYY-MM-DD HH:mm:ss')
+      : '',
+    endVerifyTime: verifyTime
+      ? dayjs(verifyTime[1]).format('YYYY-MM-DD HH:mm:ss')
+      : '',
     ...others
   }
 
