@@ -860,7 +860,7 @@ const getList = () => {
     .then((res) => {
       tableLoading.value = false
       if (res && res.code === 200) {
-        tableData.value.splice(0, tableData.value.length)
+        // tableData.value.splice(0, tableData.value.length)
         tableData.value = res?.data?.list || []
         pageTotal.value = res?.data?.total || 0
       }
@@ -896,12 +896,11 @@ const init = () => {
   getDicts()
 }
 
-init()
-
 onMounted(() => {
   const userStore = useUserStore()
   queryParams.creatorName = userStore.userInfo?.staffName as string
   curStaffCode.value = userStore.userInfo?.staffCode as string
+  init()
 })
 </script>
 
