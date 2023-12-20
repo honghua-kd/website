@@ -5,10 +5,11 @@
       v-model="dialogVisible"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
+      width="60%"
     >
-      <el-form ref="formRef" :model="formParamsRequest" label-width="130px">
-        <el-row :gutter="20">
-          <el-col :span="12">
+      <el-form ref="formRef" :model="formParamsRequest" label-width="100px">
+        <el-row>
+          <el-col :span="8">
             <el-form-item
               label="联系人名称:"
               prop="contractName"
@@ -21,7 +22,7 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="联系人方式:" prop="contractWay">
               <el-input
                 v-model="basicInfoForm.contractWay"
@@ -30,9 +31,7 @@
               />
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="邮箱:" prop="email">
               <el-input
                 v-model="basicInfoForm.email"

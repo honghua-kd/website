@@ -7,10 +7,17 @@
       :close-on-press-escape="false"
       width="50%"
     >
-      <el-upload>
-        上传文件: &nbsp;&nbsp;&nbsp;<el-button type="primary"
-          >选择文件</el-button
-        >
+      <el-upload
+        :show-file-list="true"
+        :before-upload="beforeUploadHandler"
+        :http-request="uploadHandler"
+        :accept="fileType"
+        :limit="1"
+        :auto-upload="false"
+        action="#"
+      >
+        上传文件: &nbsp;&nbsp;&nbsp;
+        <el-button type="primary">选择文件</el-button>
       </el-upload>
       <template #footer>
         <el-button> 模板下载 </el-button>

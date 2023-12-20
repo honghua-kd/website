@@ -247,12 +247,12 @@
       </el-row>
       <el-divider />
       <div class="second-title">其他信息</div>
-      <!-- <div>附件：<el-button type="primary">上传</el-button></div> -->
       <el-row :gutter="20">
         <el-col>
           <el-form-item label="附件:" prop="otherInfoList">
             <div style="margin-bottom: 20px">
-              <el-button type="primary" :icon="Download"></el-button>
+              <!-- <el-button type="primary" :icon="Download"></el-button> -->
+              <svg-icon name="download" size="24" />
             </div>
             <el-table
               :data="basicInfoForm.otherInfoList"

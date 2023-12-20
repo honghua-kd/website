@@ -302,7 +302,6 @@ import LogisticsInfoForm from './LogisticsInfoForm.vue'
 import CheckForm from './CheckForm.vue'
 import ImportForm from './ImportForm.vue'
 import type {
-  PostMessageRegisterCardListRequest,
   PageRequest,
   DateRangeRequest,
   SortParamsRequest,
@@ -312,13 +311,9 @@ import type {
 import { formatDate } from '@/utils'
 import dayjs from 'dayjs'
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
-type QueryParams = PostMessageRegisterCardListRequest &
-  PageRequest &
-  DateRangeRequest &
-  SortParamsRequest
 const dialogTitle = ref<string>('')
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
-const queryParams = reactive<QueryParams>({
+const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
   expressNo: '',
