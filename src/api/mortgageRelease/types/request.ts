@@ -146,3 +146,67 @@ export interface UploadFileRequest {
 export interface MortgageeType {
   mortgageeType: string
 }
+
+export interface PostMessageRegisterCardListRequest extends PageRequest {
+  /**
+   * 快递单号
+   */
+  expressNo?: string | null | undefined
+  /**
+   * 快递公司
+   */
+  expressCompany?: string
+  /**
+   * 核验状态
+   */
+  archivalStatus?: string
+  /**
+   * 登记时间
+   */
+  registerTime?: Date
+  /**
+   * 寄送/接收
+   */
+  postOrReceive?: string
+  /**
+   * 快递内容
+   */
+  contractNo?: string | null | undefined
+  /**
+   * 快递备注
+   */
+  expressNote?: string
+  /**
+   * 创建人工号
+   */
+  creator?: string | null | undefined
+  /**
+   * 核验结束时间
+   */
+  endVerifyTime?: number
+  /**
+   * 发动机号
+   */
+  engineNo?: string | null | undefined
+  /**
+   * 发动机型号
+   */
+  engineType?: string | null | undefined
+  /**
+   * 车牌号
+   */
+  licensePlateNo?: string | null | undefined
+
+  /**
+   * 核验开始时间
+   */
+  startVerifyTime?: number
+  /**
+   * 核验结果
+   */
+  verifyResult?: string
+  /**
+   * 车架号
+   */
+  vinNo?: string | null | undefined
+}
