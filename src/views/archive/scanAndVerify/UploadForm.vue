@@ -12,6 +12,7 @@
         :model="formParams"
         v-loading="formLoading"
         label-width="130px"
+        :rules="formRules"
       >
         <el-row>
           <el-col :span="8">
@@ -25,7 +26,7 @@
           </el-col>
         </el-row>
 
-        <el-form-item label="上传文件">
+        <el-form-item label="上传文件" prop="formParams.fileInfoList">
           <el-upload
             :show-file-list="false"
             :before-upload="beforeUploadHandler"
@@ -157,6 +158,11 @@ const chooseFileNum = computed(() => {
   return number
 })
 
+// 校验
+const formRules = reactive({
+  batchNo: [{ required: true, message: '处理批次号不能为空', trigger: 'blur' }]
+})
+
 /** 打开弹窗 */
 const tenantUser = ref<string>('')
 const open = (type: string, title: string, user: string) => {
@@ -169,7 +175,12 @@ const open = (type: string, title: string, user: string) => {
 defineExpose({ open })
 
 // 识别 & 核验
-const checkHandler = () => {
+const formRef = ref<InstanceType<typeof ElForm>>()
+const checkHandler = async () => {
+  // 校验表单
+  if (!formRef.value) return
+  const valid = await formRef.value.validate()
+  if (!valid) return
   if (!chooseFileNum.value) {
     ElMessage({
       type: 'error',
@@ -199,7 +210,6 @@ const checkHandler = () => {
 
 // 上传前校验
 const beforeUploadHandler = (file: UploadRawFile) => {
-  console.log('fileType>>>>', file)
   // 校验文件格式
   if (!fileType.value.includes(file.type)) {
     ElMessage.error('上传文件支持 jpg/jpeg/png/pdf 格式，请重新选择！')
@@ -274,6 +284,7 @@ const handlePictureCardPreview = (uploadFile: UploadFileListItemRequest) => {
 const reset = () => {
   formParams.batchNo = ''
   formParams.fileInfoList = []
+  formRef.value?.resetFields()
 }
 
 // 删除文件缩略图

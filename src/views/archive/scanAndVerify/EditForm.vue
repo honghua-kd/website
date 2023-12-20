@@ -268,6 +268,7 @@ const formLoading = ref<boolean>(false)
 const formRules = reactive({})
 const formRef = ref()
 const infoId = ref<string>('')
+const emit = defineEmits(['success'])
 
 const fileParams = reactive<Pick<CardCell, 'fileCode' | 'fileName'>>({
   fileName: '',
@@ -338,11 +339,11 @@ const formParams = reactive<FormOrigin>({
 
 /** 打开弹窗 */
 const open = async (id: string) => {
-  dialogVisible.value = true
   infoId.value = id
   formLoading.value = true
   await getCardInfo(id)
   await getMortList()
+  dialogVisible.value = true
 }
 
 defineExpose({ open })
@@ -364,6 +365,7 @@ const submitForm = () => {
           type: 'success',
           message: '编辑成功'
         })
+        emit('success')
         dialogVisible.value = false
       }
     })
