@@ -11,22 +11,20 @@
       >
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-row>
-              <el-form-item label="核验时间:" prop="startVerifyTime">
-                <el-date-picker
-                  v-model="queryParams.startVerifyTime"
-                  type="datetime"
-                  placeholder="开始日期"
-                />
-              </el-form-item>
-              <el-form-item prop="endVerifyTime">
-                <el-date-picker
-                  v-model="queryParams.endVerifyTime"
-                  type="datetime"
-                  placeholder="结束日期"
-                />
-              </el-form-item>
-            </el-row>
+            <el-form-item label="核验时间:" class="width-full">
+              <el-date-picker
+                v-model="queryParams.startVerifyTime"
+                type="datetime"
+                placeholder="开始日期"
+                style="margin-right: 4%; width: 48%"
+              />
+              <el-date-picker
+                v-model="queryParams.endVerifyTime"
+                type="datetime"
+                placeholder="结束日期"
+                style="width: 48%"
+              />
+            </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="创建人:" prop="creatorName">
@@ -535,8 +533,8 @@ type QueryParams = VehiRegisterCardListRequest & PageRequest & SortParamsRequest
 const queryParams = reactive<QueryParams>({
   pageNo: 1,
   pageSize: 10,
-  startVerifyTime: '',
-  endVerifyTime: '',
+  startVerifyTime: dayjs().startOf('day').toString(),
+  endVerifyTime: dayjs().endOf('day').toString(),
   creatorName: '', // 创建者
   creator: '', // 创建者工号
   verifyResult: '', // 核对结果
@@ -835,8 +833,8 @@ const reset = () => {
   const userStore = useUserStore()
   queryParams.pageNo = 1
   queryParams.pageSize = 10
-  queryParams.startVerifyTime = '' // 开始时间
-  queryParams.endVerifyTime = '' // 结束时间
+  queryParams.startVerifyTime = dayjs().startOf('day').toString() // 开始时间
+  queryParams.endVerifyTime = dayjs().endOf('day').toString() // 结束时间
   queryParams.creatorName = userStore.userInfo?.staffName as string // 创建者姓名
   queryParams.creator = userStore.userInfo?.staffCode as string // 创建者工号
   queryParams.verifyResult = '' // 核对结果
@@ -950,5 +948,8 @@ onMounted(() => {
 .file-name {
   cursor: pointer;
   text-decoration: underline;
+}
+.width-full {
+  width: 100%;
 }
 </style>
