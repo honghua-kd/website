@@ -32,7 +32,6 @@
                 v-model="queryParams.creatorName"
                 clearable
                 placeholder="请输入"
-                @clear="creatorClearHandler"
               />
             </el-form-item>
           </el-col>
@@ -217,7 +216,7 @@
           </template>
           <template #default="scope">
             <span
-              v-if="scope.row.id"
+              v-if="scope.row.fileCode"
               @click="openPreview(scope.row.fileCode)"
               class="file-name"
             >
@@ -242,7 +241,7 @@
             />
           </template>
           <template #default="scope">
-            <span :class="scope.row.id ? '' : 'font-color-system'">
+            <span :class="scope.row.fileCode ? '' : 'font-color-system'">
               {{ scope.row.registerCardArchiveNo }}
             </span>
           </template>
@@ -261,7 +260,7 @@
             />
           </template>
           <template #default="scope">
-            <span v-if="scope.row.id">
+            <span v-if="scope.row.fileCode">
               <svg-icon
                 :name="getVerifyResult(scope.row)"
                 size="20"
@@ -443,7 +442,7 @@
 
         <el-table-column label="操作" fixed="right" width="150" align="center">
           <template #default="scope">
-            <template v-if="scope.row.id">
+            <template v-if="scope.row.fileCode">
               <el-button
                 v-if="
                   scope.row.archivalStatus === ARCHIVE_STATUS.UNACHIVED &&
@@ -479,7 +478,7 @@
         @current-change="handleCurrentChange"
       />
     </div>
-    <EditForm ref="editFormRef" />
+    <EditForm ref="editFormRef" @success="getList()" />
     <UploadForm ref="uploadFormRef" @success="getList()" />
     <Preview
       v-model="previewVisible"
@@ -536,7 +535,6 @@ const queryParams = reactive<QueryParams>({
   startVerifyTime: dayjs().startOf('day').toString(),
   endVerifyTime: dayjs().endOf('day').toString(),
   creatorName: '', // 创建者
-  creator: '', // 创建者工号
   verifyResult: '', // 核对结果
   batchNo: '', // 批次号
   engineNo: '', // 发动机号
@@ -555,12 +553,6 @@ const queryParams = reactive<QueryParams>({
 
 const selectData: Ref<CardListItem[]> = ref([])
 const curStaffCode = ref<string>('')
-
-// 创建人点击清除时，删掉工号
-const creatorClearHandler = () => {
-  queryParams.creator = ''
-  console.log('clearable', queryParams)
-}
 
 // 归档状态处理
 const getAchivalStatus = (status: string) => {
@@ -618,7 +610,7 @@ const selectionChangeHandler = (item: CardListItem[]) => {
 const selectIds = computed(() => {
   const ids: string[] = []
   selectData.value.forEach((item) => {
-    if (item.id) {
+    if (item.fileCode && item.id) {
       ids.push(item.id)
     }
   })
@@ -627,7 +619,7 @@ const selectIds = computed(() => {
 
 // 是否可选
 const selectableHandler = (row: CardListItem) => {
-  return !!(row.id && row.archivalStatus !== ARCHIVE_STATUS.ACHIVED)
+  return !!(row.fileCode && row.archivalStatus !== ARCHIVE_STATUS.ACHIVED)
 }
 // 展开-收回处理
 const expandHandler = (): boolean => {
@@ -714,7 +706,6 @@ const setSortFlag = (type: string): string => {
 }
 // 分页
 const handleCurrentChange = (val: number) => {
-  console.log('value>>>>>', val)
   queryParams.pageNo = val
   getList()
 }
@@ -836,7 +827,6 @@ const reset = () => {
   queryParams.startVerifyTime = dayjs().startOf('day').toString() // 开始时间
   queryParams.endVerifyTime = dayjs().endOf('day').toString() // 结束时间
   queryParams.creatorName = userStore.userInfo?.staffName as string // 创建者姓名
-  queryParams.creator = userStore.userInfo?.staffCode as string // 创建者工号
   queryParams.verifyResult = '' // 核对结果
   queryParams.batchNo = '' // 批次号
   queryParams.engineNo = '' // 发动机号
@@ -870,6 +860,7 @@ const getList = () => {
     .then((res) => {
       tableLoading.value = false
       if (res && res.code === 200) {
+        tableData.value.splice(0, tableData.value.length)
         tableData.value = res?.data?.list || []
         pageTotal.value = res?.data?.total || 0
       }
@@ -910,7 +901,6 @@ init()
 onMounted(() => {
   const userStore = useUserStore()
   queryParams.creatorName = userStore.userInfo?.staffName as string
-  queryParams.creator = userStore.userInfo?.staffCode as string
   curStaffCode.value = userStore.userInfo?.staffCode as string
 })
 </script>
