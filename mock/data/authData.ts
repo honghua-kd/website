@@ -125,7 +125,7 @@ export default [
     ],
     elements: [],
     menuType: 5,
-    sort: 3,
+    sort: 5,
     menu: 'system'
   },
   {
@@ -161,7 +161,7 @@ export default [
     ],
     elements: [],
     menuType: 5,
-    sort: 2,
+    sort: 4,
     menu: 'downloadCenter'
   },
   {
@@ -200,18 +200,82 @@ export default [
             children: [],
             elements: [],
             menuType: 3,
-            menu: 'supplierList',
+            menu: 'channelList',
             sort: 3
           }
         ],
         elements: [],
         menuType: 5,
-        menu: 'supplierListMenu'
+        menu: 'channelListMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'channelAddress',
+            sort: 4
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'channelAddressMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'mainPart',
+            sort: 5
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'mainPartMenu'
+      }
+    ],
+    elements: [],
+    menuType: 5,
+    sort: 2,
+    menu: 'mortgage'
+  },
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'supplierManage',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'supplierManageMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'settleAccounts',
+            sort: 2
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'settleAccountsMenu'
       }
     ],
     elements: [],
     menuType: 5,
     sort: 3,
-    menu: 'mortgage'
+    menu: 'supplier'
   }
 ]
