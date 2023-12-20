@@ -11,14 +11,22 @@
       >
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="核验时间:" prop="verifyTime">
-              <el-date-picker
-                v-model="queryParams.verifyTime"
-                type="datetimerange"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-              />
-            </el-form-item>
+            <el-row>
+              <el-form-item label="核验时间:" prop="startVerifyTime">
+                <el-date-picker
+                  v-model="queryParams.startVerifyTime"
+                  type="datetime"
+                  placeholder="开始日期"
+                />
+              </el-form-item>
+              <el-form-item prop="endVerifyTime">
+                <el-date-picker
+                  v-model="queryParams.endVerifyTime"
+                  type="datetime"
+                  placeholder="结束日期"
+                />
+              </el-form-item>
+            </el-row>
           </el-col>
           <el-col :span="6">
             <el-form-item label="创建人:" prop="creatorName">
@@ -26,6 +34,7 @@
                 v-model="queryParams.creatorName"
                 clearable
                 placeholder="请输入"
+                @clear="creatorClearHandler"
               />
             </el-form-item>
           </el-col>
@@ -504,7 +513,6 @@ import {
 import type {
   VehiRegisterCardListRequest,
   PageRequest,
-  DateRangeRequest,
   SortParamsRequest,
   CardListItem,
   DictItem
@@ -523,14 +531,12 @@ const queryFormRef = ref<InstanceType<typeof ElForm>>()
 const expandFlag = ref<boolean>(false)
 const tableLoading = ref<boolean>(false)
 const tableData: Ref<CardListItem[]> = ref([])
-type QueryParams = VehiRegisterCardListRequest &
-  PageRequest &
-  DateRangeRequest &
-  SortParamsRequest
+type QueryParams = VehiRegisterCardListRequest & PageRequest & SortParamsRequest
 const queryParams = reactive<QueryParams>({
   pageNo: 1,
   pageSize: 10,
-  verifyTime: [dayjs().startOf('day').toDate(), dayjs().endOf('day').toDate()], // 创建时间
+  startVerifyTime: '',
+  endVerifyTime: '',
   creatorName: '', // 创建者
   creator: '', // 创建者工号
   verifyResult: '', // 核对结果
@@ -551,6 +557,12 @@ const queryParams = reactive<QueryParams>({
 
 const selectData: Ref<CardListItem[]> = ref([])
 const curStaffCode = ref<string>('')
+
+// 创建人点击清除时，删掉工号
+const creatorClearHandler = () => {
+  queryParams.creator = ''
+  console.log('clearable', queryParams)
+}
 
 // 归档状态处理
 const getAchivalStatus = (status: string) => {
@@ -794,14 +806,15 @@ const achiveHandler = () => {
 
 // 导出
 const exportHandler = async () => {
-  const { verifyTime, pageNo, pageSize, ...others } = queryParams
+  const { pageNo, pageSize, startVerifyTime, endVerifyTime, ...others } =
+    queryParams
   console.log(pageNo, pageSize)
   const params = {
-    startVerifyTime: verifyTime
-      ? dayjs(verifyTime[0]).format('YYYY-MM-DD HH:mm:ss')
+    startVerifyTime: startVerifyTime
+      ? dayjs(startVerifyTime).format('YYYY-MM-DD HH:mm:ss')
       : '',
-    endVerifyTime: verifyTime
-      ? dayjs(verifyTime[1]).format('YYYY-MM-DD HH:mm:ss')
+    endVerifyTime: endVerifyTime
+      ? dayjs(endVerifyTime).format('YYYY-MM-DD HH:mm:ss')
       : '',
     ...others
   }
@@ -822,10 +835,8 @@ const reset = () => {
   const userStore = useUserStore()
   queryParams.pageNo = 1
   queryParams.pageSize = 10
-  queryParams.verifyTime = [
-    dayjs().startOf('day').toDate(),
-    dayjs().endOf('day').toDate()
-  ] // 创建时间
+  queryParams.startVerifyTime = '' // 开始时间
+  queryParams.endVerifyTime = '' // 结束时间
   queryParams.creatorName = userStore.userInfo?.staffName as string // 创建者姓名
   queryParams.creator = userStore.userInfo?.staffCode as string // 创建者工号
   queryParams.verifyResult = '' // 核对结果
@@ -845,13 +856,13 @@ const reset = () => {
 }
 // 获取列表
 const getList = () => {
-  const { verifyTime, ...others } = queryParams
+  const { startVerifyTime, endVerifyTime, ...others } = queryParams
   const params = {
-    startVerifyTime: verifyTime
-      ? dayjs(verifyTime[0]).format('YYYY-MM-DD HH:mm:ss')
+    startVerifyTime: startVerifyTime
+      ? dayjs(startVerifyTime).format('YYYY-MM-DD HH:mm:ss')
       : '',
-    endVerifyTime: verifyTime
-      ? dayjs(verifyTime[1]).format('YYYY-MM-DD HH:mm:ss')
+    endVerifyTime: endVerifyTime
+      ? dayjs(endVerifyTime).format('YYYY-MM-DD HH:mm:ss')
       : '',
     ...others
   }

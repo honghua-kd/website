@@ -50,7 +50,10 @@
                   style="margin-right: 10px"
                   class="el-upload-list el-upload-list--picture-card"
                 >
-                  <div class="el-upload-list__item">
+                  <div
+                    class="el-upload-list__item"
+                    style="justify-content: center"
+                  >
                     <div v-if="isPdf(item.name)" class="card-list-img">
                       <img
                         class="el-upload-list__item-thumbnail"
@@ -143,17 +146,12 @@ const formLoading = ref<boolean>(false)
 const emit = defineEmits(['success'])
 const formParams = reactive<UploadFileRequest>({
   batchNo: '', // 处理批次号
-  fileInfoList: [
-    // {
-    //   name: 'food.jpeg',
-    //   fileCode: 'LX_1731921571582316630_1',
-    //   fileCreateTime: '2023-12-05 14:20:54',
-    //   url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-    // },
-  ]
+  fileInfoList: []
 })
 
-const fileType = ref<string>('.pdf, .jpg, .jpeg, .png, .JPG, .JPEG')
+const fileType = ref<string>(
+  '.pdf, .jpg, .jpeg, .png, application/pdf,image/jpeg,image/png '
+)
 const chooseFileNum = computed(() => {
   const number = formParams.fileInfoList.length
   return number
@@ -201,6 +199,7 @@ const checkHandler = () => {
 
 // 上传前校验
 const beforeUploadHandler = (file: UploadRawFile) => {
+  console.log('fileType>>>>', file)
   // 校验文件格式
   if (!fileType.value.includes(file.type)) {
     ElMessage.error('上传文件支持 jpg/jpeg/png/pdf 格式，请重新选择！')
