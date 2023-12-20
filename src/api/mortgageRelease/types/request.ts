@@ -110,7 +110,7 @@ export interface EditRegisterCardInfoRequest {
   /**
    * 抵押登记日期
    */
-  mortgageRegisterDate?: number | Date
+  mortgageRegisterDate?: string
   /**
    * 登记证编号
    */

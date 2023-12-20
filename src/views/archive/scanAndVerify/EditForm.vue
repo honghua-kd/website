@@ -253,18 +253,13 @@
 
 <script setup lang="ts">
 import { ref, reactive, Ref, watch } from 'vue'
-import type {
-  EditRegisterCardInfoRequest,
-  ModifiyInfo,
-  FormOrigin,
-  MortgageeItem,
-  CardCell
-} from '@/api'
+import type { ModifiyInfo, FormOrigin, MortgageeItem, CardCell } from '@/api'
 import { MortageAPI } from '@/api'
 import { ElMessage } from 'element-plus'
 import Preview from '@/components/Preview/index.vue'
 import { openLink, isPdf } from '@/utils'
 import { useGetPreviewURL } from '@/hooks'
+import dayjs from 'dayjs'
 
 const API = new MortageAPI()
 const dialogTitle = ref<string>('编辑扫描结果')
@@ -354,10 +349,14 @@ defineExpose({ open })
 
 // 保存
 const submitForm = () => {
+  const { mortgageRegisterDate, ...others } = formParamsRequest
   const params = {
     id: infoId.value,
-    ...formParamsRequest
-  } as EditRegisterCardInfoRequest
+    mortgageRegisterDate: dayjs(mortgageRegisterDate).format(
+      'YYYY-MM-DD HH:mm:ss'
+    ),
+    ...others
+  }
   API.editRegisterCardInfo(params)
     .then((res) => {
       if (res && res.code === 200) {
