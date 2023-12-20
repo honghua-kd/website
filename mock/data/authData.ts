@@ -134,5 +134,55 @@ export default [
     menuType: 5,
     sort: 2,
     menu: 'downloadCenter'
+  },
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'mortgageRules',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'mortgageRulesdMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'cityManage',
+            sort: 2
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'cityManageMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'supplierList',
+            sort: 3
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'supplierListMenu'
+      }
+    ],
+    elements: [],
+    menuType: 5,
+    sort: 3,
+    menu: 'mortgage'
   }
 ]
