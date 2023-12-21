@@ -33,7 +33,7 @@ const frameSetting: FrameSetting = {
   // 默认顶部菜单文字颜色
   topMenuTextColor: '#333',
   // 是否显示用户名
-  showName: false,
+  showName: true,
   // 头部工具栏布局
   showHeaderBar: false,
   // 是否显示页面底部自定义版权信息
