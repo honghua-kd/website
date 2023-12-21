@@ -112,9 +112,7 @@
         <el-button :disabled="formLoading" type="primary" @click="checkHandler">
           识别 & 核验
         </el-button>
-        <el-button type="primary" @click="dialogVisible = false">
-          关 闭
-        </el-button>
+        <el-button @click="dialogVisible = false"> 关 闭 </el-button>
       </template>
     </el-dialog>
     <Preview
