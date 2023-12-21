@@ -200,10 +200,6 @@
         :tree-props="{ children: 'target' }"
         @selection-change="selectionChangeHandler"
         @header-click="sortChangeHandler"
-        :cell-style="{
-          padding: '2px !important',
-          fontSize: '13px'
-        }"
       >
         <el-table-column
           type="selection"
@@ -957,8 +953,5 @@ onMounted(() => {
 }
 :deep(.el-form-item) {
   margin-bottom: 12px;
-}
-:deep(.el-table .cell) {
-  padding: 3px 2px !important;
 }
 </style>
