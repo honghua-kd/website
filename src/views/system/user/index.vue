@@ -55,7 +55,13 @@
           v-loading="loading"
           class="table-container"
         >
-          <el-table-column type="index" width="60" label="序号" fixed />
+          <el-table-column
+            type="index"
+            width="60"
+            label="序号"
+            fixed
+            align="center"
+          />
           <el-table-column
             label="员工姓名"
             align="center"
@@ -117,7 +123,7 @@
             align="center"
             class-name="fixed-width"
             fixed="right"
-            width="150"
+            width="100"
           >
             <template #default="scope">
               <el-button
@@ -282,5 +288,8 @@ const assignPermiHandler = (row: StaffListItem) => {
 .table-container {
   overflow-y: scroll;
   height: 410px;
+}
+:deep(.el-card__body) {
+  padding: 12px !important;
 }
 </style>
