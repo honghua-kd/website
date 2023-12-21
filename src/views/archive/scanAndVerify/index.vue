@@ -98,7 +98,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row :gutter="20">
+        <el-row :gutter="20" v-if="expandFlag">
           <el-col :span="6">
             <el-form-item label="合同号:" prop="contractNo">
               <el-input
@@ -174,6 +174,7 @@
         </div>
       </div>
     </div>
+    <el-divider border-style="dashed" />
     <!-- 表格 -->
     <div>
       <el-row class="table-btn">
@@ -199,11 +200,16 @@
         :tree-props="{ children: 'target' }"
         @selection-change="selectionChangeHandler"
         @header-click="sortChangeHandler"
+        :cell-style="{
+          padding: '2px !important',
+          fontSize: '13px'
+        }"
       >
         <el-table-column
           type="selection"
-          width="55"
+          width="40"
           :selectable="selectableHandler"
+          align="center"
         />
 
         <el-table-column fixed prop="fileName" width="180" align="center">
@@ -230,7 +236,7 @@
         <el-table-column
           label="登记证归档序号"
           prop="registerCardArchiveNo"
-          width="180"
+          width="160"
           align="center"
         >
           <template #header>
@@ -249,7 +255,7 @@
         <el-table-column
           label="核对结果"
           prop="verifyResult"
-          width="150"
+          width="110"
           align="center"
         >
           <template #header>
@@ -272,7 +278,7 @@
         <el-table-column
           label="*登记证编号"
           prop="registerCardNo"
-          width="180"
+          width="120"
           align="center"
         >
           <template #default="scope">
@@ -282,7 +288,7 @@
         <el-table-column
           label="*车架号"
           prop="vinNo"
-          width="180"
+          width="120"
           align="center"
         >
           <template #default="scope">
@@ -292,7 +298,7 @@
         <el-table-column
           label="*发动机号"
           prop="engineNo"
-          width="180"
+          width="120"
           align="center"
         >
           <template #default="scope">
@@ -302,7 +308,7 @@
         <el-table-column
           label="*发动机型号"
           prop="engineType"
-          width="180"
+          width="120"
           align="center"
         >
           <template #default="scope">
@@ -312,7 +318,7 @@
         <el-table-column
           label="*车牌号"
           prop="licensePlateNo"
-          width="180"
+          width="110"
           align="center"
         >
           <template #default="scope">
@@ -322,14 +328,19 @@
         <el-table-column
           label="*机动车所有人"
           prop="vehicleOwner"
-          width="180"
+          width="120"
           align="center"
         >
           <template #default="scope">
             <TableSlotItem :rowInfo="scope.row" rowKey="vehicleOwner" />
           </template>
         </el-table-column>
-        <el-table-column label="*车身颜色" prop="vehicleColor" width="150">
+        <el-table-column
+          label="*车身颜色"
+          prop="vehicleColor"
+          width="90"
+          align="center"
+        >
           <template #default="scope">
             <TableSlotItem :rowInfo="scope.row" rowKey="vehicleColor" />
           </template>
@@ -337,7 +348,7 @@
         <el-table-column
           label="*使用性质"
           prop="useType"
-          width="150"
+          width="110"
           align="center"
         >
           <template #default="scope">
@@ -357,7 +368,7 @@
         <el-table-column
           label="*统一社会信用代码"
           prop="mortgageeUscc"
-          width="200"
+          width="170"
           align="center"
         >
           <template #default="scope">
@@ -367,7 +378,7 @@
         <el-table-column
           label="*抵押登记日期"
           prop="mortgageRegisterDate"
-          width="180"
+          width="160"
           align="center"
         >
           <template #default="scope">
@@ -377,56 +388,56 @@
         <el-table-column
           label="批次号"
           prop="batchNo"
-          width="180"
+          width="120"
           align="center"
         />
         <el-table-column
           label="关联合同号"
           prop="contractNo"
-          width="200"
+          width="120"
           align="center"
         />
         <el-table-column
           label="所属系统"
           prop="belongSystem"
-          width="180"
+          width="120"
           align="center"
         />
         <el-table-column
           label="挂靠商"
           prop="affiliatesName"
-          width="180"
+          width="120"
           align="center"
         />
         <el-table-column
           label="办事处"
           prop="agencyName"
-          width="180"
+          width="120"
           align="center"
         />
         <el-table-column
           label="渠道商"
           prop="channelName"
-          width="180"
+          width="120"
           align="center"
         />
         <el-table-column
           label="创建人"
           prop="creatorName"
-          width="150"
+          width="120"
           align="center"
         />
         <el-table-column
           label="创建时间"
           prop="createTime"
-          width="180"
+          width="160"
           align="center"
         />
 
         <el-table-column
           label="归档状态"
           prop="archivalStatus"
-          width="150"
+          width="110"
           align="center"
         >
           <template #default="scope">
@@ -436,11 +447,11 @@
         <el-table-column
           label="归档时间"
           prop="archivalDate"
-          width="180"
+          width="160"
           align="center"
         />
 
-        <el-table-column label="操作" fixed="right" width="150" align="center">
+        <el-table-column label="操作" fixed="right" width="120" align="center">
           <template #default="scope">
             <template v-if="scope.row.fileCode">
               <el-button
@@ -910,12 +921,12 @@ onMounted(() => {
   width: 100%;
 }
 .scan-search-bar {
-  padding: 10px;
+  padding: 6px 10px;
   width: 90%;
 }
 .search-btn {
   display: flex;
-  margin-top: 6%;
+  margin-top: 3%;
   padding: 20px 10px;
   height: 60px;
   flex-direction: column;
@@ -940,5 +951,14 @@ onMounted(() => {
 }
 .width-full {
   width: 100%;
+}
+:deep(.el-divider--horizontal) {
+  margin: 0 0 10px;
+}
+:deep(.el-form-item) {
+  margin-bottom: 12px;
+}
+:deep(.el-table .cell) {
+  padding: 3px 2px !important;
 }
 </style>

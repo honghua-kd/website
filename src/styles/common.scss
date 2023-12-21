@@ -63,7 +63,7 @@ html {
   }
 }
 .page-container {
-  padding: $base-main-padding;
+  padding: $base-main-padding !important;
   background-color: $base-color-white;
 }
 .table-page {
