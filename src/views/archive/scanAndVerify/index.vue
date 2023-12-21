@@ -830,7 +830,6 @@ const exportHandler = async () => {
 const reset = () => {
   const userStore = useUserStore()
   queryParams.pageNo = 1
-  queryParams.pageSize = 10
   queryParams.startVerifyTime = dayjs().startOf('day').toString() // 开始时间
   queryParams.endVerifyTime = dayjs().endOf('day').toString() // 结束时间
   queryParams.creatorName = userStore.userInfo?.staffName as string // 创建者姓名
