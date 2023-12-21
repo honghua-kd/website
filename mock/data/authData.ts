@@ -125,7 +125,7 @@ export default [
     ],
     elements: [],
     menuType: 5,
-    sort: 5,
+    sort: 101,
     menu: 'system'
   },
   {
@@ -161,7 +161,7 @@ export default [
     ],
     elements: [],
     menuType: 5,
-    sort: 4,
+    sort: 100,
     menu: 'downloadCenter'
   },
   {
@@ -277,5 +277,69 @@ export default [
     menuType: 5,
     sort: 3,
     menu: 'supplier'
+  },
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'docCheck',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'docCheckMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'checked',
+            sort: 2
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'checkedMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'templateConfig',
+            sort: 3
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'templateConfigMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'specialConfig',
+            sort: 4
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'specialConfigMenu'
+      }
+    ],
+    elements: [],
+    menuType: 5,
+    sort: 4,
+    menu: 'docManage'
   }
 ]
