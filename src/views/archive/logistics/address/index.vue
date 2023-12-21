@@ -9,20 +9,20 @@
       >
         <el-row :gutter="20">
           <el-col :span="6">
-            <el-form-item label="联系人名称:" prop="contractName">
+            <el-form-item label="联系人名称:" prop="userName">
               <el-input
-                v-model="queryParams.contractName"
+                v-model="queryParams.userName"
                 clearable
                 placeholder="请输入联系人名称"
               />
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="联系方式:" prop="contractWay">
+            <el-form-item label="联系电话:" prop="userPhone">
               <el-input
-                v-model="queryParams.contractWay"
+                v-model="queryParams.userPhone"
                 clearable
-                placeholder="请输入联系方式"
+                placeholder="请输入联系电话"
               />
             </el-form-item>
           </el-col>
@@ -53,19 +53,10 @@
         @selection-change="selectionChangeHandler"
         @header-click="sortChangeHandler"
       >
-        <el-table-column
-          type="selection"
-          width="55"
-          :selectable="selectableHandler"
-        />
-        <el-table-column
-          label="联系人名称"
-          prop="contractName"
-          align="center"
-        />
-        <el-table-column label="联系方式" prop="contractWay" align="center" />
-        <el-table-column label="地址" prop="address" align="center" />
-        <el-table-column label="邮箱" prop="email" align="center" />
+        <el-table-column label="联系人名称" prop="userName" align="center" />
+        <el-table-column label="联系电话" prop="userMail" align="center" />
+        <el-table-column label="地址" prop="userAddress" align="center" />
+        <el-table-column label="邮箱" prop="userMail" align="center" />
 
         <el-table-column label="操作" fixed="right" width="240" align="center">
           <template #default="scope">
@@ -73,7 +64,7 @@
               <el-button link type="primary" @click="editHandler(scope.row.id)">
                 编辑
               </el-button>
-              <el-button link type="danger" @click="delHandler([scope.row.id])">
+              <el-button link type="danger" @click="delHandler([scope.row])">
                 删除
               </el-button>
             </template>
@@ -108,26 +99,62 @@ import {
   Download,
   Check
 } from '@element-plus/icons-vue'
+import type { UsualAddressListItem } from '@/api'
+import { CommonAPI, ExpressAPI } from '@/api'
+const API = new ExpressAPI()
+const CommonApi = new CommonAPI()
 import EditForm from './EditForm.vue'
+const tableLoading = ref<boolean>(false)
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
 const queryFormRef = ref()
 const queryParams = reactive({
   pageNo: 1,
-  pageSize: 10
+  pageSize: 10,
+  userName: '',
+  userPhone: ''
 })
-const tableData = ref([
-  {
-    id: '111',
-    contractName: '曾锐祺',
-    contractWay: '13824513588',
-    address: '广州市番禺区市桥街大北路420号',
-    email: '123445@qq.com'
-  }
-])
-const editFormRef = ref()
-const editHandler = (id: string) => {
-  editFormRef.value.open(id)
+const tableData: Ref<UsualAddressListItem[]> = ref([])
+const reset = () => {
+  queryParams.pageNo = 1
+  queryParams.pageSize = 10
+  queryParams.userName = ''
+  queryParams.userPhone = ''
 }
+const editFormRef = ref()
+const editHandler = (row: string) => {
+  editFormRef.value.open(row)
+}
+
+const delHandler = (id: number) => {
+  ElMessageBox.confirm('确认要删除吗？', '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(() => {
+      // 调用删除接口
+      const params = {
+        id
+      }
+      API.delUsualAddress(params).then((res) => {
+        if (res && res.code === 200) {
+          ElMessage({
+            type: 'success',
+            message: '删除成功'
+          })
+          getList()
+        }
+      })
+    })
+    .catch((err: Error) => {
+      ElMessage({
+        type: 'error',
+        message: '删除失败'
+      })
+      throw err
+    })
+}
+
 const addHandler = () => {
   editFormRef.value.open()
 }
@@ -136,7 +163,22 @@ const addHandler = () => {
 const handleCurrentChange = (val: number) => {
   queryParams.pageNo = val
 }
-
+// 获取列表
+const getList = () => {
+  tableLoading.value = true
+  API.getUsualAddressList(queryParams)
+    .then((res) => {
+      tableLoading.value = false
+      if (res && res.code === 200) {
+        tableData.value = res?.data?.list || []
+        pageTotal.value = res?.data?.total || 0
+      }
+    })
+    .catch((err: Error) => {
+      tableLoading.value = false
+      console.log(err)
+    })
+}
 // 页面条数改变
 const handleSizeChange = (val: number) => {
   queryParams.pageSize = val
@@ -145,7 +187,13 @@ const handleSizeChange = (val: number) => {
 // 查询
 const searchHandler = () => {
   queryParams.pageNo = 1
+  getList()
 }
+const init = () => {
+  getList()
+}
+
+init()
 </script>
 
 <style lang="scss" scoped>

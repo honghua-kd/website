@@ -29,7 +29,7 @@ export class ExpressAPI {
     data: ExpressInfoCardListRequest
   ): Response<PageList<ExpressListItem>> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage/express/info/list`,
+      url: `${prefix}/admin-api/mortgage/express/info/list1`,
       method: 'post',
       data
     })
@@ -58,9 +58,7 @@ export class ExpressAPI {
   }
 
   // 查看邮寄信息详情
-  checkExpressInfo(
-    data: CheckExpressInfoRequest
-  ): Response<boolean | null | undefined> {
+  checkExpressInfo(data: CheckExpressInfoRequest): Response<ExpressListItem> {
     return this.request({
       url: `${prefix}/admin-api/mortgage/express/info/detail`,
       method: 'post',
@@ -92,7 +90,7 @@ export class ExpressAPI {
 
   // 获取物流信息详情
   getLogisticsInfo(
-    data: DelExpressInfoRequest
+    data: CheckExpressInfoRequest
   ): Response<boolean | null | undefined> {
     return this.request({
       url: `${prefix}/admin-api/mortgage/express/info/logistics/detail`,

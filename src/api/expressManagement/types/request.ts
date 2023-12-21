@@ -23,7 +23,7 @@ export interface ExpressInfoCardListRequest extends PageRequest {
   /**
    * 快递类型 寄送类型 0寄送 1接收
    */
-  expressType: number
+  expressType: number | string
 }
 
 export interface ExpressContentListRequest {
@@ -149,14 +149,14 @@ export interface DelExpressInfoRequest {
   /**
    * 快递单号
    */
-  express_no?: string
+  expressNo?: string[]
 }
 
 export interface ReceiveExpressInfoRequest {
   /**
    * 快递单号
    */
-  expressNo?: string[]
+  expressNos?: string[]
 }
 
 export interface UsualAddressListRequest {

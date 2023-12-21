@@ -20,13 +20,13 @@
           <el-col :span="6">
             <el-form-item label="快递公司:" prop="expressCompany">
               <el-select
-                v-model="queryParams.expressCompanyStatus"
+                v-model="queryParams.expressCompany"
                 style="width: 100%"
                 clearable
                 placeholder="请选择快递公司"
               >
                 <el-option
-                  v-for="(item, index) in archiveStatusOpts"
+                  v-for="(item, index) in expressCompanyOpts"
                   :key="index"
                   :label="item.label"
                   :value="item.value"
@@ -35,9 +35,9 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="登记时间:" prop="registerTime">
+            <el-form-item label="登记时间:" prop="createTime">
               <el-date-picker
-                v-model="queryParams.registerTime"
+                v-model="queryParams.createTime"
                 type="date"
                 :default-value="new Date()"
                 format="YYYY/MM/DD"
@@ -47,15 +47,15 @@
         </el-row>
         <el-row :gutter="20">
           <el-col :span="6">
-            <el-form-item label="寄送/接收:" prop="postOrReceive">
+            <el-form-item label="寄送/接收:" prop="expressType">
               <el-select
-                v-model="queryParams.postOrReceiveStatus"
+                v-model="queryParams.expressType"
                 style="width: 100%"
                 clearable
                 placeholder="请选择寄送/接收"
               >
                 <el-option
-                  v-for="(item, index) in postAndReceiveStatusOpts"
+                  v-for="(item, index) in expressTypeOpts"
                   :key="index"
                   :label="item.label"
                   :value="item.value"
@@ -66,13 +66,13 @@
           <el-col :span="6">
             <el-form-item label="快递内容:" prop="expressContent">
               <el-select
-                v-model="queryParams.expressContentStatus"
+                v-model="queryParams.expressContent"
                 style="width: 100%"
                 clearable
                 placeholder="请选择快递内容"
               >
                 <el-option
-                  v-for="(item, index) in expressContentStatusOpts"
+                  v-for="(item, index) in expressContentOpts"
                   :key="index"
                   :label="item.label"
                   :value="item.value"
@@ -81,9 +81,9 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="快递备注:" prop="expressNote">
+            <el-form-item label="快递备注:" prop="expressContentRemark">
               <el-input
-                v-model="queryParams.expressNote"
+                v-model="queryParams.expressContentRemark"
                 clearable
                 placeholder="请输入快递备注"
               />
@@ -105,11 +105,7 @@
         <el-button type="primary" :icon="Plus" @click="addHandler">
           添加
         </el-button>
-        <el-button
-          type="primary"
-          :icon="Check"
-          @click="achiveHandler(selectIds)"
-        >
+        <el-button type="primary" :icon="Check" @click="batchReceiveHandler()">
           批量接收
         </el-button>
         <el-button type="primary" :icon="Upload" @click="importHandler">
@@ -126,17 +122,14 @@
         :data="tableData"
         :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
         border
+        show-overflow-tooltip
         v-loading="tableLoading"
         row-key="id"
         :tree-props="{ children: 'target' }"
         @selection-change="selectionChangeHandler"
         @header-click="sortChangeHandler"
       >
-        <el-table-column
-          type="selection"
-          width="55"
-          :selectable="selectableHandler"
-        />
+        <el-table-column type="selection" width="55" />
         <el-table-column
           label="快递状态"
           prop="expressStatus"
@@ -157,67 +150,59 @@
         />
         <el-table-column
           label="寄送/接收"
-          prop="postOrReceive"
+          prop="expressType"
           width="180"
           align="center"
         />
         <el-table-column
           label="寄送日期"
-          prop="postTime"
+          prop="sendTime"
           width="180"
           align="center"
-        >
-          <template #default="scope">
-            {{ formatDate(scope.row.postTime, '') }}
-          </template>
-        </el-table-column>
+        />
         <el-table-column
           label="收件日期"
           prop="receiveTime"
           width="180"
           align="center"
+        />
+        <el-table-column
+          label="快递主要内容"
+          prop="expressContentList"
+          width="180"
+          align="center"
         >
           <template #default="scope">
-            {{ formatDate(scope.row.receiveTime, '') }}
+            {{ getContentList(scope.row.expressContentList) }}
           </template>
         </el-table-column>
         <el-table-column
-          label="快递主要内容"
-          prop="expressContent"
-          width="180"
-          align="center"
-        />
-        <el-table-column
           label="内容备注"
-          prop="contentRemark"
+          prop="expressContentRemark"
           width="180"
           align="center"
         />
         <el-table-column
           label="寄送人"
-          prop="sender"
+          prop="sendUser"
           width="180"
           align="center"
         />
         <el-table-column
           label="收件人"
-          prop="recipient"
+          prop="receiveUser"
           width="180"
           align="center"
         />
         <el-table-column
           label="登记时间"
-          prop="registerTime"
+          prop="createTime"
           width="180"
           align="center"
-        >
-          <template #default="scope">
-            {{ formatDate(scope.row.registerTime, 'YYYY-MM-DD') }}
-          </template>
-        </el-table-column>
+        />
         <el-table-column
           label="登记人"
-          prop="registrant"
+          prop="creator"
           width="180"
           align="center"
         />
@@ -226,11 +211,7 @@
           prop="updateTime"
           width="180"
           align="center"
-        >
-          <template #default="scope">
-            {{ formatDate(scope.row.updateTime, '') }}
-          </template>
-        </el-table-column>
+        />
         <el-table-column
           label="更新人"
           prop="updater"
@@ -242,24 +223,28 @@
           <template #default="scope">
             <template v-if="scope.row.id">
               <el-button
-                v-if="scope.row.postOrReceive == '寄送'"
+                v-if="scope.row.expressType == 0"
                 link
                 type="primary"
-                @click="logisticsInfo(scope.row.id)"
+                @click="logisticsInfo(scope.row.expressNo)"
               >
                 物流信息
               </el-button>
               <el-button
                 link
                 type="primary"
-                @click="checkHandler(scope.row.id)"
+                @click="checkHandler(scope.row.expressNo)"
               >
                 查看
               </el-button>
-              <el-button link type="primary" @click="editHandler(scope.row.id)">
+              <el-button link type="primary" @click="editHandler(scope.row)">
                 编辑
               </el-button>
-              <el-button link type="danger" @click="delHandler([scope.row.id])">
+              <el-button
+                link
+                type="danger"
+                @click="delHandler([scope.row.expressNo])"
+              >
                 删除
               </el-button>
             </template>
@@ -288,6 +273,7 @@
 <script lang="ts" setup>
 import { ref, reactive, Ref, computed, onMounted } from 'vue'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
+import { CommonAPI, ExpressAPI } from '@/api'
 import {
   ArrowDownBold,
   ArrowUpBold,
@@ -303,61 +289,92 @@ import CheckForm from './CheckForm.vue'
 import ImportForm from './ImportForm.vue'
 import type {
   PageRequest,
-  DateRangeRequest,
-  SortParamsRequest,
-  CardListItem,
-  DictItem
+  ExpressInfoCardListRequest,
+  DictItem,
+  ExpressListItem,
+  ExpressContentList
 } from '@/api'
-import { formatDate } from '@/utils'
-import dayjs from 'dayjs'
+type QueryParams = ExpressInfoCardListRequest & PageRequest
+const API = new ExpressAPI()
+const CommonApi = new CommonAPI()
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
 const dialogTitle = ref<string>('')
+const tableLoading = ref<boolean>(false)
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
-const queryParams = reactive({
+const queryParams = reactive<QueryParams>({
   pageNo: 1,
   pageSize: 10,
   expressNo: '',
-  expressCompanyStatus: '',
-  registerTime: dayjs().startOf('day').toDate(),
-  postOrReceiveStatus: '',
-  expressContentStatus: '',
-  expressNote: ''
+  expressCompany: '',
+  createTime: '',
+  expressType: '',
+  expressContent: '',
+  expressContentRemark: ''
 })
-const tableData = ref([
-  {
-    id: '111',
-    expressStatus: '已接收',
-    expressNo: 'SF1685550901301',
-    expressCompany: '顺丰',
-    postOrReceive: '寄送',
-    postTime: '1702605614729',
-    receiveTime: '1702605614729',
-    expressContent: '登记证、发票',
-    contentRemark: 'KCG23112983',
-    sender: '王五',
-    recipient: '王五',
-    registerTime: '1702605614729',
-    registrant: '王五',
-    updateTime: '1702605614729',
-    updater: '王五'
-  }
-])
+const tableData: Ref<ExpressListItem[]> = ref([])
+const selectData: Ref<ExpressListItem[]> = ref([])
+const getContentList = (value: ExpressContentList[]) => {
+  let list = ''
+  value.forEach((item) => {
+    list += item.contentType
+  })
+  return list
+}
 
 // 查询
 const searchHandler = () => {
   queryParams.pageNo = 1
+  getList()
 }
 // 重置
-const reset = () => {}
-
+const reset = () => {
+  queryParams.pageNo = 1
+  queryParams.pageSize = 10
+  queryParams.expressNo = ''
+  queryParams.expressCompany = ''
+  queryParams.createTime = ''
+  queryParams.expressType = ''
+  queryParams.expressContent = ''
+  queryParams.expressContentRemark = ''
+}
+// 获取列表
+const getList = () => {
+  tableLoading.value = true
+  API.getExpressInfoCardList(queryParams)
+    .then((res) => {
+      tableLoading.value = false
+      if (res && res.code === 200) {
+        tableData.value = res?.data?.list || []
+        pageTotal.value = res?.data?.total || 0
+      }
+    })
+    .catch((err: Error) => {
+      tableLoading.value = false
+      console.log(err)
+    })
+}
+// 选择的数据
+const selectionChangeHandler = (item: ExpressListItem[]) => {
+  selectData.value.splice(0, selectData.value.length)
+  selectData.value.push(...item)
+}
+const selectIds = computed(() => {
+  const ids: string[] = []
+  selectData.value.forEach((item) => {
+    if (item.id) {
+      ids.push(item.expressNo)
+    }
+  })
+  return ids
+})
 const logisticsInfoFormRef = ref()
 const logisticsInfo = (id: string) => {
   logisticsInfoFormRef.value.open(id)
 }
 const editFormRef = ref()
-const editHandler = (id: string) => {
+const editHandler = (row: string) => {
   dialogTitle.value = '编辑邮寄信息'
-  editFormRef.value.open(id)
+  editFormRef.value.open(row)
 }
 const addHandler = () => {
   dialogTitle.value = '新增邮寄信息'
@@ -367,19 +384,124 @@ const checkFormRef = ref()
 const checkHandler = (id: string) => {
   checkFormRef.value.open(id)
 }
-
-const achiveHandler = (ids: string[]) => {}
+// 批量接收
+const batchReceiveHandler = () => {
+  if (!selectIds.value.length) {
+    ElMessage({
+      type: 'error',
+      message: '请选择要批量接收的内容'
+    })
+    return
+  }
+  // 二次确认
+  ElMessageBox.confirm('确认要批量接收吗？', '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(() => {
+      const params = {
+        expressNos: selectIds.value
+      }
+      API.batchReceiveExpressInfo(params)
+        .then((res) => {
+          if (res && res.code === 200) {
+            ElMessage({
+              type: 'success',
+              message: '操作成功'
+            })
+            getList()
+            selectData.value.splice(0, selectData.value.length)
+          }
+        })
+        .catch((err: Error) => {
+          throw err
+        })
+    })
+    .catch((err: Error) => {
+      ElMessage({
+        type: 'error',
+        message: '操作失败'
+      })
+      throw err
+    })
+}
 const importFormRef = ref()
 const importHandler = () => {
   importFormRef.value.open()
 }
 const exportHandler = () => {}
-const delHandler = (ids: string[]) => {}
+
+// 删除
+const delHandler = (ids: string[]) => {
+  if (!ids.length) {
+    ElMessage({
+      type: 'error',
+      message: '请选择要删除的内容'
+    })
+    return
+  }
+  // 二次确认
+  ElMessageBox.confirm('确认要删除吗？', '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(() => {
+      // 调用删除接口
+      const params = {
+        expressNo: ids
+      }
+      API.delExpressInfo(params).then((res) => {
+        if (res && res.code === 200) {
+          ElMessage({
+            type: 'success',
+            message: '删除成功'
+          })
+          getList()
+        }
+      })
+    })
+    .catch((err: Error) => {
+      ElMessage({
+        type: 'error',
+        message: '删除失败'
+      })
+      throw err
+    })
+}
 
 // 页面条数改变
 const handleSizeChange = (val: number) => {
   queryParams.pageSize = val
 }
+
+// 批量获取数据字典
+const expressCompanyOpts: Ref<DictItem[]> = ref([])
+const expressTypeOpts: Ref<DictItem[]> = ref([])
+const getDicts = () => {
+  const dictTypes = []
+  const params = {
+    dictTypes
+  }
+  CommonApi.getDictsList(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        expressCompanyOpts.value = res?.data?.ARCHIVE_STATUS as DictItem[]
+        expressTypeOpts.value = res?.data?.OCR_STATUS as DictItem[]
+      }
+    })
+    .catch((err: Error) => {
+      throw err
+    })
+}
+
+const init = () => {
+  getList()
+  getDicts()
+}
+
+init()
 </script>
 
 <style lang="scss" scoped>

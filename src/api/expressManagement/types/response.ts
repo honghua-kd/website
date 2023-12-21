@@ -30,15 +30,15 @@ export interface ExpressListItem {
   /**
    * 快递公司
    */
-  express_company?: string
+  expressCompany?: string
   /**
    * 快递单号
    */
-  express_no?: string
+  expressNo?: string
   /**
    * 快递状态 0未接收 1已接收 2问题件
    */
-  express_status?: number
+  expressStatus?: number
   /**
    * 快递内容
    */

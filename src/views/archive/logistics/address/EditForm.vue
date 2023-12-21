@@ -23,11 +23,11 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="联系人方式:" prop="contractWay">
+            <el-form-item label="联系人电话:" prop="contractWay">
               <el-input
                 v-model="basicInfoForm.contractWay"
                 clearable
-                placeholder="请输入联系人方式"
+                placeholder="请输入联系人电话"
               />
             </el-form-item>
           </el-col>

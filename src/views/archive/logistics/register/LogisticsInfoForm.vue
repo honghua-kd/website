@@ -23,17 +23,37 @@
 </template>
 
 <script setup lang="ts">
+import { ElMessage } from 'element-plus'
 import { logisticsRoutes } from './logisticsRoutes'
-import { MoreFilled } from '@element-plus/icons-vue'
-
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ExpressAPI } from '@/api'
+const API = new ExpressAPI()
+import { ref } from 'vue'
 const dialogTitle = ref<string>('物流信息')
 const dialogVisible = ref<boolean>(false)
 const routes = logisticsRoutes.reverse()
 
+const getLogisticsInfo = (id: string) => {
+  const params = {
+    expressNo: id
+  }
+  API.getLogisticsInfo(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        ElMessage({
+          type: 'success',
+          message: '操作成功'
+        })
+      }
+    })
+    .catch((err: Error) => {
+      throw err
+    })
+}
+
 /** 打开弹窗 */
-const open = () => {
+const open = async (id: string) => {
   dialogVisible.value = true
+  await getLogisticsInfo(id)
 }
 defineExpose({ open })
 </script>
