@@ -453,9 +453,8 @@ const getCardInfo = (id: string) => {
 }
 
 // 监听 抵解押切换
-type SelectType = Pick<MortgageeItem, 'mortgagee'>
-const mortChangeHandler = (selectItem: SelectType) => {
-  const filterCell = mortgageeOpts.value.filter((item: MortgageeItem) => {
+const mortChangeHandler = (selectItem: string) => {
+  const filterCell = mortgageeOpts.value.filter((item) => {
     return item.mortgagee === selectItem
   })
   formParamsRequest.mortgageeUscc =
