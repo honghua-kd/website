@@ -37,3 +37,38 @@ export interface FileDownload {
   data: string | ArrayBuffer | ArrayBufferView | Blob
   headers: FileHeader
 }
+
+export interface RecordList {
+  /**
+   * 批次号
+   */
+  batchNo: string
+  /**
+   * 上传时间
+   */
+  createTime: string
+  /**
+   * 上传人
+   */
+  creatorName: string
+  /**
+   * 文件code
+   */
+  fileCode: string
+  /**
+   * 文件名
+   */
+  fileName: string
+  /**
+   * 导入类型
+   */
+  importType: string
+  /**
+   * 说明（失败原因+下载地址）
+   */
+  msg: null | string
+  /**
+   * 处理状态（0待处理，1成功，2失败，3处理中）
+   */
+  status: number
+}

@@ -103,6 +103,7 @@
                     placeholder="请输入寄件人名称"
                     @select="handleSelect"
                     :debounce="500"
+                    @change="handleChange"
                   />
                 </el-form-item>
               </el-col>
@@ -287,11 +288,17 @@
                   <el-button
                     link
                     type="primary"
-                    @click="editExpressHandler(scope.row)"
+                    @click="editExpressHandler(scope.row.id)"
                   >
                     编辑
                   </el-button>
-                  <el-button link type="danger"> 删除 </el-button>
+                  <el-button
+                    link
+                    type="danger"
+                    @click="delExpressHandler(scope.row.id)"
+                  >
+                    删除
+                  </el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -411,6 +418,9 @@ import type {
   ExpressContentList
 } from '@/api'
 import { ref, reactive, Ref, watch, onMounted } from 'vue'
+import { CommonAPI, ExpressAPI } from '@/api'
+const API = new ExpressAPI()
+const CommonApi = new CommonAPI()
 const dialogExpressTitle = ref<string>('')
 const dialogVisible = ref<boolean>(false)
 const disFlag = ref<boolean>(false)
@@ -422,11 +432,6 @@ defineProps({
 })
 let basicInfoForm = reactive<ExpressListItem>({})
 const commonContracts = ref([])
-const loadAll = ref([
-  { name: '曾三', number: '13724513588', address: '桥街大北路420号' },
-  { name: '曾四', number: '13824513588', address: '桥街大北路421号' },
-  { name: '张三', number: '13924513588', address: '桥街大北路422号' }
-])
 
 const queryContractsSearch = (queryString: string, cb: any) => {
   const results = queryString
@@ -440,14 +445,32 @@ const createFilter = (queryString: string) => {
   }
 }
 const handleSelect = (item) => {
-  basicInfoForm.sendUser = item.name
-  basicInfoForm.sendPhone = item.number
-  basicInfoForm.sendAddress = item.address
+  basicInfoForm.sendUser = item.userName
+  basicInfoForm.sendPhone = item.userPhone
+  basicInfoForm.sendAddress = item.userAddress
+}
+const handleChange = () => {
+  const params = {
+    userName: basicInfoForm.sendUser,
+    userPhone: basicInfoForm.sendPhone
+  }
+  API.getUsualAddressList(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        commonContracts.value = res?.data?.list || []
+        commonContracts.value.forEach((item) => {
+          item.value = '常用联系-' + item.userName + '-' + item.userPhone
+        })
+      }
+    })
+    .catch((err: Error) => {
+      console.log(err)
+    })
 }
 
 // 新增编辑快递内容弹窗
 const editExpressFormRef = ref()
-const editExpressHandler = (row: string) => {
+const editExpressHandler = (id: string) => {
   dialogExpressTitle.value = '编辑快递内容'
   editExpressFormRef.value.open(row)
 }
@@ -456,12 +479,10 @@ const addExpressHandler = () => {
   editExpressFormRef.value.open()
 }
 
-onMounted(() => {
-  commonContracts.value = JSON.parse(JSON.stringify(loadAll.value))
-  commonContracts.value.forEach((item) => {
-    item.value = '常用联系-' + item.name + '-' + item.number
-  })
-})
+// 删除快递内容
+const delExpressHandler = (id: string) => {
+  
+}
 
 /** 打开弹窗 */
 const open = async (row: string) => {

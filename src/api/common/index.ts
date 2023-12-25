@@ -1,8 +1,17 @@
 import { useRequest } from '@toystory/lotso'
 import requestConfig from '@/config/request.config'
 import type { Response } from '../types/response'
-import type { FilePreviewUrlRequest } from './types/request'
-import type { UploadFile, FilePreviewList, DictList } from './types/response'
+import type {
+  FilePreviewUrlRequest,
+  ExportAssetStageResultRequest,
+  RecordRequest
+} from './types/request'
+import type {
+  UploadFile,
+  FilePreviewList,
+  DictList,
+  RecordList
+} from './types/response'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
 import type { DictsRequest } from '../types/request'
@@ -45,6 +54,49 @@ export class CommonAPI {
   getDictsList(data: DictsRequest): Response<DictList> {
     return this.request({
       url: `${prefix}/admin-api/system/dict-data/batchList`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 文件导入结果下载
+  getExportAssetStageResult(
+    data: ExportAssetStageResultRequest
+  ): Response<DictList> {
+    return this.request({
+      url: `${prefix}/admin-api/import/file/exportAssetStageResult`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 根据文件名下载指定模板文件
+  getDownLoadTemplate(
+    data: Omit<ExportAssetStageResultRequest, 'batchNo'>
+  ): Response<DictList> {
+    return this.request({
+      url: `${prefix}/admin-api/import/file/downloadTemplate`,
+      method: 'post',
+      responseType: 'blob',
+      data
+    })
+  }
+
+  // 异步导入记录查询
+  getAsyncImportRecord(data: RecordRequest): Response<RecordList> {
+    return this.request({
+      url: `${prefix}/admin-api/import/file/record/page`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 异步导出记录查询
+  getAsyncExportRecord(
+    data: RecordRequest
+  ): Response<Omit<RecordList, 'batchNo' | 'msg'>> {
+    return this.request({
+      url: `${prefix}/admin-api/export/file/record/page`,
       method: 'post',
       data
     })

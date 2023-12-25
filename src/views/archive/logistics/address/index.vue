@@ -169,7 +169,11 @@ const handleCurrentChange = (val: number) => {
 // 获取列表
 const getList = () => {
   tableLoading.value = true
-  API.getUsualAddressList(queryParams)
+  const params = {
+    userName: queryParams.userName,
+    userPhone: queryParams.userPhone
+  }
+  API.getUsualAddressList(params)
     .then((res) => {
       tableLoading.value = false
       if (res && res.code === 200) {

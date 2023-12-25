@@ -321,7 +321,7 @@ const selectData: Ref<ExpressListItem[]> = ref([])
 const getContentList = (value: ExpressContentList[]) => {
   let list = ''
   value.forEach((item) => {
-    list += item.contentType
+    list += item.contentType + ' '
   })
   return list
 }
