@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-dialog
-      :title="dialogTitle"
+      :title="title"
       v-model="dialogVisible"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
@@ -68,8 +68,12 @@ import { ref, reactive, computed } from 'vue'
 import { UploadFilled, Delete, ZoomIn } from '@element-plus/icons-vue'
 import { ElMessage, ElForm } from 'element-plus'
 import type { UploadFile, UploadRawFile } from 'element-plus'
-
-const dialogTitle = ref<string>('联系人信息')
+defineProps({
+  title: {
+    type: String,
+    default: ''
+  }
+})
 const dialogVisible = ref<boolean>(false)
 const basicInfoForm = reactive({})
 /** 打开弹窗 */

@@ -40,7 +40,8 @@
                 v-model="queryParams.createTime"
                 type="date"
                 :default-value="new Date()"
-                format="YYYY/MM/DD"
+                format="YYYY-MM-DD"
+                value-format="YYYY-MM-DD"
               />
             </el-form-item>
           </el-col>
@@ -105,7 +106,7 @@
         <el-button type="primary" :icon="Plus" @click="addHandler">
           添加
         </el-button>
-        <el-button type="primary" :icon="Check" @click="batchReceiveHandler()">
+        <el-button type="primary" :icon="Check" @click="batchReceiveHandler">
           批量接收
         </el-button>
         <el-button type="primary" :icon="Upload" @click="importHandler">
@@ -116,6 +117,9 @@
         </el-button>
         <el-button type="primary" :icon="Delete" @click="delHandler(selectIds)">
           删除
+        </el-button>
+        <el-button type="primary" :icon="Search" @click="importResultHandler">
+          导入结果查询
         </el-button>
       </el-row>
       <el-table
@@ -281,7 +285,8 @@ import {
   Delete,
   Upload,
   Download,
-  Check
+  Check,
+  Search
 } from '@element-plus/icons-vue'
 import EditForm from './EditForm.vue'
 import LogisticsInfoForm from './LogisticsInfoForm.vue'
@@ -469,6 +474,17 @@ const delHandler = (ids: string[]) => {
       })
       throw err
     })
+}
+
+// 导入结果查询
+const importResultHandler = () => {
+  
+}
+
+// 分页
+const handleCurrentChange = (val: number) => {
+  queryParams.pageNo = val
+  getList()
 }
 
 // 页面条数改变

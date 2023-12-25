@@ -83,7 +83,7 @@
         @current-change="handleCurrentChange"
       />
     </div>
-    <EditForm ref="editFormRef" />
+    <EditForm ref="editFormRef" :title="dialogTitle" />
   </div>
 </template>
 
@@ -105,6 +105,7 @@ const API = new ExpressAPI()
 const CommonApi = new CommonAPI()
 import EditForm from './EditForm.vue'
 const tableLoading = ref<boolean>(false)
+const dialogTitle = ref<string>('')
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
 const queryFormRef = ref()
 const queryParams = reactive({
@@ -122,6 +123,7 @@ const reset = () => {
 }
 const editFormRef = ref()
 const editHandler = (row: string) => {
+  dialogTitle.value = '编辑联系人信息'
   editFormRef.value.open(row)
 }
 
@@ -156,6 +158,7 @@ const delHandler = (id: number) => {
 }
 
 const addHandler = () => {
+  dialogTitle.value = '新增联系人信息'
   editFormRef.value.open()
 }
 

@@ -176,7 +176,18 @@ export class ExpressAPI {
     })
   }
 
-  // 附件下载
+  // 快递内容导入
+  importExpressContent(
+    data: CheckExpressInfoRequest
+  ): Response<boolean | null | undefined> {
+    return this.request({
+      url: `${prefix}/admin-api/mortgage/express/info/content/import`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 其他附件下载
   downLoadOtherFile(
     data: DelExpressInfoRequest
   ): Response<boolean | null | undefined> {
