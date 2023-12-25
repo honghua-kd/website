@@ -453,7 +453,7 @@ const getCardInfo = (id: string) => {
 }
 
 // 监听 抵解押切换
-const mortChangeHandler = (selectItem) => {
+const mortChangeHandler = (selectItem: string) => {
   const filterCell = mortgageeOpts.value.filter((item) => {
     return item.mortgagee === selectItem
   })
