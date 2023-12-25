@@ -288,7 +288,7 @@
                   <el-button
                     link
                     type="primary"
-                    @click="editExpressHandler(scope.row.id)"
+                    @click="editExpressHandler(scope.row)"
                   >
                     编辑
                   </el-button>
@@ -395,7 +395,11 @@
         关 闭
       </el-button>
     </template>
-    <EditExpressForm ref="editExpressFormRef" :title="dialogExpressTitle" />
+    <EditExpressForm
+      ref="editExpressFormRef"
+      :title="dialogExpressTitle"
+      @editcontent="updateExpressHandler"
+    />
   </el-dialog>
 </template>
 
@@ -417,6 +421,7 @@ import type {
   ExpressListItem,
   ExpressContentList
 } from '@/api'
+import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import { ref, reactive, Ref, watch, onMounted } from 'vue'
 import { CommonAPI, ExpressAPI } from '@/api'
 const API = new ExpressAPI()
@@ -470,7 +475,7 @@ const handleChange = () => {
 
 // 新增编辑快递内容弹窗
 const editExpressFormRef = ref()
-const editExpressHandler = (id: string) => {
+const editExpressHandler = (row: string) => {
   dialogExpressTitle.value = '编辑快递内容'
   editExpressFormRef.value.open(row)
 }
@@ -481,7 +486,32 @@ const addExpressHandler = () => {
 
 // 删除快递内容
 const delExpressHandler = (id: string) => {
-  
+  ElMessageBox.confirm('确认要删除吗？', '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(() => {
+      const index = basicInfoForm.expressContentList.findIndex(
+        (item) => item.id === id
+      )
+      if (index !== -1) {
+        basicInfoForm.expressContentList.splice(index, 1)
+      }
+    })
+    .catch((err: Error) => {
+      ElMessage({
+        type: 'error',
+        message: '删除失败'
+      })
+      throw err
+    })
+}
+
+const updateExpressHandler = (val) => {
+  if (val) {
+    basicInfoForm.expressContentList.push(val)
+  }
 }
 
 /** 打开弹窗 */
