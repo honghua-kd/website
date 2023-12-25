@@ -165,6 +165,7 @@
                   v-model="formParamsRequest.mortgagee"
                   class="width-full"
                   clearable
+                  @change="mortChangeHandler"
                 >
                   <el-option
                     v-for="(item, index) in mortgageeOpts"
@@ -250,7 +251,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, Ref, watch } from 'vue'
+import { ref, reactive, Ref } from 'vue'
 import type { ModifiyInfo, FormOrigin, MortgageeItem, CardCell } from '@/api'
 import { MortageAPI } from '@/api'
 import { ElMessage } from 'element-plus'
@@ -452,20 +453,13 @@ const getCardInfo = (id: string) => {
 }
 
 // 监听 抵解押切换
-watch(
-  () => formParamsRequest.mortgagee,
-  () => {
-    const filterCell = mortgageeOpts.value.filter((item) => {
-      return item.mortgagee === formParamsRequest.mortgagee
-    })
-    formParamsRequest.mortgageeUscc =
-      filterCell && filterCell[0]?.unifiedSocialCreditCode
-  },
-  {
-    immediate: true,
-    deep: true
-  }
-)
+const mortChangeHandler = (selectItem) => {
+  const filterCell = mortgageeOpts.value.filter((item) => {
+    return item.mortgagee === selectItem
+  })
+  formParamsRequest.mortgageeUscc =
+    filterCell && filterCell[0]?.unifiedSocialCreditCode
+}
 </script>
 
 <style lang="scss" scoped>
