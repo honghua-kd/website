@@ -32,18 +32,46 @@ export const express = [
                 {
                   id: '111',
                   contentNo: 'SF1685550901301-001',
-                  contentType: 'string',
+                  contentType: '抵押材料',
                   contentTypeNumber: '7897979790',
                   contractNo: 'KCG23117833'
                 },
                 {
                   id: '222',
                   contentNo: 'SF1685550901301-002',
-                  contentType: 'string',
+                  contentType: '解压材料',
                   contentTypeNumber: '7897979790',
                   contractNo: 'KCG23117833'
                 }
               ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    url: `${VITE_API}/admin-api/mortgage/usual/address/list1`,
+    method: 'post',
+    response: () => {
+      return {
+        code: 200,
+        msg: '操作成功',
+        data: {
+          pageNo: 1,
+          pageSize: 10,
+          total: 1,
+          totalPage: 1,
+          list: [
+            {
+              id: '111',
+              userName: '曾三',
+              userPhone: '18888888888',
+              userMail: '123445@qq.com',
+              userAddress: '广州市番禺区市桥街大北路420号',
+              province: '广东省',
+              city: '广州市',
+              area: '番禺区'
             }
           ]
         }

@@ -101,7 +101,7 @@ export class ExpressAPI {
 
   // 快递内容编号自动生成
   getExpressContentNo(
-    data: DelExpressInfoRequest
+    data: CheckExpressInfoRequest
   ): Response<boolean | null | undefined> {
     return this.request({
       url: `${prefix}/admin-api/mortgage/express/info/content/number/auto`,
@@ -115,7 +115,7 @@ export class ExpressAPI {
     data: UsualAddressListRequest
   ): Response<PageList<UsualAddressListItem>> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage/usual/address/list`,
+      url: `${prefix}/admin-api/mortgage/usual/address/list1`,
       method: 'post',
       data
     })

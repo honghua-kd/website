@@ -39,10 +39,10 @@
                 v-for="(item, index) in expressCompanyOpts"
                 :key="index"
                 :label="item.label"
-                :value="item.value"
+                :value="item.label"
               />
             </el-select>
-            <el-form-item prop="expressNo">
+            <el-form-item v-if="expressCompanyFlag" prop="expressNo">
               <el-input
                 v-model="basicInfoForm.expressCompanyOther"
                 clearable
@@ -54,7 +54,7 @@
         <el-col :span="5">
           <el-form-item
             label="寄送/接收:"
-            prop="postOrReceive"
+            prop="expressType"
             :rules="[{ required: true }]"
           >
             <el-select
@@ -73,12 +73,24 @@
           </el-form-item>
         </el-col>
         <el-col :span="5">
-          <el-form-item label="收件日期:" prop="receiveTime">
+          <el-form-item
+            v-if="expressStatusFlag"
+            label="收件日期:"
+            prop="receiveTime"
+          >
             <el-date-picker
               v-model="basicInfoForm.receiveTime"
               type="date"
               :default-value="new Date()"
-              format="YYYY/MM/DD"
+              format="YYYY-MM-DD"
+            />
+          </el-form-item>
+          <el-form-item v-else label="寄件日期:" prop="sendTime">
+            <el-date-picker
+              v-model="basicInfoForm.sendTime"
+              type="date"
+              :default-value="new Date()"
+              format="YYYY-MM-DD"
             />
           </el-form-item>
         </el-col>
@@ -295,7 +307,7 @@
                   <el-button
                     link
                     type="danger"
-                    @click="delExpressHandler(scope.row.id)"
+                    @click="delExpressHandler(scope.row.contentNo)"
                   >
                     删除
                   </el-button>
@@ -422,7 +434,8 @@ import type {
   ExpressContentList
 } from '@/api'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
-import { ref, reactive, Ref, watch, onMounted } from 'vue'
+import { ref, reactive, Ref, watch, onMounted, onActivated } from 'vue'
+import { EXPRESS_STATUS, EXPRESS_TYPE } from '@/constants'
 import { CommonAPI, ExpressAPI } from '@/api'
 const API = new ExpressAPI()
 const CommonApi = new CommonAPI()
@@ -435,7 +448,29 @@ defineProps({
     default: ''
   }
 })
-let basicInfoForm = reactive<ExpressListItem>({})
+const basicInfoForm = reactive<ExpressListItem>({
+  id: '',
+  expressNo: '',
+  expressCompany: '',
+  expressStatus: 0,
+  expressType: 0,
+  sendTime: '',
+  receiveTime: '',
+  sendUser: '',
+  sendPhone: '',
+  sendAddress: '',
+  receivePhone: '',
+  receiveAddress: '',
+  expressStatusRemark: '',
+  receiveUser: '',
+  expressContentRemark: '',
+  creator: '',
+  createTime: '',
+  updater: '',
+  updateTime: '',
+  expressContentList: [],
+  otherFileList: []
+})
 const commonContracts = ref([])
 
 const queryContractsSearch = (queryString: string, cb: any) => {
@@ -475,17 +510,17 @@ const handleChange = () => {
 
 // 新增编辑快递内容弹窗
 const editExpressFormRef = ref()
-const editExpressHandler = (row: string) => {
+const editExpressHandler = (row: ExpressContentList) => {
   dialogExpressTitle.value = '编辑快递内容'
   editExpressFormRef.value.open(row)
 }
 const addExpressHandler = () => {
   dialogExpressTitle.value = '新增快递内容'
-  editExpressFormRef.value.open()
+  editExpressFormRef.value.open(basicInfoForm.expressNo)
 }
 
 // 删除快递内容
-const delExpressHandler = (id: string) => {
+const delExpressHandler = (contentNo: string) => {
   ElMessageBox.confirm('确认要删除吗？', '警告', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
@@ -493,7 +528,7 @@ const delExpressHandler = (id: string) => {
   })
     .then(() => {
       const index = basicInfoForm.expressContentList.findIndex(
-        (item) => item.id === id
+        (item) => item.contentNo === contentNo
       )
       if (index !== -1) {
         basicInfoForm.expressContentList.splice(index, 1)
@@ -508,25 +543,118 @@ const delExpressHandler = (id: string) => {
     })
 }
 
-const updateExpressHandler = (val) => {
+const updateExpressHandler = (val: ExpressContentList) => {
   if (val) {
-    basicInfoForm.expressContentList.push(val)
+    const index = basicInfoForm.expressContentList.findIndex(
+      (item) => item.contentNo === val.contentNo
+    )
+    if (index !== -1) {
+      basicInfoForm.expressContentList.splice(index, 1, val)
+    } else {
+      basicInfoForm.expressContentList.push(val)
+    }
   }
 }
 
 /** 打开弹窗 */
 const open = async (row: string) => {
   dialogVisible.value = true
-  console.error(row)
+  getDicts()
+  init(row)
+}
+const init = (row) => {
   if (row) {
     disFlag.value = true
-    basicInfoForm = row
+    const data = JSON.parse(JSON.stringify(row))
+    basicInfoForm.id = data.id
+    basicInfoForm.expressNo = data.expressNo
+    basicInfoForm.expressCompany = data.expressCompany
+    basicInfoForm.expressStatus = data.expressStatus
+    basicInfoForm.expressType = data.expressType
+    basicInfoForm.sendTime = data.sendTime
+    basicInfoForm.receiveTime = data.receiveTime
+    basicInfoForm.sendUser = data.sendUser
+    basicInfoForm.sendPhone = data.sendPhone
+    basicInfoForm.sendAddress = data.sendAddress
+    basicInfoForm.receivePhone = data.receivePhone
+    basicInfoForm.receiveAddress = data.receiveAddress
+    basicInfoForm.expressStatusRemark = data.expressStatusRemark
+    basicInfoForm.receiveUser = data.receiveUser
+    basicInfoForm.expressContentRemark = data.expressContentRemark
+    basicInfoForm.creator = data.creator
+    basicInfoForm.createTime = data.createTime
+    basicInfoForm.updater = data.updater
+    basicInfoForm.updateTime = data.updateTime
+    basicInfoForm.expressContentList = data.expressContentList
+    basicInfoForm.otherFileList = data.otherFileList
   } else {
     disFlag.value = false
+    basicInfoForm.id = ''
+    basicInfoForm.expressNo = ''
+    basicInfoForm.expressCompany = ''
+    basicInfoForm.expressStatus = 0
+    basicInfoForm.expressType = 0
+    basicInfoForm.sendTime = ''
+    basicInfoForm.receiveTime = ''
+    basicInfoForm.sendUser = ''
+    basicInfoForm.sendPhone = ''
+    basicInfoForm.sendAddress = ''
+    basicInfoForm.receivePhone = ''
+    basicInfoForm.receiveAddress = ''
+    basicInfoForm.expressStatusRemark = ''
+    basicInfoForm.receiveUser = ''
+    basicInfoForm.expressContentRemark = ''
+    basicInfoForm.creator = ''
+    basicInfoForm.createTime = ''
+    basicInfoForm.updater = ''
+    basicInfoForm.updateTime = ''
+    basicInfoForm.expressContentList = []
+    basicInfoForm.otherFileList = []
   }
 }
-
+const expressCompanyOpts: Ref<DictItem[]> = ref([])
+const expressTypeOpts: Ref<DictItem[]> = ref([])
+const expressStatusOpts: Ref<DictItem[]> = ref([])
+const getDicts = () => {
+  expressCompanyOpts.value = JSON.parse(localStorage.getItem('EXPRESS_COMPANY'))
+  expressTypeOpts.value = JSON.parse(localStorage.getItem('EXPRESS_TYPE'))
+  expressTypeOpts.value.forEach((item) => {
+    item.value = Number(item.value)
+  })
+  expressStatusOpts.value = JSON.parse(localStorage.getItem('EXPRESS_STATUS'))
+  expressStatusOpts.value.forEach((item) => {
+    item.value = Number(item.value)
+  })
+}
 defineExpose({ open })
+const expressStatusFlag = ref(true)
+watch(
+  () => basicInfoForm.expressType,
+  (val) => {
+    if (val === 0) {
+      expressStatusFlag.value = false
+    } else if (val === 1) {
+      expressStatusFlag.value = true
+    }
+  },
+  {
+    immediate: true
+  }
+)
+const expressCompanyFlag = ref(true)
+watch(
+  () => basicInfoForm.expressCompany,
+  (val) => {
+    if (val === '其它') {
+      expressCompanyFlag.value = true
+    } else {
+      expressCompanyFlag.value = false
+    }
+  },
+  {
+    immediate: true
+  }
+)
 </script>
 
 <style lang="scss" scoped>

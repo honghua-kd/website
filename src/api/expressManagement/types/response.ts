@@ -17,6 +17,16 @@ export interface ExpressContentList {
   contractNo?: string
   id?: string
 }
+export interface OtherFileList {
+  /**
+   * 附件code
+   */
+  fileCode?: string
+  /**
+   * 附件备注
+   */
+  fileRemark?: string
+}
 
 export interface ExpressListItem {
   /**
@@ -57,6 +67,14 @@ export interface ExpressListItem {
   expressType?: number
   id?: string
   /**
+   * 收件人地址
+   */
+  receiveAddress: string
+  /**
+   * 收件人联系方式
+   */
+  receivePhone: string
+  /**
    * 接收时间
    */
   receiveTime?: string
@@ -73,6 +91,14 @@ export interface ExpressListItem {
    */
   sendUser?: string
   /**
+   * 寄送人地址
+   */
+  sendAddress: string
+  /**
+   * 寄送人联系方式
+   */
+  sendPhone: string
+  /**
    * 更新人
    */
   updater?: string
@@ -80,6 +106,7 @@ export interface ExpressListItem {
    * 更新时间
    */
   updateTime?: string
+  otherFileList: OtherFileList[]
 }
 
 export interface UsualAddressListItem {

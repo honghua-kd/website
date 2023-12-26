@@ -29,7 +29,7 @@
                   v-for="(item, index) in expressCompanyOpts"
                   :key="index"
                   :label="item.label"
-                  :value="item.value"
+                  :value="item.label"
                 />
               </el-select>
             </el-form-item>
@@ -76,7 +76,7 @@
                   v-for="(item, index) in expressContentOpts"
                   :key="index"
                   :label="item.label"
-                  :value="item.value"
+                  :value="item.label"
                 />
               </el-select>
             </el-form-item>
@@ -131,7 +131,6 @@
         row-key="id"
         :tree-props="{ children: 'target' }"
         @selection-change="selectionChangeHandler"
-        @header-click="sortChangeHandler"
       >
         <el-table-column type="selection" width="55" />
         <el-table-column
@@ -139,7 +138,11 @@
           prop="expressStatus"
           width="180"
           align="center"
-        />
+        >
+          <template #default="scope">
+            {{ getExpressStatus(scope.row.expressStatus) }}
+          </template>
+        </el-table-column>
         <el-table-column
           label="快递单号"
           prop="expressNo"
@@ -157,9 +160,13 @@
           prop="expressType"
           width="180"
           align="center"
-        />
+        >
+          <template #default="scope">
+            {{ getExpressType(scope.row.expressType) }}
+          </template>
+        </el-table-column>
         <el-table-column
-          label="寄送日期"
+          label="寄送日期/接收日期"
           prop="sendTime"
           width="180"
           align="center"
@@ -275,12 +282,10 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, Ref, computed, onMounted } from 'vue'
+import { ref, reactive, Ref, computed } from 'vue'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import { CommonAPI, ExpressAPI } from '@/api'
 import {
-  ArrowDownBold,
-  ArrowUpBold,
   Plus,
   Delete,
   Upload,
@@ -292,6 +297,7 @@ import EditForm from './EditForm.vue'
 import LogisticsInfoForm from './LogisticsInfoForm.vue'
 import CheckForm from './CheckForm.vue'
 import ImportForm from './ImportForm.vue'
+import { EXPRESS_STATUS, EXPRESS_TYPE } from '@/constants'
 import type {
   PageRequest,
   ExpressInfoCardListRequest,
@@ -320,8 +326,12 @@ const tableData: Ref<ExpressListItem[]> = ref([])
 const selectData: Ref<ExpressListItem[]> = ref([])
 const getContentList = (value: ExpressContentList[]) => {
   let list = ''
-  value.forEach((item) => {
-    list += item.contentType + ' '
+  value.forEach((item, index) => {
+    if (index === value.length - 1) {
+      list += item.contentType
+    } else {
+      list += item.contentType + '、'
+    }
   })
   return list
 }
@@ -477,9 +487,7 @@ const delHandler = (ids: string[]) => {
 }
 
 // 导入结果查询
-const importResultHandler = () => {
-  
-}
+const importResultHandler = () => {}
 
 // 分页
 const handleCurrentChange = (val: number) => {
@@ -495,21 +503,68 @@ const handleSizeChange = (val: number) => {
 // 批量获取数据字典
 const expressCompanyOpts: Ref<DictItem[]> = ref([])
 const expressTypeOpts: Ref<DictItem[]> = ref([])
+const expressContentOpts: Ref<DictItem[]> = ref([])
 const getDicts = () => {
-  const dictTypes = []
+  const dictTypes = [
+    'EXPRESS_STATUS',
+    'EXPRESS_CONTENT',
+    'EXPRESS_COMPANY',
+    'EXPRESS_TYPE'
+  ]
   const params = {
     dictTypes
   }
   CommonApi.getDictsList(params)
     .then((res) => {
       if (res && res.code === 200) {
-        expressCompanyOpts.value = res?.data?.ARCHIVE_STATUS as DictItem[]
-        expressTypeOpts.value = res?.data?.OCR_STATUS as DictItem[]
+        expressCompanyOpts.value = res?.data?.EXPRESS_COMPANY as DictItem[]
+        expressTypeOpts.value = res?.data?.EXPRESS_TYPE as DictItem[]
+        expressContentOpts.value = res?.data?.EXPRESS_CONTENT as DictItem[]
+        const expressStatus = res?.data?.EXPRESS_STATUS as DictItem[]
+        window.localStorage.setItem(
+          'EXPRESS_STATUS',
+          JSON.stringify(expressStatus)
+        )
+        window.localStorage.setItem(
+          'EXPRESS_CONTENT',
+          JSON.stringify(expressContentOpts.value)
+        )
+        window.localStorage.setItem(
+          'EXPRESS_COMPANY',
+          JSON.stringify(expressCompanyOpts.value)
+        )
+        window.localStorage.setItem(
+          'EXPRESS_TYPE',
+          JSON.stringify(expressTypeOpts.value)
+        )
       }
     })
     .catch((err: Error) => {
       throw err
     })
+}
+// 快递状态处理
+const getExpressStatus = (status: number) => {
+  let topic = ''
+  if (status === EXPRESS_STATUS.REJECT) {
+    topic = '未接收'
+  } else if (status === EXPRESS_STATUS.RECEIVE) {
+    topic = '已接收'
+  } else if (status === EXPRESS_STATUS.PROBLEM) {
+    topic = '问题件'
+  }
+  return topic
+}
+
+// 寄送接收状态
+const getExpressType = (status: number) => {
+  let topic = ''
+  if (status === EXPRESS_TYPE.RECEIVE) {
+    topic = '接收'
+  } else if (status === EXPRESS_TYPE.SEND) {
+    topic = '寄送'
+  }
+  return topic
 }
 
 const init = () => {

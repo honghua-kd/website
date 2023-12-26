@@ -101,4 +101,13 @@ export class CommonAPI {
       data
     })
   }
+
+  // 异步上传导入
+  getAsyncImport(data: File): Response<Omit<RecordList, 'batchNo' | 'msg'>> {
+    return this.request({
+      url: `${prefix}/admin-api/import/file/record/importAsync`,
+      method: 'post',
+      data
+    })
+  }
 }

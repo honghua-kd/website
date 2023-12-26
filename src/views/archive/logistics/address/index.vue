@@ -61,10 +61,10 @@
         <el-table-column label="操作" fixed="right" width="240" align="center">
           <template #default="scope">
             <template v-if="scope.row.id">
-              <el-button link type="primary" @click="editHandler(scope.row.id)">
+              <el-button link type="primary" @click="editHandler(scope.row)">
                 编辑
               </el-button>
-              <el-button link type="danger" @click="delHandler([scope.row])">
+              <el-button link type="danger" @click="delHandler(scope.row)">
                 删除
               </el-button>
             </template>

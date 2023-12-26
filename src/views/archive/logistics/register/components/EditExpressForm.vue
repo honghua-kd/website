@@ -6,8 +6,11 @@
       v-model="dialogVisible"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
+      destroy-on-close
+      @close="resetForm"
+      v-if="dialogVisible"
     >
-      <el-form :model="expressInfoForm" label-width="130px">
+      <el-form ref="expressRef" :model="expressInfoForm" label-width="130px">
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="快递内容编号:" prop="contentNo">
@@ -30,10 +33,10 @@
                 clearable
               >
                 <el-option
-                  v-for="(item, index) in contentTypeOpts"
+                  v-for="(item, index) in expressContentOpts"
                   :key="index"
                   :label="item.label"
-                  :value="item.value"
+                  :value="item.label"
                 />
               </el-select>
             </el-form-item>
@@ -45,7 +48,7 @@
               <el-input
                 v-model="expressInfoForm.contentTypeNumber"
                 clearable
-                placeholder="请输入类型对应编号"
+                :placeholder="contentTypePlaceHolder"
               />
             </el-form-item>
           </el-col>
@@ -75,26 +78,50 @@
 <script setup lang="ts">
 import { warn } from 'console'
 import { ref, reactive, Ref, watch, onMounted } from 'vue'
+import type {
+  PageRequest,
+  ExpressInfoCardListRequest,
+  DictItem,
+  ExpressListItem,
+  ExpressContentList
+} from '@/api'
+import { CommonAPI, ExpressAPI } from '@/api'
+const API = new ExpressAPI()
+const CommonApi = new CommonAPI()
 defineProps({
   title: {
     type: String,
     default: ''
   }
 })
-let expressInfoForm = reactive({})
+const expressInfoForm = reactive({
+  id: '',
+  contentNo: '',
+  contentType: '',
+  contentTypeNumber: '',
+  contractNo: ''
+})
 const dialogVisible = ref<boolean>(false)
-
+const expressRef = ref()
 const emit = defineEmits(['editcontent'])
 const saveExpressHandler = () => {
   dialogVisible.value = false
-  emit('editcontent', expressInfoForm)
+  const params = JSON.parse(JSON.stringify(expressInfoForm))
+  emit('editcontent', params)
 }
 /** 打开弹窗 */
-const open = async (row: string) => {
+const open = async (row) => {
   dialogVisible.value = true
-  if (row) {
-    expressInfoForm = row
+  getDicts()
+  if (typeof row === 'object') {
+    const data = JSON.parse(JSON.stringify(row))
+    expressInfoForm.id = data.id
+    expressInfoForm.contentNo = data.contentNo
+    expressInfoForm.contentType = data.contentType
+    expressInfoForm.contentTypeNumber = data.contentTypeNumber
+    expressInfoForm.contractNo = data.contractNo
   } else {
+    getExpressContentNo(row)
     expressInfoForm.id = ''
     expressInfoForm.contentNo = ''
     expressInfoForm.contentType = ''
@@ -102,7 +129,52 @@ const open = async (row: string) => {
     expressInfoForm.contractNo = ''
   }
 }
+const getExpressContentNo = (no: string) => {
+  const params = {
+    expressNo: no
+  }
+  API.getExpressContentNo(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+      }
+    })
+    .catch((err: Error) => {
+      console.log(err)
+    })
+}
+const expressContentOpts: Ref<DictItem[]> = ref([])
+const getDicts = () => {
+  expressContentOpts.value = JSON.parse(localStorage.getItem('EXPRESS_CONTENT'))
+  expressContentOpts.value.forEach((item) => {
+    item.value = Number(item.value)
+  })
+}
+const resetForm = () => {
+  expressRef.value.resetFields()
+}
 defineExpose({ open })
+const contentTypePlaceHolder = ref('')
+watch(
+  () => expressInfoForm.contentType,
+  (val) => {
+    if (val === '登记证') {
+      contentTypePlaceHolder.value = '请输入车架号'
+    } else if (val === '抵押材料') {
+      contentTypePlaceHolder.value = '请输入抵押任务号'
+    } else if (val === '解压材料') {
+      contentTypePlaceHolder.value = '请输入解押任务号'
+    } else if (val === '发票') {
+      contentTypePlaceHolder.value = '请输入发票号码'
+    } else if (val === '其他') {
+      contentTypePlaceHolder.value = '请输入XX编号'
+    } else {
+      contentTypePlaceHolder.value = ''
+    }
+  },
+  {
+    immediate: true
+  }
+)
 </script>
 
 <style scoped></style>
