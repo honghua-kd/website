@@ -31,5 +31,5 @@ export type StateType = {
   tableColumn: TableColumnType[]
   tableData: RecordType[]
   pageTotal: number
-  dialogVisible: bollean
+  dialogVisible: boolean
 }
