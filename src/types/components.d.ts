@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    Card: typeof import('./../components/Card/index.vue')['default']
     DataPermissonForm: typeof import('./../components/PermiForm/DataPermissonForm.vue')['default']
     ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
@@ -14,6 +15,7 @@ declare module 'vue' {
     ElCard: typeof import('element-plus/es')['ElCard']
     ElCol: typeof import('element-plus/es')['ElCol']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
+    ElCord: typeof import('element-plus/es')['ElCord']
     ElDatePicker: typeof import('element-plus/es')['ElDatePicker']
     ElDialog: typeof import('element-plus/es')['ElDialog']
     ElDivider: typeof import('element-plus/es')['ElDivider']
@@ -33,6 +35,8 @@ declare module 'vue' {
     ElRow: typeof import('element-plus/es')['ElRow']
     ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
     ElSelect: typeof import('element-plus/es')['ElSelect']
+    ElStep: typeof import('element-plus/es')['ElStep']
+    ElSteps: typeof import('element-plus/es')['ElSteps']
     ElSubMenu: typeof import('element-plus/es')['ElSubMenu']
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
@@ -42,6 +46,7 @@ declare module 'vue' {
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     ErrorPage: typeof import('./../components/ErrorPage/index.vue')['default']
+    FilterForm: typeof import('./../components/FilterForm/index.vue')['default']
     Icon: typeof import('./../components/Icon/index.vue')['default']
     MdEditor: typeof import('./../components/MdEditor/index.vue')['default']
     PermiListDialog: typeof import('./../components/PermiForm/PermiListDialog.vue')['default']
