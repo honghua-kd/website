@@ -2,7 +2,7 @@
   <div>
     <SecondaryTitle title="核验车辆登记证" />
     <!-- 搜索工作栏 -->
-    <div class="scan-search-container">
+    <div class="scan-search-container" ref="searchBoxRef">
       <el-form
         ref="queryFormRef"
         :model="queryParams"
@@ -199,6 +199,7 @@
         v-loading="tableLoading"
         row-key="id"
         :tree-props="{ children: 'target' }"
+        :max-height="tableHeight"
         @selection-change="selectionChangeHandler"
         @header-click="sortChangeHandler"
       >
@@ -285,7 +286,7 @@
         <el-table-column
           label="*车架号"
           prop="vinNo"
-          width="120"
+          width="150"
           align="center"
         >
           <template #default="scope">
@@ -355,8 +356,9 @@
         <el-table-column
           label="*抵押权人"
           prop="mortgagee"
-          width="150"
+          width="250"
           align="center"
+          show-overflow-tooltip
         >
           <template #default="scope">
             <TableSlotItem :rowInfo="scope.row" rowKey="mortgagee" />
@@ -385,7 +387,7 @@
         <el-table-column
           label="批次号"
           prop="batchNo"
-          width="120"
+          width="170"
           align="center"
         />
         <el-table-column
@@ -561,6 +563,22 @@ const queryParams = reactive<QueryParams>({
 
 const selectData: Ref<CardListItem[]> = ref([])
 const curStaffCode = ref<string>('')
+
+// 表格最大高度
+const searchBoxRef = ref()
+const tableHeight = computed(() => {
+  if (searchBoxRef.value?.clientHeight) {
+    const height = Number(
+      document.documentElement.clientHeight -
+        261 -
+        searchBoxRef.value?.clientHeight
+    )
+    return height
+  } else {
+    const height = Number(document.documentElement.clientHeight - 261)
+    return height
+  }
+})
 
 // 归档状态处理
 const getAchivalStatus = (status: string) => {
