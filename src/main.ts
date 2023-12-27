@@ -12,17 +12,25 @@ import {
 } from '@toystory/lotso'
 import '@toystory/lotso/dist/style.css'
 
-import { CoreAPI } from '@/api'
-import App from './App.vue'
-import { setActivePinia } from 'pinia'
-
 // 注册字节跳动图标
 import iconPark from './plugin/icon-park'
 
 // svg-icon
 import 'virtual:svg-icons-register'
 
+// Element-plus
 import { ElMessage, ElLoading } from 'element-plus'
+
+import { CoreAPI } from '@/api'
+import App from './App.vue'
+import { setActivePinia } from 'pinia'
+import { setDomFontSize, debounce } from './utils'
+
+// px2rem
+setDomFontSize()
+const setDomFontSizeDebounce = debounce(setDomFontSize, 400)
+window.addEventListener('resize', setDomFontSizeDebounce)
+
 // 注册框架，传入项目配置和store，页面路径
 const app = createFrameApp(App, {
   options,

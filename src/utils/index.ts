@@ -408,3 +408,10 @@ export function handleDownloadFile(fileData: FileDownload, fileName?: string) {
   }
   fileDownload(fileStream, name)
 }
+
+export const setDomFontSize = () => {
+  const width =
+    document.documentElement.clientWidth || document.body.clientWidth
+  const fontsize = (width <= 1200 ? 1200 : width) / 100 + 'px'
+  document.getElementsByTagName('html')[0].style.fontSize = fontsize
+}
