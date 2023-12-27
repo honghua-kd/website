@@ -87,7 +87,9 @@ const frameSetting: FrameSetting = {
   // base路径
   baseURL: '',
   // 登录页面路径，默认为'/login'，可配置SSO路径，建议用环境变量
-  loginPath: import.meta.env.VITE_APP_SSO_URL
+  loginPath: import.meta.env.VITE_APP_SSO_URL,
+  // px2rem基准单位
+  remRootValue: 19.2
 }
 
 export default frameSetting
