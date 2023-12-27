@@ -13,10 +13,15 @@ import type {
   ReceiveExpressInfoRequest,
   UsualAddressListRequest,
   DelUsualAddressRequest,
-  AddUsualAddressRequest
+  AddUsualAddressRequest,
+  ExportExpressRequest
 } from './types/request'
-import type { ExpressListItem, UsualAddressListItem } from './types/response'
-
+import type {
+  ExpressListItem,
+  UsualAddressListItem,
+  TraceList
+} from './types/response'
+import type { FileDownload, UploadFile } from '../common/types/response'
 const prefix = '/operations-mortgage'
 
 export class ExpressAPI {
@@ -84,18 +89,16 @@ export class ExpressAPI {
     data: ReceiveExpressInfoRequest
   ): Response<boolean | null | undefined> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage/express/info/batch/receiving`,
+      url: `${prefix}/admin-api/express/info/batch/receiving`,
       method: 'post',
       data
     })
   }
 
   // 获取物流信息详情
-  getLogisticsInfo(
-    data: CheckExpressInfoRequest
-  ): Response<boolean | null | undefined> {
+  getLogisticsInfo(data: CheckExpressInfoRequest): Response<TraceList> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage/express/info/logistics/detail`,
+      url: `${prefix}/admin-api/express/info/logistics/detail`,
       method: 'post',
       data
     })
@@ -106,7 +109,7 @@ export class ExpressAPI {
     data: CheckExpressInfoRequest
   ): Response<boolean | null | undefined> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage/express/info/content/number/auto`,
+      url: `${prefix}/admin-api/express/info/content/number/auto`,
       method: 'post',
       data
     })
@@ -139,7 +142,7 @@ export class ExpressAPI {
     data: UsualAddressListRequest
   ): Response<boolean | null | undefined> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage/usual/address/update`,
+      url: `${prefix}/admin-api/express/usual/address/update`,
       method: 'post',
       data
     })
@@ -150,7 +153,7 @@ export class ExpressAPI {
     data: DelUsualAddressRequest
   ): Response<boolean | null | undefined> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage/usual/address/delete`,
+      url: `${prefix}/admin-api/express/usual/address/delete`,
       method: 'post',
       data
     })
@@ -168,34 +171,33 @@ export class ExpressAPI {
   }
 
   // 导出邮寄信息
-  exportExpressContentInfo(
-    data: DelUsualAddressRequest
-  ): Response<boolean | null | undefined> {
+  exportExpressContentInfo(data: ExportExpressRequest): Promise<FileDownload> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage/express/info/export`,
+      url: `${prefix}/admin-api/express/info/export`,
       method: 'post',
+      responseType: 'blob',
       data
     })
   }
 
   // 快递内容导入
-  importExpressContent(
-    data: CheckExpressInfoRequest
-  ): Response<boolean | null | undefined> {
+  importExpressContent(data: FormData): Response<UploadFile> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage/express/info/content/import`,
+      url: `${prefix}/admin-api/express/info/content/import`,
       method: 'post',
+      headers: {
+        'Content-Type': 'application/form-data'
+      },
       data
     })
   }
 
   // 其他附件下载
-  downLoadOtherFile(
-    data: DelExpressInfoRequest
-  ): Response<boolean | null | undefined> {
+  downLoadOtherFile(data: CheckExpressInfoRequest): Promise<FileDownload> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage/express/info/otherFile/export`,
+      url: `${prefix}/admin-api/express/info/otherFile/export`,
       method: 'post',
+      responseType: 'blob',
       data
     })
   }

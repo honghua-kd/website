@@ -142,7 +142,7 @@ export interface CheckExpressInfoRequest {
   /**
    * 快递单号
    */
-  expressNo?: string
+  expressNo?: string | null | undefined
 }
 
 export interface DelExpressInfoRequest {
@@ -198,4 +198,31 @@ export interface AddUsualAddressRequest {
    * 用户联系方式
    */
   userPhone: string
+}
+
+export interface ExportExpressRequest {
+  /**
+   * 登记时间，yyyy-MM-dd
+   */
+  createTime?: string
+  /**
+   * 快递公司
+   */
+  expressCompany?: string
+  /**
+   * 快递内容
+   */
+  expressContent?: string
+  /**
+   * 内容备注
+   */
+  expressContentRemark?: string
+  /**
+   * 快递单号
+   */
+  expressNo?: string
+  /**
+   * 快递类型，0寄送 1接收
+   */
+  expressType?: number | string
 }

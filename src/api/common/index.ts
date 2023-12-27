@@ -4,13 +4,16 @@ import type { Response } from '../types/response'
 import type {
   FilePreviewUrlRequest,
   ExportAssetStageResultRequest,
-  RecordRequest
+  RecordRequest,
+  RelationListRequest
 } from './types/request'
 import type {
   UploadFile,
   FilePreviewList,
   DictList,
-  RecordList
+  RecordList,
+  FileDownload,
+  RelationList
 } from './types/response'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
@@ -73,7 +76,7 @@ export class CommonAPI {
   // 根据文件名下载指定模板文件
   getDownLoadTemplate(
     data: Omit<ExportAssetStageResultRequest, 'batchNo'>
-  ): Response<DictList> {
+  ): Promise<FileDownload> {
     return this.request({
       url: `${prefix}/admin-api/import/file/downloadTemplate`,
       method: 'post',
@@ -103,9 +106,21 @@ export class CommonAPI {
   }
 
   // 异步上传导入
-  getAsyncImport(data: File): Response<Omit<RecordList, 'batchNo' | 'msg'>> {
+  getAsyncImport(data: FormData): Response<UploadFile> {
     return this.request({
       url: `${prefix}/admin-api/import/file/record/importAsync`,
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/form-data'
+      },
+      data
+    })
+  }
+
+  // 附件关系信息列表
+  getRelationList(data: RelationListRequest): Response<RelationList> {
+    return this.request({
+      url: `${prefix}/admin-api/system/attachment/relation/list`,
       method: 'post',
       data
     })

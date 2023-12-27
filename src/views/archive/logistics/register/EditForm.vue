@@ -42,7 +42,7 @@
                 :value="item.label"
               />
             </el-select>
-            <el-form-item v-if="expressCompanyFlag" prop="expressNo">
+            <el-form-item v-if="expressCompanyFlag" prop="expressCompanyOther">
               <el-input
                 v-model="basicInfoForm.expressCompanyOther"
                 clearable
@@ -248,7 +248,7 @@
       <div class="express-content">
         <div class="title">快递内容</div>
         <div>
-          <el-button type="primary">导入</el-button>
+          <el-button type="primary" @click="importContent">导入</el-button>
           <el-button type="primary" @click="addExpressHandler">新增</el-button>
         </div>
       </div>
@@ -341,7 +341,9 @@
         <el-col>
           <el-form-item label="附件:" prop="otherInfoList">
             <div style="margin-bottom: 20px">
-              <el-button type="primary">上传</el-button>
+              <el-button type="primary" @click="importOtherFile"
+                >上传</el-button
+              >
             </div>
             <el-table
               :data="basicInfoForm.otherFileList"
@@ -354,10 +356,11 @@
                 prop="number"
                 width="180"
                 align="center"
+                type="index"
               />
               <el-table-column
                 label="文件名"
-                prop="expressContentNo"
+                prop="fileName"
                 width="180"
                 align="center"
               />
@@ -369,7 +372,7 @@
               />
               <el-table-column
                 label="上传时间"
-                prop="typeNo"
+                prop="createTime"
                 width="180"
                 align="center"
               />
@@ -377,7 +380,7 @@
                 label="备注"
                 prop="remark"
                 width="180"
-                align="center"
+                align="remark"
               >
                 <template #default="scope">
                   <el-input
@@ -416,11 +419,15 @@
       :title="dialogExpressTitle"
       @editcontent="updateExpressHandler"
     />
+    <ImportContent ref="importContentRef" />
+    <ImportOtherFile ref="importOtherFileRef" />
   </el-dialog>
 </template>
 
 <script setup lang="ts">
 import EditExpressForm from './components/EditExpressForm.vue'
+import ImportContent from './components/ImportContent.vue'
+import ImportOtherFile from './components/ImportOtherFile.vue'
 import {
   ArrowDownBold,
   ArrowUpBold,
@@ -496,8 +503,7 @@ const handleSelect = (item) => {
 }
 const handleChange = () => {
   const params = {
-    userName: basicInfoForm.sendUser,
-    userPhone: basicInfoForm.sendPhone
+    userName: basicInfoForm.sendUser
   }
   API.getUsualAddressList(params)
     .then((res) => {
@@ -581,11 +587,35 @@ const updateExpressHandler = (val: ExpressContentList) => {
     }
   }
 }
-
+const getOtherContentList = () => {
+  const params = {
+    businessCategory: 'ARCHIVE',
+    businessSubCategory: 'REGISTER VERIFY_TASK',
+    businessNoList: [],
+    businessNo: basicInfoForm.expressNo
+  }
+  CommonApi.getRelationList(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        const data = res?.data
+        if (res.data && res.data.length) {
+          basicInfoForm.otherFileList.push([...data])
+        }
+        // ElMessage({
+        //   type: 'success',
+        //   message: '添加成功'
+        // })
+      }
+    })
+    .catch((err: Error) => {
+      console.log(err)
+    })
+}
 /** 打开弹窗 */
 const open = async (row: string) => {
   dialogVisible.value = true
   getDicts()
+  getOtherContentList()
   init(row)
 }
 const init = (row) => {
@@ -660,6 +690,10 @@ const updateHandler = () => {
     API.addExpressInfo(params)
       .then((res) => {
         if (res && res.code === 200) {
+          ElMessage({
+            type: 'success',
+            message: '新增成功'
+          })
           dialogVisible.value = false
           emit('success')
         }
@@ -672,6 +706,10 @@ const updateHandler = () => {
     API.editExpressInfo(params)
       .then((res) => {
         if (res && res.code === 200) {
+          ElMessage({
+            type: 'success',
+            message: '修改成功'
+          })
           dialogVisible.value = false
           emit('success')
         }
@@ -681,6 +719,15 @@ const updateHandler = () => {
       })
   }
 }
+const importContentRef = ref()
+const importContent = () => {
+  importContentRef.value.open()
+}
+const importOtherFileRef = ref()
+const importOtherFile = () => {
+  importOtherFileRef.value.open()
+}
+
 const expressStatusFlag = ref(true)
 watch(
   () => basicInfoForm.expressType,
@@ -699,7 +746,7 @@ const expressCompanyFlag = ref(true)
 watch(
   () => basicInfoForm.expressCompany,
   (val) => {
-    if (val === '其它') {
+    if (val === '其他') {
       expressCompanyFlag.value = true
     } else {
       expressCompanyFlag.value = false

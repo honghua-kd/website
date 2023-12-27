@@ -18,6 +18,7 @@
                 v-model="expressInfoForm.contentNo"
                 clearable
                 placeholder="请输入快递内容编号"
+                disabled
               />
             </el-form-item>
           </el-col>
@@ -57,6 +58,7 @@
               <el-input
                 v-model="expressInfoForm.contractNo"
                 clearable
+                disabled
                 placeholder="请输入关联合同号"
               />
             </el-form-item>
@@ -136,6 +138,7 @@ const getExpressContentNo = (no: string) => {
   API.getExpressContentNo(params)
     .then((res) => {
       if (res && res.code === 200) {
+        expressInfoForm.contentNo = res?.data
       }
     })
     .catch((err: Error) => {

@@ -170,13 +170,17 @@
           prop="sendTime"
           width="180"
           align="center"
-        />
-        <el-table-column
-          label="收件日期"
-          prop="receiveTime"
-          width="180"
-          align="center"
-        />
+        >
+          <template #default="scope">
+            {{
+              getRealTime(
+                scope.row.expressType,
+                scope.row.sendTime,
+                scope.row.receiveTime
+              )
+            }}
+          </template>
+        </el-table-column>
         <el-table-column
           label="快递主要内容"
           prop="expressContentList"
@@ -210,7 +214,10 @@
           prop="createTime"
           width="180"
           align="center"
-        />
+          ><template #default="scope">
+            {{ getDate(scope.row.createTime) }}
+          </template>
+        </el-table-column>
         <el-table-column
           label="登记人"
           prop="creator"
@@ -222,7 +229,10 @@
           prop="updateTime"
           width="180"
           align="center"
-        />
+          ><template #default="scope">
+            {{ getDate(scope.row.updateTime) }}
+          </template>
+        </el-table-column>
         <el-table-column
           label="更新人"
           prop="updater"
@@ -305,6 +315,7 @@ import type {
   ExpressListItem,
   ExpressContentList
 } from '@/api'
+import fileDownload from 'js-file-download'
 type QueryParams = ExpressInfoCardListRequest & PageRequest
 const API = new ExpressAPI()
 const CommonApi = new CommonAPI()
@@ -445,7 +456,31 @@ const importFormRef = ref()
 const importHandler = () => {
   importFormRef.value.open()
 }
-const exportHandler = () => {}
+const exportHandler = () => {
+  const params = {
+    expressNo: queryParams.expressNo,
+    expressCompany: queryParams.expressCompany,
+    create_time: queryParams.createTime,
+    expressType: queryParams.expressType,
+    expressContent: queryParams.expressContent,
+    expressContentRemark: queryParams.expressContentRemark
+  }
+  API.exportExpressContentInfo(params)
+    .then((res) => {
+      console.error(res)
+      const fileStream = res?.data
+      const headers = res?.headers
+      const files =
+        headers &&
+        headers['content-disposition'] &&
+        decodeURI(headers['content-disposition'].split(';')[1])
+      const fileName = (files && files.split('=')[1]) || ''
+      fileDownload(fileStream, fileName)
+    })
+    .catch((err: Error) => {
+      throw err
+    })
+}
 
 // 删除
 const delHandler = (ids: string[]) => {
@@ -565,6 +600,18 @@ const getExpressType = (status: number) => {
     topic = '寄送'
   }
   return topic
+}
+const getRealTime = (type: number, stime: string, rtime: string) => {
+  if (type === 0) {
+    return stime.slice(0, 10)
+  } else if (type === 1) {
+    return rtime.slice(0, 10)
+  }
+}
+const getDate = (datetime: string) => {
+  if (datetime) {
+    return datetime.slice(0, 10)
+  }
 }
 
 const init = () => {

@@ -64,7 +64,7 @@
               <el-button link type="primary" @click="editHandler(scope.row)">
                 编辑
               </el-button>
-              <el-button link type="danger" @click="delHandler(scope.row)">
+              <el-button link type="danger" @click="delHandler(scope.row.id)">
                 删除
               </el-button>
             </template>
@@ -83,7 +83,7 @@
         @current-change="handleCurrentChange"
       />
     </div>
-    <EditForm ref="editFormRef" :title="dialogTitle" />
+    <EditForm ref="editFormRef" :title="dialogTitle" @success="getList()" />
   </div>
 </template>
 

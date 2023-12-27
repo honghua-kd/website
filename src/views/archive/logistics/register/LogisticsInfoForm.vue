@@ -7,14 +7,16 @@
       :close-on-press-escape="false"
       width="60%"
     >
-      <div class="routes-list">
+      <div class="routes-list" v-loading="loading">
         <el-timeline>
           <el-timeline-item
-            v-for="(activity, index) in routes"
+            v-for="(activity, index) in routes.traces.reverse()"
             :key="index"
-            :timestamp="activity.scanDateTime + '&nbsp  ' + activity.remark"
+            :timestamp="
+              activity.acceptTime + '&nbsp  ' + activity.acceptStation
+            "
           >
-            {{ activity.cxPackageMessage }}
+            {{ activity.actionDesc }}
           </el-timeline-item>
         </el-timeline>
       </div>
@@ -24,25 +26,54 @@
 
 <script setup lang="ts">
 import { ElMessage } from 'element-plus'
-import { logisticsRoutes } from './logisticsRoutes'
+import { ref, reactive, Ref, computed } from 'vue'
 import { ExpressAPI } from '@/api'
+import type {
+  PageRequest,
+  ExpressInfoCardListRequest,
+  DictItem,
+  ExpressListItem,
+  TraceList
+} from '@/api'
 const API = new ExpressAPI()
-import { ref } from 'vue'
 const dialogTitle = ref<string>('物流信息')
 const dialogVisible = ref<boolean>(false)
-const routes = logisticsRoutes.reverse()
+const loading = ref<boolean>(false)
+const routes = reactive<TraceList>({
+  orderCode: null,
+  shipperCode: '',
+  logisticCode: '',
+  callback: null,
+  success: true,
+  reason: null,
+  state: '签收',
+  stateEx: '正常签收',
+  location: '上海市',
+  station: null,
+  stationTel: null,
+  stationAdd: null,
+  deliveryMan: null,
+  deliveryManTel: null,
+  nextCity: null,
+  traces: [],
+  ebusinessID: ''
+})
 
 const getLogisticsInfo = (id: string) => {
+  loading.value = true
   const params = {
-    expressNo: id
+    // expressNo: id
+    expressNo: '78746538393827'
   }
   API.getLogisticsInfo(params)
     .then((res) => {
       if (res && res.code === 200) {
-        ElMessage({
-          type: 'success',
-          message: '操作成功'
-        })
+        loading.value = false
+        routes.traces = res?.data?.traces
+        // ElMessage({
+        //   type: 'success',
+        //   message: '操作成功'
+        // })
       }
     })
     .catch((err: Error) => {

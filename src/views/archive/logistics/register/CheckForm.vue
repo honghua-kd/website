@@ -23,21 +23,37 @@
             />
           </el-form-item>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="8">
           <el-form-item
             class="express-com"
             label="快递公司:"
             prop="expressCompany"
+            :rules="[{ required: true }]"
           >
-            <el-input
+            <el-select
               v-model="basicInfoForm.expressCompany"
+              style="width: 100%"
               clearable
               disabled
-              placeholder="请输入快递公司"
-            />
+            >
+              <el-option
+                v-for="(item, index) in expressCompanyOpts"
+                :key="index"
+                :label="item.label"
+                :value="item.label"
+              />
+            </el-select>
+            <el-form-item v-if="expressCompanyFlag" prop="expressNo">
+              <el-input
+                v-model="basicInfoForm.expressCompanyOther"
+                clearable
+                disabled
+                placeholder="请输入快递公司"
+              />
+            </el-form-item>
           </el-form-item>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="5">
           <el-form-item label="寄送/接收:" prop="expressType">
             <el-select
               v-model="basicInfoForm.expressType"
@@ -55,14 +71,29 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="6">
-          <el-form-item label="收件日期:" prop="receiveTime">
+        <el-col :span="5">
+          <el-form-item
+            v-if="expressStatusFlag"
+            label="收件日期:"
+            prop="receiveTime"
+          >
             <el-date-picker
               v-model="basicInfoForm.receiveTime"
               type="date"
               disabled
               :default-value="new Date()"
-              format="YYYY/MM/DD"
+              format="YYYY-MM-DD"
+              value-format="YYYY-MM-DD"
+            />
+          </el-form-item>
+          <el-form-item v-else label="寄件日期:" prop="sendTime">
+            <el-date-picker
+              v-model="basicInfoForm.sendTime"
+              type="date"
+              disabled
+              :default-value="new Date()"
+              format="YYYY-MM-DD"
+              value-format="YYYY-MM-DD"
             />
           </el-form-item>
         </el-col>
@@ -212,7 +243,12 @@
               border
               row-key="id"
             >
-              <el-table-column label="序号" prop="number" align="center" />
+              <el-table-column
+                label="序号"
+                prop="number"
+                align="center"
+                type="index"
+              />
               <el-table-column
                 label="快递内容编号"
                 prop="contentNo"
@@ -255,7 +291,10 @@
       <el-row :gutter="20">
         <el-col>
           <el-form-item label="附件:" prop="otherInfoList">
-            <div style="margin-bottom: 20px">
+            <div
+              style="margin-bottom: 20px; cursor: pointer"
+              @click="otherFileDownload"
+            >
               <!-- <el-button type="primary" :icon="Download"></el-button> -->
               <svg-icon name="download" size="24" />
             </div>
@@ -264,7 +303,6 @@
               :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
               border
               row-key="id"
-              @selection-change="selectionChangeHandler"
             >
               <el-table-column type="selection" width="55" />
               <el-table-column label="序号" prop="number" align="center" />
@@ -311,12 +349,36 @@ import type {
   ExpressListItem,
   ExpressContentList
 } from '@/api'
+import fileDownload from 'js-file-download'
 import { CommonAPI, ExpressAPI } from '@/api'
 const API = new ExpressAPI()
 const CommonApi = new CommonAPI()
 const dialogTitle = ref<string>('邮寄信息登记详情')
 const dialogVisible = ref<boolean>(false)
-let basicInfoForm = reactive({})
+const basicInfoForm = reactive<ExpressListItem>({
+  id: '',
+  expressNo: '',
+  expressCompany: '',
+  expressCompanyOther: '',
+  expressStatus: 0,
+  expressType: 0,
+  sendTime: '',
+  receiveTime: '',
+  sendUser: '',
+  sendPhone: '',
+  sendAddress: '',
+  receivePhone: '',
+  receiveAddress: '',
+  expressStatusRemark: '',
+  receiveUser: '',
+  expressContentRemark: '',
+  creator: '',
+  createTime: '',
+  updater: '',
+  updateTime: '',
+  expressContentList: [],
+  otherFileList: []
+})
 
 // 获取邮寄信息
 const getList = (id: string) => {
@@ -326,21 +388,124 @@ const getList = (id: string) => {
   API.checkExpressInfo(params)
     .then((res) => {
       if (res && res.code === 200) {
-        basicInfoForm = res?.data
+        basicInfoForm.expressNo = res?.data?.expressNo
+        basicInfoForm.expressCompany = res?.data?.expressCompany
+        basicInfoForm.expressCompanyOther = res?.data?.expressCompanyOther
+        basicInfoForm.expressStatus = res?.data?.expressStatus
+        basicInfoForm.expressType = res?.data?.expressType
+        basicInfoForm.sendTime = res?.data?.sendTime
+        basicInfoForm.receiveTime = res?.data?.receiveTime
+        basicInfoForm.sendUser = res?.data?.sendUser
+        basicInfoForm.sendPhone = res?.data?.sendPhone
+        basicInfoForm.sendAddress = res?.data?.sendAddress
+        basicInfoForm.receivePhone = res?.data?.receivePhone
+        basicInfoForm.receiveAddress = res?.data?.receiveAddress
+        basicInfoForm.receiveUser = res?.data?.receiveUser
+        basicInfoForm.expressStatusRemark = res?.data?.expressStatusRemark
+        basicInfoForm.expressContentRemark = res?.data?.expressContentRemark
+        basicInfoForm.creator = res?.data?.creator
+        basicInfoForm.createTime = res?.data?.createTime
+        basicInfoForm.updater = res?.data?.updater
+        basicInfoForm.updateTime = res?.data?.updateTime
+        basicInfoForm.expressContentList = res?.data?.expressContentList
       }
     })
     .catch((err: Error) => {
       throw err
     })
 }
+const expressCompanyOpts: Ref<DictItem[]> = ref([])
+const expressTypeOpts: Ref<DictItem[]> = ref([])
+const expressStatusOpts: Ref<DictItem[]> = ref([])
+const getDicts = () => {
+  expressCompanyOpts.value = JSON.parse(localStorage.getItem('EXPRESS_COMPANY'))
+  expressTypeOpts.value = JSON.parse(localStorage.getItem('EXPRESS_TYPE'))
+  expressTypeOpts.value.forEach((item) => {
+    item.value = Number(item.value)
+  })
+  expressStatusOpts.value = JSON.parse(localStorage.getItem('EXPRESS_STATUS'))
+  expressStatusOpts.value.forEach((item) => {
+    item.value = Number(item.value)
+  })
+}
+const getOtherContentList = () => {
+  const params = {
+    businessCategory: 'ARCHIVE',
+    businessSubCategory: 'REGISTER VERIFY_TASK',
+    businessNoList: [],
+    businessNo: basicInfoForm.expressNo
+  }
+  CommonApi.getRelationList(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        const data = res?.data
+        if (res.data && res.data.length) {
+          basicInfoForm.otherFileList.push([...data])
+        }
+      }
+    })
+    .catch((err: Error) => {
+      console.log(err)
+    })
+}
 
+const otherFileDownload = () => {
+  const params = {
+    expressNo: basicInfoForm.expressNo
+  }
+  API.downLoadOtherFile(params)
+    .then((res) => {
+      console.error(res)
+      const fileStream = res?.data
+      const headers = res?.headers
+      const files =
+        headers &&
+        headers['content-disposition'] &&
+        decodeURI(headers['content-disposition'].split(';')[1])
+      const fileName = (files && files.split('=')[1]) || ''
+      fileDownload(fileStream, fileName)
+    })
+    .catch((err: Error) => {
+      console.log(err)
+    })
+}
 /** 打开弹窗 */
 const open = async (id: string) => {
   dialogVisible.value = true
+  getDicts()
+  getOtherContentList()
   getList(id)
 }
 
 defineExpose({ open })
+const expressStatusFlag = ref(true)
+watch(
+  () => basicInfoForm.expressType,
+  (val) => {
+    if (val === 0) {
+      expressStatusFlag.value = false
+    } else if (val === 1) {
+      expressStatusFlag.value = true
+    }
+  },
+  {
+    immediate: true
+  }
+)
+const expressCompanyFlag = ref(true)
+watch(
+  () => basicInfoForm.expressCompany,
+  (val) => {
+    if (val === '其他') {
+      expressCompanyFlag.value = true
+    } else {
+      expressCompanyFlag.value = false
+    }
+  },
+  {
+    immediate: true
+  }
+)
 </script>
 
 <style lang="scss" scoped>

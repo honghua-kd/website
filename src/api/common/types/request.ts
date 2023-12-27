@@ -25,3 +25,25 @@ export interface RecordRequest {
    */
   startCreateTime: null | string
 }
+
+/**
+ * AttachmentRelationQueryDTO
+ */
+export interface RelationListRequest {
+  /**
+   * 业务大类
+   */
+  businessCategory?: null | string
+  /**
+   * 业务单号
+   */
+  businessNo?: null | string
+  /**
+   * 业务单号
+   */
+  businessNoList?: string[] | null
+  /**
+   * 业务子类
+   */
+  businessSubCategory?: null | string
+}

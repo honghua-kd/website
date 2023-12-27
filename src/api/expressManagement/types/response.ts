@@ -42,6 +42,10 @@ export interface ExpressListItem {
    */
   expressCompany?: string
   /**
+   * 其它快递公司
+   */
+  expressCompanyOther?: string
+  /**
    * 快递单号
    */
   expressNo?: string
@@ -139,4 +143,103 @@ export interface UsualAddressListItem {
    * 用户联系方式
    */
   userPhone?: string
+}
+
+export interface TraceItem {
+  /**
+   * 轨迹描述
+   */
+  acceptStation: string
+  /**
+   * 轨迹发生时间
+   */
+  acceptTime: string
+  /**
+   * 增值物流状态，0-暂无轨迹信息 1-已揽收 2-在途中 201-到达派件城市 202-派件中 211-已放入快递柜或驿站 3-已签收 301-正常签收 302-派件异常后最终签收
+   * 304-代收签收 311-快递柜或驿站签收 4-问题件 401-发货无信息 402-超时未签收 403-超时未更新 404-拒收(退件) 405-派件异常 406-退货签收
+   * 407-退货未签收 412-快递柜或驿站超时未取 10-待揽件
+   */
+  action: string
+  /**
+   * 增值物流状态说明
+   */
+  actionDesc: string
+  /**
+   * 当前城市
+   */
+  location: string
+  /**
+   * 备注
+   */
+  remark: string
+}
+export interface TraceList {
+  /**
+   * 用户自定义回传字段
+   */
+  callback: null
+  /**
+   * 派件快递员
+   */
+  deliveryMan: null
+  /**
+   * 派件快递员手机号
+   */
+  deliveryManTel: null
+  /**
+   * 用户ID
+   */
+  ebusinessID: string
+  /**
+   * 所在城市
+   */
+  location: string
+  /**
+   * 物流单号
+   */
+  logisticCode: string
+  /**
+   * 下一站城市
+   */
+  nextCity: null
+  /**
+   * 订单编号
+   */
+  orderCode: null
+  /**
+   * 失败原因
+   */
+  reason: null
+  /**
+   * 快递公司编码
+   */
+  shipperCode: string
+  /**
+   * 普通物流状态
+   */
+  state: string
+  /**
+   * 增值物流状态
+   */
+  stateEx: string
+  /**
+   * 派件网点的名称
+   */
+  station: null
+  /**
+   * 派件网点的地址
+   */
+  stationAdd: null
+  /**
+   * 派件网点的电话
+   */
+  stationTel: null
+  /**
+   * 成功与否
+   */
+  success: boolean
+  /**
+   * 物流轨迹
+   */
+  traces: TraceItem[]
 }

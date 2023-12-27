@@ -95,22 +95,46 @@ const basicInfoForm = reactive<UsualAddressListItem>({
   city: '',
   area: ''
 })
+const emit = defineEmits(['success'])
 const addHandler = () => {
   if (props.title === '新增联系人信息') {
-    const params = {}
+    const params = {
+      userName: basicInfoForm.userName,
+      userPhone: basicInfoForm.userPhone,
+      userMail: basicInfoForm.userMail,
+      userAddress: basicInfoForm.userAddress
+    }
     API.addUsualAddress(params)
       .then((res) => {
         if (res && res.code === 200) {
+          ElMessage({
+            type: 'success',
+            message: '新增成功'
+          })
+          dialogVisible.value = false
+          emit('success')
         }
       })
       .catch((err: Error) => {
         console.log(err)
       })
   } else {
-    const params = {}
+    const params = {
+      userName: basicInfoForm.userName,
+      userPhone: basicInfoForm.userPhone,
+      userMail: basicInfoForm.userMail,
+      userAddress: basicInfoForm.userAddress,
+      id: basicInfoForm.id
+    }
     API.editUsualAddress(params)
       .then((res) => {
         if (res && res.code === 200) {
+          ElMessage({
+            type: 'success',
+            message: '修改成功'
+          })
+          dialogVisible.value = false
+          emit('success')
         }
       })
       .catch((err: Error) => {
