@@ -24,3 +24,7 @@ export type StateType = {
   pageTotal: number
   editModelVisible: boolean
 }
+export type ModelStateType = {
+  dialogVisible: boolean
+  editForm: RecordType
+}

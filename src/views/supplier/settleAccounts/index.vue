@@ -4,13 +4,13 @@
     <el-card :body-style="{ padding: '10px 10px 0px' }">
       <el-form :inline="true" :model="formModel" class="filter-form">
         <el-form-item label="供应商名称">
-          <el-input v-model="formModel.supplierName" size="large" />
+          <el-input v-model="formModel.supplierName" />
         </el-form-item>
         <el-form-item label="城市">
-          <el-input v-model="formModel.city" size="large" />
+          <el-input v-model="formModel.city" />
         </el-form-item>
         <el-form-item label="结算状态">
-          <el-select v-model="formModel.status" size="large">
+          <el-select v-model="formModel.status">
             <el-option
               v-for="item in statusArr"
               :key="item.value"
@@ -20,11 +20,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="抵押主体">
-          <el-select
-            placeholder="请选择"
-            v-model="formModel.mortgageMain"
-            size="large"
-          >
+          <el-select placeholder="请选择" v-model="formModel.mortgageMain">
             <el-option
               v-for="item in mortgageMainArr"
               :key="item.value"
@@ -34,11 +30,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="合同归属">
-          <el-select
-            placeholder="请选择"
-            v-model="formModel.contractBelong"
-            size="large"
-          >
+          <el-select placeholder="请选择" v-model="formModel.contractBelong">
             <el-option
               v-for="item in contractBelongArr"
               :key="item.value"
@@ -48,10 +40,10 @@
           </el-select>
         </el-form-item>
         <el-form-item label="合同号">
-          <el-input v-model="formModel.contractCode" size="large" />
+          <el-input v-model="formModel.contractCode" />
         </el-form-item>
         <el-form-item label="订单类型">
-          <el-select v-model="formModel.orderType" size="large">
+          <el-select v-model="formModel.orderType">
             <el-option
               v-for="item in ordertypeArr"
               :key="item.value"
@@ -69,7 +61,6 @@
             format="YYYY-MM-DD HH:mm:ss"
             date-format="YYYY/MM/DD ddd"
             time-format="A hh:mm:ss"
-            size="large"
           />
         </el-form-item>
         <el-form-item>
@@ -107,10 +98,7 @@
           :fixed="i.fixed"
         >
           <template v-if="i.label === '操作'">
-            <span class="action-span">查看</span>
-            <span class="action-span">修改</span>
-            <span class="action-span">停用</span>
-            <span class="action-span">删除</span>
+            <el-button link type="primary">结算</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -154,8 +142,11 @@
 
 <script setup lang="ts">
 import { reactive, toRefs } from 'vue'
-import BasicData from './data'
-import type { StateType, RecordType } from './type.ts'
+import BasicData from '@/views/supplier/settleAccounts/data'
+import type {
+  StateType,
+  RecordType
+} from '@/views/supplier/settleAccounts/type.ts'
 import completeSvg from '@/assets/common/complete.svg'
 const state = reactive<StateType>({
   formModel: {
@@ -227,12 +218,14 @@ const {
 } = toRefs(state)
 
 const search = () => {}
-
 const handleSizeChange = () => {}
 const handleCurrentChange = () => {}
 
 const action = (val: string) => {
   console.log(val)
+  if (val === '批量结算') {
+    state.dialogVisible = true
+  }
 }
 
 const selectAllData = (selection: RecordType[]) => {
@@ -257,11 +250,6 @@ const handleClose = (done: () => void) => {
   .action {
     margin: 10px 0;
   }
-  .action-span {
-    margin-right: 6px;
-    color: #1890ff;
-    cursor: pointer;
-  }
   .list {
     margin-bottom: 20px;
   }
@@ -279,9 +267,9 @@ const handleClose = (done: () => void) => {
       width: 50px;
     }
     p {
-      font-size: 16px;
+      font-size: $base-font-size-big;
       font-weight: bolder;
-      color: #000000;
+      color: $base-color-black;
     }
   }
   .dialog-footer {

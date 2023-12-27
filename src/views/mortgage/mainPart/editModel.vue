@@ -47,11 +47,19 @@
           <el-input />
         </el-form-item>
         <span>联系地址</span>
-        <el-form-item label="省份">
+        <!-- <el-form-item label="省份">
           <el-select> </el-select>
         </el-form-item>
         <el-form-item label="城市">
           <el-select> </el-select>
+        </el-form-item> -->
+        <el-form-item label="省/市">
+          <el-cascader
+            placeholder="请选择"
+            style="width: 100%"
+            :options="BasicData.cityList"
+            clearable
+          />
         </el-form-item>
         <el-form-item label="详细地址">
           <el-input />
@@ -80,22 +88,19 @@
 <script lang="ts" setup>
 import { watch, toRefs, reactive } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
-import type { RecordType } from './type'
+import type { RecordType, ModelStateType } from '@/views/mortgage/mainPart/type'
+import BasicData from '@/views/mortgage/mainPart/data'
 
-type IProps = {
+type ModelPropsType = {
   visible: boolean
   formValue: RecordType
 }
-const props = withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<ModelPropsType>(), {
   visible: false,
   formValue: () => ({})
 })
 
-type IState = {
-  dialogVisible: boolean
-  editForm: RecordType
-}
-const state = reactive<IState>({
+const state = reactive<ModelStateType>({
   dialogVisible: false,
   editForm: {}
 })

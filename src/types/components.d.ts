@@ -8,11 +8,13 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Card: typeof import('./../components/Card/index.vue')['default']
+    CityCascader: typeof import('./../components/CityCascader/index.vue')['default']
     DataPermissonForm: typeof import('./../components/PermiForm/DataPermissonForm.vue')['default']
     ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCard: typeof import('element-plus/es')['ElCard']
+    ElCascader: typeof import('element-plus/es')['ElCascader']
     ElCol: typeof import('element-plus/es')['ElCol']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElCord: typeof import('element-plus/es')['ElCord']

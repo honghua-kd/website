@@ -16,7 +16,7 @@ export default {
       columnKey: '',
       width: '100',
       minWidth: '',
-      fixed: true
+      fixed: false
     },
     {
       type: '',

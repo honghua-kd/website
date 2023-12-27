@@ -4,33 +4,36 @@
     <el-card :body-style="{ padding: '10px 10px 0px' }">
       <el-form :inline="true" :model="formModel" class="filter-form">
         <el-form-item label="公司名称">
-          <el-input v-model="formModel.companyName" size="large" />
+          <el-input v-model="formModel.supplierName" />
         </el-form-item>
         <el-form-item label="归属公司">
-          <el-input v-model="formModel.belongCompany" size="large" />
+          <el-input v-model="formModel.belongCompany" />
         </el-form-item>
         <el-form-item label="区域">
-          <el-select
+          <el-cascader
+            placeholder="请选择"
+            style="width: 100%"
+            :options="BasicData.cityList"
+            clearable
+          />
+          <!-- <el-select
             :style="{ width: '130px', marginRight: '10px' }"
             placeholder="省"
             v-model="formModel.province"
-            size="large"
           ></el-select>
           <el-select
             :style="{ width: '130px', marginRight: '10px' }"
             placeholder="市"
             v-model="formModel.city"
-            size="large"
           ></el-select>
           <el-select
             :style="{ width: '130px' }"
             placeholder="区"
             v-model="formModel.area"
-            size="large"
-          ></el-select>
+          ></el-select> -->
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="formModel.status" size="large">
+          <el-select v-model="formModel.status">
             <el-option
               v-for="item in statusArr"
               :key="item.value"
@@ -40,7 +43,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="类型">
-          <el-select v-model="formModel.type" size="large">
+          <el-select v-model="formModel.supplierType">
             <el-option
               v-for="item in typeArr"
               :key="item.value"
@@ -51,18 +54,15 @@
         </el-form-item>
         <el-form-item label="到期时间">
           <el-date-picker
-            v-model="formModel.expireTime"
-            type="datetimerange"
+            v-model="formModel.expireDate"
+            type="daterange"
             start-placeholder="开始时间"
             end-placeholder="结束时间"
-            format="YYYY-MM-DD HH:mm:ss"
-            date-format="YYYY/MM/DD ddd"
-            time-format="A hh:mm:ss"
-            size="large"
+            format="YYYY-MM-DD"
           />
         </el-form-item>
         <el-form-item label="内部对接人">
-          <el-input v-model="formModel.inPerson" size="large" />
+          <el-input v-model="formModel.innerInterfaceStaffCode" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="search">查询</el-button>
@@ -97,12 +97,13 @@
           :label="i.label"
           :width="i.width"
           :fixed="i.fixed"
+          :show-overflow-tooltip="i.tooltip"
         >
           <template v-if="i.label === '操作'">
-            <span class="action-span">查看</span>
-            <span class="action-span">修改</span>
-            <span class="action-span">停用</span>
-            <span class="action-span">删除</span>
+            <el-button link type="primary">查看</el-button>
+            <el-button link type="primary">修改</el-button>
+            <el-button link type="primary">停用</el-button>
+            <el-button link type="danger">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -118,6 +119,7 @@
         @current-change="handleCurrentChange"
       />
     </div>
+    <!-- 供应商弹窗 -->
     <EditModel
       :visible="editModelVisible"
       :formValue="{}"
@@ -127,21 +129,29 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, toRefs } from 'vue'
-import BasicData from './data'
-import EditModel from './editModel.vue'
-import type { StateType, RecordType } from './type.ts'
+import { reactive, toRefs, onMounted } from 'vue'
+import BasicData from '@/views/supplier/supplierManage/data'
+import EditModel from '@/views/supplier/supplierManage/editModel.vue'
+import type {
+  StateType,
+  RecordType
+} from '@/views/supplier/supplierManage/type.ts'
+// import { SupplierAPI } from '@/api'
+// const API = new SupplierAPI()
 const state = reactive<StateType>({
+  // filter form
   formModel: {
-    companyName: '',
+    supplierName: '',
     belongCompany: '',
-    province: '',
-    city: '',
-    area: '',
-    status: '',
-    type: '',
-    expireTime: '',
-    inPerson: ''
+    provinceCode: 0,
+    cityCode: 0,
+    countyCode: 0,
+    status: 0,
+    supplierType: 0,
+    expireDateStart: '',
+    expireDateEnd: '',
+    innerInterfaceStaffCode: '',
+    expireDate: '' // 自行添加
   },
   statusArr: [
     {
@@ -185,23 +195,12 @@ const state = reactive<StateType>({
       value: 'download'
     }
   ],
+  // 表列
   tableColumn: BasicData.tableColumn,
-  tableData: [
-    {
-      companyName: 'string',
-      type: 'string',
-      belongCompany: 'string',
-      area: 'string',
-      person: 'string',
-      phone: 'string',
-      email: 'string',
-      status: 'string',
-      expireTime: 'string',
-      notice: 'string',
-      inPerson: 'string'
-    }
-  ],
+  // 表格数据
+  tableData: [],
   pageTotal: 100,
+  // 供应商弹窗
   editModelVisible: false
 })
 const {
@@ -214,14 +213,23 @@ const {
   pageTotal,
   editModelVisible
 } = toRefs(state)
+
+onMounted(() => {
+  // API.getSupplierList({ pageNo: 1, pageSize: 20 })
+})
+// 获取列表数据
 const search = () => {}
+// 表格size变化
 const handleSizeChange = () => {}
+// 表格分页
 const handleCurrentChange = () => {}
 const action = (val: string) => {
   if (val === 'add') {
     state.editModelVisible = true
   }
 }
+
+// 监听供应商弹窗关闭
 const closeModel = ({ visible, type }: { visible: boolean; type: string }) => {
   console.log(visible, type)
   state.editModelVisible = visible
@@ -243,15 +251,10 @@ const selectData = (selection: RecordType[], row: RecordType) => {
     }
   }
   .action {
-    margin: 10px 0;
-  }
-  .action-span {
-    margin-right: 6px;
-    color: #1890ff;
-    cursor: pointer;
+    margin: $base-margin-10 0;
   }
   .list {
-    margin-bottom: 20px;
+    margin-bottom: $base-margin-20;
   }
   .page {
     display: flex;

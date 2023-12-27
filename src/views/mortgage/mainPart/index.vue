@@ -4,10 +4,10 @@
     <el-card :body-style="{ padding: '10px 10px 0px' }">
       <el-form :inline="true" :model="formModel" class="filter-form">
         <el-form-item label="代理商/办事处">
-          <el-input v-model="formModel.name" size="large" />
+          <el-input v-model="formModel.name" />
         </el-form-item>
         <el-form-item label="来源系统">
-          <el-select v-model="formModel.source" size="large">
+          <el-select v-model="formModel.source">
             <el-option
               v-for="item in sourceArr"
               :key="item.value"
@@ -50,8 +50,8 @@
           :fixed="i.fixed"
         >
           <template v-if="i.label === '操作'">
-            <span class="action-span">编辑</span>
-            <span class="action-span">删除</span>
+            <el-button link type="primary">编辑</el-button>
+            <el-button link type="danger">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -67,6 +67,7 @@
         @current-change="handleCurrentChange"
       />
     </div>
+    <!--  -->
     <EditModel
       :visible="editModelVisible"
       :formValue="{}"
@@ -77,9 +78,9 @@
 
 <script setup lang="ts">
 import { reactive, toRefs } from 'vue'
-import BasicData from './data'
-import EditModel from './editModel.vue'
-import type { StateType, RecordType } from './type.ts'
+import BasicData from '@/views/mortgage/mainPart/data'
+import EditModel from '@/views/mortgage/mainPart/editModel.vue'
+import type { StateType, RecordType } from '@/views/mortgage/mainPart/type.ts'
 const state = reactive<StateType>({
   formModel: {
     name: '',
@@ -166,9 +167,11 @@ const {
   pageTotal,
   editModelVisible
 } = toRefs(state)
+
 const search = () => {}
 const handleSizeChange = () => {}
 const handleCurrentChange = () => {}
+
 const action = (val: string) => {
   if (val === 'add') {
     state.editModelVisible = true
@@ -196,11 +199,6 @@ const selectData = (selection: RecordType[], row: RecordType) => {
   }
   .action {
     margin: 10px 0;
-  }
-  .action-span {
-    margin-right: 6px;
-    color: #1890ff;
-    cursor: pointer;
   }
   .list {
     margin-bottom: 20px;

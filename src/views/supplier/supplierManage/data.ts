@@ -7,7 +7,8 @@ export default {
       columnKey: '',
       width: '40',
       minWidth: '',
-      fixed: true
+      fixed: true,
+      tooltip: false
     },
     {
       type: 'index',
@@ -16,25 +17,28 @@ export default {
       columnKey: '',
       width: '60',
       minWidth: '',
-      fixed: true
+      fixed: true,
+      tooltip: false
     },
     {
       type: '',
       label: '公司名称',
-      prop: 'companyName',
-      columnKey: 'companyName',
+      prop: 'supplierName',
+      columnKey: 'supplierName',
       width: '120',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      tooltip: false
     },
     {
       type: '',
       label: '类型',
-      prop: 'type',
-      columnKey: 'type',
+      prop: 'supplierTypeName',
+      columnKey: 'supplierTypeName',
       width: '60',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      tooltip: false
     },
     {
       type: '',
@@ -43,25 +47,28 @@ export default {
       columnKey: 'belongCompany',
       width: '120',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      tooltip: false
     },
     {
       type: '',
       label: '负责区域',
-      prop: 'area',
-      columnKey: 'area',
+      prop: 'coverArea',
+      columnKey: 'coverArea',
       width: '100',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      tooltip: false
     },
     {
       type: '',
       label: '联系人',
-      prop: 'person',
-      columnKey: 'person',
+      prop: 'contactName',
+      columnKey: 'contactName',
       width: '',
       minWidth: '100',
-      fixed: false
+      fixed: false,
+      tooltip: false
     },
     {
       type: '',
@@ -70,7 +77,8 @@ export default {
       columnKey: 'phone',
       width: '100',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      tooltip: false
     },
     {
       type: '',
@@ -79,7 +87,8 @@ export default {
       columnKey: 'email',
       width: '100',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      tooltip: false
     },
     {
       type: '',
@@ -88,43 +97,231 @@ export default {
       columnKey: 'status',
       width: '100',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      tooltip: false
     },
     {
       type: '',
       label: '到期时间',
-      prop: 'expireTime',
-      columnKey: 'expireTime',
+      prop: 'expireDate',
+      columnKey: 'expireDate',
       width: '100',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      tooltip: false
     },
     {
       type: '',
       label: '提醒',
-      prop: 'notice',
-      columnKey: 'notice',
+      prop: 'expireRemind',
+      columnKey: 'expireRemind',
       width: '100',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      tooltip: false
     },
     {
       type: '',
       label: '内部对接人',
-      prop: 'inPerson',
-      columnKey: 'inPerson',
+      prop: 'innerInterfaceStaffName',
+      columnKey: 'innerInterfaceStaffName',
       width: '100',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      tooltip: false
     },
     {
       type: '',
       label: '操作',
       prop: '',
       columnKey: '',
-      width: '180',
+      width: '200',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      tooltip: false
+    }
+  ],
+  personColumn: [
+    {
+      type: 'index',
+      label: '序号',
+      prop: '',
+      columnKey: '',
+      width: '60',
+      minWidth: '',
+      fixed: true,
+      tooltip: false
+    },
+    {
+      type: '',
+      label: '省份',
+      prop: 'province',
+      columnKey: '',
+      width: '',
+      minWidth: '',
+      fixed: false,
+      tooltip: false
+    },
+    {
+      type: '',
+      label: '城市',
+      prop: '',
+      columnKey: '',
+      width: '',
+      minWidth: '',
+      fixed: false,
+      tooltip: false
+    },
+    {
+      type: '',
+      label: '联系人',
+      prop: '',
+      columnKey: '',
+      width: '',
+      minWidth: '',
+      fixed: false,
+      tooltip: false
+    },
+    {
+      type: '',
+      label: '联系电话',
+      prop: '',
+      columnKey: '',
+      width: '',
+      minWidth: '',
+      fixed: false,
+      tooltip: false
+    },
+    {
+      type: '',
+      label: '操作',
+      prop: '',
+      columnKey: '',
+      width: '',
+      minWidth: '',
+      fixed: false,
+      tooltip: false
+    }
+  ],
+  cityList: [
+    {
+      value: 1,
+      label: 'Asia',
+      children: [
+        {
+          value: 2,
+          label: 'China',
+          children: [
+            { value: 3, label: 'Beijing' },
+            { value: 4, label: 'Shanghai' },
+            { value: 5, label: 'Hangzhou' }
+          ]
+        },
+        {
+          value: 6,
+          label: 'Japan',
+          children: [
+            { value: 7, label: 'Tokyo' },
+            { value: 8, label: 'Osaka' },
+            { value: 9, label: 'Kyoto' }
+          ]
+        },
+        {
+          value: 10,
+          label: 'Korea',
+          children: [
+            { value: 11, label: 'Seoul' },
+            { value: 12, label: 'Busan' },
+            { value: 13, label: 'Taegu' }
+          ]
+        }
+      ]
+    },
+    {
+      value: 14,
+      label: 'Europe',
+      children: [
+        {
+          value: 15,
+          label: 'France',
+          children: [
+            { value: 16, label: 'Paris' },
+            { value: 17, label: 'Marseille' },
+            { value: 18, label: 'Lyon' }
+          ]
+        },
+        {
+          value: 19,
+          label: 'UK',
+          children: [
+            { value: 20, label: 'London' },
+            { value: 21, label: 'Birmingham' },
+            { value: 22, label: 'Manchester' }
+          ]
+        }
+      ]
+    }
+  ],
+  settlementColumn: [
+    {
+      type: 'index',
+      label: '序号',
+      prop: '',
+      columnKey: '',
+      width: '60',
+      minWidth: '',
+      fixed: true,
+      tooltip: false
+    },
+    {
+      type: '',
+      label: '省份',
+      prop: 'province',
+      columnKey: '',
+      width: '',
+      minWidth: '',
+      fixed: false,
+      tooltip: false
+    },
+    {
+      type: '',
+      label: '城市',
+      prop: '',
+      columnKey: '',
+      width: '',
+      minWidth: '',
+      fixed: false,
+      tooltip: false
+    },
+    {
+      type: '',
+      label: '结算方式',
+      prop: '',
+      columnKey: '',
+      width: '',
+      minWidth: '',
+      fixed: false,
+      tooltip: false
+    },
+    {
+      type: '',
+      label: '结算金额',
+      prop: '',
+      columnKey: '',
+      width: '',
+      minWidth: '',
+      fixed: false,
+      tooltip: false
+    },
+    {
+      type: '',
+      label: '操作',
+      prop: '',
+      columnKey: '',
+      width: '',
+      minWidth: '',
+      fixed: false,
+      tooltip: false
     }
   ]
 }
