@@ -15,13 +15,13 @@
               <el-date-picker
                 v-model="queryParams.startVerifyTime"
                 type="datetime"
-                placeholder="开始日期"
+                placeholder="核验开始时间"
                 style="margin-right: 4%; width: 48%"
               />
               <el-date-picker
                 v-model="queryParams.endVerifyTime"
                 type="datetime"
-                placeholder="结束日期"
+                placeholder="核验结束时间"
                 style="width: 48%"
               />
             </el-form-item>
@@ -31,7 +31,7 @@
               <el-input
                 v-model="queryParams.creatorName"
                 clearable
-                placeholder="请输入"
+                placeholder="请输入创建人"
               />
             </el-form-item>
           </el-col>
@@ -41,6 +41,7 @@
                 v-model="queryParams.verifyResult"
                 style="width: 100%"
                 placeholder="请选择核对结果"
+                clearable
               >
                 <el-option
                   v-for="(item, index) in verifyOpts"
