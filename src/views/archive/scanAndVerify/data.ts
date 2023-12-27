@@ -6,7 +6,7 @@ export default {
       valueType: 'custom',
       minWidth: 180,
       align: 'left',
-      showOverflowTooltip: false,
+      showOverflowTooltip: true,
       fixed: true,
       show: true,
       showDisabled: true
@@ -17,8 +17,9 @@ export default {
       valueType: 'custom',
       width: 160,
       align: 'center',
-      showOverflowTooltip: false,
-      show: true
+      showOverflowTooltip: true,
+      show: true,
+      showDisabled: true
     },
     {
       label: '核对结果',
@@ -26,8 +27,9 @@ export default {
       valueType: 'custom',
       width: 110,
       align: 'center',
-      showOverflowTooltip: false,
-      show: true
+      showOverflowTooltip: true,
+      show: true,
+      showDisabled: true
     },
     {
       label: '*登记证编号',
@@ -35,7 +37,7 @@ export default {
       valueType: 'soltItem',
       width: 120,
       align: 'center',
-      showOverflowTooltip: false,
+      showOverflowTooltip: true,
       show: true
     },
     {
@@ -44,7 +46,7 @@ export default {
       valueType: 'soltItem',
       width: 150,
       align: 'center',
-      showOverflowTooltip: false,
+      showOverflowTooltip: true,
       show: true
     },
     {
@@ -53,7 +55,7 @@ export default {
       valueType: 'soltItem',
       width: 120,
       align: 'center',
-      showOverflowTooltip: false,
+      showOverflowTooltip: true,
       show: true
     },
     {
@@ -62,7 +64,7 @@ export default {
       valueType: 'soltItem',
       width: 120,
       align: 'center',
-      showOverflowTooltip: false,
+      showOverflowTooltip: true,
       show: true
     },
     {
@@ -71,7 +73,7 @@ export default {
       valueType: 'soltItem',
       width: 110,
       align: 'center',
-      showOverflowTooltip: false,
+      showOverflowTooltip: true,
       show: true
     },
     {
@@ -80,16 +82,16 @@ export default {
       valueType: 'soltItem',
       width: 150,
       align: 'left',
-      showOverflowTooltip: false,
+      showOverflowTooltip: true,
       show: true
     },
     {
       label: '*车身颜色',
       prop: 'vehicleColor',
       valueType: 'soltItem',
-      width: 90,
+      width: 110,
       align: 'center',
-      showOverflowTooltip: false,
+      showOverflowTooltip: true,
       show: true
     },
     {
@@ -98,7 +100,7 @@ export default {
       valueType: 'soltItem',
       width: 110,
       align: 'center',
-      showOverflowTooltip: false,
+      showOverflowTooltip: true,
       show: true
     },
     {
@@ -116,7 +118,7 @@ export default {
       valueType: 'soltItem',
       width: 170,
       align: 'center',
-      showOverflowTooltip: false,
+      showOverflowTooltip: true,
       show: true
     },
     {
@@ -125,7 +127,7 @@ export default {
       valueType: 'soltItem',
       width: 160,
       align: 'center',
-      showOverflowTooltip: false,
+      showOverflowTooltip: true,
       show: true
     },
     {
@@ -134,7 +136,7 @@ export default {
       valueType: '',
       width: 170,
       align: 'center',
-      showOverflowTooltip: false,
+      showOverflowTooltip: true,
       show: true
     },
     {
@@ -143,7 +145,7 @@ export default {
       valueType: '',
       width: 120,
       align: 'center',
-      showOverflowTooltip: false,
+      showOverflowTooltip: true,
       show: true
     },
     {
@@ -152,7 +154,7 @@ export default {
       valueType: '',
       width: 120,
       align: 'center',
-      showOverflowTooltip: false,
+      showOverflowTooltip: true,
       show: true
     },
     {
@@ -188,7 +190,7 @@ export default {
       valueType: '',
       width: 120,
       align: 'center',
-      showOverflowTooltip: false,
+      showOverflowTooltip: true,
       show: true
     },
     {
@@ -197,7 +199,7 @@ export default {
       valueType: '',
       width: 160,
       align: 'center',
-      showOverflowTooltip: false,
+      showOverflowTooltip: true,
       show: true
     },
     {
@@ -206,7 +208,7 @@ export default {
       valueType: 'archivalStatus',
       width: 110,
       align: 'center',
-      showOverflowTooltip: false,
+      showOverflowTooltip: true,
       show: true
     },
     {

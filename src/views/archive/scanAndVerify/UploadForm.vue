@@ -11,7 +11,7 @@
         ref="formRef"
         :model="formParams"
         v-loading="formLoading"
-        label-width="130px"
+        :label-width="px2rem('130px')"
         :rules="formRules"
       >
         <el-row>
@@ -133,7 +133,7 @@ import pdfImg from '@/assets/common/pdf.png'
 import { ElMessage, ElForm } from 'element-plus'
 import dayjs from 'dayjs'
 import { MortageAPI, CommonAPI } from '@/api'
-import { openLink, isPdf } from '@/utils'
+import { openLink, isPdf, px2rem } from '@/utils'
 import useGetPreviewURL from '@/hooks/useGetPreviewURL/index'
 import type { UploadRawFile, UploadRequestOptions } from 'element-plus'
 import type { UploadFileRequest, UploadFileListItemRequest } from '@/api'

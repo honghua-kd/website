@@ -12,7 +12,7 @@
         :model="formParamsRequest"
         v-loading="formLoading"
         :rules="formRules"
-        label-width="130px"
+        :label-width="px2rem('130px')"
       >
         <el-form-item label="文件名">
           <div class="file-name" @click="openFileHandler">
@@ -256,7 +256,7 @@ import type { ModifiyInfo, FormOrigin, MortgageeItem, CardCell } from '@/api'
 import { MortageAPI } from '@/api'
 import { ElMessage } from 'element-plus'
 import Preview from '@/components/Preview/index.vue'
-import { openLink, isPdf } from '@/utils'
+import { openLink, isPdf, px2rem } from '@/utils'
 import useGetPreviewURL from '@/hooks/useGetPreviewURL/index'
 import dayjs from 'dayjs'
 

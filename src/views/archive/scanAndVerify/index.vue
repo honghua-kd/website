@@ -6,7 +6,7 @@
         ref="queryFormRef"
         :model="queryParams"
         class="scan-search-bar"
-        label-width="90px"
+        :label-width="px2rem('90px')"
       >
         <el-row :gutter="20">
           <el-col :span="12">
@@ -147,7 +147,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="渠道商:" prop="channelName">
+            <el-form-item label="渠道商" prop="channelName">
               <el-input
                 v-model="queryParams.channelName"
                 clearable
@@ -202,23 +202,28 @@
           placement="top-end"
           :hide-on-click="false"
           max-height="300px"
+          @visible-change="handleDropdownFn"
         >
-          <span class="el-dropdown-link">
-            <el-icon :size="18"><Setting /></el-icon>
+          <div class="dropdown-column">
+            <el-icon :size="15" class="icon"><Setting /></el-icon>
             设置表格列
-          </span>
+          </div>
           <template #dropdown>
             <el-dropdown-menu class="custom-drop-menu">
               <el-dropdown-item>
                 <el-checkbox
                   v-model="checkAll"
                   :indeterminate="isIndeterminate"
+                  @change="handleCheckAllChange"
                 >
-                  全选{{ isIndeterminate }}
+                  全选
                 </el-checkbox>
               </el-dropdown-item>
-              <!-- @change="handleCheckedConfig" @change="handleCheckAllChange" -->
-              <el-checkbox-group v-model="checkedConfig">
+              <!--  -->
+              <el-checkbox-group
+                v-model="checkedConfig"
+                @change="handleCheckedConfig"
+              >
                 <el-dropdown-item
                   v-for="cfg in checkboxTableConfig"
                   :key="cfg.prop"
@@ -377,11 +382,11 @@
 <script setup lang="ts">
 import { ref, reactive, Ref, computed, onMounted, toRefs } from 'vue'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
-import { openLink, isPdf, handleDownloadFile } from '@/utils'
+import { openLink, isPdf, handleDownloadFile, px2rem } from '@/utils'
 import EditForm from './EditForm.vue'
 import UploadForm from './UploadForm.vue'
 import { CommonAPI, MortageAPI } from '@/api'
-import type { TableColumnCtx } from 'element-plus'
+import type { TableColumnCtx, CheckboxValueType } from 'element-plus'
 import {
   ArrowDownBold,
   ArrowUpBold,
@@ -468,7 +473,7 @@ const state = reactive<IState>({
   tableConfig: BasicData.tableConfig,
   checkAll: false,
   checkedConfig: [],
-  checkboxTableConfig: BasicData.tableConfig,
+  checkboxTableConfig: [],
   isIndeterminate: true
 })
 
@@ -496,32 +501,48 @@ const tableHeight = computed(() => {
   }
 })
 
-// 自定义表格列--handleCheckedConfig
-// const handleCheckedConfig = (value: string[]) => {
-//   const checkedCount = value.length
-//   checkAll.value = checkedCount === state.checkboxTableConfig.length
+// 自定义表格列
+const handleCheckedConfig = (value: CheckboxValueType[]) => {
+  const checkedCount = value.length
+  checkAll.value = checkedCount === state.checkboxTableConfig.length
 
-//   checkedConfig.value = value
+  state.checkedConfig = value as string[]
 
-//   state.isIndeterminate =
-//     checkedCount > 0 && checkedCount < state.checkboxTableConfig.length
+  state.isIndeterminate =
+    checkedCount > 0 && checkedCount < state.checkboxTableConfig.length
 
-//   state.tableConfig.forEach((item) => {
-//     item.show = checkedConfig.value.includes(item.prop)
-//   })
-// }
+  state.tableConfig.forEach((item) => {
+    if (!item.showDisabled) {
+      item.show = checkedConfig.value.includes(item.prop)
+    }
+  })
+}
 
-// // 自定义表格列-全选
-// const handleCheckAllChange = (val: boolean) => {
-//   const arr = state.checkboxTableConfig.map((item) => item.prop)
+// 自定义表格列-全选
+const handleCheckAllChange = (val: string | number | boolean) => {
+  const arr = state.checkboxTableConfig.map((item) => item.prop)
 
-//   checkedConfig.value = val ? arr : []
-//   state.isIndeterminate = !val
+  const _val = val as boolean
 
-//   state.tableConfig.forEach((item) => {
-//     item.show = !!val
-//   })
-// }
+  state.checkedConfig = _val ? arr : []
+  state.isIndeterminate = !_val
+
+  state.tableConfig.forEach((item) => {
+    if (!item.showDisabled) {
+      item.show = !!_val
+    }
+  })
+}
+
+const handleDropdownFn = (visible: boolean) => {
+  if (visible) {
+    state.checkboxTableConfig = BasicData.tableConfig.filter(
+      (item) => !item.showDisabled
+    )
+    state.checkedConfig = state.checkboxTableConfig.map((item) => item.prop)
+    state.isIndeterminate = false
+  }
+}
 
 // 归档状态处理
 const getAchivalStatus = (status: string) => {
@@ -920,8 +941,13 @@ onMounted(() => {
 :deep(.el-form-item) {
   margin-bottom: 12px;
 }
-// .custom-drop-menu {
-//   display: flex;
-//   flex-direction: column;
-// }
+.dropdown-column {
+  display: flex;
+  flex-direction: row;
+  padding-top: 10px;
+  .icon {
+    margin-top: -3px;
+    margin-right: 5px;
+  }
+}
 </style>

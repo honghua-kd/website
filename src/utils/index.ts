@@ -4,7 +4,7 @@ import fileDownload from 'js-file-download'
 
 import type { FileDownload } from '@/api'
 
-const { title } = setting
+const { title, remRootValue } = setting
 
 export const getPageTitle = (pageTitle: string) => {
   if (pageTitle) {
@@ -414,4 +414,14 @@ export const setDomFontSize = () => {
     document.documentElement.clientWidth || document.body.clientWidth
   const fontsize = (width <= 1200 ? 1200 : width) / 100 + 'px'
   document.getElementsByTagName('html')[0].style.fontSize = fontsize
+}
+
+export function px2rem(pxUnit: string) {
+  const htmlSize = document.documentElement.style.fontSize
+  const pxNum = Number(pxUnit.split('px')[0])
+  if (htmlSize && remRootValue) {
+    return `${pxNum / remRootValue}rem`
+  } else {
+    return pxUnit
+  }
 }
