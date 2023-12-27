@@ -33,6 +33,7 @@
             :http-request="uploadHandler"
             :accept="fileType"
             action="#"
+            :multiple="multiple"
           >
             <el-button type="primary" :icon="UploadFilled" :loading="upLoading">
               上传文件
@@ -69,7 +70,7 @@
                       :zoom-rate="1.2"
                       :max-scale="5"
                       :min-scale="0.2"
-                      :preview-src-list="[item.url]"
+                      :preview-src-list="[item.url as string]"
                       fit="cover"
                     />
                   </div>
@@ -133,15 +134,16 @@ import { ElMessage, ElForm } from 'element-plus'
 import dayjs from 'dayjs'
 import { MortageAPI, CommonAPI } from '@/api'
 import { openLink, isPdf } from '@/utils'
-import { useGetPreviewURL } from '@/hooks'
+import useGetPreviewURL from '@/hooks/useGetPreviewURL/index'
 import type { UploadRawFile, UploadRequestOptions } from 'element-plus'
 import type { UploadFileRequest, UploadFileListItemRequest } from '@/api'
-
+const { getSinglePreviewURL } = useGetPreviewURL()
 const API = new MortageAPI()
 const CommonApi = new CommonAPI()
 const dialogTitle = ref<string>('上传车辆登记证')
 const dialogVisible = ref<boolean>(false)
 const formLoading = ref<boolean>(false)
+const multiple = ref<boolean>()
 const emit = defineEmits(['success'])
 const formParams = reactive<UploadFileRequest>({
   batchNo: '', // 处理批次号
@@ -163,8 +165,14 @@ const formRules = reactive({
 
 /** 打开弹窗 */
 const tenantUser = ref<string>('')
-const open = (type: string, title: string, user: string) => {
+const open = (
+  type: string,
+  title: string,
+  user: string,
+  isMultiple?: boolean
+) => {
   dialogVisible.value = true
+  multiple.value = isMultiple
   reset()
   formParams.batchNo = title
   tenantUser.value = user
@@ -224,8 +232,12 @@ const beforeUploadHandler = (file: UploadRawFile) => {
 // 上传
 const preFileName = ref<string>('')
 const upLoading = ref<boolean>(false)
+let uploadCount = 0
+let uploadSuccCount = 0
 const uploadHandler = async (options: UploadRequestOptions) => {
   upLoading.value = true
+  uploadCount++
+
   const file = options.file
   const formData = new FormData()
   formData.append('file', file)
@@ -233,16 +245,21 @@ const uploadHandler = async (options: UploadRequestOptions) => {
   formData.append('tenantUser', tenantUser.value)
   formData.append('prefixPath', 'attachment')
   formData.append('expireDays', '-1')
+
   CommonApi.uploadFiles(formData)
     .then(async (res) => {
       if (res && res.code === 200) {
-        const fileCode = res.data?.fileCode
-        // 拿到fileCode 换取 文件地址 URL
+        uploadSuccCount++
 
-        const { preUrl, fileName } = await useGetPreviewURL(fileCode)
-        upLoading.value = false
-        previewUrl.value = preUrl
-        preFileName.value = fileName
+        if (uploadCount === uploadSuccCount) {
+          upLoading.value = false
+        }
+        const fileCode = res.data?.fileCode as string
+        // 拿到fileCode 换取 文件地址 URL
+        const data = await getSinglePreviewURL(fileCode)
+
+        previewUrl.value = data?.preUrl as string
+        preFileName.value = data?.fileName as string
         const fileCreateTime = dayjs(file.lastModified).format(
           'YYYY-MM-DD HH:mm:ss'
         )
@@ -251,8 +268,9 @@ const uploadHandler = async (options: UploadRequestOptions) => {
           name,
           fileCode,
           fileCreateTime,
-          url: preUrl
+          url: data?.preUrl
         } as UploadFileListItemRequest
+
         formParams.fileInfoList.push(obj)
       }
     })
