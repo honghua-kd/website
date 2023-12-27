@@ -96,30 +96,27 @@ const basicInfoForm = reactive<UsualAddressListItem>({
   area: ''
 })
 const addHandler = () => {
-  
-  
   if (props.title === '新增联系人信息') {
     const params = {}
     API.addUsualAddress(params)
-    .then((res) => {
-      if (res && res.code === 200) {
-      }
-    })
-    .catch((err: Error) => {
-      console.log(err)
-    })
-  }else {
+      .then((res) => {
+        if (res && res.code === 200) {
+        }
+      })
+      .catch((err: Error) => {
+        console.log(err)
+      })
+  } else {
     const params = {}
     API.editUsualAddress(params)
-    .then((res) => {
-      if (res && res.code === 200) {
-      }
-    })
-    .catch((err: Error) => {
-      console.log(err)
-    })
+      .then((res) => {
+        if (res && res.code === 200) {
+        }
+      })
+      .catch((err: Error) => {
+        console.log(err)
+      })
   }
-  
 }
 /** 打开弹窗 */
 const open = (row) => {

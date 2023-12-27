@@ -276,7 +276,7 @@
     </div>
     <ImportForm ref="importFormRef" />
     <CheckForm ref="checkFormRef" />
-    <EditForm ref="editFormRef" :title="dialogTitle" />
+    <EditForm ref="editFormRef" :title="dialogTitle" @success="getList()" />
     <LogisticsInfoForm ref="logisticsInfoFormRef" />
   </div>
 </template>
@@ -465,7 +465,7 @@ const delHandler = (ids: string[]) => {
     .then(() => {
       // 调用删除接口
       const params = {
-        expressNo: ids
+        expressNoList: ids
       }
       API.delExpressInfo(params).then((res) => {
         if (res && res.code === 200) {

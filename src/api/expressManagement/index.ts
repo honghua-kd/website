@@ -9,9 +9,11 @@ import type {
   ExpressDetailInfoRequest,
   CheckExpressInfoRequest,
   DelExpressInfoRequest,
+  DelExpressListRequest,
   ReceiveExpressInfoRequest,
   UsualAddressListRequest,
-  DelUsualAddressRequest
+  DelUsualAddressRequest,
+  AddUsualAddressRequest
 } from './types/request'
 import type { ExpressListItem, UsualAddressListItem } from './types/response'
 
@@ -29,7 +31,7 @@ export class ExpressAPI {
     data: ExpressInfoCardListRequest
   ): Response<PageList<ExpressListItem>> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage/express/info/list1`,
+      url: `${prefix}/admin-api/express/info/list`,
       method: 'post',
       data
     })
@@ -40,7 +42,7 @@ export class ExpressAPI {
     data: ExpressDetailInfoRequest
   ): Response<boolean | null | undefined> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage/express/info/add`,
+      url: `${prefix}/admin-api/express/info/add`,
       method: 'post',
       data
     })
@@ -51,7 +53,7 @@ export class ExpressAPI {
     data: ExpressDetailInfoRequest
   ): Response<boolean | null | undefined> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage/express/info/update`,
+      url: `${prefix}/admin-api/express/info/update`,
       method: 'post',
       data
     })
@@ -60,7 +62,7 @@ export class ExpressAPI {
   // 查看邮寄信息详情
   checkExpressInfo(data: CheckExpressInfoRequest): Response<ExpressListItem> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage/express/info/detail`,
+      url: `${prefix}/admin-api/express/info/detail`,
       method: 'post',
       data
     })
@@ -68,10 +70,10 @@ export class ExpressAPI {
 
   // 删除邮寄信息
   delExpressInfo(
-    data: DelExpressInfoRequest
+    data: DelExpressListRequest
   ): Response<boolean | null | undefined> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage/express/info/delete`,
+      url: `${prefix}/admin-api/express/info/delete`,
       method: 'post',
       data
     })
@@ -115,7 +117,7 @@ export class ExpressAPI {
     data: UsualAddressListRequest
   ): Response<PageList<UsualAddressListItem>> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage/usual/address/list1`,
+      url: `${prefix}/admin-api/express/usual/address/list`,
       method: 'post',
       data
     })
@@ -123,10 +125,10 @@ export class ExpressAPI {
 
   // 新增常用地址
   addUsualAddress(
-    data: Omit<UsualAddressListItem, 'id'>
+    data: AddUsualAddressRequest
   ): Response<boolean | null | undefined> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage/usual/address/add`,
+      url: `${prefix}/admin-api/express/usual/address/add`,
       method: 'post',
       data
     })

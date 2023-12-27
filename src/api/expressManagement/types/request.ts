@@ -152,6 +152,13 @@ export interface DelExpressInfoRequest {
   expressNo?: string[]
 }
 
+export interface DelExpressListRequest {
+  /**
+   * 快递单号
+   */
+  expressNoList?: string[]
+}
+
 export interface ReceiveExpressInfoRequest {
   /**
    * 快递单号
@@ -172,4 +179,23 @@ export interface UsualAddressListRequest {
 
 export interface DelUsualAddressRequest {
   id?: number
+}
+
+export interface AddUsualAddressRequest {
+  /**
+   * 用户地址
+   */
+  userAddress: string
+  /**
+   * 用户邮箱
+   */
+  userMail: string
+  /**
+   * 用户名
+   */
+  userName: string
+  /**
+   * 用户联系方式
+   */
+  userPhone: string
 }

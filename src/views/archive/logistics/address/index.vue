@@ -54,7 +54,7 @@
         @header-click="sortChangeHandler"
       >
         <el-table-column label="联系人名称" prop="userName" align="center" />
-        <el-table-column label="联系电话" prop="userMail" align="center" />
+        <el-table-column label="联系电话" prop="userPhone" align="center" />
         <el-table-column label="地址" prop="userAddress" align="center" />
         <el-table-column label="邮箱" prop="userMail" align="center" />
 

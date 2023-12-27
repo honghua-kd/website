@@ -83,6 +83,7 @@
               type="date"
               :default-value="new Date()"
               format="YYYY-MM-DD"
+              value-format="YYYY-MM-DD"
             />
           </el-form-item>
           <el-form-item v-else label="寄件日期:" prop="sendTime">
@@ -91,6 +92,7 @@
               type="date"
               :default-value="new Date()"
               format="YYYY-MM-DD"
+              value-format="YYYY-MM-DD"
             />
           </el-form-item>
         </el-col>
@@ -144,7 +146,9 @@
                 </el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-button type="primary">设为常用地址</el-button>
+                <el-button type="primary" @click="addAddressHandler"
+                  >设为常用地址</el-button
+                >
               </el-col>
             </el-row>
           </el-col>
@@ -402,7 +406,7 @@
       </el-row>
     </el-form>
     <template #footer>
-      <el-button type="primary"> 保 存 </el-button>
+      <el-button type="primary" @click="updateHandler"> 保 存 </el-button>
       <el-button type="primary" @click="dialogVisible = false">
         关 闭
       </el-button>
@@ -442,7 +446,7 @@ const CommonApi = new CommonAPI()
 const dialogExpressTitle = ref<string>('')
 const dialogVisible = ref<boolean>(false)
 const disFlag = ref<boolean>(false)
-defineProps({
+const props = defineProps({
   title: {
     type: String,
     default: ''
@@ -452,6 +456,7 @@ const basicInfoForm = reactive<ExpressListItem>({
   id: '',
   expressNo: '',
   expressCompany: '',
+  expressCompanyOther: '',
   expressStatus: 0,
   expressType: 0,
   sendTime: '',
@@ -500,6 +505,27 @@ const handleChange = () => {
         commonContracts.value = res?.data?.list || []
         commonContracts.value.forEach((item) => {
           item.value = '常用联系-' + item.userName + '-' + item.userPhone
+        })
+      }
+    })
+    .catch((err: Error) => {
+      console.log(err)
+    })
+}
+
+const addAddressHandler = () => {
+  const params = {
+    userName: basicInfoForm.sendUser,
+    userPhone: basicInfoForm.sendPhone,
+    userAddress: basicInfoForm.sendAddress,
+    userMail: ''
+  }
+  API.addUsualAddress(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        ElMessage({
+          type: 'success',
+          message: '添加成功'
         })
       }
     })
@@ -627,6 +653,34 @@ const getDicts = () => {
   })
 }
 defineExpose({ open })
+const emit = defineEmits(['success'])
+const updateHandler = () => {
+  if (props.title === '新增邮寄信息') {
+    const params = basicInfoForm
+    API.addExpressInfo(params)
+      .then((res) => {
+        if (res && res.code === 200) {
+          dialogVisible.value = false
+          emit('success')
+        }
+      })
+      .catch((err: Error) => {
+        console.log(err)
+      })
+  } else {
+    const params = basicInfoForm
+    API.editExpressInfo(params)
+      .then((res) => {
+        if (res && res.code === 200) {
+          dialogVisible.value = false
+          emit('success')
+        }
+      })
+      .catch((err: Error) => {
+        console.log(err)
+      })
+  }
+}
 const expressStatusFlag = ref(true)
 watch(
   () => basicInfoForm.expressType,
