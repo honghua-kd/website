@@ -257,7 +257,7 @@ import { MortageAPI } from '@/api'
 import { ElMessage } from 'element-plus'
 import Preview from '@/components/Preview/index.vue'
 import { openLink, isPdf } from '@/utils'
-import { useGetPreviewURL } from '@/hooks'
+import useGetPreviewURL from '@/hooks/useGetPreviewURL/index'
 import dayjs from 'dayjs'
 
 const API = new MortageAPI()
@@ -390,11 +390,13 @@ const previewVisible = ref<boolean>(false)
 const previewUrl = ref<string>('')
 const preFileName = ref<string>('')
 
+const { getSinglePreviewURL } = useGetPreviewURL()
 const openFileHandler = async () => {
   const fileCode = fileParams?.fileCode || ''
-  const { preUrl, fileName } = await useGetPreviewURL(fileCode)
-  previewUrl.value = preUrl
-  preFileName.value = fileName
+  const data = await getSinglePreviewURL(fileCode)
+  previewUrl.value = data?.preUrl as string
+  preFileName.value = data?.fileName as string
+
   if (!previewUrl.value) {
     ElMessage.error('读取上传文件URL出错')
   }

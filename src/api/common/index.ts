@@ -28,6 +28,18 @@ export class CommonAPI {
     })
   }
 
+  // 批量上传文件 Response<UploadFile>
+  uploadFilesBatch(data: FormData): Response<UploadFile> {
+    return this.request({
+      url: `${prefix}/admin-api/file/attachment/uploadBatch`,
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/form-data'
+      },
+      data
+    })
+  }
+
   // 批量获取附件预览链接
   getPreviewUrl(data: FilePreviewUrlRequest): Response<FilePreviewList> {
     return this.request({

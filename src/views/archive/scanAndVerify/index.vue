@@ -15,13 +15,13 @@
               <el-date-picker
                 v-model="queryParams.startVerifyTime"
                 type="datetime"
-                placeholder="开始日期"
+                placeholder="核验开始时间"
                 style="margin-right: 4%; width: 48%"
               />
               <el-date-picker
                 v-model="queryParams.endVerifyTime"
                 type="datetime"
-                placeholder="结束日期"
+                placeholder="核验结束时间"
                 style="width: 48%"
               />
             </el-form-item>
@@ -31,7 +31,7 @@
               <el-input
                 v-model="queryParams.creatorName"
                 clearable
-                placeholder="请输入"
+                placeholder="请输入创建人"
               />
             </el-form-item>
           </el-col>
@@ -41,6 +41,7 @@
                 v-model="queryParams.verifyResult"
                 style="width: 100%"
                 placeholder="请选择核对结果"
+                clearable
               >
                 <el-option
                   v-for="(item, index) in verifyOpts"
@@ -504,7 +505,6 @@ import { openLink, isPdf, handleDownloadFile } from '@/utils'
 import EditForm from './EditForm.vue'
 import UploadForm from './UploadForm.vue'
 import { CommonAPI, MortageAPI } from '@/api'
-import { useGetPreviewURL } from '@/hooks'
 import type { TableColumnCtx } from 'element-plus'
 import {
   ArrowDownBold,
@@ -526,6 +526,7 @@ import { ARCHIVE_STATUS, VERIFY_RESULTS } from '@/constants'
 import { useUserStore } from '@toystory/lotso'
 import dayjs from 'dayjs'
 import Preview from '@/components/Preview/index.vue'
+import useGetPreviewURL from '@/hooks/useGetPreviewURL/index'
 
 const API = new MortageAPI()
 const CommonApi = new CommonAPI()
@@ -578,10 +579,12 @@ const previewVisible = ref<boolean>(false)
 const previewUrl = ref<string>('')
 const preFileName = ref<string>('')
 
+const { getSinglePreviewURL } = useGetPreviewURL()
 const openPreview = async (fileCode: string) => {
-  const { preUrl, fileName } = await useGetPreviewURL(fileCode)
-  previewUrl.value = preUrl
-  preFileName.value = fileName
+  const data = await getSinglePreviewURL(fileCode)
+  previewUrl.value = data?.preUrl as string
+  preFileName.value = data?.fileName as string
+
   if (!previewUrl.value) {
     ElMessage.error('读取上传文件URL出错')
   }
@@ -637,7 +640,7 @@ const expandHandler = (): boolean => {
 const uploadFormRef = ref()
 const uploadHandler = () => {
   const title = `${curStaffCode.value}-${dayjs().format('YYYYMMDDHHmmss')}`
-  uploadFormRef.value.open('upload', title, curStaffCode.value)
+  uploadFormRef.value.open('upload', title, curStaffCode.value, true)
 }
 
 // 删除
