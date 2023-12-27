@@ -1,8 +1,8 @@
 <template>
   <div>
-    <SecondaryTitle title="核验车辆登记证" />
+    <!-- <SecondaryTitle title="核验车辆登记证" /> -->
     <!-- 搜索工作栏 -->
-    <div class="scan-search-container">
+    <div class="scan-search-container" ref="searchBoxRef">
       <el-form
         ref="queryFormRef"
         :model="queryParams"
@@ -194,11 +194,15 @@
       </el-row>
       <el-table
         :data="tableData"
-        :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
-        border
+        :header-cell-style="{
+          background: '#eef1f6',
+          color: '#606266',
+          textAlign: 'center'
+        }"
         v-loading="tableLoading"
         row-key="id"
         :tree-props="{ children: 'target' }"
+        :max-height="tableHeight"
         @selection-change="selectionChangeHandler"
         @header-click="sortChangeHandler"
       >
@@ -209,7 +213,7 @@
           align="center"
         />
 
-        <el-table-column fixed prop="fileName" width="180" align="center">
+        <el-table-column fixed prop="fileName" width="180" align="left">
           <template #header>
             文件名
             <svg-icon
@@ -285,7 +289,7 @@
         <el-table-column
           label="*车架号"
           prop="vinNo"
-          width="120"
+          width="150"
           align="center"
         >
           <template #default="scope">
@@ -325,8 +329,9 @@
         <el-table-column
           label="*机动车所有人"
           prop="vehicleOwner"
-          width="120"
-          align="center"
+          width="150"
+          align="left"
+          show-overflow-tooltip
         >
           <template #default="scope">
             <TableSlotItem :rowInfo="scope.row" rowKey="vehicleOwner" />
@@ -355,8 +360,9 @@
         <el-table-column
           label="*抵押权人"
           prop="mortgagee"
-          width="150"
-          align="center"
+          width="250"
+          align="left"
+          show-overflow-tooltip
         >
           <template #default="scope">
             <TableSlotItem :rowInfo="scope.row" rowKey="mortgagee" />
@@ -385,7 +391,7 @@
         <el-table-column
           label="批次号"
           prop="batchNo"
-          width="120"
+          width="170"
           align="center"
         />
         <el-table-column
@@ -404,19 +410,22 @@
           label="挂靠商"
           prop="affiliatesName"
           width="120"
-          align="center"
+          align="left"
+          show-overflow-tooltip
         />
         <el-table-column
           label="办事处"
           prop="agencyName"
           width="120"
-          align="center"
+          align="left"
+          show-overflow-tooltip
         />
         <el-table-column
           label="渠道商"
           prop="channelName"
           width="120"
-          align="center"
+          align="left"
+          show-overflow-tooltip
         />
         <el-table-column
           label="创建人"
@@ -478,6 +487,7 @@
       <el-pagination
         v-if="pageTotal"
         background
+        small
         layout="total,sizes,prev, pager, next"
         :page-sizes="[10, 20, 50, 100]"
         :total="pageTotal"
@@ -498,7 +508,7 @@
 </template>
 
 <script setup lang="ts">
-import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
+// import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
 import { ref, reactive, Ref, computed, onMounted } from 'vue'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import { openLink, isPdf, handleDownloadFile } from '@/utils'
@@ -561,6 +571,22 @@ const queryParams = reactive<QueryParams>({
 
 const selectData: Ref<CardListItem[]> = ref([])
 const curStaffCode = ref<string>('')
+
+// 表格最大高度
+const searchBoxRef = ref()
+const tableHeight = computed(() => {
+  if (searchBoxRef.value?.clientHeight) {
+    const height = Number(
+      document.documentElement.clientHeight -
+        251 -
+        searchBoxRef.value?.clientHeight
+    )
+    return height
+  } else {
+    const height = Number(document.documentElement.clientHeight - 251)
+    return height
+  }
+})
 
 // 归档状态处理
 const getAchivalStatus = (status: string) => {
