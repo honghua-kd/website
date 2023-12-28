@@ -243,6 +243,8 @@
         row-key="id"
         :tree-props="{ children: 'target' }"
         :max-height="tableHeight"
+        border
+        :cell-style="{ borderRight: '1px solid #fff' }"
         @selection-change="selectionChangeHandler"
         @header-click="sortChangeHandler"
       >
@@ -480,12 +482,12 @@ const tableHeight = computed(() => {
   if (searchBoxRef.value?.clientHeight) {
     const height = Number(
       document.documentElement.clientHeight -
-        251 -
+        200 -
         searchBoxRef.value?.clientHeight
     )
     return height
   } else {
-    const height = Number(document.documentElement.clientHeight - 251)
+    const height = Number(document.documentElement.clientHeight - 200)
     return height
   }
 })
@@ -876,6 +878,9 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+.simmi-cell {
+  border-color: #ffffff !important;
+}
 .scan-search-container {
   display: flex;
   width: 100%;
