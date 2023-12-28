@@ -29,7 +29,13 @@
       <el-table-column type="index" width="80" label="序号" align="center" />
       <el-table-column prop="creatorName" label="上传人"></el-table-column>
       <el-table-column prop="createTime" label="上传时间"></el-table-column>
-      <el-table-column prop="fileName" label="上传文件"></el-table-column>
+      <el-table-column prop="fileName" label="上传文件">
+        <template v-slot="scope">
+          <el-button @click="downUploadFile(scope.row)" type="text">{{
+            scope.row.fileName
+          }}</el-button>
+        </template>
+      </el-table-column>
       <el-table-column prop="status" label="状态"></el-table-column>
       <el-table-column
         prop="msg"
@@ -62,8 +68,10 @@ import {
   ElButton,
   ElDatePicker,
   ElTable,
-  ElTableColumn
+  ElTableColumn,
+  ElMessage
 } from 'element-plus'
+import { handleDownloadFile } from '@/utils'
 const API = new RecordAPI()
 onMounted(() => {
   getList()
@@ -119,7 +127,21 @@ const resetForm = () => {
   ]
   getList()
 }
-
+const downUploadFile = (row: ImportTableItem) => {
+  API.downLoadFiles({ fileCode: row.fileCode })
+    .then((res) => {
+      if (res) {
+        ElMessage({
+          type: 'success',
+          message: '操作成功'
+        })
+        handleDownloadFile(res, row.fileName)
+      }
+    })
+    .catch((err: Error) => {
+      throw err
+    })
+}
 const tableData: Ref<ImportTableItem[]> = ref([])
 
 // 分页

@@ -8,7 +8,6 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     DataPermissonForm: typeof import('./../components/PermiForm/DataPermissonForm.vue')['default']
-    ElButton: typeof import('element-plus/es')['ElButton']
     ElCol: typeof import('element-plus/es')['ElCol']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElPagination: typeof import('element-plus/es')['ElPagination']
