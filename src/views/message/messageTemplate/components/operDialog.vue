@@ -15,8 +15,36 @@
         :rules="formRules"
       >
         <el-row>
-          <el-col>
-            <el-form-item label="来源系统" prop="market">
+          <el-col :span="12">
+            <el-form-item label="模板类型" prop="market">
+              <el-select
+                v-model="formParams.market"
+                clearable
+                placeholder="请选择"
+                width="100%"
+              >
+                <el-option
+                  v-for="item in statusOpts"
+                  :key="item.dictValue"
+                  :label="item.dictLabel"
+                  :value="item.dictValue"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="模板名称" prop="market">
+              <el-input
+                v-model="formParams.chepai"
+                placeholder="请输入"
+                clearable
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="业务类型" prop="market">
               <el-select
                 v-model="formParams.market"
                 clearable
@@ -35,95 +63,70 @@
         </el-row>
         <el-row>
           <el-col>
-            <el-form-item label="渠道商/办事处" prop="market">
-              <el-input
-                v-model="formParams.chepai"
-                placeholder="请输入"
-                clearable
+            <el-form-item label="来源系统" prop="market">
+              <el-tree
+                ref="source"
+                :data="systemOptions"
+                v-bind="{ ...treeConfig }"
+                :default-checked-keys="defaultCheckedkeys"
+                @check="handleNodeClick"
               />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="省份" prop="market">
-              <el-select
-                v-model="formParams.market"
-                clearable
-                placeholder="请选择"
-              >
-                <el-option
-                  v-for="item in statusOpts"
-                  :key="item.dictValue"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="城市" prop="market">
-              <el-select
-                v-model="formParams.market"
-                clearable
-                placeholder="请选择"
-              >
-                <el-option
-                  v-for="item in statusOpts"
-                  :key="item.dictValue"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="区" prop="market">
-              <el-select
-                v-model="formParams.market"
-                clearable
-                placeholder="请选择"
-              >
-                <el-option
-                  v-for="item in statusOpts"
-                  :key="item.dictValue"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
-                />
-              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col>
-            <el-form-item label="详细地址" prop="market">
+            <el-form-item label="模板内容" prop="market">
               <el-input
                 v-model="formParams.chepai"
-                placeholder="请输入"
-                clearable
+                :rows="5"
+                type="textarea"
+                placeholder="请输入内容"
               />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
-            <el-form-item label="联系人" prop="market">
-              <el-input
-                v-model="formParams.chepai"
-                placeholder="请输入"
-                clearable
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="联系电话" prop="market">
-              <el-input
-                v-model="formParams.chepai"
-                placeholder="请输入"
-                clearable
-              />
+          <el-col>
+            <el-form-item label="模板内容" prop="market">
+              <div class="divfont-red">
+                (注:在模板内容中,可在{}符号中插入左侧参数对应的配置模板参数名,添加后系统将会自动映射)
+              </div>
+              <el-table border size="mini">
+                <el-table-column
+                  label="一级来源"
+                  prop="sourceSystem1"
+                  width="120"
+                  show-overflow-tooltip
+                >
+                </el-table-column>
+                <el-table-column
+                  label="二级来源"
+                  prop="sourceSystem2"
+                  width="120"
+                  show-overflow-tooltip
+                >
+                </el-table-column>
+                <el-table-column
+                  label="业务类型"
+                  prop="bizType"
+                  width="120"
+                  show-overflow-tooltip
+                >
+                </el-table-column>
+                <el-table-column
+                  label="名称"
+                  prop="paramName"
+                  width="120"
+                  show-overflow-tooltip
+                />
+                <el-table-column
+                  label="模板变量名"
+                  prop="paramCode"
+                  width="120"
+                  show-overflow-tooltip
+                />
+              </el-table>
             </el-form-item>
           </el-col>
         </el-row>
@@ -170,6 +173,23 @@ const formRules = reactive({
 })
 const formRef = ref<InstanceType<typeof ElForm>>()
 
+const treeConfig = {
+  'empty-text': '暂无数据',
+  'default-expand-all': true,
+  'show-checkbox': true,
+  'default-expanded-keys': [],
+  // 'default-checked-keys': [], // 默认勾选的节点的 key 的数组
+  nodeKey: 'id',
+  indent: 15,
+  props: {
+    children: 'children',
+    label: 'name',
+    value: 'code'
+  }
+}
+const defaultCheckedkeys = ref<object>([])
+const handleNodeClick = () => {}
+
 const submitForm = async () => {
   if (!formRef.value) return
   const valid = await formRef.value.validate()
@@ -201,6 +221,9 @@ defineExpose({ open })
 </script>
 
 <style lang="scss" scoped>
+.divfont-red {
+  color: red;
+}
 :deep(.el-select) {
   width: 100%;
 }

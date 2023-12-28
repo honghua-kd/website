@@ -242,7 +242,7 @@ const open = (type: string, row: TableItem) => {
 defineExpose({ open })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .city-select {
   margin-left: 1%;
   width: 48%;

@@ -53,12 +53,7 @@
         <el-button type="primary"> 删除 </el-button>
       </el-col>
     </el-row>
-    <el-table
-      :data="tableData"
-      :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
-      border
-      v-loading="tableLoading"
-    >
+    <el-table :data="tableData" border v-loading="tableLoading">
       <el-table-column type="selection" width="55" />
       <template v-for="item in Columns">
         <el-table-column
