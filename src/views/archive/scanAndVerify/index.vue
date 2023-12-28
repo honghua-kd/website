@@ -399,7 +399,7 @@ import type {
 } from '@/api'
 import TableSlotItem from './components/TableSlotItem.vue'
 import { ARCHIVE_STATUS, VERIFY_RESULTS } from '@/constants'
-import { useUserStore } from '@toystory/lotso'
+import { useUserStore, useRoute } from '@toystory/lotso'
 import dayjs from 'dayjs'
 import Preview from '@/components/Preview/index.vue'
 import useGetPreviewURL from '@/hooks/useGetPreviewURL/index'
@@ -407,6 +407,8 @@ import BasicData from '@/views/archive/scanAndVerify/data'
 
 const API = new MortageAPI()
 const CommonApi = new CommonAPI()
+const route = useRoute()
+const pathName = 'Table:' + (route?.value.name as string)
 
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
@@ -466,7 +468,9 @@ type IState = {
 const state = reactive<IState>({
   tableConfig: BasicData.tableConfig,
   checkAll: true,
-  checkedConfig: [],
+  checkedConfig: localStorage.getItem(pathName)
+    ? JSON.parse(localStorage.getItem(pathName) || '')
+    : [],
   checkboxTableConfig: BasicData.tableConfig,
   isIndeterminate: true
 })
@@ -480,12 +484,12 @@ const tableHeight = computed(() => {
   if (searchBoxRef.value?.clientHeight) {
     const height = Number(
       document.documentElement.clientHeight -
-        251 -
+        200 -
         searchBoxRef.value?.clientHeight
     )
     return height
   } else {
-    const height = Number(document.documentElement.clientHeight - 251)
+    const height = Number(document.documentElement.clientHeight - 200)
     return height
   }
 })
@@ -494,8 +498,9 @@ const tableHeight = computed(() => {
 const handleCheckedConfig = (value: CheckboxValueType[]) => {
   const checkedCount = value.length
   checkAll.value = checkedCount === state.checkboxTableConfig.length
-
   state.checkedConfig = value as string[]
+
+  localStorage.setItem(pathName, JSON.stringify(value))
 
   state.tableConfig.forEach((item) => {
     if (!item.showDisabled) {
@@ -929,5 +934,8 @@ onMounted(() => {
     margin-top: -3px;
     margin-right: 5px;
   }
+}
+.my-cell .el-checkbox__input {
+  display: none;
 }
 </style>
