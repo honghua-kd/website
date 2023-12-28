@@ -961,7 +961,4 @@ onMounted(() => {
     margin-right: 5px;
   }
 }
-.my-cell .el-checkbox__input {
-  display: none;
-}
 </style>
