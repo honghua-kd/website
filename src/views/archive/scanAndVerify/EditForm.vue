@@ -12,7 +12,7 @@
         :model="formParamsRequest"
         v-loading="formLoading"
         :rules="formRules"
-        label-width="130px"
+        :label-width="px2rem('130px')"
       >
         <el-form-item label="文件名">
           <div class="file-name" @click="openFileHandler">
@@ -165,6 +165,7 @@
                   v-model="formParamsRequest.mortgagee"
                   class="width-full"
                   clearable
+                  @change="mortChangeHandler"
                 >
                   <el-option
                     v-for="(item, index) in mortgageeOpts"
@@ -237,9 +238,7 @@
         <el-button :disabled="formLoading" type="primary" @click="submitForm">
           保 存
         </el-button>
-        <el-button type="primary" @click="dialogVisible = false">
-          关 闭
-        </el-button>
+        <el-button @click="dialogVisible = false"> 关 闭 </el-button>
       </template>
     </el-dialog>
     <Preview
@@ -252,13 +251,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, Ref, watch } from 'vue'
+import { ref, reactive, Ref } from 'vue'
 import type { ModifiyInfo, FormOrigin, MortgageeItem, CardCell } from '@/api'
 import { MortageAPI } from '@/api'
 import { ElMessage } from 'element-plus'
 import Preview from '@/components/Preview/index.vue'
-import { openLink, isPdf } from '@/utils'
-import { useGetPreviewURL } from '@/hooks'
+import { openLink, isPdf, px2rem } from '@/utils'
+import useGetPreviewURL from '@/hooks/useGetPreviewURL/index'
 import dayjs from 'dayjs'
 
 const API = new MortageAPI()
@@ -268,6 +267,7 @@ const formLoading = ref<boolean>(false)
 const formRules = reactive({})
 const formRef = ref()
 const infoId = ref<string>('')
+const emit = defineEmits(['success'])
 
 const fileParams = reactive<Pick<CardCell, 'fileCode' | 'fileName'>>({
   fileName: '',
@@ -338,11 +338,11 @@ const formParams = reactive<FormOrigin>({
 
 /** 打开弹窗 */
 const open = async (id: string) => {
-  dialogVisible.value = true
   infoId.value = id
   formLoading.value = true
   await getCardInfo(id)
   await getMortList()
+  dialogVisible.value = true
 }
 
 defineExpose({ open })
@@ -364,6 +364,7 @@ const submitForm = () => {
           type: 'success',
           message: '编辑成功'
         })
+        emit('success')
         dialogVisible.value = false
       }
     })
@@ -389,11 +390,13 @@ const previewVisible = ref<boolean>(false)
 const previewUrl = ref<string>('')
 const preFileName = ref<string>('')
 
+const { getSinglePreviewURL } = useGetPreviewURL()
 const openFileHandler = async () => {
   const fileCode = fileParams?.fileCode || ''
-  const { preUrl, fileName } = await useGetPreviewURL(fileCode)
-  previewUrl.value = preUrl
-  preFileName.value = fileName
+  const data = await getSinglePreviewURL(fileCode)
+  previewUrl.value = data?.preUrl as string
+  preFileName.value = data?.fileName as string
+
   if (!previewUrl.value) {
     ElMessage.error('读取上传文件URL出错')
   }
@@ -452,20 +455,13 @@ const getCardInfo = (id: string) => {
 }
 
 // 监听 抵解押切换
-watch(
-  () => formParamsRequest.mortgagee,
-  () => {
-    const filterCell = mortgageeOpts.value.filter((item) => {
-      return item.mortgagee === formParamsRequest.mortgagee
-    })
-    formParamsRequest.mortgageeUscc =
-      filterCell && filterCell[0]?.unifiedSocialCreditCode
-  },
-  {
-    immediate: true,
-    deep: true
-  }
-)
+const mortChangeHandler = (selectItem: string) => {
+  const filterCell = mortgageeOpts.value.filter((item) => {
+    return item.mortgagee === selectItem
+  })
+  formParamsRequest.mortgageeUscc =
+    filterCell && filterCell[0]?.unifiedSocialCreditCode
+}
 </script>
 
 <style lang="scss" scoped>

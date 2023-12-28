@@ -36,8 +36,12 @@
       <el-col :span="18">
         <SecondaryTitle title="公式定义器" />
         <div class="exp-container">
-          <el-form :model="expForm" label-width="100" :disabled="editable">
-            <el-form-item label="编辑公式：" prop="keywordName">
+          <el-form
+            :model="expForm"
+            :label-width="px2rem('100px')"
+            :disabled="editable"
+          >
+            <el-form-item label="编辑公式" prop="keywordName">
               <el-row :gutter="20" class="width-full">
                 <el-col :span="20">
                   <el-input
@@ -58,10 +62,10 @@
                 </el-col>
               </el-row>
             </el-form-item>
-            <el-form-item label="表达式：" prop="keywordCode">
+            <el-form-item label="表达式" prop="keywordCode">
               <el-input v-model="expForm.keywordCode" type="textarea" />
             </el-form-item>
-            <el-form-item label="编辑器：">
+            <el-form-item label="编辑器">
               <el-row class="width-full">
                 <el-col class="formula-cont">
                   <p v-for="(el, ind) in formulaList" :key="ind">
@@ -103,6 +107,7 @@ import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
 import { formulaList } from '@/views/system/role/config'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import type { ScopeMapping, ExpDetail } from '@/api'
+import { px2rem } from '@/utils'
 
 const API = new SystemAPI()
 const variableArr: Ref<ScopeMapping[]> = ref([])

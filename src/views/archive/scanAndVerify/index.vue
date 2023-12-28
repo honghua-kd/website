@@ -1,49 +1,46 @@
 <template>
   <div>
-    <SecondaryTitle title="核验车辆登记证" />
     <!-- 搜索工作栏 -->
-    <div class="scan-search-container">
+    <div class="scan-search-container" ref="searchBoxRef">
       <el-form
         ref="queryFormRef"
         :model="queryParams"
         class="scan-search-bar"
-        label-width="90px"
+        :label-width="px2rem('90px')"
       >
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-row>
-              <el-form-item label="核验时间:" prop="startVerifyTime">
-                <el-date-picker
-                  v-model="queryParams.startVerifyTime"
-                  type="datetime"
-                  placeholder="开始日期"
-                />
-              </el-form-item>
-              <el-form-item prop="endVerifyTime">
-                <el-date-picker
-                  v-model="queryParams.endVerifyTime"
-                  type="datetime"
-                  placeholder="结束日期"
-                />
-              </el-form-item>
-            </el-row>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="创建人:" prop="creatorName">
-              <el-input
-                v-model="queryParams.creatorName"
-                clearable
-                placeholder="请输入"
-                @clear="creatorClearHandler"
+            <el-form-item label="核验时间" class="width-full">
+              <el-date-picker
+                v-model="queryParams.startVerifyTime"
+                type="datetime"
+                placeholder="核验开始时间"
+                style="margin-right: 4%; width: 48%"
+              />
+              <el-date-picker
+                v-model="queryParams.endVerifyTime"
+                type="datetime"
+                placeholder="核验结束时间"
+                style="width: 48%"
               />
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="核对结果:" prop="verifyResult">
+            <el-form-item label="创建人" prop="creatorName">
+              <el-input
+                v-model="queryParams.creatorName"
+                clearable
+                placeholder="请输入创建人"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="核对结果" prop="verifyResult">
               <el-select
                 v-model="queryParams.verifyResult"
                 style="width: 100%"
                 placeholder="请选择核对结果"
+                clearable
               >
                 <el-option
                   v-for="(item, index) in verifyOpts"
@@ -57,7 +54,7 @@
         </el-row>
         <el-row :gutter="20">
           <el-col :span="6">
-            <el-form-item label="批次号:" prop="batchNo">
+            <el-form-item label="批次号" prop="batchNo">
               <el-input
                 v-model="queryParams.batchNo"
                 clearable
@@ -66,7 +63,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="发动机号:" prop="engineNo">
+            <el-form-item label="发动机号" prop="engineNo">
               <el-input
                 v-model="queryParams.engineNo"
                 clearable
@@ -75,7 +72,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="发动机型号:" prop="engineType">
+            <el-form-item label="发动机型号" prop="engineType">
               <el-input
                 v-model="queryParams.engineType"
                 clearable
@@ -84,7 +81,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="归档状态:" prop="archivalStatus">
+            <el-form-item label="归档状态" prop="archivalStatus">
               <el-select
                 v-model="queryParams.archivalStatus"
                 style="width: 100%"
@@ -101,9 +98,9 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row :gutter="20">
+        <el-row :gutter="20" v-if="expandFlag">
           <el-col :span="6">
-            <el-form-item label="合同号:" prop="contractNo">
+            <el-form-item label="合同号" prop="contractNo">
               <el-input
                 v-model="queryParams.contractNo"
                 clearable
@@ -112,7 +109,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="车牌号:" prop="licensePlateNo">
+            <el-form-item label="车牌号" prop="licensePlateNo">
               <el-input
                 v-model="queryParams.licensePlateNo"
                 clearable
@@ -121,7 +118,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="车架号:" prop="vinNo">
+            <el-form-item label="车架号" prop="vinNo">
               <el-input
                 v-model="queryParams.vinNo"
                 clearable
@@ -130,7 +127,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="办事处:" prop="agencyName">
+            <el-form-item label="办事处" prop="agencyName">
               <el-input
                 v-model="queryParams.agencyName"
                 clearable
@@ -141,7 +138,7 @@
         </el-row>
         <el-row :gutter="20" v-if="expandFlag">
           <el-col :span="12">
-            <el-form-item label="挂靠商:" prop="affiliatesName">
+            <el-form-item label="挂靠商" prop="affiliatesName">
               <el-input
                 v-model="queryParams.affiliatesName"
                 clearable
@@ -150,7 +147,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="渠道商:" prop="channelName">
+            <el-form-item label="渠道商" prop="channelName">
               <el-input
                 v-model="queryParams.channelName"
                 clearable
@@ -177,275 +174,171 @@
         </div>
       </div>
     </div>
+    <el-divider border-style="dashed" />
     <!-- 表格 -->
     <div>
-      <el-row class="table-btn">
-        <el-button type="primary" :icon="Plus" @click="uploadHandler">
-          上传车辆登记证
-        </el-button>
-        <el-button type="primary" :icon="Check" @click="achiveHandler">
-          选择 & 归档
-        </el-button>
-        <el-button type="primary" :icon="Delete" @click="delHandler(selectIds)">
-          删除
-        </el-button>
-        <el-button type="primary" :icon="Download" @click="exportHandler">
-          导出
-        </el-button>
-      </el-row>
+      <div class="table-btn-box">
+        <div>
+          <el-button type="primary" :icon="Plus" @click="uploadHandler">
+            上传车辆登记证
+          </el-button>
+          <el-tooltip
+            content="如有需要，请点击右侧设置表格列选择表格列内容"
+            placement="top-start"
+          >
+            <el-button type="primary" :icon="Check" @click="achiveHandler">
+              选择 & 归档
+            </el-button>
+          </el-tooltip>
+          <el-tooltip
+            content="如有需要，请点击右侧设置表格列选择表格列内容"
+            placement="top-start"
+          >
+            <el-button
+              type="primary"
+              :icon="Delete"
+              @click="delHandler(selectIds)"
+            >
+              删除
+            </el-button>
+          </el-tooltip>
+
+          <el-button type="primary" :icon="Download" @click="exportHandler">
+            导出
+          </el-button>
+        </div>
+        <!-- 设置表格列 -->
+        <el-dropdown
+          trigger="click"
+          placement="top-end"
+          :hide-on-click="false"
+          max-height="300px"
+        >
+          <div class="dropdown-column">
+            <el-icon :size="15" class="icon"><Setting /></el-icon>
+            设置表格列
+          </div>
+          <template #dropdown>
+            <el-dropdown-menu class="custom-drop-menu">
+              <el-dropdown-item>
+                <el-checkbox v-model="checkAll" @change="handleCheckAllChange">
+                  全选
+                </el-checkbox>
+              </el-dropdown-item>
+              <el-checkbox-group
+                v-model="checkedConfig"
+                @change="handleCheckedConfig"
+              >
+                <el-dropdown-item
+                  v-for="cfg in checkboxTableConfig"
+                  :key="cfg.prop"
+                >
+                  <el-checkbox :label="cfg.prop" :disabled="cfg.showDisabled">
+                    {{ cfg.label }}
+                  </el-checkbox>
+                </el-dropdown-item>
+              </el-checkbox-group>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </div>
+
       <el-table
         :data="tableData"
-        :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
-        border
+        :header-cell-style="{
+          background: '#eef1f6',
+          color: '#606266',
+          textAlign: 'center'
+        }"
         v-loading="tableLoading"
         row-key="id"
         :tree-props="{ children: 'target' }"
+        :max-height="tableHeight"
+        border
+        :cell-style="{ borderRight: '1px solid #fff' }"
         @selection-change="selectionChangeHandler"
         @header-click="sortChangeHandler"
       >
         <el-table-column
           type="selection"
-          width="55"
+          width="40"
           :selectable="selectableHandler"
-        />
-
-        <el-table-column fixed prop="fileName" width="180" align="center">
-          <template #header>
-            文件名
-            <svg-icon
-              :name="setSortFlag(queryParams?.fileNameSort || '')"
-              size="20"
-            />
-          </template>
-          <template #default="scope">
-            <span
-              v-if="scope.row.id"
-              @click="openPreview(scope.row.fileCode)"
-              class="file-name"
-            >
-              {{ scope.row.fileName }}
-            </span>
-            <span v-else class="font-color-system">
-              {{ scope.row.fileName || '系统数据' }}
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="登记证归档序号"
-          prop="registerCardArchiveNo"
-          width="180"
-          align="center"
-        >
-          <template #header>
-            登记证归档序号
-            <svg-icon
-              :name="setSortFlag(queryParams?.registerCardArchiveNoSort || '')"
-              size="20"
-            />
-          </template>
-          <template #default="scope">
-            <span :class="scope.row.id ? '' : 'font-color-system'">
-              {{ scope.row.registerCardArchiveNo }}
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="核对结果"
-          prop="verifyResult"
-          width="150"
-          align="center"
-        >
-          <template #header>
-            核对结果
-            <svg-icon
-              :name="setSortFlag(queryParams?.verifyResultSort || '')"
-              size="20"
-            />
-          </template>
-          <template #default="scope">
-            <span v-if="scope.row.id">
-              <svg-icon
-                :name="getVerifyResult(scope.row)"
-                size="20"
-                color="#f39b1c"
-              />
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="*登记证编号"
-          prop="registerCardNo"
-          width="180"
-          align="center"
-        >
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="registerCardNo" />
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="*车架号"
-          prop="vinNo"
-          width="180"
-          align="center"
-        >
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="vinNo" />
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="*发动机号"
-          prop="engineNo"
-          width="180"
-          align="center"
-        >
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="engineNo" />
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="*发动机型号"
-          prop="engineType"
-          width="180"
-          align="center"
-        >
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="engineType" />
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="*车牌号"
-          prop="licensePlateNo"
-          width="180"
-          align="center"
-        >
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="licensePlateNo" />
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="*机动车所有人"
-          prop="vehicleOwner"
-          width="180"
-          align="center"
-        >
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="vehicleOwner" />
-          </template>
-        </el-table-column>
-        <el-table-column label="*车身颜色" prop="vehicleColor" width="150">
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="vehicleColor" />
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="*使用性质"
-          prop="useType"
-          width="150"
-          align="center"
-        >
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="useType" />
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="*抵押权人"
-          prop="mortgagee"
-          width="150"
-          align="center"
-        >
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="mortgagee" />
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="*统一社会信用代码"
-          prop="mortgageeUscc"
-          width="200"
-          align="center"
-        >
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="mortgageeUscc" />
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="*抵押登记日期"
-          prop="mortgageRegisterDate"
-          width="180"
-          align="center"
-        >
-          <template #default="scope">
-            <TableSlotItem :rowInfo="scope.row" rowKey="mortgageRegisterDate" />
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="批次号"
-          prop="batchNo"
-          width="180"
-          align="center"
-        />
-        <el-table-column
-          label="关联合同号"
-          prop="contractNo"
-          width="200"
-          align="center"
-        />
-        <el-table-column
-          label="所属系统"
-          prop="belongSystem"
-          width="180"
-          align="center"
-        />
-        <el-table-column
-          label="挂靠商"
-          prop="affiliatesName"
-          width="180"
-          align="center"
-        />
-        <el-table-column
-          label="办事处"
-          prop="agencyName"
-          width="180"
-          align="center"
-        />
-        <el-table-column
-          label="渠道商"
-          prop="channelName"
-          width="180"
-          align="center"
-        />
-        <el-table-column
-          label="创建人"
-          prop="creatorName"
-          width="150"
-          align="center"
-        />
-        <el-table-column
-          label="创建时间"
-          prop="createTime"
-          width="180"
           align="center"
         />
 
-        <el-table-column
-          label="归档状态"
-          prop="archivalStatus"
-          width="150"
-          align="center"
-        >
-          <template #default="scope">
-            {{ getAchivalStatus(scope.row.archivalStatus) }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="归档时间"
-          prop="archivalDate"
-          width="180"
-          align="center"
-        />
+        <template v-for="item in tableConfig" :key="item.prop">
+          <el-table-column v-if="!!item.show" v-bind="item">
+            <template #header>
+              <!-- 核对结果 -->
+              <span
+                v-if="
+                  item.prop === 'verifyResult' ||
+                  item.prop === 'registerCardArchiveNo' ||
+                  item.prop === 'fileName'
+                "
+              >
+                {{ item.label }}
+                <svg-icon
+                  :name="setSortFlag((queryParams[item.prop + 'Sort'] as string) || '')"
+                  size="20"
+                />
+              </span>
+              <!-- 登记证归档序号 -->
+              <span v-else>{{ item.label }}</span>
+            </template>
 
-        <el-table-column label="操作" fixed="right" width="150" align="center">
+            <template #default="{ row }">
+              <!-- 归档状态 -->
+              <span v-if="item.valueType === 'archivalStatus'">
+                {{ getAchivalStatus(row.archivalStatus) }}
+              </span>
+
+              <!-- 登记证编号、车架号、发动机号、发动机型号、车牌号、机动车所有人、车身颜色、使用性质、抵押权人、统一社会信用代码、抵押登记日期 -->
+              <span v-else-if="item.valueType === 'soltItem'">
+                <TableSlotItem :rowInfo="row" :rowKey="item.prop" />
+              </span>
+
+              <!-- 自定义 -->
+              <span v-else-if="item.valueType === 'custom'">
+                <!-- 核对结果 -->
+                <span v-if="row.fileCode && item.prop === 'verifyResult'">
+                  <svg-icon
+                    :name="getVerifyResult(row)"
+                    size="20"
+                    color="#f39b1c"
+                  />
+                </span>
+                <!-- 登记证归档序号 -->
+                <span
+                  v-if="item.prop === 'registerCardArchiveNo'"
+                  :class="row.fileCode ? '' : 'font-color-system'"
+                >
+                  {{ row.registerCardArchiveNo }}
+                </span>
+                <!-- 文件名 -->
+                <span v-if="item.prop === 'fileName'">
+                  <span
+                    v-if="row.fileCode"
+                    @click="openPreview(row.fileCode)"
+                    class="file-name"
+                  >
+                    {{ row.fileName }}
+                  </span>
+                  <span v-else class="font-color-system">
+                    {{ row.fileName || '系统数据' }}
+                  </span>
+                </span>
+              </span>
+
+              <!-- other -->
+              <span v-else>{{ row[item.prop] }}</span>
+            </template>
+          </el-table-column>
+        </template>
+
+        <el-table-column label="操作" fixed="right" width="120" align="center">
           <template #default="scope">
-            <template v-if="scope.row.id">
+            <template v-if="scope.row.fileCode">
               <el-button
                 v-if="
                   scope.row.archivalStatus === ARCHIVE_STATUS.UNACHIVED &&
@@ -473,6 +366,7 @@
       <el-pagination
         v-if="pageTotal"
         background
+        small
         layout="total,sizes,prev, pager, next"
         :page-sizes="[10, 20, 50, 100]"
         :total="pageTotal"
@@ -481,7 +375,7 @@
         @current-change="handleCurrentChange"
       />
     </div>
-    <EditForm ref="editFormRef" />
+    <EditForm ref="editFormRef" @success="getList()" />
     <UploadForm ref="uploadFormRef" @success="getList()" />
     <Preview
       v-model="previewVisible"
@@ -493,22 +387,21 @@
 </template>
 
 <script setup lang="ts">
-import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
-import { ref, reactive, Ref, computed, onMounted } from 'vue'
+import { ref, reactive, Ref, computed, onMounted, toRefs } from 'vue'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
-import { openLink, isPdf, handleDownloadFile } from '@/utils'
+import { openLink, isPdf, handleDownloadFile, px2rem } from '@/utils'
 import EditForm from './EditForm.vue'
 import UploadForm from './UploadForm.vue'
 import { CommonAPI, MortageAPI } from '@/api'
-import { useGetPreviewURL } from '@/hooks'
-import type { TableColumnCtx } from 'element-plus'
+import type { TableColumnCtx, CheckboxValueType } from 'element-plus'
 import {
   ArrowDownBold,
   ArrowUpBold,
   Plus,
   Delete,
   Download,
-  Check
+  Check,
+  Setting
 } from '@element-plus/icons-vue'
 import type {
   VehiRegisterCardListRequest,
@@ -519,26 +412,32 @@ import type {
 } from '@/api'
 import TableSlotItem from './components/TableSlotItem.vue'
 import { ARCHIVE_STATUS, VERIFY_RESULTS } from '@/constants'
-import { useUserStore } from '@toystory/lotso'
+import { useUserStore, useRoute } from '@toystory/lotso'
 import dayjs from 'dayjs'
 import Preview from '@/components/Preview/index.vue'
+import useGetPreviewURL from '@/hooks/useGetPreviewURL/index'
+import BasicData from '@/views/archive/scanAndVerify/data'
 
 const API = new MortageAPI()
 const CommonApi = new CommonAPI()
+const route = useRoute()
+const pathName = 'Table:' + (route?.value.name as string)
 
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
 const expandFlag = ref<boolean>(false)
 const tableLoading = ref<boolean>(false)
 const tableData: Ref<CardListItem[]> = ref([])
-type QueryParams = VehiRegisterCardListRequest & PageRequest & SortParamsRequest
+type QueryParams = VehiRegisterCardListRequest &
+  PageRequest &
+  SortParamsRequest & { [index: string]: string | number | null | undefined }
+
 const queryParams = reactive<QueryParams>({
   pageNo: 1,
   pageSize: 10,
-  startVerifyTime: '',
-  endVerifyTime: '',
+  startVerifyTime: dayjs().startOf('day').toString(),
+  endVerifyTime: dayjs().endOf('day').toString(),
   creatorName: '', // 创建者
-  creator: '', // 创建者工号
   verifyResult: '', // 核对结果
   batchNo: '', // 批次号
   engineNo: '', // 发动机号
@@ -558,10 +457,87 @@ const queryParams = reactive<QueryParams>({
 const selectData: Ref<CardListItem[]> = ref([])
 const curStaffCode = ref<string>('')
 
-// 创建人点击清除时，删掉工号
-const creatorClearHandler = () => {
-  queryParams.creator = ''
-  console.log('clearable', queryParams)
+type ITableConfigObj = {
+  label: string
+  prop: string
+  valueType: string
+  minWidth?: number | string
+  width?: number | string
+  align: string
+  showOverflowTooltip?: boolean
+  fixed?: boolean
+  show: boolean
+  showDisabled?: boolean
+}
+
+type IState = {
+  tableConfig: ITableConfigObj[]
+  checkAll: boolean
+  checkedConfig: string[]
+  checkboxTableConfig: ITableConfigObj[]
+  isIndeterminate: boolean
+}
+
+const state = reactive<IState>({
+  tableConfig: BasicData.tableConfig,
+  checkAll: true,
+  checkedConfig: [],
+  checkboxTableConfig: BasicData.tableConfig,
+  isIndeterminate: true
+})
+
+const { tableConfig, checkAll, checkedConfig, checkboxTableConfig } =
+  toRefs(state)
+
+// 表格最大高度
+const searchBoxRef = ref()
+const tableHeight = computed(() => {
+  if (searchBoxRef.value?.clientHeight) {
+    const height = Number(
+      document.documentElement.clientHeight -
+        200 -
+        searchBoxRef.value?.clientHeight
+    )
+    return height
+  } else {
+    const height = Number(document.documentElement.clientHeight - 200)
+    return height
+  }
+})
+
+// 自定义表格列
+const handleCheckedConfig = (value: CheckboxValueType[]) => {
+  const checkedCount = value.length
+  state.checkAll = checkedCount === state.checkboxTableConfig.length
+  state.checkedConfig = value as string[]
+  localStorage.setItem(pathName, JSON.stringify(value))
+
+  state.tableConfig.forEach((item) => {
+    if (!item.showDisabled) {
+      item.show = state.checkedConfig.includes(item.prop)
+    }
+  })
+}
+
+// 自定义表格列-全选
+const handleCheckAllChange = (val: string | number | boolean) => {
+  const arr = state.checkboxTableConfig.map((item) => item.prop)
+  const arrRequired = state.checkboxTableConfig.filter(
+    (item) => item.showDisabled
+  )
+
+  const _val = val as boolean
+
+  state.checkedConfig = _val ? arr : arrRequired.map((item) => item.prop)
+  state.isIndeterminate = !_val
+
+  localStorage.setItem(pathName, JSON.stringify(state.checkedConfig))
+
+  state.tableConfig.forEach((item) => {
+    if (!item.showDisabled) {
+      item.show = !!_val
+    }
+  })
 }
 
 // 归档状态处理
@@ -581,10 +557,12 @@ const previewVisible = ref<boolean>(false)
 const previewUrl = ref<string>('')
 const preFileName = ref<string>('')
 
+const { getSinglePreviewURL } = useGetPreviewURL()
 const openPreview = async (fileCode: string) => {
-  const { preUrl, fileName } = await useGetPreviewURL(fileCode)
-  previewUrl.value = preUrl
-  preFileName.value = fileName
+  const data = await getSinglePreviewURL(fileCode)
+  previewUrl.value = data?.preUrl as string
+  preFileName.value = data?.fileName as string
+
   if (!previewUrl.value) {
     ElMessage.error('读取上传文件URL出错')
   }
@@ -620,7 +598,7 @@ const selectionChangeHandler = (item: CardListItem[]) => {
 const selectIds = computed(() => {
   const ids: string[] = []
   selectData.value.forEach((item) => {
-    if (item.id) {
+    if (item.fileCode && item.id) {
       ids.push(item.id)
     }
   })
@@ -629,7 +607,7 @@ const selectIds = computed(() => {
 
 // 是否可选
 const selectableHandler = (row: CardListItem) => {
-  return !!(row.id && row.archivalStatus !== ARCHIVE_STATUS.ACHIVED)
+  return !!(row.fileCode && row.archivalStatus !== ARCHIVE_STATUS.ACHIVED)
 }
 // 展开-收回处理
 const expandHandler = (): boolean => {
@@ -640,7 +618,7 @@ const expandHandler = (): boolean => {
 const uploadFormRef = ref()
 const uploadHandler = () => {
   const title = `${curStaffCode.value}-${dayjs().format('YYYYMMDDHHmmss')}`
-  uploadFormRef.value.open('upload', title, curStaffCode.value)
+  uploadFormRef.value.open('upload', title, curStaffCode.value, true)
 }
 
 // 删除
@@ -716,7 +694,6 @@ const setSortFlag = (type: string): string => {
 }
 // 分页
 const handleCurrentChange = (val: number) => {
-  console.log('value>>>>>', val)
   queryParams.pageNo = val
   getList()
 }
@@ -834,11 +811,9 @@ const exportHandler = async () => {
 const reset = () => {
   const userStore = useUserStore()
   queryParams.pageNo = 1
-  queryParams.pageSize = 10
-  queryParams.startVerifyTime = '' // 开始时间
-  queryParams.endVerifyTime = '' // 结束时间
+  queryParams.startVerifyTime = dayjs().startOf('day').toString() // 开始时间
+  queryParams.endVerifyTime = dayjs().endOf('day').toString() // 结束时间
   queryParams.creatorName = userStore.userInfo?.staffName as string // 创建者姓名
-  queryParams.creator = userStore.userInfo?.staffCode as string // 创建者工号
   queryParams.verifyResult = '' // 核对结果
   queryParams.batchNo = '' // 批次号
   queryParams.engineNo = '' // 发动机号
@@ -872,6 +847,7 @@ const getList = () => {
     .then((res) => {
       tableLoading.value = false
       if (res && res.code === 200) {
+        // tableData.value.splice(0, tableData.value.length)
         tableData.value = res?.data?.list || []
         pageTotal.value = res?.data?.total || 0
       }
@@ -902,18 +878,31 @@ const getDicts = () => {
     })
 }
 
+// 获取表格设置表头内容
+const getCheckConfig = () => {
+  state.checkedConfig = localStorage.getItem(pathName)
+    ? JSON.parse(localStorage.getItem(pathName) || '')
+    : state.checkboxTableConfig.map((item) => item.prop)
+
+  state.tableConfig.forEach((item) => {
+    if (!item.showDisabled) {
+      item.show = state.checkedConfig.includes(item.prop)
+    }
+  })
+  state.checkAll = !(state.checkedConfig.length < BasicData.tableConfig.length)
+}
+
 const init = () => {
   getList()
   getDicts()
 }
 
-init()
-
 onMounted(() => {
   const userStore = useUserStore()
   queryParams.creatorName = userStore.userInfo?.staffName as string
-  queryParams.creator = userStore.userInfo?.staffCode as string
   curStaffCode.value = userStore.userInfo?.staffCode as string
+  init()
+  getCheckConfig()
 })
 </script>
 
@@ -923,12 +912,12 @@ onMounted(() => {
   width: 100%;
 }
 .scan-search-bar {
-  padding: 10px;
+  padding: 6px 10px;
   width: 90%;
 }
 .search-btn {
   display: flex;
-  margin-top: 6%;
+  margin-top: 3%;
   padding: 20px 10px;
   height: 60px;
   flex-direction: column;
@@ -941,7 +930,10 @@ onMounted(() => {
   display: flex;
   justify-content: flex-end;
 }
-.table-btn {
+.table-btn-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   margin-bottom: 10px;
 }
 .font-color-system {
@@ -950,5 +942,23 @@ onMounted(() => {
 .file-name {
   cursor: pointer;
   text-decoration: underline;
+}
+.width-full {
+  width: 100%;
+}
+:deep(.el-divider--horizontal) {
+  margin: 0 0 10px;
+}
+:deep(.el-form-item) {
+  margin-bottom: 12px;
+}
+.dropdown-column {
+  display: flex;
+  padding-top: 10px;
+  flex-direction: row;
+  .icon {
+    margin-top: -2px;
+    margin-right: 5px;
+  }
 }
 </style>
