@@ -221,7 +221,7 @@ const search = () => {}
 const handleSizeChange = () => {}
 const handleCurrentChange = () => {}
 
-const action = (val: string) => {
+const action = (val: string | number) => {
   console.log(val)
   if (val === '批量结算') {
     state.dialogVisible = true

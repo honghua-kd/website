@@ -155,7 +155,7 @@ export default {
     {
       type: '',
       label: '省份',
-      prop: 'province',
+      prop: 'provinceName',
       columnKey: '',
       width: '',
       minWidth: '',
@@ -165,7 +165,7 @@ export default {
     {
       type: '',
       label: '城市',
-      prop: '',
+      prop: 'cityName',
       columnKey: '',
       width: '',
       minWidth: '',
@@ -175,7 +175,7 @@ export default {
     {
       type: '',
       label: '联系人',
-      prop: '',
+      prop: 'contactsName',
       columnKey: '',
       width: '',
       minWidth: '',
@@ -185,8 +185,8 @@ export default {
     {
       type: '',
       label: '联系电话',
-      prop: '',
-      columnKey: '',
+      prop: 'phone',
+      columnKey: 'phone',
       width: '',
       minWidth: '',
       fixed: false,
@@ -225,15 +225,6 @@ export default {
             { value: 8, label: 'Osaka' },
             { value: 9, label: 'Kyoto' }
           ]
-        },
-        {
-          value: 10,
-          label: 'Korea',
-          children: [
-            { value: 11, label: 'Seoul' },
-            { value: 12, label: 'Busan' },
-            { value: 13, label: 'Taegu' }
-          ]
         }
       ]
     },
@@ -243,12 +234,7 @@ export default {
       children: [
         {
           value: 15,
-          label: 'France',
-          children: [
-            { value: 16, label: 'Paris' },
-            { value: 17, label: 'Marseille' },
-            { value: 18, label: 'Lyon' }
-          ]
+          label: 'France'
         },
         {
           value: 19,

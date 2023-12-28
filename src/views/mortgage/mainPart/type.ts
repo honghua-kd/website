@@ -1,6 +1,6 @@
 type OptionItemType = {
   label: string
-  value: string
+  value: string | number
 }
 type TableColumnType = {
   type: string

@@ -1,6 +1,6 @@
 type OptionItemType = {
   label: string
-  value: string
+  value: number | string
 }
 type TableColumnType = {
   type: string
@@ -17,15 +17,18 @@ export type StateType = {
   formModel: {
     supplierName: string
     belongCompany: string
-    provinceCode: number
-    cityCode: number
-    countyCode: number
-    status: number
-    supplierType: number
+    provinceCode: number | ''
+    cityCode: number | ''
+    countyCode: number | ''
+    status: number | ''
+    supplierType: number | ''
     expireDateStart: string
     expireDateEnd: string
     innerInterfaceStaffCode: string
     expireDate: string
+    areaCode: number[]
+    pageNo: number
+    pageSize: number
   }
   statusArr: OptionItemType[]
   typeArr: OptionItemType[]

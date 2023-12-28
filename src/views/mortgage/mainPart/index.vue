@@ -172,7 +172,7 @@ const search = () => {}
 const handleSizeChange = () => {}
 const handleCurrentChange = () => {}
 
-const action = (val: string) => {
+const action = (val: string | number) => {
   if (val === 'add') {
     state.editModelVisible = true
   }

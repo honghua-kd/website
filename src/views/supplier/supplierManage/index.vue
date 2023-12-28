@@ -11,10 +11,15 @@
         </el-form-item>
         <el-form-item label="区域">
           <el-cascader
-            placeholder="请选择"
             style="width: 100%"
+            v-model="formModel.areaCode"
+            placeholder="请选择"
+            :props="propsObj"
             :options="BasicData.cityList"
+            collapse-tags
+            collapse-tags-tooltip
             clearable
+            @change="changeCity"
           />
           <!-- <el-select
             :style="{ width: '130px', marginRight: '10px' }"
@@ -66,7 +71,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="search">查询</el-button>
-          <el-button @click="search">重置</el-button>
+          <el-button @click="reset()">重置</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -138,47 +143,71 @@ import type {
 } from '@/views/supplier/supplierManage/type.ts'
 // import { SupplierAPI } from '@/api'
 // const API = new SupplierAPI()
+
 const state = reactive<StateType>({
   // filter form
   formModel: {
     supplierName: '',
     belongCompany: '',
-    provinceCode: 0,
-    cityCode: 0,
-    countyCode: 0,
-    status: 0,
-    supplierType: 0,
+    provinceCode: '',
+    cityCode: '',
+    countyCode: '',
+    status: '',
+    supplierType: '',
     expireDateStart: '',
     expireDateEnd: '',
     innerInterfaceStaffCode: '',
-    expireDate: '' // 自行添加
+    expireDate: '', // 自行添加
+    areaCode: [], // 地区
+    pageNo: 1,
+    pageSize: 10
   },
   statusArr: [
     {
       label: '全部',
-      value: '全部'
+      value: ''
     },
     {
       label: '启用',
-      value: '启用'
+      value: 1
     },
     {
       label: '停用',
-      value: '停用'
+      value: 0
     }
   ],
   typeArr: [
     {
       label: '全部',
-      value: '全部'
+      value: ''
     },
     {
-      label: '启用',
-      value: '启用'
+      label: '律所',
+      value: 1
     },
     {
-      label: '停用',
-      value: '停用'
+      label: '委外机构',
+      value: 2
+    },
+    {
+      label: '仓库',
+      value: 3
+    },
+    {
+      label: '运输公司',
+      value: 4
+    },
+    {
+      label: '收车公司',
+      value: 5
+    },
+    {
+      label: '评估机构',
+      value: 6
+    },
+    {
+      label: '设备处置平台机构',
+      value: 7
     }
   ],
   actionList: [
@@ -215,15 +244,38 @@ const {
 } = toRefs(state)
 
 onMounted(() => {
-  // API.getSupplierList({ pageNo: 1, pageSize: 20 })
+  getSupplierList()
 })
+
 // 获取列表数据
-const search = () => {}
+const getSupplierList = async () => {
+  // await API.getSupplierList(formModel)
+}
+// 查询
+const search = () => {
+  const { areaCode, expireDate } = formModel.value
+  formModel.value.provinceCode = areaCode[0] || ''
+  formModel.value.cityCode = areaCode[1] || ''
+  formModel.value.countyCode = areaCode[2] || ''
+  formModel.value.expireDateStart = expireDate[0] || ''
+  formModel.value.expireDateEnd = expireDate[1] || ''
+  formModel.value.pageNo = 1
+  console.log(formModel.value)
+}
+// 重置
+const reset = () => {}
 // 表格size变化
-const handleSizeChange = () => {}
+const handleSizeChange = (size: number) => {
+  formModel.value.pageSize = size
+  formModel.value.pageNo = 1
+  getSupplierList()
+}
 // 表格分页
-const handleCurrentChange = () => {}
-const action = (val: string) => {
+const handleCurrentChange = (page: number) => {
+  formModel.value.pageNo = page
+  getSupplierList()
+}
+const action = (val: string | number) => {
   if (val === 'add') {
     state.editModelVisible = true
   }
@@ -235,11 +287,29 @@ const closeModel = ({ visible, type }: { visible: boolean; type: string }) => {
   state.editModelVisible = visible
 }
 
+// 勾选列表数据
 const selectAllData = (selection: RecordType[]) => {
   console.log(selection)
 }
 const selectData = (selection: RecordType[], row: RecordType) => {
   console.log(selection, row)
+}
+
+// 级联选择器属性
+const propsObj = reactive({
+  multiple: false
+})
+const changeCity = (value: any) => {
+  console.log(value)
+  console.log(formModel.value)
+  if (propsObj.multiple) {
+    // 多选
+  } else {
+    // 单选
+    value.forEach((i: number) => {
+      console.log(i)
+    })
+  }
 }
 </script>
 
