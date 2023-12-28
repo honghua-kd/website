@@ -159,8 +159,10 @@
         <el-row justify="end">
           <el-col :span="6" class="btn-row">
             <el-form-item>
-              <el-button type="primary" @click="searchHandler">查询</el-button>
-              <el-button @click="reset">重置</el-button>
+              <el-button type="primary" :icon="Search" @click="searchHandler"
+                >查询</el-button
+              >
+              <el-button :icon="Refresh" @click="reset">重置</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -377,13 +379,9 @@
 
 <script setup lang="ts">
 import { ref, reactive, Ref, computed, onMounted, toRefs } from 'vue'
-import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
-import { openLink, isPdf, handleDownloadFile, px2rem } from '@/utils'
-import EditForm from './EditForm.vue'
-import UploadForm from './UploadForm.vue'
-import { CommonAPI, MortageAPI } from '@/api'
-import type { TableColumnCtx, CheckboxValueType } from 'element-plus'
 import {
+  Refresh,
+  Search,
   ArrowDownBold,
   ArrowUpBold,
   Plus,
@@ -392,6 +390,13 @@ import {
   Check,
   Setting
 } from '@element-plus/icons-vue'
+import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
+import { openLink, isPdf, handleDownloadFile, px2rem } from '@/utils'
+import EditForm from './EditForm.vue'
+import UploadForm from './UploadForm.vue'
+import { CommonAPI, MortageAPI } from '@/api'
+import type { TableColumnCtx, CheckboxValueType } from 'element-plus'
+
 import type {
   VehiRegisterCardListRequest,
   PageRequest,
@@ -934,9 +939,6 @@ onMounted(() => {
 }
 .width-full {
   width: 100%;
-}
-:deep(.el-divider--horizontal) {
-  margin: 0 0 10px;
 }
 :deep(.el-form-item) {
   margin-bottom: 12px;

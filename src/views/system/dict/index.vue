@@ -39,13 +39,10 @@
             </el-form-item>
           </el-col>
           <el-col style="text-align: right" :span="8">
+            <el-button :icon="Search" type="primary" @click="searchHandler">
+              查询
+            </el-button>
             <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
-            <el-button plain :icon="Search" @click="searchHandler">
-              搜索
-            </el-button>
-            <el-button type="primary" :icon="Plus" @click="addDictHandler">
-              新增
-            </el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -53,6 +50,11 @@
     <el-divider border-style="dashed" />
     <!-- 列表 -->
     <div>
+      <div class="table-btn-box">
+        <el-button type="primary" :icon="Plus" @click="addDictHandler">
+          新增
+        </el-button>
+      </div>
       <el-table
         :data="tableData"
         :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
@@ -254,6 +256,12 @@ init()
 .dict-container {
   margin-top: 10px;
   font-size: 14px;
+}
+.table-btn-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
 .width-full {
   width: 100%;
