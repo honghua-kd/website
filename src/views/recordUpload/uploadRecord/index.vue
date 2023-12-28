@@ -3,7 +3,7 @@
     <el-form :model="queryForm" ref="formRef">
       <el-row :gutter="20">
         <el-col :span="8">
-          <el-form-item label="下载时间：">
+          <el-form-item label="上传时间：">
             <el-date-picker
               v-model="queryForm.verifyTime"
               type="datetimerange"
@@ -27,17 +27,15 @@
       v-loading="tableLoading"
     >
       <el-table-column type="index" width="80" label="序号" align="center" />
-      <el-table-column prop="creatorName" label="下载人"></el-table-column>
-      <el-table-column prop="createTime" label="下载时间"></el-table-column>
+      <el-table-column prop="creatorName" label="上传人"></el-table-column>
+      <el-table-column prop="createTime" label="上传时间"></el-table-column>
+      <el-table-column prop="fileName" label="上传文件"></el-table-column>
       <el-table-column prop="status" label="状态"></el-table-column>
-      <el-table-column prop="fileName" label="下载类型"></el-table-column>
-      <el-table-column label="操作" align="center">
-        <template v-slot="scope">
-          <el-button link type="primary" @click="handleDwon(scope.row)">
-            下载
-          </el-button>
-        </template>
-      </el-table-column>
+      <el-table-column
+        prop="msg"
+        label="说明"
+        show-overflow-tooltip
+      ></el-table-column>
     </el-table>
     <!-- 分页 -->
     <el-pagination
@@ -57,17 +55,15 @@
 import { ref, reactive, Ref, onMounted } from 'vue'
 import dayjs from 'dayjs'
 import { Refresh, Search } from '@element-plus/icons-vue'
-import { RecordAPI, ExportTableItem } from '@/api'
+import { RecordAPI, ImportTableItem } from '@/api'
 import {
   ElForm,
   ElFormItem,
   ElButton,
   ElDatePicker,
   ElTable,
-  ElTableColumn,
-  ElMessage
+  ElTableColumn
 } from 'element-plus'
-import { handleDownloadFile } from '@/utils'
 const API = new RecordAPI()
 onMounted(() => {
   getList()
@@ -98,7 +94,7 @@ const getList = () => {
     endCreateTime: dayjs(queryForm.verifyTime[1]).format('YYYY-MM-DD HH:mm:ss')
   }
   tableLoading.value = true
-  API.uploadExportRecordPage(parm)
+  API.uploadImportRecordPage(parm)
     .then((res) => {
       if (res && res.code === 200) {
         tableLoading.value = false
@@ -124,7 +120,7 @@ const resetForm = () => {
   getList()
 }
 
-const tableData: Ref<ExportTableItem[]> = ref([])
+const tableData: Ref<ImportTableItem[]> = ref([])
 
 // 分页
 const handleCurrentChange = (val: number) => {
@@ -136,20 +132,5 @@ const handleCurrentChange = (val: number) => {
 const handleSizeChange = (val: number) => {
   queryForm.pageSize = val
   getList()
-}
-const handleDwon = (row: ExportTableItem) => {
-  API.downLoadFiles({ fileCode: row.fileCode })
-    .then((res) => {
-      if (res && res.code === 200) {
-        ElMessage({
-          type: 'success',
-          message: '操作成功'
-        })
-        handleDownloadFile(res)
-      }
-    })
-    .catch((err: Error) => {
-      throw err
-    })
 }
 </script>

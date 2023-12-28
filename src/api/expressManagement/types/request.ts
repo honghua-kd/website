@@ -1,4 +1,5 @@
 import { PageRequest } from '@/api/types/request'
+import { OtherFileList } from './response'
 export interface ExpressInfoCardListRequest extends PageRequest {
   /**
    * 登记时间 yyyy-MM-dd
@@ -45,18 +46,6 @@ export interface ExpressContentListRequest {
   contractNo?: string
   id?: string
 }
-
-export interface OtherFileList {
-  /**
-   * 附件code
-   */
-  fileCode?: string
-  /**
-   * 附件备注
-   */
-  fileRemark?: string
-}
-
 export interface ExpressDetailInfoRequest {
   /**
    * 登记时间

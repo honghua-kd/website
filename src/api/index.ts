@@ -3,6 +3,7 @@ export { SystemAPI } from './system'
 export { MortageAPI } from './mortgageRelease'
 export { ExpressAPI } from './expressManagement'
 export { CommonAPI } from './common'
+export { RecordAPI } from './downUpload'
 export type * from './types/request'
 export type * from './types/response'
 
