@@ -954,10 +954,10 @@ onMounted(() => {
 }
 .dropdown-column {
   display: flex;
-  flex-direction: row;
   padding-top: 10px;
+  flex-direction: row;
   .icon {
-    margin-top: -3px;
+    margin-top: -2px;
     margin-right: 5px;
   }
 }
