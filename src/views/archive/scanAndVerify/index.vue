@@ -185,7 +185,7 @@
             上传车辆登记证
           </el-button>
           <el-tooltip
-            content="如有需要，请点击右侧设置表格列选择表格列内容"
+            content="需勾选要归档的条目，方可操作"
             placement="top-start"
           >
             <el-button type="primary" :icon="Check" @click="achiveHandler">
@@ -193,7 +193,7 @@
             </el-button>
           </el-tooltip>
           <el-tooltip
-            content="如有需要，请点击右侧设置表格列选择表格列内容"
+            content="需勾选要删除的条目，方可操作"
             placement="top-start"
           >
             <el-button
