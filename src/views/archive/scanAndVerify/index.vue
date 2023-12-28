@@ -896,9 +896,6 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.simmi-cell {
-  border-color: #ffffff !important;
-}
 .scan-search-container {
   display: flex;
   width: 100%;

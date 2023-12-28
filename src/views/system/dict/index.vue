@@ -1,11 +1,11 @@
 <template>
   <div>
     <!-- 搜索工作栏 -->
-    <el-card class="dict-container">
+    <div class="dict-container">
       <el-form ref="queryFormRef" :model="queryParams" :inline="true">
         <el-row :gutter="15">
           <el-col :span="6">
-            <el-form-item label="字典名称:" prop="name" class="width-full">
+            <el-form-item label="字典名称" prop="name" class="width-full">
               <el-input
                 v-model="queryParams.name"
                 placeholder="请输入字典名称"
@@ -14,7 +14,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="字典类型:" prop="type" class="width-full">
+            <el-form-item label="字典类型" prop="type" class="width-full">
               <el-input
                 v-model="queryParams.type"
                 placeholder="请输入字典类型"
@@ -23,7 +23,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="4">
-            <el-form-item label="状态:" prop="status" class="width-full">
+            <el-form-item label="状态" prop="status" class="width-full">
               <el-select
                 v-model="queryParams.status"
                 clearable
@@ -49,9 +49,10 @@
           </el-col>
         </el-row>
       </el-form>
-    </el-card>
+    </div>
+    <el-divider border-style="dashed" />
     <!-- 列表 -->
-    <el-card class="dict-container">
+    <div>
       <el-table
         :data="tableData"
         :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
@@ -115,7 +116,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
-    </el-card>
+    </div>
     <DictTypeForm ref="dictTypeRef" @success="getList" />
   </div>
 </template>
@@ -251,7 +252,7 @@ init()
 
 <style lang="scss" scoped>
 .dict-container {
-  margin-bottom: 20px;
+  margin-top: 10px;
   font-size: 14px;
 }
 .width-full {

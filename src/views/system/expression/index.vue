@@ -41,7 +41,7 @@
             :label-width="px2rem('100px')"
             :disabled="editable"
           >
-            <el-form-item label="编辑公式：" prop="keywordName">
+            <el-form-item label="编辑公式" prop="keywordName">
               <el-row :gutter="20" class="width-full">
                 <el-col :span="20">
                   <el-input
@@ -62,10 +62,10 @@
                 </el-col>
               </el-row>
             </el-form-item>
-            <el-form-item label="表达式：" prop="keywordCode">
+            <el-form-item label="表达式" prop="keywordCode">
               <el-input v-model="expForm.keywordCode" type="textarea" />
             </el-form-item>
-            <el-form-item label="编辑器：">
+            <el-form-item label="编辑器">
               <el-row class="width-full">
                 <el-col class="formula-cont">
                   <p v-for="(el, ind) in formulaList" :key="ind">
