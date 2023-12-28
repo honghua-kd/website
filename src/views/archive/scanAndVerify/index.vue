@@ -184,16 +184,27 @@
           <el-button type="primary" :icon="Plus" @click="uploadHandler">
             上传车辆登记证
           </el-button>
-          <el-button type="primary" :icon="Check" @click="achiveHandler">
-            选择 & 归档
-          </el-button>
-          <el-button
-            type="primary"
-            :icon="Delete"
-            @click="delHandler(selectIds)"
+          <el-tooltip
+            content="如有需要，请点击右侧设置表格列选择表格列内容"
+            placement="top-start"
           >
-            删除
-          </el-button>
+            <el-button type="primary" :icon="Check" @click="achiveHandler">
+              选择 & 归档
+            </el-button>
+          </el-tooltip>
+          <el-tooltip
+            content="如有需要，请点击右侧设置表格列选择表格列内容"
+            placement="top-start"
+          >
+            <el-button
+              type="primary"
+              :icon="Delete"
+              @click="delHandler(selectIds)"
+            >
+              删除
+            </el-button>
+          </el-tooltip>
+
           <el-button type="primary" :icon="Download" @click="exportHandler">
             导出
           </el-button>
@@ -945,14 +956,11 @@ onMounted(() => {
 }
 .dropdown-column {
   display: flex;
-  flex-direction: row;
   padding-top: 10px;
+  flex-direction: row;
   .icon {
-    margin-top: -3px;
+    margin-top: -2px;
     margin-right: 5px;
   }
-}
-.my-cell .el-checkbox__input {
-  display: none;
 }
 </style>

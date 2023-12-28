@@ -275,6 +275,7 @@ const uploadHandler = async (options: UploadRequestOptions) => {
       }
     })
     .catch((err: Error) => {
+      upLoading.value = false
       throw err
     })
 }
