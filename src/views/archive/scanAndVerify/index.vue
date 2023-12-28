@@ -243,6 +243,8 @@
         row-key="id"
         :tree-props="{ children: 'target' }"
         :max-height="tableHeight"
+        border
+        :cell-style="{ borderRight: '1px solid #fff' }"
         @selection-change="selectionChangeHandler"
         @header-click="sortChangeHandler"
       >
@@ -881,6 +883,9 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+.simmi-cell {
+  border-color: #ffffff !important;
+}
 .scan-search-container {
   display: flex;
   width: 100%;
