@@ -13,7 +13,7 @@ import type {
   DictList,
   RecordList,
   FileDownload,
-  RelationList
+  RelationListItem
 } from './types/response'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
@@ -135,11 +135,21 @@ export class CommonAPI {
   }
 
   // 附件关系信息列表
-  getRelationList(data: RelationListRequest): Response<RelationList> {
+  getRelationList(data: RelationListRequest): Response<RelationListItem[]> {
     return this.request({
       url: `${prefix}/admin-api/system/attachment/relation/list`,
       method: 'post',
       data
+    })
+  }
+
+  // 下载接口
+  downLoadFiles(data: Pick<RecordList, 'fileCode'>): Promise<FileDownload> {
+    return this.request({
+      url: `${prefix}/admin-api/file/attachment/downloadAttachment`,
+      method: 'post',
+      responseType: 'blob',
+      params: data
     })
   }
 }

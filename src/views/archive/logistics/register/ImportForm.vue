@@ -1,3 +1,4 @@
+<!-- eslint-disable no-unused-vars -->
 <template>
   <div>
     <el-dialog
@@ -31,18 +32,15 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { ElMessage, ElForm, genFileId } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import type {
   UploadRawFile,
   UploadInstance,
   UploadProps,
-  UploadFile,
-  UploadFiles,
-  UploadUserFile
+  UploadFile
 } from 'element-plus'
-import { ExpressAPI, CommonAPI } from '@/api'
+import { CommonAPI } from '@/api'
 import fileDownload from 'js-file-download'
-const API = new ExpressAPI()
 const CommonApi = new CommonAPI()
 const dialogTitle = ref<string>('批量导入')
 const dialogVisible = ref<boolean>(false)
@@ -50,10 +48,13 @@ const upload = ref<UploadInstance>()
 const fileType = ref<string>('.xlsx')
 const selectFile = ref()
 // 上传前校验
-const onChangeHandler = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
+const onChangeHandler = (uploadFile: UploadFile) => {
   selectFile.value = uploadFile
-  // 校验文件大小
-  if (uploadFile.name.split('.')[1] !== 'xlsx') {
+  // 校验文件格式
+  const fileType = uploadFile.name
+    .slice(uploadFile.name.lastIndexOf('.'))
+    .toLowerCase()
+  if (fileType !== '.xlsx') {
     ElMessage.error('文件格式需为.xlsx')
     upload.value!.clearFiles()
   }
@@ -66,8 +67,7 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
 
 const downloadTemplate = () => {
   const params = {
-    // bizType: 'EXPRESS_INFO'
-    bizType: 'EXPRESS_CONTENT'
+    bizType: 'EXPRESS_INFO'
   }
   CommonApi.getDownLoadTemplate(params)
     .then((res) => {

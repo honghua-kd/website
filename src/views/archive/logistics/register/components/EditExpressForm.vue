@@ -78,24 +78,10 @@
 </template>
 
 <script setup lang="ts">
-import { warn } from 'console'
-import { ref, reactive, Ref, watch, onMounted } from 'vue'
-import type {
-  PageRequest,
-  ExpressInfoCardListRequest,
-  DictItem,
-  ExpressListItem,
-  ExpressContentList
-} from '@/api'
-import { CommonAPI, ExpressAPI } from '@/api'
+import { ref, reactive, Ref, watch } from 'vue'
+import type { DictItem } from '@/api'
+import { ExpressAPI } from '@/api'
 const API = new ExpressAPI()
-const CommonApi = new CommonAPI()
-defineProps({
-  title: {
-    type: String,
-    default: ''
-  }
-})
 const expressInfoForm = reactive({
   id: '',
   contentNo: '',
@@ -112,7 +98,7 @@ const saveExpressHandler = () => {
   emit('editcontent', params)
 }
 /** 打开弹窗 */
-const open = async (row) => {
+const open = async (row?: string) => {
   dialogVisible.value = true
   getDicts()
   if (typeof row === 'object') {
@@ -138,7 +124,7 @@ const getExpressContentNo = (no: string) => {
   API.getExpressContentNo(params)
     .then((res) => {
       if (res && res.code === 200) {
-        expressInfoForm.contentNo = res?.data
+        expressInfoForm.contentNo = res?.data || ''
       }
     })
     .catch((err: Error) => {

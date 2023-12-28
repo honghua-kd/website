@@ -12,10 +12,9 @@
         :show-file-list="true"
         :on-change="onChangeHandler"
         :on-exceed="handleExceed"
-        :accept="fileType"
-        :limit="1"
         :auto-upload="false"
         action="#"
+        multiple
         v-model:file-list="fileList"
       >
         上传文件: &nbsp;&nbsp;&nbsp;
@@ -39,6 +38,7 @@ import type {
   UploadFiles,
   UploadUserFile
 } from 'element-plus'
+import { useUserStore } from '@toystory/lotso'
 import { ExpressAPI, CommonAPI } from '@/api'
 import fileDownload from 'js-file-download'
 const API = new ExpressAPI()
@@ -49,11 +49,10 @@ const upload = ref<UploadInstance>()
 const fileType = ref<string>('.xlsx')
 const selectFile = ref()
 // 上传前校验
-const onChangeHandler = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
-  selectFile.value = uploadFile
+const onChangeHandler = (uploadFile: UploadRawFile) => {
   // 校验文件大小
-  if (uploadFile.name.split('.')[1] !== 'xlsx') {
-    ElMessage.error('文件格式需为.xlsx')
+  if (uploadFile.size / 1024 / 1024 > 300) {
+    ElMessage.error('单个图片和单页PDF文件不超过8M，多页PDF文件单个不超过300M')
     upload.value!.clearFiles()
   }
 }
@@ -64,16 +63,42 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
 }
 
 const fileList = ref([])
+const tenantUser = ref<string>('')
+const emit = defineEmits(['otherfileinfo'])
 const importHandler = () => {
-  dialogVisible.value = false
-  console.error(selectFile.value)
+  const userStore = useUserStore()
+  tenantUser.value = userStore.userInfo?.staffCode as string
   const formData = new FormData()
-  formData.append('file', selectFile.value.raw)
-  formData.append('bizType', 'EXPRESS_CONTENT')
-  fileList.value = []
-  API.importExpressContent(formData)
+  fileList.value.forEach((item) => {
+    formData.append('file', item.raw)
+  })
+  formData.append('tenantUser', tenantUser.value)
+  formData.append('prefixPath', 'express')
+  formData.append('expireDays', '-1')
+  CommonApi.uploadFilesBatch(formData)
     .then((res) => {
-      console.error(res)
+      if (res && res.code === 200) {
+        ElMessage({
+          type: 'success',
+          message: '导入成功'
+        })
+        dialogVisible.value = false
+        const fileCodes = res.data?.fileCodes
+        const fileNames: string[] = []
+        fileList.value.forEach((item) => {
+          const fileName = item.name.substring(0, item.name.lastIndexOf('.'))
+          fileNames.push(fileName)
+        })
+        const params = []
+        fileCodes.forEach((item, index) => {
+          params.push({
+            fileCode: item,
+            fileName: fileNames[index]
+          })
+        })
+        emit('otherfileinfo', params)
+      }
+      upload.value!.clearFiles()
     })
     .catch((err: Error) => {
       throw err

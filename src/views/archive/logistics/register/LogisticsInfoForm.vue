@@ -25,16 +25,10 @@
 </template>
 
 <script setup lang="ts">
-import { ElMessage } from 'element-plus'
-import { ref, reactive, Ref, computed } from 'vue'
+import { ref, reactive } from 'vue'
 import { ExpressAPI } from '@/api'
-import type {
-  PageRequest,
-  ExpressInfoCardListRequest,
-  DictItem,
-  ExpressListItem,
-  TraceList
-} from '@/api'
+import { ElMessage } from 'element-plus'
+import type { TraceList } from '@/api'
 const API = new ExpressAPI()
 const dialogTitle = ref<string>('物流信息')
 const dialogVisible = ref<boolean>(false)
@@ -62,18 +56,21 @@ const routes = reactive<TraceList>({
 const getLogisticsInfo = (id: string) => {
   loading.value = true
   const params = {
-    // expressNo: id
-    expressNo: '78746538393827'
+    expressNo: id
+    // expressNo: '78746538393827'
   }
   API.getLogisticsInfo(params)
     .then((res) => {
-      if (res && res.code === 200) {
+      if (res && res.code === 200 && res?.data?.traces) {
+        dialogVisible.value = true
         loading.value = false
-        routes.traces = res?.data?.traces
-        // ElMessage({
-        //   type: 'success',
-        //   message: '操作成功'
-        // })
+        routes.traces = res?.data?.traces || []
+      } else {
+        dialogVisible.value = false
+        ElMessage({
+          type: 'success',
+          message: '暂无数据'
+        })
       }
     })
     .catch((err: Error) => {
@@ -83,7 +80,6 @@ const getLogisticsInfo = (id: string) => {
 
 /** 打开弹窗 */
 const open = async (id: string) => {
-  dialogVisible.value = true
   await getLogisticsInfo(id)
 }
 defineExpose({ open })

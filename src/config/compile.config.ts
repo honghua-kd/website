@@ -44,15 +44,17 @@ const userViteConfig: ViteConfig = {
     '^/api/.*': {
       target: 'https://dev-op.utfinancing.com',
       // target: 'http://10.102.3.168:28080',
+      // target: 'http://10.13.13.113:32374',
+      changeOrigin: true
+      // rewrite: (path) => path.replace(/^\/operations-management/, '')
+    },
+    '^/express/info/otherFile/export': {
+      // target: 'https://test-op.utfinancing.com',
+      // target: 'http://10.102.3.168:18080',
+      target: 'http://10.13.13.113:32374',
       changeOrigin: true
       // rewrite: (path) => path.replace(/^\/operations-management/, '')
     }
-    // '^/api/operations-management/.*': {
-    //   target: 'https://test-op.utfinancing.com',
-    //   // target: 'http://10.102.3.168:18080',
-    //   changeOrigin: true
-    //   // rewrite: (path) => path.replace(/^\/operations-management/, '')
-    // }
   },
   // 是否使用mock数据
   useMock: false

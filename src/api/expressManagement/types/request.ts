@@ -50,81 +50,81 @@ export interface ExpressDetailInfoRequest {
   /**
    * 登记时间
    */
-  createTime: string
+  createTime?: string
   /**
    * 登记人
    */
-  creator: string
+  creator?: string
   /**
    * 快递公司
    */
-  expressCompany: string
+  expressCompany?: string
   /**
    * 快递内容
    */
-  expressContentList: ExpressContentListRequest[]
+  expressContentList?: ExpressContentListRequest[]
   /**
    * 快递内容备注
    */
-  expressContentRemark: string
+  expressContentRemark?: string
   /**
    * 快递单号
    */
-  expressNo: string
+  expressNo?: string
   /**
    * 快递状态 0未接收 1已接收 2问题件
    */
-  expressStatus: number
+  expressStatus?: number
   /**
    * 问题件描述
    */
-  expressStatusRemark: string
+  expressStatusRemark?: string
   /**
    * 寄送类型 0寄送 1接收
    */
-  expressType: number
-  id: string
-  otherFileList: OtherFileList[]
+  expressType?: number
+  id?: string
+  otherFileList?: OtherFileList[]
   /**
    * 收件人地址
    */
-  receiveAddress: string
+  receiveAddress?: string
   /**
    * 收件人联系方式
    */
-  receivePhone: string
+  receivePhone?: string
   /**
    * 接收时间
    */
-  receiveTime: string
+  receiveTime?: string
   /**
    * 收件人
    */
-  receiveUser: string
+  receiveUser?: string
   /**
    * 寄送人地址
    */
-  sendAddress: string
+  sendAddress?: string
   /**
    * 寄送人联系方式
    */
-  sendPhone: string
+  sendPhone?: string
   /**
    * 寄送日期
    */
-  sendTime: string
+  sendTime?: string
   /**
    * 寄送人
    */
-  sendUser: string
+  sendUser?: string
   /**
    * 修改人
    */
-  updater: string
+  updater?: string
   /**
    * 修改时间
    */
-  updateTime: string
+  updateTime?: string
 }
 
 export interface CheckExpressInfoRequest {
@@ -159,11 +159,11 @@ export interface UsualAddressListRequest {
   /**
    * 联系人
    */
-  userName: string
+  userName?: string
   /**
    * 联系方式
    */
-  userPhone: string
+  userPhone?: string
 }
 
 export interface DelUsualAddressRequest {
@@ -172,21 +172,25 @@ export interface DelUsualAddressRequest {
 
 export interface AddUsualAddressRequest {
   /**
+   * 用户id
+   */
+  id?: string
+  /**
    * 用户地址
    */
-  userAddress: string
+  userAddress?: string
   /**
    * 用户邮箱
    */
-  userMail: string
+  userMail?: string
   /**
    * 用户名
    */
-  userName: string
+  userName?: string
   /**
    * 用户联系方式
    */
-  userPhone: string
+  userPhone?: string
 }
 
 export interface ExportExpressRequest {

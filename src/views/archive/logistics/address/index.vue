@@ -50,8 +50,6 @@
         v-loading="tableLoading"
         row-key="id"
         :tree-props="{ children: 'target' }"
-        @selection-change="selectionChangeHandler"
-        @header-click="sortChangeHandler"
       >
         <el-table-column label="联系人名称" prop="userName" align="center" />
         <el-table-column label="联系电话" prop="userPhone" align="center" />
@@ -88,21 +86,12 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, Ref, computed, onMounted } from 'vue'
+import { ref, reactive, Ref } from 'vue'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
-import {
-  ArrowDownBold,
-  ArrowUpBold,
-  Plus,
-  Delete,
-  Upload,
-  Download,
-  Check
-} from '@element-plus/icons-vue'
+import { Plus } from '@element-plus/icons-vue'
 import type { UsualAddressListItem } from '@/api'
-import { CommonAPI, ExpressAPI } from '@/api'
+import { ExpressAPI } from '@/api'
 const API = new ExpressAPI()
-const CommonApi = new CommonAPI()
 import EditForm from './EditForm.vue'
 const tableLoading = ref<boolean>(false)
 const dialogTitle = ref<string>('')

@@ -28,7 +28,7 @@
             class="express-com"
             label="快递公司:"
             prop="expressCompany"
-            :rules="[{ required: true }]"
+            :rules="[{ required: true, message: '快递公司不能为空' }]"
           >
             <el-select
               v-model="basicInfoForm.expressCompany"
@@ -39,7 +39,7 @@
                 v-for="(item, index) in expressCompanyOpts"
                 :key="index"
                 :label="item.label"
-                :value="item.label"
+                :value="(item.label as string)"
               />
             </el-select>
             <el-form-item v-if="expressCompanyFlag" prop="expressCompanyOther">
@@ -55,7 +55,7 @@
           <el-form-item
             label="寄送/接收:"
             prop="expressType"
-            :rules="[{ required: true }]"
+            :rules="[{ required: true, message: '寄送/接收不能为空' }]"
           >
             <el-select
               v-model="basicInfoForm.expressType"
@@ -81,7 +81,6 @@
             <el-date-picker
               v-model="basicInfoForm.receiveTime"
               type="date"
-              :default-value="new Date()"
               format="YYYY-MM-DD"
               value-format="YYYY-MM-DD"
             />
@@ -90,7 +89,6 @@
             <el-date-picker
               v-model="basicInfoForm.sendTime"
               type="date"
-              :default-value="new Date()"
               format="YYYY-MM-DD"
               value-format="YYYY-MM-DD"
             />
@@ -108,7 +106,16 @@
           <el-col :span="20">
             <el-row :gutter="20">
               <el-col :span="8">
-                <el-form-item label="寄件人名称:" prop="sendUser">
+                <el-form-item
+                  label="寄件人名称:"
+                  prop="sendUser"
+                  :rules="[
+                    {
+                      required: expressStatusFlag,
+                      message: '寄件人名称不能为空'
+                    }
+                  ]"
+                >
                   <el-autocomplete
                     v-model="basicInfoForm.sendUser"
                     :fetch-suggestions="queryContractsSearch"
@@ -163,11 +170,25 @@
           <el-col :span="20">
             <el-row :gutter="20">
               <el-col :span="8">
-                <el-form-item label="收件人名称:" prop="receiveUser">
-                  <el-input
+                <el-form-item
+                  label="收件人名称:"
+                  prop="receiveUser"
+                  :rules="[
+                    {
+                      required: !expressStatusFlag,
+                      message: '收件人名称不能为空'
+                    }
+                  ]"
+                >
+                  <el-autocomplete
                     v-model="basicInfoForm.receiveUser"
+                    :fetch-suggestions="queryContractsSearch"
+                    :trigger-on-focus="false"
                     clearable
                     placeholder="请输入收件人名称"
+                    @select="handleSelect"
+                    :debounce="500"
+                    @change="handleChange"
                   />
                 </el-form-item>
               </el-col>
@@ -208,7 +229,7 @@
           <el-form-item
             label="快递状态:"
             prop="expressStatus"
-            :rules="[{ required: true }]"
+            :rules="[{ required: true, message: '快递状态不能为空' }]"
           >
             <el-select
               v-model="basicInfoForm.expressStatus"
@@ -226,7 +247,7 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row>
+      <el-row v-if="problemFlag">
         <el-col :span="15">
           <el-form-item label="问题描述:" prop="expressStatusRemark">
             <el-input
@@ -366,7 +387,7 @@
               />
               <el-table-column
                 label="上传用户"
-                prop="expressContentType"
+                prop="creator"
                 width="180"
                 align="center"
               />
@@ -378,13 +399,13 @@
               />
               <el-table-column
                 label="备注"
-                prop="remark"
+                prop="fileRemark"
                 width="180"
-                align="remark"
+                align="center"
               >
                 <template #default="scope">
                   <el-input
-                    v-model="scope.row.remark"
+                    v-model="scope.row.fileRemark"
                     clearable
                     placeholder="请输入备注"
                   />
@@ -398,7 +419,11 @@
                 align="center"
               >
                 <template #default="scope">
-                  <el-button link type="danger">
+                  <el-button
+                    link
+                    type="danger"
+                    @click="delOtherFile(scope.row.fileCode)"
+                  >
                     <el-icon><Delete /></el-icon>
                   </el-button>
                 </template>
@@ -419,8 +444,8 @@
       :title="dialogExpressTitle"
       @editcontent="updateExpressHandler"
     />
-    <ImportContent ref="importContentRef" />
-    <ImportOtherFile ref="importOtherFileRef" />
+    <ImportContent ref="importContentRef" @importcontent="imContent" />
+    <ImportOtherFile ref="importOtherFileRef" @otherfileinfo="getFileInfo" />
   </el-dialog>
 </template>
 
@@ -428,26 +453,18 @@
 import EditExpressForm from './components/EditExpressForm.vue'
 import ImportContent from './components/ImportContent.vue'
 import ImportOtherFile from './components/ImportOtherFile.vue'
-import {
-  ArrowDownBold,
-  ArrowUpBold,
-  Plus,
-  Delete,
-  Upload,
-  Download,
-  Check
-} from '@element-plus/icons-vue'
+import { Delete } from '@element-plus/icons-vue'
 import type {
-  PageRequest,
-  ExpressInfoCardListRequest,
-  DictItem,
+  ExpressDictItem,
   ExpressListItem,
-  ExpressContentList
+  ExpressContentList,
+  OtherFileList,
+  UsualAddressListItem
 } from '@/api'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
-import { ref, reactive, Ref, watch, onMounted, onActivated } from 'vue'
-import { EXPRESS_STATUS, EXPRESS_TYPE } from '@/constants'
+import { ref, reactive, Ref, watch } from 'vue'
 import { CommonAPI, ExpressAPI } from '@/api'
+import { useUserStore } from '@toystory/lotso'
 const API = new ExpressAPI()
 const CommonApi = new CommonAPI()
 const dialogExpressTitle = ref<string>('')
@@ -483,7 +500,7 @@ const basicInfoForm = reactive<ExpressListItem>({
   expressContentList: [],
   otherFileList: []
 })
-const commonContracts = ref([])
+const commonContracts = ref<UsualAddressListItem[]>([])
 
 const queryContractsSearch = (queryString: string, cb: any) => {
   const results = queryString
@@ -492,11 +509,11 @@ const queryContractsSearch = (queryString: string, cb: any) => {
   cb(results)
 }
 const createFilter = (queryString: string) => {
-  return (res) => {
+  return (res: UsualAddressListItem) => {
     return res.value.indexOf(queryString) !== -1
   }
 }
-const handleSelect = (item) => {
+const handleSelect = (item: UsualAddressListItem) => {
   basicInfoForm.sendUser = item.userName
   basicInfoForm.sendPhone = item.userPhone
   basicInfoForm.sendAddress = item.userAddress
@@ -559,11 +576,11 @@ const delExpressHandler = (contentNo: string) => {
     type: 'warning'
   })
     .then(() => {
-      const index = basicInfoForm.expressContentList.findIndex(
+      const index = basicInfoForm.expressContentList!.findIndex(
         (item) => item.contentNo === contentNo
       )
       if (index !== -1) {
-        basicInfoForm.expressContentList.splice(index, 1)
+        basicInfoForm.expressContentList!.splice(index, 1)
       }
     })
     .catch((err: Error) => {
@@ -577,34 +594,36 @@ const delExpressHandler = (contentNo: string) => {
 
 const updateExpressHandler = (val: ExpressContentList) => {
   if (val) {
-    const index = basicInfoForm.expressContentList.findIndex(
+    const index = basicInfoForm.expressContentList!.findIndex(
       (item) => item.contentNo === val.contentNo
     )
     if (index !== -1) {
-      basicInfoForm.expressContentList.splice(index, 1, val)
+      basicInfoForm.expressContentList!.splice(index, 1, val)
     } else {
-      basicInfoForm.expressContentList.push(val)
+      basicInfoForm.expressContentList!.push(val)
     }
   }
 }
 const getOtherContentList = () => {
   const params = {
-    businessCategory: 'ARCHIVE',
-    businessSubCategory: 'REGISTER VERIFY_TASK',
+    businessCategory: 'EXPRESS',
+    businessSubCategory: 'INFO_OTHER',
     businessNoList: [],
     businessNo: basicInfoForm.expressNo
   }
   CommonApi.getRelationList(params)
     .then((res) => {
       if (res && res.code === 200) {
-        const data = res?.data
-        if (res.data && res.data.length) {
-          basicInfoForm.otherFileList.push([...data])
-        }
-        // ElMessage({
-        //   type: 'success',
-        //   message: '添加成功'
-        // })
+        const data = res?.data || []
+        data.forEach((item) => {
+          basicInfoForm.otherFileList.push({
+            fileCode: item.attachmentId,
+            fileName: item.fileName,
+            fileRemark: item.remark,
+            creator: item.creator,
+            createTime: item.createTime
+          })
+        })
       }
     })
     .catch((err: Error) => {
@@ -612,13 +631,13 @@ const getOtherContentList = () => {
     })
 }
 /** 打开弹窗 */
-const open = async (row: string) => {
+const open = async (row?: ExpressListItem) => {
   dialogVisible.value = true
   getDicts()
-  getOtherContentList()
   init(row)
+  getOtherContentList()
 }
-const init = (row) => {
+const init = (row?: ExpressListItem) => {
   if (row) {
     disFlag.value = true
     const data = JSON.parse(JSON.stringify(row))
@@ -641,8 +660,8 @@ const init = (row) => {
     basicInfoForm.createTime = data.createTime
     basicInfoForm.updater = data.updater
     basicInfoForm.updateTime = data.updateTime
-    basicInfoForm.expressContentList = data.expressContentList
-    basicInfoForm.otherFileList = data.otherFileList
+    basicInfoForm.expressContentList = data.expressContentList || []
+    basicInfoForm.otherFileList = data.otherFileList || []
   } else {
     disFlag.value = false
     basicInfoForm.id = ''
@@ -668,16 +687,22 @@ const init = (row) => {
     basicInfoForm.otherFileList = []
   }
 }
-const expressCompanyOpts: Ref<DictItem[]> = ref([])
-const expressTypeOpts: Ref<DictItem[]> = ref([])
-const expressStatusOpts: Ref<DictItem[]> = ref([])
+const expressCompanyOpts: Ref<ExpressDictItem[]> = ref([])
+const expressTypeOpts: Ref<ExpressDictItem[]> = ref([])
+const expressStatusOpts: Ref<ExpressDictItem[]> = ref([])
 const getDicts = () => {
-  expressCompanyOpts.value = JSON.parse(localStorage.getItem('EXPRESS_COMPANY'))
-  expressTypeOpts.value = JSON.parse(localStorage.getItem('EXPRESS_TYPE'))
+  expressCompanyOpts.value = JSON.parse(
+    localStorage.getItem('EXPRESS_COMPANY') as string
+  )
+  expressTypeOpts.value = JSON.parse(
+    localStorage.getItem('EXPRESS_TYPE') as string
+  )
   expressTypeOpts.value.forEach((item) => {
     item.value = Number(item.value)
   })
-  expressStatusOpts.value = JSON.parse(localStorage.getItem('EXPRESS_STATUS'))
+  expressStatusOpts.value = JSON.parse(
+    localStorage.getItem('EXPRESS_STATUS') as string
+  )
   expressStatusOpts.value.forEach((item) => {
     item.value = Number(item.value)
   })
@@ -685,50 +710,115 @@ const getDicts = () => {
 defineExpose({ open })
 const emit = defineEmits(['success'])
 const updateHandler = () => {
-  if (props.title === '新增邮寄信息') {
-    const params = basicInfoForm
-    API.addExpressInfo(params)
-      .then((res) => {
-        if (res && res.code === 200) {
-          ElMessage({
-            type: 'success',
-            message: '新增成功'
-          })
-          dialogVisible.value = false
-          emit('success')
-        }
-      })
-      .catch((err: Error) => {
-        console.log(err)
-      })
+  basicInfoForm.sendTime = basicInfoForm.sendTime
+    ? basicInfoForm.sendTime.slice(0, 10)
+    : ''
+  basicInfoForm.receiveTime = basicInfoForm.receiveTime
+    ? basicInfoForm.receiveTime.slice(0, 10)
+    : ''
+  if (!basicInfoForm.expressContentList?.length) {
+    ElMessage({
+      type: 'error',
+      message: '快递内容不能为空'
+    })
   } else {
-    const params = basicInfoForm
-    API.editExpressInfo(params)
-      .then((res) => {
-        if (res && res.code === 200) {
-          ElMessage({
-            type: 'success',
-            message: '修改成功'
-          })
-          dialogVisible.value = false
-          emit('success')
-        }
-      })
-      .catch((err: Error) => {
-        console.log(err)
-      })
+    if (props.title === '新增邮寄信息') {
+      const params = basicInfoForm
+      API.addExpressInfo(params)
+        .then((res) => {
+          if (res && res.code === 200) {
+            ElMessage({
+              type: 'success',
+              message: '新增成功'
+            })
+            dialogVisible.value = false
+            emit('success')
+          }
+        })
+        .catch((err: Error) => {
+          console.log(err)
+        })
+    } else {
+      const params = basicInfoForm
+      API.editExpressInfo(params)
+        .then((res) => {
+          if (res && res.code === 200) {
+            ElMessage({
+              type: 'success',
+              message: '修改成功'
+            })
+            dialogVisible.value = false
+            emit('success')
+          }
+        })
+        .catch((err: Error) => {
+          console.log(err)
+        })
+    }
   }
 }
 const importContentRef = ref()
 const importContent = () => {
-  importContentRef.value.open()
+  importContentRef.value.open(basicInfoForm.expressNo)
 }
+// 导入快递内容数据回显
+const imContent = (params: ExpressContentList[]) => {
+  // basicInfoForm.expressContentList?.push([...params])
+  params.forEach((item) => {
+    basicInfoForm.expressContentList?.push({
+      contentNo: item.contentNo,
+      contentType: item.contentType,
+      contentTypeNumber: item.contentTypeNumber
+    })
+  })
+}
+// 导入上传附件数据回显
+const getFileInfo = (params: OtherFileList[]) => {
+  const userStore = useUserStore()
+  const user = userStore.userInfo?.staffCode as string
+  console.error(params)
+  if (params && params.length) {
+    params.forEach((item) => {
+      basicInfoForm.otherFileList.push({
+        fileCode: item.fileCode,
+        fileName: item.fileName,
+        fileRemark: '',
+        creator: user
+      })
+    })
+  }
+}
+// 删除附件信息
+const delOtherFile = (code: string) => {
+  ElMessageBox.confirm('确认要删除吗？', '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(() => {
+      const index = basicInfoForm.otherFileList.findIndex(
+        (item) => item.fileCode === code
+      )
+      if (index !== -1) {
+        basicInfoForm.otherFileList.splice(index, 1)
+      }
+    })
+    .catch((err: Error) => {
+      ElMessage({
+        type: 'error',
+        message: '删除失败'
+      })
+      throw err
+    })
+}
+
 const importOtherFileRef = ref()
 const importOtherFile = () => {
   importOtherFileRef.value.open()
 }
 
 const expressStatusFlag = ref(true)
+// const requiredMes = ref()
 watch(
   () => basicInfoForm.expressType,
   (val) => {
@@ -750,6 +840,20 @@ watch(
       expressCompanyFlag.value = true
     } else {
       expressCompanyFlag.value = false
+    }
+  },
+  {
+    immediate: true
+  }
+)
+const problemFlag = ref(false)
+watch(
+  () => basicInfoForm.expressStatus,
+  (val) => {
+    if (val === 2) {
+      problemFlag.value = true
+    } else {
+      problemFlag.value = false
     }
   },
   {

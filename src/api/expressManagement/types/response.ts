@@ -21,11 +21,23 @@ export interface OtherFileList {
   /**
    * 附件code
    */
-  fileCode?: string
+  fileCode?: string | null
   /**
    * 附件备注
    */
-  fileRemark?: string
+  fileRemark?: string | null
+  /**
+   * 附件名称
+   */
+  fileName?: string | null
+  /**
+   * 上传用户
+   */
+  creator?: string | null
+  /**
+   * 上传时间
+   */
+  createTime?: string | null
 }
 
 export interface ExpressListItem {
@@ -64,7 +76,7 @@ export interface ExpressListItem {
   /**
    * 快递描述：问题件描述
    */
-  expressStatusRemark: string
+  expressStatusRemark?: string
   /**
    * 寄送类型 0寄送 1接收
    */
@@ -73,11 +85,11 @@ export interface ExpressListItem {
   /**
    * 收件人地址
    */
-  receiveAddress: string
+  receiveAddress?: string
   /**
    * 收件人联系方式
    */
-  receivePhone: string
+  receivePhone?: string
   /**
    * 接收时间
    */
@@ -97,11 +109,11 @@ export interface ExpressListItem {
   /**
    * 寄送人地址
    */
-  sendAddress: string
+  sendAddress?: string
   /**
    * 寄送人联系方式
    */
-  sendPhone: string
+  sendPhone?: string
   /**
    * 更新人
    */
@@ -143,6 +155,7 @@ export interface UsualAddressListItem {
    * 用户联系方式
    */
   userPhone?: string
+  value: string
 }
 
 export interface TraceItem {
@@ -242,4 +255,15 @@ export interface TraceList {
    * 物流轨迹
    */
   traces: TraceItem[]
+}
+
+export interface ExpressDownLoad {
+  /**
+   * 附件code
+   */
+  fileCode: string
+  /**
+   * 异步或同步，0异步 1同步
+   */
+  sync: number
 }

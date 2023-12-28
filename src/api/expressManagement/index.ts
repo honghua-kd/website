@@ -8,7 +8,6 @@ import type {
   ExpressInfoCardListRequest,
   ExpressDetailInfoRequest,
   CheckExpressInfoRequest,
-  DelExpressInfoRequest,
   DelExpressListRequest,
   ReceiveExpressInfoRequest,
   UsualAddressListRequest,
@@ -19,7 +18,8 @@ import type {
 import type {
   ExpressListItem,
   UsualAddressListItem,
-  TraceList
+  TraceList,
+  ExpressDownLoad
 } from './types/response'
 import type { FileDownload, UploadFile } from '../common/types/response'
 const prefix = '/operations-mortgage'
@@ -107,7 +107,7 @@ export class ExpressAPI {
   // 快递内容编号自动生成
   getExpressContentNo(
     data: CheckExpressInfoRequest
-  ): Response<boolean | null | undefined> {
+  ): Response<string | null | undefined> {
     return this.request({
       url: `${prefix}/admin-api/express/info/content/number/auto`,
       method: 'post',
@@ -139,7 +139,7 @@ export class ExpressAPI {
 
   // 编辑常用地址
   editUsualAddress(
-    data: UsualAddressListRequest
+    data: AddUsualAddressRequest
   ): Response<boolean | null | undefined> {
     return this.request({
       url: `${prefix}/admin-api/express/usual/address/update`,
@@ -171,11 +171,12 @@ export class ExpressAPI {
   }
 
   // 导出邮寄信息
-  exportExpressContentInfo(data: ExportExpressRequest): Promise<FileDownload> {
+  exportExpressContentInfo(
+    data: ExportExpressRequest
+  ): Response<ExpressDownLoad> {
     return this.request({
       url: `${prefix}/admin-api/express/info/export`,
       method: 'post',
-      responseType: 'blob',
       data
     })
   }

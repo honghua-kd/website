@@ -132,7 +132,7 @@
         :tree-props="{ children: 'target' }"
         @selection-change="selectionChangeHandler"
       >
-        <el-table-column type="selection" width="55" />
+        <el-table-column type="selection" width="55" align="center" />
         <el-table-column
           label="快递状态"
           prop="expressStatus"
@@ -293,6 +293,7 @@
 
 <script lang="ts" setup>
 import { ref, reactive, Ref, computed } from 'vue'
+import { useRouter } from '@toystory/lotso'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import { CommonAPI, ExpressAPI } from '@/api'
 import {
@@ -315,6 +316,7 @@ import type {
   ExpressListItem,
   ExpressContentList
 } from '@/api'
+const { router } = useRouter()
 import fileDownload from 'js-file-download'
 type QueryParams = ExpressInfoCardListRequest & PageRequest
 const API = new ExpressAPI()
@@ -388,7 +390,7 @@ const selectIds = computed(() => {
   const ids: string[] = []
   selectData.value.forEach((item) => {
     if (item.id) {
-      ids.push(item.expressNo)
+      ids.push(item.expressNo as string)
     }
   })
   return ids
@@ -398,7 +400,7 @@ const logisticsInfo = (id: string) => {
   logisticsInfoFormRef.value.open(id)
 }
 const editFormRef = ref()
-const editHandler = (row: string) => {
+const editHandler = (row: ExpressListItem) => {
   dialogTitle.value = '编辑邮寄信息'
   editFormRef.value.open(row)
 }
@@ -407,7 +409,7 @@ const addHandler = () => {
   editFormRef.value.open()
 }
 const checkFormRef = ref()
-const checkHandler = (id: string) => {
+const checkHandler = (id: ExpressListItem) => {
   checkFormRef.value.open(id)
 }
 // 批量接收
@@ -467,15 +469,32 @@ const exportHandler = () => {
   }
   API.exportExpressContentInfo(params)
     .then((res) => {
-      console.error(res)
-      const fileStream = res?.data
-      const headers = res?.headers
-      const files =
-        headers &&
-        headers['content-disposition'] &&
-        decodeURI(headers['content-disposition'].split(';')[1])
-      const fileName = (files && files.split('=')[1]) || ''
-      fileDownload(fileStream, fileName)
+      if (res && res.code === 200) {
+        if (res?.data?.sync === 1) {
+          const params = {
+            fileCode: res?.data?.fileCode
+          }
+          CommonApi.downLoadFiles(params)
+            .then((res) => {
+              const fileStream = res?.data
+              const fileName = '邮寄信息.xlsx'
+              fileDownload(fileStream, fileName)
+              ElMessage({
+                type: 'success',
+                message: '操作成功'
+              })
+            })
+            .catch((err: Error) => {
+              tableLoading.value = false
+              throw err
+            })
+        } else if (res?.data?.sync === 0) {
+          ElMessage({
+            type: 'success',
+            message: '等待导出结果'
+          })
+        }
+      }
     })
     .catch((err: Error) => {
       throw err
@@ -522,7 +541,11 @@ const delHandler = (ids: string[]) => {
 }
 
 // 导入结果查询
-const importResultHandler = () => {}
+const importResultHandler = () => {
+  router.push({
+    path: '/recordUploadIndex'
+  })
+}
 
 // 分页
 const handleCurrentChange = (val: number) => {
@@ -603,9 +626,9 @@ const getExpressType = (status: number) => {
 }
 const getRealTime = (type: number, stime: string, rtime: string) => {
   if (type === 0) {
-    return stime.slice(0, 10)
+    return stime ? stime.slice(0, 10) : ''
   } else if (type === 1) {
-    return rtime.slice(0, 10)
+    return rtime ? rtime.slice(0, 10) : ''
   }
 }
 const getDate = (datetime: string) => {

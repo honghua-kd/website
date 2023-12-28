@@ -24,6 +24,10 @@ export interface DictItem {
 interface DictTypes {
   ARCHIVE_STATUS: string
   OCR_STATUS: string
+  EXPRESS_COMPANY: string
+  EXPRESS_TYPE: string
+  EXPRESS_CONTENT: string
+  EXPRESS_STATUS: string
 }
 
 type DictType = keyof DictTypes
@@ -156,4 +160,12 @@ export interface RelationList {
    * 错误提示，用户可阅读
    */
   msg?: null | string
+}
+
+export interface ExpressDictItem {
+  dictType?: string
+  value: string | number | boolean
+  label?: string | number
+  colorType?: string
+  cssClass?: string
 }

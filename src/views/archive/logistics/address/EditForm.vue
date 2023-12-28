@@ -64,20 +64,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
-import { UploadFilled, Delete, ZoomIn } from '@element-plus/icons-vue'
+import { ref, reactive } from 'vue'
 import { ElMessage, ElForm } from 'element-plus'
-import type { UploadFile, UploadRawFile } from 'element-plus'
-import type {
-  PageRequest,
-  ExpressInfoCardListRequest,
-  DictItem,
-  ExpressListItem,
-  UsualAddressListItem
-} from '@/api'
-import { CommonAPI, ExpressAPI } from '@/api'
+import type { UsualAddressListItem } from '@/api'
+import { ExpressAPI } from '@/api'
 const API = new ExpressAPI()
-const CommonApi = new CommonAPI()
 const props = defineProps({
   title: {
     type: String,
@@ -143,7 +134,7 @@ const addHandler = () => {
   }
 }
 /** 打开弹窗 */
-const open = (row) => {
+const open = (row?: string) => {
   dialogVisible.value = true
   if (row) {
     const data = JSON.parse(JSON.stringify(row))

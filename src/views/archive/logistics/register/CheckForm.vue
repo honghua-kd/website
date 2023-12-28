@@ -40,7 +40,7 @@
                 v-for="(item, index) in expressCompanyOpts"
                 :key="index"
                 :label="item.label"
-                :value="item.label"
+                :value="(item.label as string)"
               />
             </el-select>
             <el-form-item v-if="expressCompanyFlag" prop="expressNo">
@@ -215,7 +215,7 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row>
+      <el-row v-if="problemFlag">
         <el-col :span="15">
           <el-form-item label="问题描述:" prop="expressStatusRemark">
             <el-input
@@ -304,20 +304,37 @@
               border
               row-key="id"
             >
-              <el-table-column type="selection" width="55" />
-              <el-table-column label="序号" prop="number" align="center" />
+              <el-table-column
+                label="序号"
+                prop="number"
+                width="180"
+                align="center"
+                type="index"
+              />
               <el-table-column
                 label="文件名"
-                prop="expressContentNo"
+                prop="fileName"
+                width="180"
                 align="center"
               />
               <el-table-column
                 label="上传用户"
-                prop="expressContentType"
+                prop="creator"
+                width="180"
                 align="center"
               />
-              <el-table-column label="上传时间" prop="typeNo" align="center" />
-              <el-table-column label="备注" prop="remark" align="center" />
+              <el-table-column
+                label="上传时间"
+                prop="createTime"
+                width="180"
+                align="center"
+              />
+              <el-table-column
+                label="备注"
+                prop="fileRemark"
+                width="180"
+                align="center"
+              />
             </el-table>
           </el-form-item>
         </el-col>
@@ -332,23 +349,8 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ArrowDownBold,
-  ArrowUpBold,
-  Plus,
-  Delete,
-  Upload,
-  Download,
-  Check
-} from '@element-plus/icons-vue'
-import { ref, reactive, Ref, watch, onMounted } from 'vue'
-import type {
-  PageRequest,
-  ExpressInfoCardListRequest,
-  DictItem,
-  ExpressListItem,
-  ExpressContentList
-} from '@/api'
+import { ref, reactive, Ref, watch } from 'vue'
+import type { ExpressDictItem, ExpressListItem } from '@/api'
 import fileDownload from 'js-file-download'
 import { CommonAPI, ExpressAPI } from '@/api'
 const API = new ExpressAPI()
@@ -414,34 +416,46 @@ const getList = (id: string) => {
       throw err
     })
 }
-const expressCompanyOpts: Ref<DictItem[]> = ref([])
-const expressTypeOpts: Ref<DictItem[]> = ref([])
-const expressStatusOpts: Ref<DictItem[]> = ref([])
+const expressCompanyOpts: Ref<ExpressDictItem[]> = ref([])
+const expressTypeOpts: Ref<ExpressDictItem[]> = ref([])
+const expressStatusOpts: Ref<ExpressDictItem[]> = ref([])
 const getDicts = () => {
-  expressCompanyOpts.value = JSON.parse(localStorage.getItem('EXPRESS_COMPANY'))
-  expressTypeOpts.value = JSON.parse(localStorage.getItem('EXPRESS_TYPE'))
+  expressCompanyOpts.value = JSON.parse(
+    localStorage.getItem('EXPRESS_COMPANY') as string
+  )
+  expressTypeOpts.value = JSON.parse(
+    localStorage.getItem('EXPRESS_TYPE') as string
+  )
   expressTypeOpts.value.forEach((item) => {
     item.value = Number(item.value)
   })
-  expressStatusOpts.value = JSON.parse(localStorage.getItem('EXPRESS_STATUS'))
+  expressStatusOpts.value = JSON.parse(
+    localStorage.getItem('EXPRESS_STATUS') as string
+  )
   expressStatusOpts.value.forEach((item) => {
     item.value = Number(item.value)
   })
 }
-const getOtherContentList = () => {
+const getOtherContentList = (id: string) => {
   const params = {
-    businessCategory: 'ARCHIVE',
-    businessSubCategory: 'REGISTER VERIFY_TASK',
+    businessCategory: 'EXPRESS',
+    businessSubCategory: 'INFO_OTHER',
     businessNoList: [],
-    businessNo: basicInfoForm.expressNo
+    businessNo: id
   }
   CommonApi.getRelationList(params)
     .then((res) => {
       if (res && res.code === 200) {
-        const data = res?.data
-        if (res.data && res.data.length) {
-          basicInfoForm.otherFileList.push([...data])
-        }
+        const data = res?.data || []
+        data.forEach((item) => {
+          basicInfoForm.otherFileList.push({
+            fileCode: item.attachmentId,
+            fileName: item.fileName,
+            fileRemark: item.remark,
+            creator: item.creator,
+            createTime: item.createTime
+          })
+        })
       }
     })
     .catch((err: Error) => {
@@ -469,12 +483,36 @@ const otherFileDownload = () => {
       console.log(err)
     })
 }
+const init = () => {
+  basicInfoForm.id = ''
+  basicInfoForm.expressNo = ''
+  basicInfoForm.expressCompany = ''
+  basicInfoForm.expressStatus = 0
+  basicInfoForm.expressType = 0
+  basicInfoForm.sendTime = ''
+  basicInfoForm.receiveTime = ''
+  basicInfoForm.sendUser = ''
+  basicInfoForm.sendPhone = ''
+  basicInfoForm.sendAddress = ''
+  basicInfoForm.receivePhone = ''
+  basicInfoForm.receiveAddress = ''
+  basicInfoForm.expressStatusRemark = ''
+  basicInfoForm.receiveUser = ''
+  basicInfoForm.expressContentRemark = ''
+  basicInfoForm.creator = ''
+  basicInfoForm.createTime = ''
+  basicInfoForm.updater = ''
+  basicInfoForm.updateTime = ''
+  basicInfoForm.expressContentList = []
+  basicInfoForm.otherFileList = []
+}
 /** 打开弹窗 */
 const open = async (id: string) => {
   dialogVisible.value = true
-  getDicts()
-  getOtherContentList()
+  init()
   getList(id)
+  await getDicts()
+  await getOtherContentList(id)
 }
 
 defineExpose({ open })
@@ -500,6 +538,20 @@ watch(
       expressCompanyFlag.value = true
     } else {
       expressCompanyFlag.value = false
+    }
+  },
+  {
+    immediate: true
+  }
+)
+const problemFlag = ref(false)
+watch(
+  () => basicInfoForm.expressStatus,
+  (val) => {
+    if (val === 2) {
+      problemFlag.value = true
+    } else {
+      problemFlag.value = false
     }
   },
   {

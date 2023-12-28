@@ -52,8 +52,11 @@ const selectFile = ref()
 // 上传前校验
 const onChangeHandler = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
   selectFile.value = uploadFile
-  // 校验文件大小
-  if (uploadFile.name.split('.')[1] !== 'xlsx') {
+  // 校验文件格式
+  const fileType = uploadFile.name
+    .slice(uploadFile.name.lastIndexOf('.'))
+    .toLowerCase()
+  if (fileType !== '.xlsx') {
     ElMessage.error('文件格式需为.xlsx')
     upload.value!.clearFiles()
   }
@@ -85,16 +88,26 @@ const downloadTemplate = () => {
     })
 }
 const fileList = ref([])
+const expressNo = ref('')
+const emit = defineEmits(['importcontent'])
 const importHandler = () => {
   dialogVisible.value = false
   console.error(selectFile.value)
   const formData = new FormData()
   formData.append('file', selectFile.value.raw)
   formData.append('bizType', 'EXPRESS_CONTENT')
+  formData.append('expressNo', expressNo.value)
   fileList.value = []
   API.importExpressContent(formData)
     .then((res) => {
-      console.error(res)
+      if (res && res.code === 200) {
+        emit('importcontent', res.data)
+        dialogVisible.value = false
+        ElMessage({
+          type: 'success',
+          message: '导入成功'
+        })
+      }
     })
     .catch((err: Error) => {
       throw err
@@ -102,8 +115,9 @@ const importHandler = () => {
 }
 
 /** 打开弹窗 */
-const open = () => {
+const open = (no: string) => {
   dialogVisible.value = true
+  expressNo.value = no
 }
 defineExpose({ open })
 </script>
