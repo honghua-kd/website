@@ -140,12 +140,12 @@ const handleSizeChange = (val: number) => {
 const handleDwon = (row: ExportTableItem) => {
   API.downLoadFiles({ fileCode: row.fileCode })
     .then((res) => {
-      if (res && res.code === 200) {
+      if (res) {
         ElMessage({
           type: 'success',
           message: '操作成功'
         })
-        handleDownloadFile(res)
+        handleDownloadFile(res, row.fileName)
       }
     })
     .catch((err: Error) => {

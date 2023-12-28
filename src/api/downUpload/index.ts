@@ -47,7 +47,7 @@ export class RecordAPI {
       url: `${prefix}/file/attachment/downloadAttachment`,
       method: 'post',
       responseType: 'blob',
-      data
+      params: data
     })
   }
 }
