@@ -3,9 +3,9 @@
     <el-card class="tree-container">
       <SideTree @getSelect="getSelectNodeHandler" />
     </el-card>
-    <div class="right-part">
+    <el-card class="right-part">
       <!-- 搜索工作栏 -->
-      <el-card class="search-bar">
+      <div class="search-bar">
         <el-form ref="queryFormRef" :model="queryParams" :inline="true">
           <el-row :gutter="20">
             <el-col :span="6">
@@ -45,9 +45,10 @@
             </el-col>
           </el-row>
         </el-form>
-      </el-card>
+      </div>
+      <el-divider border-style="dashed" />
       <!-- 列表 -->
-      <el-card>
+      <div>
         <el-table
           :data="tableData"
           :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
@@ -117,7 +118,12 @@
             prop="reportToStaffCode"
             :show-overflow-tooltip="true"
           />
-          <el-table-column align="center" label="邮箱" prop="email" />
+          <el-table-column
+            align="center"
+            label="邮箱"
+            width="150"
+            prop="email"
+          />
           <el-table-column
             label="操作"
             align="center"
@@ -147,8 +153,8 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
-      </el-card>
-    </div>
+      </div>
+    </el-card>
     <PermiListDialog ref="userListRef" @success="searchHandler" />
   </div>
 </template>
@@ -256,7 +262,7 @@ const assignPermiHandler = (row: StaffListItem) => {
 <style lang="scss" scoped>
 .user-container {
   display: flex;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   width: 100%;
   font-size: 14px;
 }
@@ -271,7 +277,7 @@ const assignPermiHandler = (row: StaffListItem) => {
 }
 .tree-container {
   overflow-y: scroll;
-  margin-right: 3%;
+  margin-right: 20px;
   width: 22%;
   height: 550px;
 }
