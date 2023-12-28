@@ -90,10 +90,17 @@ const { handlePermission } = usePermission({
           const errorMsg =
             response.msg || response.message || '系统错误，请稍后重试'
           ElMessage.error(errorMsg)
+          router.replace('/error?type=403')
           throw new Error(errorMsg)
         }
       })
       .catch((err) => {
+        const status = err?.response?.status
+        if (+status === 403) {
+          router.replace('/error?type=403')
+        } else {
+          router.replace('/error?type=500')
+        }
         userStore.setAuthDataFlag(true)
         throw new Error(err)
       })

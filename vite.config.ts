@@ -4,7 +4,7 @@ import legacy from '@vitejs/plugin-legacy'
 import jsx from '@vitejs/plugin-vue-jsx'
 import { viteMockServe } from 'vite-plugin-mock'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
-import viteImagemin from 'vite-plugin-imagemin'
+// import viteImagemin from 'vite-plugin-imagemin'
 
 import ElementPlus from 'unplugin-element-plus/vite'
 
@@ -79,34 +79,34 @@ export default defineConfig({
       iconDirs: [path.resolve(process.cwd(), 'src/icons')],
       // 指定symbolId格式
       symbolId: 'icon-[dir]-[name]'
-    }),
-    viteImagemin({
-      gifsicle: {
-        optimizationLevel: 7,
-        interlaced: false
-      },
-      optipng: {
-        optimizationLevel: 7
-      },
-      mozjpeg: {
-        quality: 20
-      },
-      pngquant: {
-        quality: [0.8, 0.9],
-        speed: 4
-      },
-      svgo: {
-        plugins: [
-          {
-            name: 'removeViewBox'
-          },
-          {
-            name: 'removeEmptyAttrs',
-            active: false
-          }
-        ]
-      }
     })
+    // viteImagemin({
+    //   gifsicle: {
+    //     optimizationLevel: 7,
+    //     interlaced: false
+    //   },
+    //   optipng: {
+    //     optimizationLevel: 7
+    //   },
+    //   mozjpeg: {
+    //     quality: 20
+    //   },
+    //   pngquant: {
+    //     quality: [0.8, 0.9],
+    //     speed: 4
+    //   },
+    //   svgo: {
+    //     plugins: [
+    //       {
+    //         name: 'removeViewBox'
+    //       },
+    //       {
+    //         name: 'removeEmptyAttrs',
+    //         active: false
+    //       }
+    //     ]
+    //   }
+    // })
   ],
 
   server: {

@@ -2,7 +2,7 @@
   <div>
     <SecondaryTitle title="核验车辆登记证" />
     <!-- 搜索工作栏 -->
-    <div class="scan-search-container">
+    <div class="scan-search-container" ref="searchBoxRef">
       <el-form
         ref="queryFormRef"
         :model="queryParams"
@@ -11,12 +11,18 @@
       >
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="核验时间:" prop="verifyTime">
+            <el-form-item label="核验时间:" class="width-full">
               <el-date-picker
-                v-model="queryParams.verifyTime"
-                type="datetimerange"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
+                v-model="queryParams.startVerifyTime"
+                type="datetime"
+                placeholder="核验开始时间"
+                style="margin-right: 4%; width: 48%"
+              />
+              <el-date-picker
+                v-model="queryParams.endVerifyTime"
+                type="datetime"
+                placeholder="核验结束时间"
+                style="width: 48%"
               />
             </el-form-item>
           </el-col>
@@ -25,7 +31,7 @@
               <el-input
                 v-model="queryParams.creatorName"
                 clearable
-                placeholder="请输入"
+                placeholder="请输入创建人"
               />
             </el-form-item>
           </el-col>
@@ -35,6 +41,7 @@
                 v-model="queryParams.verifyResult"
                 style="width: 100%"
                 placeholder="请选择核对结果"
+                clearable
               >
                 <el-option
                   v-for="(item, index) in verifyOpts"
@@ -92,7 +99,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row :gutter="20">
+        <el-row :gutter="20" v-if="expandFlag">
           <el-col :span="6">
             <el-form-item label="合同号:" prop="contractNo">
               <el-input
@@ -168,6 +175,7 @@
         </div>
       </div>
     </div>
+    <el-divider border-style="dashed" />
     <!-- 表格 -->
     <div>
       <el-row class="table-btn">
@@ -191,13 +199,15 @@
         v-loading="tableLoading"
         row-key="id"
         :tree-props="{ children: 'target' }"
+        :max-height="tableHeight"
         @selection-change="selectionChangeHandler"
         @header-click="sortChangeHandler"
       >
         <el-table-column
           type="selection"
-          width="55"
+          width="40"
           :selectable="selectableHandler"
+          align="center"
         />
 
         <el-table-column fixed prop="fileName" width="180" align="center">
@@ -210,21 +220,21 @@
           </template>
           <template #default="scope">
             <span
-              v-if="scope.row.id"
+              v-if="scope.row.fileCode"
               @click="openPreview(scope.row.fileCode)"
               class="file-name"
             >
               {{ scope.row.fileName }}
             </span>
             <span v-else class="font-color-system">
-              {{ scope.row.fileName || '系统文件' }}
+              {{ scope.row.fileName || '系统数据' }}
             </span>
           </template>
         </el-table-column>
         <el-table-column
           label="登记证归档序号"
           prop="registerCardArchiveNo"
-          width="180"
+          width="160"
           align="center"
         >
           <template #header>
@@ -235,7 +245,7 @@
             />
           </template>
           <template #default="scope">
-            <span :class="scope.row.id ? '' : 'font-color-system'">
+            <span :class="scope.row.fileCode ? '' : 'font-color-system'">
               {{ scope.row.registerCardArchiveNo }}
             </span>
           </template>
@@ -243,7 +253,7 @@
         <el-table-column
           label="核对结果"
           prop="verifyResult"
-          width="150"
+          width="110"
           align="center"
         >
           <template #header>
@@ -254,7 +264,7 @@
             />
           </template>
           <template #default="scope">
-            <span v-if="scope.row.id">
+            <span v-if="scope.row.fileCode">
               <svg-icon
                 :name="getVerifyResult(scope.row)"
                 size="20"
@@ -266,7 +276,7 @@
         <el-table-column
           label="*登记证编号"
           prop="registerCardNo"
-          width="180"
+          width="120"
           align="center"
         >
           <template #default="scope">
@@ -276,7 +286,7 @@
         <el-table-column
           label="*车架号"
           prop="vinNo"
-          width="180"
+          width="150"
           align="center"
         >
           <template #default="scope">
@@ -286,7 +296,7 @@
         <el-table-column
           label="*发动机号"
           prop="engineNo"
-          width="180"
+          width="120"
           align="center"
         >
           <template #default="scope">
@@ -296,7 +306,7 @@
         <el-table-column
           label="*发动机型号"
           prop="engineType"
-          width="180"
+          width="120"
           align="center"
         >
           <template #default="scope">
@@ -306,7 +316,7 @@
         <el-table-column
           label="*车牌号"
           prop="licensePlateNo"
-          width="180"
+          width="110"
           align="center"
         >
           <template #default="scope">
@@ -316,14 +326,19 @@
         <el-table-column
           label="*机动车所有人"
           prop="vehicleOwner"
-          width="180"
+          width="120"
           align="center"
         >
           <template #default="scope">
             <TableSlotItem :rowInfo="scope.row" rowKey="vehicleOwner" />
           </template>
         </el-table-column>
-        <el-table-column label="*车身颜色" prop="vehicleColor" width="150">
+        <el-table-column
+          label="*车身颜色"
+          prop="vehicleColor"
+          width="90"
+          align="center"
+        >
           <template #default="scope">
             <TableSlotItem :rowInfo="scope.row" rowKey="vehicleColor" />
           </template>
@@ -331,7 +346,7 @@
         <el-table-column
           label="*使用性质"
           prop="useType"
-          width="150"
+          width="110"
           align="center"
         >
           <template #default="scope">
@@ -341,8 +356,9 @@
         <el-table-column
           label="*抵押权人"
           prop="mortgagee"
-          width="150"
+          width="250"
           align="center"
+          show-overflow-tooltip
         >
           <template #default="scope">
             <TableSlotItem :rowInfo="scope.row" rowKey="mortgagee" />
@@ -351,7 +367,7 @@
         <el-table-column
           label="*统一社会信用代码"
           prop="mortgageeUscc"
-          width="200"
+          width="170"
           align="center"
         >
           <template #default="scope">
@@ -361,7 +377,7 @@
         <el-table-column
           label="*抵押登记日期"
           prop="mortgageRegisterDate"
-          width="180"
+          width="160"
           align="center"
         >
           <template #default="scope">
@@ -371,56 +387,56 @@
         <el-table-column
           label="批次号"
           prop="batchNo"
-          width="180"
+          width="170"
           align="center"
         />
         <el-table-column
           label="关联合同号"
           prop="contractNo"
-          width="200"
+          width="120"
           align="center"
         />
         <el-table-column
           label="所属系统"
           prop="belongSystem"
-          width="180"
+          width="120"
           align="center"
         />
         <el-table-column
           label="挂靠商"
           prop="affiliatesName"
-          width="180"
+          width="120"
           align="center"
         />
         <el-table-column
           label="办事处"
           prop="agencyName"
-          width="180"
+          width="120"
           align="center"
         />
         <el-table-column
           label="渠道商"
           prop="channelName"
-          width="180"
+          width="120"
           align="center"
         />
         <el-table-column
           label="创建人"
           prop="creatorName"
-          width="150"
+          width="120"
           align="center"
         />
         <el-table-column
           label="创建时间"
           prop="createTime"
-          width="180"
+          width="160"
           align="center"
         />
 
         <el-table-column
           label="归档状态"
           prop="archivalStatus"
-          width="150"
+          width="110"
           align="center"
         >
           <template #default="scope">
@@ -430,13 +446,13 @@
         <el-table-column
           label="归档时间"
           prop="archivalDate"
-          width="180"
+          width="160"
           align="center"
         />
 
-        <el-table-column label="操作" fixed="right" width="150" align="center">
+        <el-table-column label="操作" fixed="right" width="120" align="center">
           <template #default="scope">
-            <template v-if="scope.row.id">
+            <template v-if="scope.row.fileCode">
               <el-button
                 v-if="
                   scope.row.archivalStatus === ARCHIVE_STATUS.UNACHIVED &&
@@ -472,7 +488,7 @@
         @current-change="handleCurrentChange"
       />
     </div>
-    <EditForm ref="editFormRef" />
+    <EditForm ref="editFormRef" @success="getList()" />
     <UploadForm ref="uploadFormRef" @success="getList()" />
     <Preview
       v-model="previewVisible"
@@ -487,6 +503,10 @@
 import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
 import { ref, reactive, Ref, computed, onMounted } from 'vue'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
+import { openLink, isPdf, handleDownloadFile } from '@/utils'
+import EditForm from './EditForm.vue'
+import UploadForm from './UploadForm.vue'
+import { CommonAPI, MortageAPI } from '@/api'
 import type { TableColumnCtx } from 'element-plus'
 import {
   ArrowDownBold,
@@ -496,13 +516,9 @@ import {
   Download,
   Check
 } from '@element-plus/icons-vue'
-import EditForm from './EditForm.vue'
-import UploadForm from './UploadForm.vue'
-import { CommonAPI, MortageAPI } from '@/api'
 import type {
   VehiRegisterCardListRequest,
   PageRequest,
-  DateRangeRequest,
   SortParamsRequest,
   CardListItem,
   DictItem
@@ -511,8 +527,8 @@ import TableSlotItem from './components/TableSlotItem.vue'
 import { ARCHIVE_STATUS, VERIFY_RESULTS } from '@/constants'
 import { useUserStore } from '@toystory/lotso'
 import dayjs from 'dayjs'
-import fileDownload from 'js-file-download'
 import Preview from '@/components/Preview/index.vue'
+import useGetPreviewURL from '@/hooks/useGetPreviewURL/index'
 
 const API = new MortageAPI()
 const CommonApi = new CommonAPI()
@@ -522,16 +538,13 @@ const queryFormRef = ref<InstanceType<typeof ElForm>>()
 const expandFlag = ref<boolean>(false)
 const tableLoading = ref<boolean>(false)
 const tableData: Ref<CardListItem[]> = ref([])
-type QueryParams = VehiRegisterCardListRequest &
-  PageRequest &
-  DateRangeRequest &
-  SortParamsRequest
+type QueryParams = VehiRegisterCardListRequest & PageRequest & SortParamsRequest
 const queryParams = reactive<QueryParams>({
   pageNo: 1,
   pageSize: 10,
-  verifyTime: [dayjs().startOf('day').toDate(), dayjs().endOf('day').toDate()], // 创建时间
+  startVerifyTime: dayjs().startOf('day').toString(),
+  endVerifyTime: dayjs().endOf('day').toString(),
   creatorName: '', // 创建者
-  creator: '', // 创建者工号
   verifyResult: '', // 核对结果
   batchNo: '', // 批次号
   engineNo: '', // 发动机号
@@ -551,6 +564,22 @@ const queryParams = reactive<QueryParams>({
 const selectData: Ref<CardListItem[]> = ref([])
 const curStaffCode = ref<string>('')
 
+// 表格最大高度
+const searchBoxRef = ref()
+const tableHeight = computed(() => {
+  if (searchBoxRef.value?.clientHeight) {
+    const height = Number(
+      document.documentElement.clientHeight -
+        261 -
+        searchBoxRef.value?.clientHeight
+    )
+    return height
+  } else {
+    const height = Number(document.documentElement.clientHeight - 261)
+    return height
+  }
+})
+
 // 归档状态处理
 const getAchivalStatus = (status: string) => {
   let topic = ''
@@ -567,25 +596,22 @@ const getAchivalStatus = (status: string) => {
 const previewVisible = ref<boolean>(false)
 const previewUrl = ref<string>('')
 const preFileName = ref<string>('')
-const openPreview = async (fileCode: string | undefined) => {
-  const fileUrlParams = {
-    fileCodes: [fileCode]
+
+const { getSinglePreviewURL } = useGetPreviewURL()
+const openPreview = async (fileCode: string) => {
+  const data = await getSinglePreviewURL(fileCode)
+  previewUrl.value = data?.preUrl as string
+  preFileName.value = data?.fileName as string
+
+  if (!previewUrl.value) {
+    ElMessage.error('读取上传文件URL出错')
   }
-  CommonApi.getPreviewUrl(fileUrlParams)
-    .then((res) => {
-      if (res && res.code === 200) {
-        const fileInfo = res?.data?.previewInfoList[0]
-        previewUrl.value = fileInfo?.filePreview || ''
-        preFileName.value = fileInfo?.fileName || ''
-        if (!previewUrl.value) {
-          ElMessage.error('读取上传文件URL出错')
-        }
-        previewVisible.value = true
-      }
-    })
-    .catch((err: Error) => {
-      console.log(err)
-    })
+  // 临时添加，PDF 文件直接打开预览
+  if (isPdf(preFileName.value)) {
+    openLink(previewUrl.value, '_blank')
+    return
+  }
+  previewVisible.value = true
 }
 
 // 核验结果处理
@@ -612,7 +638,7 @@ const selectionChangeHandler = (item: CardListItem[]) => {
 const selectIds = computed(() => {
   const ids: string[] = []
   selectData.value.forEach((item) => {
-    if (item.id) {
+    if (item.fileCode && item.id) {
       ids.push(item.id)
     }
   })
@@ -621,7 +647,7 @@ const selectIds = computed(() => {
 
 // 是否可选
 const selectableHandler = (row: CardListItem) => {
-  return !!(row.id && row.archivalStatus !== ARCHIVE_STATUS.ACHIVED)
+  return !!(row.fileCode && row.archivalStatus !== ARCHIVE_STATUS.ACHIVED)
 }
 // 展开-收回处理
 const expandHandler = (): boolean => {
@@ -632,7 +658,7 @@ const expandHandler = (): boolean => {
 const uploadFormRef = ref()
 const uploadHandler = () => {
   const title = `${curStaffCode.value}-${dayjs().format('YYYYMMDDHHmmss')}`
-  uploadFormRef.value.open('upload', title, curStaffCode.value)
+  uploadFormRef.value.open('upload', title, curStaffCode.value, true)
 }
 
 // 删除
@@ -667,10 +693,6 @@ const delHandler = (ids: string[]) => {
       })
     })
     .catch((err: Error) => {
-      ElMessage({
-        type: 'error',
-        message: '删除失败'
-      })
       throw err
     })
 }
@@ -712,7 +734,6 @@ const setSortFlag = (type: string): string => {
 }
 // 分页
 const handleCurrentChange = (val: number) => {
-  console.log('value>>>>>', val)
   queryParams.pageNo = val
   getList()
 }
@@ -796,35 +817,29 @@ const achiveHandler = () => {
         })
     })
     .catch((err: Error) => {
-      ElMessage({
-        type: 'error',
-        message: '操作失败'
-      })
       throw err
     })
 }
 
 // 导出
-const exportHandler = () => {
-  const { verifyTime, pageNo, pageSize, ...others } = queryParams
+const exportHandler = async () => {
+  const { pageNo, pageSize, startVerifyTime, endVerifyTime, ...others } =
+    queryParams
   console.log(pageNo, pageSize)
   const params = {
-    startVerifyTime: dayjs(verifyTime[0]).format('YYYY-MM-DD HH:mm:ss'),
-    endVerifyTime: dayjs(verifyTime[1]).format('YYYY-MM-DD HH:mm:ss'),
+    startVerifyTime: startVerifyTime
+      ? dayjs(startVerifyTime).format('YYYY-MM-DD HH:mm:ss')
+      : '',
+    endVerifyTime: endVerifyTime
+      ? dayjs(endVerifyTime).format('YYYY-MM-DD HH:mm:ss')
+      : '',
     ...others
   }
 
   API.downLoadFiles(params)
-    .then((res) => {
+    .then(async (res) => {
       if (res) {
-        const fileStream = res?.data
-        const headers = res?.headers
-        const files =
-          headers &&
-          headers['content-disposition'] &&
-          decodeURI(headers['content-disposition'].split(';')[1])
-        const fileName = (files && files.split('=')[1]) || ''
-        fileDownload(fileStream, fileName)
+        handleDownloadFile(res)
       }
     })
     .catch((err: Error) => {
@@ -834,14 +849,11 @@ const exportHandler = () => {
 
 // 重置
 const reset = () => {
+  const userStore = useUserStore()
   queryParams.pageNo = 1
-  queryParams.pageSize = 10
-  queryParams.verifyTime = [
-    dayjs().startOf('day').toDate(),
-    dayjs().endOf('day').toDate()
-  ] // 创建时间
-  queryParams.creatorName = '' // 创建者姓名
-  queryParams.creator = '' // 创建者工号
+  queryParams.startVerifyTime = dayjs().startOf('day').toString() // 开始时间
+  queryParams.endVerifyTime = dayjs().endOf('day').toString() // 结束时间
+  queryParams.creatorName = userStore.userInfo?.staffName as string // 创建者姓名
   queryParams.verifyResult = '' // 核对结果
   queryParams.batchNo = '' // 批次号
   queryParams.engineNo = '' // 发动机号
@@ -859,10 +871,14 @@ const reset = () => {
 }
 // 获取列表
 const getList = () => {
-  const { verifyTime, ...others } = queryParams
+  const { startVerifyTime, endVerifyTime, ...others } = queryParams
   const params = {
-    startVerifyTime: dayjs(verifyTime[0]).format('YYYY-MM-DD HH:mm:ss'),
-    endVerifyTime: dayjs(verifyTime[1]).format('YYYY-MM-DD HH:mm:ss'),
+    startVerifyTime: startVerifyTime
+      ? dayjs(startVerifyTime).format('YYYY-MM-DD HH:mm:ss')
+      : '',
+    endVerifyTime: endVerifyTime
+      ? dayjs(endVerifyTime).format('YYYY-MM-DD HH:mm:ss')
+      : '',
     ...others
   }
 
@@ -871,6 +887,7 @@ const getList = () => {
     .then((res) => {
       tableLoading.value = false
       if (res && res.code === 200) {
+        // tableData.value.splice(0, tableData.value.length)
         tableData.value = res?.data?.list || []
         pageTotal.value = res?.data?.total || 0
       }
@@ -906,13 +923,11 @@ const init = () => {
   getDicts()
 }
 
-init()
-
 onMounted(() => {
   const userStore = useUserStore()
   queryParams.creatorName = userStore.userInfo?.staffName as string
-  queryParams.creator = userStore.userInfo?.staffCode as string
   curStaffCode.value = userStore.userInfo?.staffCode as string
+  init()
 })
 </script>
 
@@ -922,12 +937,12 @@ onMounted(() => {
   width: 100%;
 }
 .scan-search-bar {
-  padding: 10px;
+  padding: 6px 10px;
   width: 90%;
 }
 .search-btn {
   display: flex;
-  margin-top: 6%;
+  margin-top: 3%;
   padding: 20px 10px;
   height: 60px;
   flex-direction: column;
@@ -949,5 +964,14 @@ onMounted(() => {
 .file-name {
   cursor: pointer;
   text-decoration: underline;
+}
+.width-full {
+  width: 100%;
+}
+:deep(.el-divider--horizontal) {
+  margin: 0 0 10px;
+}
+:deep(.el-form-item) {
+  margin-bottom: 12px;
 }
 </style>

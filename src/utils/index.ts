@@ -1,5 +1,8 @@
 import setting from '@/config/setting'
 import dayjs from 'dayjs'
+import fileDownload from 'js-file-download'
+
+import type { FileDownload } from '@/api'
 
 const { title } = setting
 
@@ -385,4 +388,23 @@ export function formatDate(date: Date | string, format?: string) {
     format = 'YYYY-MM-DD HH:mm:ss'
   }
   return dayjs(date).format(format)
+}
+
+export function isPdf(compareKey: string) {
+  const pdfReg = /^.+(\.pdf)(\?.+)?$/
+  return pdfReg.test(compareKey)
+}
+
+export function handleDownloadFile(fileData: FileDownload, fileName?: string) {
+  const fileStream = fileData?.data
+  let name = fileName || ''
+  if (!fileName) {
+    const headers = fileData?.headers
+    const files =
+      headers &&
+      headers['content-disposition'] &&
+      decodeURI(headers['content-disposition'].split(';')[1])
+    name = (files && files.split('=')[1]) || ''
+  }
+  fileDownload(fileStream, name)
 }

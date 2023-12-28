@@ -40,15 +40,32 @@ export class CommonAPI {
     })
   }
 
+  // 批量上传文件 Response<UploadFile>
+  uploadFilesBatch(data: FormData): Response<UploadFile> {
+    return this.request({
+      url: `${prefix}/admin-api/file/attachment/uploadBatch`,
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/form-data'
+      },
+      data
+    })
+  }
+
   // 批量获取附件预览链接
   getPreviewUrl(data: FilePreviewUrlRequest): Response<FilePreviewList> {
     return this.request({
       url: `${prefix}/admin-api/file/attachment/batchGetAttachmentPreview`,
       method: 'post',
-      // headers: {
-      //   token: 'cb7716a22374ad4bc3acd59621f80b4d', // 联调使用
-      //   'SSO-TOKEN': 'cb7716a22374ad4bc3acd59621f80b4d' // 联调使用
-      // },
+      data
+    })
+  }
+
+  // 获取单个文件预览地址链接-decode
+  getSinglePreviewURL(data: { fileCode?: string }): Response<FilePreviewList> {
+    return this.request({
+      url: `${prefix}/admin-api/file/attachment/getAttachmentPreviewDecode`,
+      method: 'post',
       data
     })
   }

@@ -109,6 +109,7 @@ export class MortageAPI {
     })
   }
 
+  // 获取企业统一社会信用代码接口
   getMortgageList(data: MortgageeType): Response<MortgageeItem[]> {
     return this.request({
       url: `${prefix}/admin-api/mortgage/mortgagee/list`,

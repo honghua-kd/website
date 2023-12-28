@@ -63,7 +63,7 @@ html {
   }
 }
 .page-container {
-  padding: $base-main-padding;
+  padding: $base-main-padding !important;
   background-color: $base-color-white;
 }
 .table-page {
@@ -73,4 +73,8 @@ html {
   padding-right: 20px;
   width: 100%;
   flex-direction: row;
+}
+.el-table .cell {
+  padding: 3px 2px !important;
+  font-size:13px !important;
 }

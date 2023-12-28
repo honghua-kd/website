@@ -125,7 +125,58 @@ export default [
     ],
     elements: [],
     menuType: 5,
-    sort: 2,
+    sort: 3,
     menu: 'system'
+  },
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'downloadRecord',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'downloadRecordMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'downloadMaintain',
+            sort: 2
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'downloadMaintainMenu'
+      }
+    ],
+    elements: [],
+    menuType: 5,
+    sort: 2,
+    menu: 'downloadCenter'
+  },
+  {
+    children: [
+      {
+        children: [],
+        elements: [],
+        menuType: 3,
+        sort: 0,
+        menu: 'recordUploadIndex'
+      }
+    ],
+    elements: [],
+    menuType: 5,
+    sort: 5,
+    menu: 'recordUpload'
   }
 ]

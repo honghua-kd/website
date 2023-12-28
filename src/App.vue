@@ -7,10 +7,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import { CoreAPI, SystemAPI } from '@/api'
-import { useRouter, mitt } from '@toystory/lotso'
+import { useRouter, mitt, useRoutesStore } from '@toystory/lotso'
 import { useDictStore } from '@/store/dict'
 import type { ElScrollbar } from 'element-plus'
 
@@ -65,10 +65,23 @@ const getDictInfo = () => {
       console.log(err)
     })
 }
-const init = () => {
-  getDictInfo()
-}
-init()
+
+const routesStore = useRoutesStore()
+const isAsyncRoute = computed(() => {
+  const asyncRoutes = routesStore.asyncRoutes
+  return (
+    asyncRoutes.findIndex(
+      (item) => item.path === router.currentRoute.value.path
+    ) > -1
+  )
+})
+
+watch(
+  () => isAsyncRoute.value,
+  (newVal) => {
+    if (newVal === true) getDictInfo()
+  }
+)
 </script>
 
 <style lang="scss">

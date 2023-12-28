@@ -130,12 +130,15 @@ import type {
   ScopeMapping,
   PermissionExpressionRequest
 } from '@/api'
-const props = defineProps({
-  origin: {
-    type: String,
-    default: () => ''
+
+const props = withDefaults(
+  defineProps<{
+    origin: string
+  }>(),
+  {
+    origin: () => ''
   }
-})
+)
 const systemAPI = new SystemAPI()
 const formRef = ref<InstanceType<typeof ElForm>>()
 const checkLoading = ref(false)
