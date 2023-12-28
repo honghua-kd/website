@@ -30,7 +30,7 @@
       <el-table-column prop="creatorName" label="下载人"></el-table-column>
       <el-table-column prop="createTime" label="下载时间"></el-table-column>
       <el-table-column prop="status" label="状态"></el-table-column>
-      <el-table-column prop="fileName" label="下载类型"></el-table-column>
+      <el-table-column prop="downloadType" label="下载类型"></el-table-column>
       <el-table-column label="操作" align="center">
         <template v-slot="scope">
           <el-button link type="primary" @click="handleDwon(scope.row)">
