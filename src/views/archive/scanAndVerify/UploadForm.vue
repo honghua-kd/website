@@ -11,7 +11,8 @@
         ref="formRef"
         :model="formParams"
         v-loading="formLoading"
-        label-width="130px"
+        :label-width="px2rem('130px')"
+        :rules="formRules"
       >
         <el-row>
           <el-col :span="8">
@@ -25,13 +26,14 @@
           </el-col>
         </el-row>
 
-        <el-form-item label="上传文件">
+        <el-form-item label="上传文件" prop="formParams.fileInfoList">
           <el-upload
             :show-file-list="false"
             :before-upload="beforeUploadHandler"
             :http-request="uploadHandler"
             :accept="fileType"
             action="#"
+            :multiple="multiple"
           >
             <el-button type="primary" :icon="UploadFilled" :loading="upLoading">
               上传文件
@@ -43,57 +45,62 @@
           <el-col>
             <div class="tip-choose">已选择文件：{{ chooseFileNum }}</div>
           </el-col>
-          <div v-loading="upLoading" class="el-upload">
-            <template v-for="item of formParams.fileInfoList" :key="item.url">
-              <div
-                style="margin-right: 10px"
-                class="el-upload-list el-upload-list--picture-card"
-              >
-                <div class="el-upload-list__item">
-                  <div v-if="isPdf(item.name)" class="card-list-img">
-                    <img
-                      class="el-upload-list__item-thumbnail"
-                      :src="pdfImg"
-                      alt=""
+          <el-col>
+            <div v-loading="upLoading" class="el-upload pre-list">
+              <template v-for="item of formParams.fileInfoList" :key="item.url">
+                <div
+                  style="margin-right: 10px"
+                  class="el-upload-list el-upload-list--picture-card"
+                >
+                  <div
+                    class="el-upload-list__item"
+                    style="justify-content: center"
+                  >
+                    <div v-if="isPdf(item.name)" class="card-list-img">
+                      <img
+                        class="el-upload-list__item-thumbnail"
+                        :src="pdfImg"
+                        alt=""
+                      />
+                    </div>
+
+                    <el-image
+                      v-else
+                      :src="item.url"
+                      :zoom-rate="1.2"
+                      :max-scale="5"
+                      :min-scale="0.2"
+                      :preview-src-list="[item.url as string]"
+                      fit="cover"
                     />
                   </div>
 
-                  <el-image
-                    v-else
-                    :src="item.url"
-                    :zoom-rate="1.2"
-                    :max-scale="5"
-                    :min-scale="0.2"
-                    :preview-src-list="[item.url]"
-                    fit="cover"
-                  />
-                </div>
-
-                <span class="el-upload-list__item-actions">
-                  <span
-                    class="el-upload-list__item-preview"
-                    @click="handlePictureCardPreview(item)"
-                  >
-                    <el-icon><zoom-in /></el-icon>
-                  </span>
-                  <!-- <span
+                  <span class="el-upload-list__item-actions">
+                    <span
+                      class="el-upload-list__item-preview"
+                      @click="handlePictureCardPreview(item)"
+                    >
+                      <el-icon><zoom-in /></el-icon>
+                    </span>
+                    <!-- <span
                     v-if="!disabled"
                     class="el-upload-list__item-delete"
                     @click="handleDownload(file)"
                   >
                     <el-icon><Download /></el-icon>
                   </span> -->
-                  <span
-                    class="el-upload-list__item-delete"
-                    style="z-index: 1000"
-                    @click="handleRemove(item)"
-                  >
-                    <el-icon><Delete /></el-icon>
+                    <span
+                      class="el-upload-list__item-delete"
+                      style="z-index: 1000"
+                      @click="handleRemove(item)"
+                    >
+                      <el-icon><Delete /></el-icon>
+                    </span>
                   </span>
-                </span>
-              </div>
-            </template>
-          </div>
+                </div>
+              </template>
+            </div>
+          </el-col>
 
           <el-col>
             <div class="el-upload__tip tip-notice">
@@ -106,9 +113,7 @@
         <el-button :disabled="formLoading" type="primary" @click="checkHandler">
           识别 & 核验
         </el-button>
-        <el-button type="primary" @click="dialogVisible = false">
-          关 闭
-        </el-button>
+        <el-button @click="dialogVisible = false"> 关 闭 </el-button>
       </template>
     </el-dialog>
     <Preview
@@ -128,38 +133,46 @@ import pdfImg from '@/assets/common/pdf.png'
 import { ElMessage, ElForm } from 'element-plus'
 import dayjs from 'dayjs'
 import { MortageAPI, CommonAPI } from '@/api'
-import { openLink } from '@/utils'
+import { openLink, isPdf, px2rem } from '@/utils'
+import useGetPreviewURL from '@/hooks/useGetPreviewURL/index'
 import type { UploadRawFile, UploadRequestOptions } from 'element-plus'
 import type { UploadFileRequest, UploadFileListItemRequest } from '@/api'
-
+const { getSinglePreviewURL } = useGetPreviewURL()
 const API = new MortageAPI()
 const CommonApi = new CommonAPI()
 const dialogTitle = ref<string>('上传车辆登记证')
 const dialogVisible = ref<boolean>(false)
 const formLoading = ref<boolean>(false)
+const multiple = ref<boolean>()
 const emit = defineEmits(['success'])
 const formParams = reactive<UploadFileRequest>({
   batchNo: '', // 处理批次号
-  fileInfoList: [
-    // {
-    //   name: 'food.jpeg',
-    //   fileCode: 'LX_1731921571582316630_1',
-    //   fileCreateTime: '2023-12-05 14:20:54',
-    //   url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-    // },
-  ]
+  fileInfoList: []
 })
 
-const fileType = ref<string>('.pdf, .jpg, .jpeg, .png, .JPG, .JPEG')
+const fileType = ref<string>(
+  '.pdf, .jpg, .jpeg, .png, application/pdf,image/jpeg,image/png '
+)
 const chooseFileNum = computed(() => {
   const number = formParams.fileInfoList.length
   return number
 })
 
+// 校验
+const formRules = reactive({
+  batchNo: [{ required: true, message: '处理批次号不能为空', trigger: 'blur' }]
+})
+
 /** 打开弹窗 */
 const tenantUser = ref<string>('')
-const open = (type: string, title: string, user: string) => {
+const open = (
+  type: string,
+  title: string,
+  user: string,
+  isMultiple?: boolean
+) => {
   dialogVisible.value = true
+  multiple.value = isMultiple
   reset()
   formParams.batchNo = title
   tenantUser.value = user
@@ -168,7 +181,19 @@ const open = (type: string, title: string, user: string) => {
 defineExpose({ open })
 
 // 识别 & 核验
-const checkHandler = () => {
+const formRef = ref<InstanceType<typeof ElForm>>()
+const checkHandler = async () => {
+  // 校验表单
+  if (!formRef.value) return
+  const valid = await formRef.value.validate()
+  if (!valid) return
+  if (!chooseFileNum.value) {
+    ElMessage({
+      type: 'error',
+      message: '您还未上传要识别的文件，请上传后再点击识别&核验'
+    })
+    return
+  }
   formLoading.value = true
   const params = { ...formParams }
   API.uploadRegisterCard(params)
@@ -191,9 +216,14 @@ const checkHandler = () => {
 
 // 上传前校验
 const beforeUploadHandler = (file: UploadRawFile) => {
+  // 校验文件格式
+  if (!fileType.value.includes(file.type)) {
+    ElMessage.error('上传文件支持 jpg/jpeg/png/pdf 格式，请重新选择！')
+    return false
+  }
   // 校验文件大小
-  if (file.size / 1024 / 1024 > 8) {
-    ElMessage.error('单个图片和单页PDF文件不超过8MB!')
+  if (file.size / 1024 / 1024 > 300) {
+    ElMessage.error('单个图片和单页PDF文件不超过8M，多页PDF文件单个不超过300M')
     return false
   }
   return true
@@ -202,8 +232,12 @@ const beforeUploadHandler = (file: UploadRawFile) => {
 // 上传
 const preFileName = ref<string>('')
 const upLoading = ref<boolean>(false)
+let uploadCount = 0
+let uploadSuccCount = 0
 const uploadHandler = async (options: UploadRequestOptions) => {
   upLoading.value = true
+  uploadCount++
+
   const file = options.file
   const formData = new FormData()
   formData.append('file', file)
@@ -211,38 +245,33 @@ const uploadHandler = async (options: UploadRequestOptions) => {
   formData.append('tenantUser', tenantUser.value)
   formData.append('prefixPath', 'attachment')
   formData.append('expireDays', '-1')
+
   CommonApi.uploadFiles(formData)
     .then(async (res) => {
       if (res && res.code === 200) {
-        const fileCode = res.data?.fileCode
-        // 拿到fileCode 换取 文件地址 URL
-        const fileUrlParams = {
-          fileCodes: [fileCode]
+        uploadSuccCount++
+
+        if (uploadCount === uploadSuccCount) {
+          upLoading.value = false
         }
-        CommonApi.getPreviewUrl(fileUrlParams)
-          .then((res) => {
-            upLoading.value = false
-            if (res && res.code === 200) {
-              const fileInfo = res?.data?.previewInfoList[0]
-              previewUrl.value = fileInfo?.filePreview || ''
-              preFileName.value = fileInfo?.fileName || ''
-              const fileCreateTime = dayjs(file.lastModified).format(
-                'YYYY-MM-DD HH:mm:ss'
-              )
-              const name = file.name
-              const obj = {
-                name,
-                fileCode,
-                fileCreateTime,
-                url: fileInfo?.filePreview
-              } as UploadFileListItemRequest
-              formParams.fileInfoList.push(obj)
-            }
-          })
-          .catch((err: Error) => {
-            upLoading.value = false
-            console.log(err)
-          })
+        const fileCode = res.data?.fileCode as string
+        // 拿到fileCode 换取 文件地址 URL
+        const data = await getSinglePreviewURL(fileCode)
+
+        previewUrl.value = data?.preUrl as string
+        preFileName.value = data?.fileName as string
+        const fileCreateTime = dayjs(file.lastModified).format(
+          'YYYY-MM-DD HH:mm:ss'
+        )
+        const name = file.name
+        const obj = {
+          name,
+          fileCode,
+          fileCreateTime,
+          url: data?.preUrl
+        } as UploadFileListItemRequest
+
+        formParams.fileInfoList.push(obj)
       }
     })
     .catch((err: Error) => {
@@ -253,11 +282,6 @@ const uploadHandler = async (options: UploadRequestOptions) => {
 // 预览
 const previewVisible = ref<boolean>(false)
 const previewUrl = ref<string>('')
-const pdfReg = /^.+(\.pdf)(\?.+)?$/
-const isPdf = (fileName: string) => {
-  return pdfReg.test(fileName)
-}
-
 const handlePictureCardPreview = (uploadFile: UploadFileListItemRequest) => {
   if (!uploadFile.url) {
     ElMessage.error('读取上传文件URL出错')
@@ -276,6 +300,7 @@ const handlePictureCardPreview = (uploadFile: UploadFileListItemRequest) => {
 const reset = () => {
   formParams.batchNo = ''
   formParams.fileInfoList = []
+  formRef.value?.resetFields()
 }
 
 // 删除文件缩略图
@@ -298,5 +323,9 @@ const handleRemove = (file: UploadFileListItemRequest) => {
 }
 .card-list-img {
   padding: 40px;
+}
+.pre-list {
+  flex-wrap: wrap;
+  justify-content: flex-start;
 }
 </style>

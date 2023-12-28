@@ -1,7 +1,10 @@
 import setting from '@/config/setting'
 import dayjs from 'dayjs'
+import fileDownload from 'js-file-download'
 
-const { title } = setting
+import type { FileDownload } from '@/api'
+
+const { title, remRootValue } = setting
 
 export const getPageTitle = (pageTitle: string) => {
   if (pageTitle) {
@@ -385,4 +388,40 @@ export function formatDate(date: Date | string, format?: string) {
     format = 'YYYY-MM-DD HH:mm:ss'
   }
   return dayjs(date).format(format)
+}
+
+export function isPdf(compareKey: string) {
+  const pdfReg = /^.+(\.pdf)(\?.+)?$/
+  return pdfReg.test(compareKey)
+}
+
+export function handleDownloadFile(fileData: FileDownload, fileName?: string) {
+  const fileStream = fileData?.data
+  let name = fileName || ''
+  if (!fileName) {
+    const headers = fileData?.headers
+    const files =
+      headers &&
+      headers['content-disposition'] &&
+      decodeURI(headers['content-disposition'].split(';')[1])
+    name = (files && files.split('=')[1]) || ''
+  }
+  fileDownload(fileStream, name)
+}
+
+export const setDomFontSize = () => {
+  const width =
+    document.documentElement.clientWidth || document.body.clientWidth
+  const fontsize = (width <= 1200 ? 1200 : width) / 100 + 'px'
+  document.getElementsByTagName('html')[0].style.fontSize = fontsize
+}
+
+export function px2rem(pxUnit: string) {
+  const htmlSize = document.documentElement.style.fontSize
+  const pxNum = Number(pxUnit.split('px')[0])
+  if (htmlSize && remRootValue) {
+    return `${pxNum / remRootValue}rem`
+  } else {
+    return pxUnit
+  }
 }

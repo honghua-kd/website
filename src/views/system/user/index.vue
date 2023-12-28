@@ -7,26 +7,26 @@
       <!-- 搜索工作栏 -->
       <el-card class="search-bar">
         <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-          <el-row :gutter="15">
-            <el-col :span="16">
+          <el-row :gutter="20">
+            <el-col :span="6">
               <el-form-item
                 label="员工工号:"
                 prop="staffCode"
-                class="widthFull"
+                class="width-full"
               >
                 <el-input
                   v-model="queryParams.staffCode"
                   placeholder="请输入员工工号"
-                  class="widthFull"
+                  class="width-full"
                   clearable
                 />
               </el-form-item>
             </el-col>
-            <!-- <el-col :span="8">
+            <el-col :span="6">
               <el-form-item
                 label="员工姓名:"
                 prop="staffName"
-                class="widthFull"
+                class="width-full"
               >
                 <el-input
                   v-model="queryParams.staffName"
@@ -35,7 +35,7 @@
                   clearable
                 />
               </el-form-item>
-            </el-col> -->
+            </el-col>
 
             <el-col :span="6" style="text-align: right">
               <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
@@ -55,7 +55,13 @@
           v-loading="loading"
           class="table-container"
         >
-          <el-table-column type="index" width="60" label="序号" fixed />
+          <el-table-column
+            type="index"
+            width="60"
+            label="序号"
+            fixed
+            align="center"
+          />
           <el-table-column
             label="员工姓名"
             align="center"
@@ -117,7 +123,7 @@
             align="center"
             class-name="fixed-width"
             fixed="right"
-            width="150"
+            width="100"
           >
             <template #default="scope">
               <el-button
@@ -180,14 +186,10 @@ const resetQuery = () => {
   queryFormRef.value?.resetFields()
   searchHandler()
 }
-// search-查询用户的下属
+// search-查询该用户
 const searchHandler = () => {
   queryParams.pageNo = 1
-  if (queryParams.staffCode || queryParams.staffName) {
-    getStaffSubHandler()
-  } else {
-    getDeptStaffList(currentOrgCode.value)
-  }
+  getStaffInfoHandler()
 }
 // 获取选中节点code
 const getSelectNodeHandler = (node: OrgInfoItem) => {
@@ -220,34 +222,28 @@ const getDeptStaffList = (orgCode: string) => {
     })
 }
 
-const getStaffSubHandler = () => {
+const getStaffInfoHandler = () => {
   const params = {
     pageNo: queryParams.pageNo,
     pageSize: queryParams.pageSize,
-    staffCodeList: [queryParams.staffCode]
+    staffCode: queryParams.staffCode,
+    staffName: queryParams.staffName,
+    orgCode: currentOrgCode.value
   }
-  API.getStaffSubordinates(params).then((res: ResponseBody<StaffList>) => {
+  API.getStaffInfo(params).then((res) => {
     if (res && res.code === 200) {
-      tableData.value = res.data?.records || []
+      tableData.value = res?.data?.records || []
       pageTotal.value = res?.data?.total || 0
     }
   })
 }
 const handleCurrentChange = (val: number) => {
   queryParams.pageNo = val
-  if (queryParams.staffCode || queryParams.staffName) {
-    getStaffSubHandler()
-  } else {
-    getDeptStaffList(currentOrgCode.value)
-  }
+  getStaffInfoHandler()
 }
 const handleSizeChange = (val: number) => {
   queryParams.pageSize = val
-  if (queryParams.staffCode || queryParams.staffName) {
-    getStaffSubHandler()
-  } else {
-    getDeptStaffList(currentOrgCode.value)
-  }
+  getStaffInfoHandler()
 }
 
 // 分配数据权限
@@ -282,5 +278,11 @@ const assignPermiHandler = (row: StaffListItem) => {
 .table-container {
   overflow-y: scroll;
   height: 410px;
+}
+:deep(.el-card__body) {
+  padding: 12px !important;
+}
+.width-full {
+  width: 100%;
 }
 </style>

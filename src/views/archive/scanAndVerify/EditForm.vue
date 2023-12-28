@@ -12,7 +12,7 @@
         :model="formParamsRequest"
         v-loading="formLoading"
         :rules="formRules"
-        label-width="130px"
+        :label-width="px2rem('130px')"
       >
         <el-form-item label="文件名">
           <div class="file-name" @click="openFileHandler">
@@ -26,7 +26,7 @@
               prop="registerNo"
               class="width-full"
             >
-              <div class="detail-container">
+              <div class="detail-container width-full">
                 <el-input
                   v-model="formParamsRequest.registerCardNo"
                   class="width-full"
@@ -40,7 +40,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="车架号" prop="vinNo">
-              <div class="detail-container">
+              <div class="detail-container width-full">
                 <el-input
                   v-model="formParamsRequest.vinNo"
                   clearable
@@ -56,17 +56,23 @@
               prop="licensePlateNo"
               class="width-full"
             >
-              <el-input v-model="formParamsRequest.licensePlateNo" />
-              <span class="detail">
-                {{ formParams.licensePlateNo?.targetValue }}
-              </span>
+              <div class="detail-container width-full">
+                <el-input
+                  v-model="formParamsRequest.licensePlateNo"
+                  class="width-full"
+                  clearable
+                />
+                <span class="detail">
+                  {{ formParams.licensePlateNo?.targetValue }}
+                </span>
+              </div>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="8">
             <el-form-item label="发动机号" prop="engineNo" class="width-full">
-              <div class="detail-container">
+              <div class="detail-container width-full">
                 <el-input
                   v-model="formParamsRequest.engineNo"
                   class="width-full"
@@ -84,7 +90,7 @@
               prop="engineType"
               class="width-full"
             >
-              <div class="detail-container">
+              <div class="detail-container width-full">
                 <el-input
                   v-model="formParamsRequest.engineType"
                   class="width-full"
@@ -104,7 +110,7 @@
               prop="vehicleOwner"
               class="width-full"
             >
-              <div class="detail-container">
+              <div class="detail-container width-full">
                 <el-input
                   v-model="formParamsRequest.vehicleOwner"
                   class="width-full"
@@ -124,7 +130,7 @@
               prop="vehicleColor"
               class="width-full"
             >
-              <div class="detail-container">
+              <div class="detail-container width-full">
                 <el-input
                   v-model="formParamsRequest.vehicleColor"
                   class="width-full"
@@ -138,7 +144,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="使用性质" prop="useType" class="width-full">
-              <div class="detail-container">
+              <div class="detail-container width-full">
                 <el-input
                   v-model="formParamsRequest.useType"
                   class="width-full"
@@ -154,11 +160,12 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="抵押权人" prop="mortgagee" class="width-full">
-              <div class="detail-container">
+              <div class="detail-container width-full">
                 <el-select
                   v-model="formParamsRequest.mortgagee"
                   class="width-full"
                   clearable
+                  @change="mortChangeHandler"
                 >
                   <el-option
                     v-for="(item, index) in mortgageeOpts"
@@ -181,7 +188,7 @@
               prop="mortgageeUscc"
               class="width-full"
             >
-              <div class="detail-container">
+              <div class="detail-container width-full">
                 <el-input
                   v-model="formParamsRequest.mortgageeUscc"
                   class="width-full"
@@ -201,7 +208,7 @@
               prop="mortgageRegisterDate"
               class="width-full"
             >
-              <div class="detail-container">
+              <div class="detail-container width-full">
                 <el-date-picker
                   v-model="formParamsRequest.mortgageRegisterDate"
                   type="date"
@@ -231,9 +238,7 @@
         <el-button :disabled="formLoading" type="primary" @click="submitForm">
           保 存
         </el-button>
-        <el-button type="primary" @click="dialogVisible = false">
-          关 闭
-        </el-button>
+        <el-button @click="dialogVisible = false"> 关 闭 </el-button>
       </template>
     </el-dialog>
     <Preview
@@ -246,26 +251,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, Ref, watch } from 'vue'
-import type {
-  EditRegisterCardInfoRequest,
-  ModifiyInfo,
-  FormOrigin,
-  MortgageeItem,
-  CardCell
-} from '@/api'
-import { MortageAPI, CommonAPI } from '@/api'
+import { ref, reactive, Ref } from 'vue'
+import type { ModifiyInfo, FormOrigin, MortgageeItem, CardCell } from '@/api'
+import { MortageAPI } from '@/api'
 import { ElMessage } from 'element-plus'
 import Preview from '@/components/Preview/index.vue'
+import { openLink, isPdf, px2rem } from '@/utils'
+import useGetPreviewURL from '@/hooks/useGetPreviewURL/index'
+import dayjs from 'dayjs'
 
 const API = new MortageAPI()
-const CommonApi = new CommonAPI()
 const dialogTitle = ref<string>('编辑扫描结果')
 const dialogVisible = ref<boolean>(false)
 const formLoading = ref<boolean>(false)
 const formRules = reactive({})
 const formRef = ref()
 const infoId = ref<string>('')
+const emit = defineEmits(['success'])
 
 const fileParams = reactive<Pick<CardCell, 'fileCode' | 'fileName'>>({
   fileName: '',
@@ -336,21 +338,25 @@ const formParams = reactive<FormOrigin>({
 
 /** 打开弹窗 */
 const open = async (id: string) => {
-  dialogVisible.value = true
   infoId.value = id
   formLoading.value = true
   await getCardInfo(id)
   await getMortList()
+  dialogVisible.value = true
 }
 
 defineExpose({ open })
 
 // 保存
 const submitForm = () => {
+  const { mortgageRegisterDate, ...others } = formParamsRequest
   const params = {
     id: infoId.value,
-    ...formParamsRequest
-  } as EditRegisterCardInfoRequest
+    mortgageRegisterDate: dayjs(mortgageRegisterDate).format(
+      'YYYY-MM-DD HH:mm:ss'
+    ),
+    ...others
+  }
   API.editRegisterCardInfo(params)
     .then((res) => {
       if (res && res.code === 200) {
@@ -358,6 +364,7 @@ const submitForm = () => {
           type: 'success',
           message: '编辑成功'
         })
+        emit('success')
         dialogVisible.value = false
       }
     })
@@ -382,26 +389,23 @@ const coverChangeHandler = () => {
 const previewVisible = ref<boolean>(false)
 const previewUrl = ref<string>('')
 const preFileName = ref<string>('')
+
+const { getSinglePreviewURL } = useGetPreviewURL()
 const openFileHandler = async () => {
   const fileCode = fileParams?.fileCode || ''
-  const fileUrlParams = {
-    fileCodes: [fileCode]
+  const data = await getSinglePreviewURL(fileCode)
+  previewUrl.value = data?.preUrl as string
+  preFileName.value = data?.fileName as string
+
+  if (!previewUrl.value) {
+    ElMessage.error('读取上传文件URL出错')
   }
-  CommonApi.getPreviewUrl(fileUrlParams)
-    .then((res) => {
-      if (res && res.code === 200) {
-        const fileInfo = res?.data?.previewInfoList[0]
-        previewUrl.value = fileInfo?.filePreview || ''
-        preFileName.value = fileInfo?.fileName || ''
-        if (!previewUrl.value) {
-          ElMessage.error('读取上传文件URL出错')
-        }
-        previewVisible.value = true
-      }
-    })
-    .catch((err: Error) => {
-      console.log(err)
-    })
+  // 临时添加，PDF 文件直接打开预览
+  if (isPdf(preFileName.value)) {
+    openLink(previewUrl.value, '_blank')
+    return
+  }
+
   previewVisible.value = true
 }
 
@@ -451,20 +455,13 @@ const getCardInfo = (id: string) => {
 }
 
 // 监听 抵解押切换
-watch(
-  () => formParamsRequest.mortgagee,
-  () => {
-    const filterCell = mortgageeOpts.value.filter((item) => {
-      return item.mortgagee === formParamsRequest.mortgagee
-    })
-    formParamsRequest.mortgageeUscc =
-      filterCell && filterCell[0]?.unifiedSocialCreditCode
-  },
-  {
-    immediate: true,
-    deep: true
-  }
-)
+const mortChangeHandler = (selectItem: string) => {
+  const filterCell = mortgageeOpts.value.filter((item) => {
+    return item.mortgagee === selectItem
+  })
+  formParamsRequest.mortgageeUscc =
+    filterCell && filterCell[0]?.unifiedSocialCreditCode
+}
 </script>
 
 <style lang="scss" scoped>

@@ -39,7 +39,8 @@ const requestConfig: RequestConfig = {
   handleResSuccess: (response) => {
     const API = new CoreAPI()
     const code = response.data?.code
-    const msg = response.data?.msg
+    const msg =
+      response.data?.msg || response.data?.message || '后端接口未知异常'
     if (code === undefined) {
       // 文件流
       return Promise.resolve(response)

@@ -12,17 +12,25 @@ import {
 } from '@toystory/lotso'
 import '@toystory/lotso/dist/style.css'
 
-import { CoreAPI } from '@/api'
-import App from './App.vue'
-import { setActivePinia } from 'pinia'
-
 // 注册字节跳动图标
 import iconPark from './plugin/icon-park'
 
 // svg-icon
 import 'virtual:svg-icons-register'
 
+// Element-plus
 import { ElMessage, ElLoading } from 'element-plus'
+
+import { CoreAPI } from '@/api'
+import App from './App.vue'
+import { setActivePinia } from 'pinia'
+import { setDomFontSize, debounce } from './utils'
+
+// px2rem
+setDomFontSize()
+const setDomFontSizeDebounce = debounce(setDomFontSize, 400)
+window.addEventListener('resize', setDomFontSizeDebounce)
+
 // 注册框架，传入项目配置和store，页面路径
 const app = createFrameApp(App, {
   options,
@@ -81,7 +89,7 @@ const { handlePermission } = usePermission({
           userStore.setRole(role || [])
           const data = [...whiteAuthData, ...authData]
           if (!data || !Array.isArray(data)) {
-            console.error('权限数据错误')
+            console.error('权限数据错误！')
           } else {
             userStore.setAuthData(data)
             routesStore.handleRoutes(data)
@@ -90,10 +98,17 @@ const { handlePermission } = usePermission({
           const errorMsg =
             response.msg || response.message || '系统错误，请稍后重试'
           ElMessage.error(errorMsg)
+          router.replace('/error?type=403')
           throw new Error(errorMsg)
         }
       })
       .catch((err) => {
+        const status = err?.response?.status
+        if (+status === 403) {
+          router.replace('/error?type=403')
+        } else {
+          router.replace('/error?type=500')
+        }
         userStore.setAuthDataFlag(true)
         throw new Error(err)
       })

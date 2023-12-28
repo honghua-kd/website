@@ -42,7 +42,8 @@ import type {
   GetStaffSubordinatesRequest,
   GetExpDetailRequest,
   DelExpRequest,
-  CreateExpRequest
+  CreateExpRequest,
+  StaffInfoRequest
 } from './types/request'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
@@ -280,6 +281,15 @@ export class SystemAPI {
   saveScopeMapping(data: CreateExpRequest): Response<ExpDetail> {
     return this.request({
       url: `${prefix}/admin-api/system/scope-mapping/save`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 查询员工信息
+  getStaffInfo(data: StaffInfoRequest): Response<StaffList> {
+    return this.request({
+      url: `${prefix}/admin-api/ehr/orgstructure/getDepartmentStaff`,
       method: 'post',
       data
     })
