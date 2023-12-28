@@ -202,7 +202,6 @@
           placement="top-end"
           :hide-on-click="false"
           max-height="300px"
-          @visible-change="handleDropdownFn"
         >
           <div class="dropdown-column">
             <el-icon :size="15" class="icon"><Setting /></el-icon>
@@ -211,15 +210,10 @@
           <template #dropdown>
             <el-dropdown-menu class="custom-drop-menu">
               <el-dropdown-item>
-                <el-checkbox
-                  v-model="checkAll"
-                  :indeterminate="isIndeterminate"
-                  @change="handleCheckAllChange"
-                >
+                <el-checkbox v-model="checkAll" @change="handleCheckAllChange">
                   全选
                 </el-checkbox>
               </el-dropdown-item>
-              <!--  -->
               <el-checkbox-group
                 v-model="checkedConfig"
                 @change="handleCheckedConfig"
@@ -228,7 +222,7 @@
                   v-for="cfg in checkboxTableConfig"
                   :key="cfg.prop"
                 >
-                  <el-checkbox :label="cfg.prop">
+                  <el-checkbox :label="cfg.prop" :disabled="cfg.showDisabled">
                     {{ cfg.label }}
                   </el-checkbox>
                 </el-dropdown-item>
@@ -471,19 +465,14 @@ type IState = {
 
 const state = reactive<IState>({
   tableConfig: BasicData.tableConfig,
-  checkAll: false,
+  checkAll: true,
   checkedConfig: [],
-  checkboxTableConfig: [],
+  checkboxTableConfig: BasicData.tableConfig,
   isIndeterminate: true
 })
 
-const {
-  tableConfig,
-  checkAll,
-  checkedConfig,
-  checkboxTableConfig,
-  isIndeterminate
-} = toRefs(state)
+const { tableConfig, checkAll, checkedConfig, checkboxTableConfig } =
+  toRefs(state)
 
 // 表格最大高度
 const searchBoxRef = ref()
@@ -508,9 +497,6 @@ const handleCheckedConfig = (value: CheckboxValueType[]) => {
 
   state.checkedConfig = value as string[]
 
-  state.isIndeterminate =
-    checkedCount > 0 && checkedCount < state.checkboxTableConfig.length
-
   state.tableConfig.forEach((item) => {
     if (!item.showDisabled) {
       item.show = checkedConfig.value.includes(item.prop)
@@ -521,10 +507,13 @@ const handleCheckedConfig = (value: CheckboxValueType[]) => {
 // 自定义表格列-全选
 const handleCheckAllChange = (val: string | number | boolean) => {
   const arr = state.checkboxTableConfig.map((item) => item.prop)
+  const arrRequired = state.checkboxTableConfig.filter(
+    (item) => item.showDisabled
+  )
 
   const _val = val as boolean
 
-  state.checkedConfig = _val ? arr : []
+  state.checkedConfig = _val ? arr : arrRequired.map((item) => item.prop)
   state.isIndeterminate = !_val
 
   state.tableConfig.forEach((item) => {
@@ -532,16 +521,6 @@ const handleCheckAllChange = (val: string | number | boolean) => {
       item.show = !!_val
     }
   })
-}
-
-const handleDropdownFn = (visible: boolean) => {
-  if (visible) {
-    state.checkboxTableConfig = BasicData.tableConfig.filter(
-      (item) => !item.showDisabled
-    )
-    state.checkedConfig = state.checkboxTableConfig.map((item) => item.prop)
-    state.isIndeterminate = false
-  }
 }
 
 // 归档状态处理
@@ -892,6 +871,7 @@ onMounted(() => {
   queryParams.creatorName = userStore.userInfo?.staffName as string
   curStaffCode.value = userStore.userInfo?.staffCode as string
   init()
+  state.checkedConfig = state.checkboxTableConfig.map((item) => item.prop)
 })
 </script>
 
