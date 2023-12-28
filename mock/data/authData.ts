@@ -14,6 +14,35 @@ export default [
         elements: [],
         menuType: 5,
         menu: 'scanAndVerifyMenu'
+      },
+      {
+        children: [
+          {
+            children: [
+              {
+                children: [],
+                elements: [],
+                menuType: 2,
+                menu: 'register',
+                sort: 1
+              },
+              {
+                children: [],
+                elements: [],
+                menuType: 2,
+                menu: 'address',
+                sort: 2
+              }
+            ],
+            elements: [],
+            menuType: 3,
+            menu: 'logistics',
+            sort: 2
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'logisticsMenu'
       }
     ],
     elements: [],
@@ -134,5 +163,20 @@ export default [
     menuType: 5,
     sort: 2,
     menu: 'downloadCenter'
+  },
+  {
+    children: [
+      {
+        children: [],
+        elements: [],
+        menuType: 3,
+        sort: 0,
+        menu: 'recordUploadIndex'
+      }
+    ],
+    elements: [],
+    menuType: 5,
+    sort: 5,
+    menu: 'recordUpload'
   }
 ]

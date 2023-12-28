@@ -1,8 +1,20 @@
 import { useRequest } from '@toystory/lotso'
 import requestConfig from '@/config/request.config'
 import type { Response } from '../types/response'
-import type { FilePreviewUrlRequest } from './types/request'
-import type { UploadFile, FilePreviewList, DictList } from './types/response'
+import type {
+  FilePreviewUrlRequest,
+  ExportAssetStageResultRequest,
+  RecordRequest,
+  RelationListRequest
+} from './types/request'
+import type {
+  UploadFile,
+  FilePreviewList,
+  DictList,
+  RecordList,
+  FileDownload,
+  RelationListItem
+} from './types/response'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
 import type { DictsRequest } from '../types/request'
@@ -64,6 +76,80 @@ export class CommonAPI {
       url: `${prefix}/admin-api/system/dict-data/batchList`,
       method: 'post',
       data
+    })
+  }
+
+  // 文件导入结果下载
+  getExportAssetStageResult(
+    data: ExportAssetStageResultRequest
+  ): Response<DictList> {
+    return this.request({
+      url: `${prefix}/admin-api/import/file/exportAssetStageResult`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 根据文件名下载指定模板文件
+  getDownLoadTemplate(
+    data: Omit<ExportAssetStageResultRequest, 'batchNo'>
+  ): Promise<FileDownload> {
+    return this.request({
+      url: `${prefix}/admin-api/import/file/downloadTemplate`,
+      method: 'post',
+      responseType: 'blob',
+      data
+    })
+  }
+
+  // 异步导入记录查询
+  getAsyncImportRecord(data: RecordRequest): Response<RecordList> {
+    return this.request({
+      url: `${prefix}/admin-api/import/file/record/page`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 异步导出记录查询
+  getAsyncExportRecord(
+    data: RecordRequest
+  ): Response<Omit<RecordList, 'batchNo' | 'msg'>> {
+    return this.request({
+      url: `${prefix}/admin-api/export/file/record/page`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 异步上传导入
+  getAsyncImport(data: FormData): Response<UploadFile> {
+    return this.request({
+      url: `${prefix}/admin-api/import/file/record/importAsync`,
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/form-data'
+      },
+      data
+    })
+  }
+
+  // 附件关系信息列表
+  getRelationList(data: RelationListRequest): Response<RelationListItem[]> {
+    return this.request({
+      url: `${prefix}/admin-api/system/attachment/relation/list`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 下载接口
+  downLoadFiles(data: Pick<RecordList, 'fileCode'>): Promise<FileDownload> {
+    return this.request({
+      url: `${prefix}/admin-api/file/attachment/downloadAttachment`,
+      method: 'post',
+      responseType: 'blob',
+      params: data
     })
   }
 }

@@ -1,6 +1,6 @@
 export default {
   hidden: false,
-  title: '邮寄管理',
-  icon: 'archive',
-  name: 'logistics'
+  title: '寄送管理',
+  icon: 'mail',
+  name: 'logisticsMenu'
 }
