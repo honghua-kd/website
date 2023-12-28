@@ -470,9 +470,7 @@ type IState = {
 const state = reactive<IState>({
   tableConfig: BasicData.tableConfig,
   checkAll: true,
-  checkedConfig: localStorage.getItem(pathName)
-    ? JSON.parse(localStorage.getItem(pathName) || '')
-    : [],
+  checkedConfig: [],
   checkboxTableConfig: BasicData.tableConfig,
   isIndeterminate: true
 })
@@ -499,14 +497,13 @@ const tableHeight = computed(() => {
 // 自定义表格列
 const handleCheckedConfig = (value: CheckboxValueType[]) => {
   const checkedCount = value.length
-  checkAll.value = checkedCount === state.checkboxTableConfig.length
+  state.checkAll = checkedCount === state.checkboxTableConfig.length
   state.checkedConfig = value as string[]
-
   localStorage.setItem(pathName, JSON.stringify(value))
 
   state.tableConfig.forEach((item) => {
     if (!item.showDisabled) {
-      item.show = checkedConfig.value.includes(item.prop)
+      item.show = state.checkedConfig.includes(item.prop)
     }
   })
 }
@@ -522,6 +519,8 @@ const handleCheckAllChange = (val: string | number | boolean) => {
 
   state.checkedConfig = _val ? arr : arrRequired.map((item) => item.prop)
   state.isIndeterminate = !_val
+
+  localStorage.setItem(pathName, JSON.stringify(state.checkedConfig))
 
   state.tableConfig.forEach((item) => {
     if (!item.showDisabled) {
@@ -868,6 +867,20 @@ const getDicts = () => {
     })
 }
 
+// 获取表格设置表头内容
+const getCheckConfig = () => {
+  state.checkedConfig = localStorage.getItem(pathName)
+    ? JSON.parse(localStorage.getItem(pathName) || '')
+    : state.checkboxTableConfig.map((item) => item.prop)
+
+  state.tableConfig.forEach((item) => {
+    if (!item.showDisabled) {
+      item.show = state.checkedConfig.includes(item.prop)
+    }
+  })
+  state.checkAll = !(state.checkedConfig.length < BasicData.tableConfig.length)
+}
+
 const init = () => {
   getList()
   getDicts()
@@ -878,7 +891,7 @@ onMounted(() => {
   queryParams.creatorName = userStore.userInfo?.staffName as string
   curStaffCode.value = userStore.userInfo?.staffCode as string
   init()
-  state.checkedConfig = state.checkboxTableConfig.map((item) => item.prop)
+  getCheckConfig()
 })
 </script>
 
