@@ -36,7 +36,8 @@
           }}</el-button>
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="状态"></el-table-column>
+      <el-table-column prop="importTypeName" label="导入类型"></el-table-column>
+      <el-table-column prop="statusName" label="状态"></el-table-column>
       <el-table-column
         prop="msg"
         label="说明"
