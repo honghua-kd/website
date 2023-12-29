@@ -29,29 +29,24 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { ElMessage, ElForm, genFileId } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import type {
   UploadRawFile,
   UploadInstance,
   UploadProps,
   UploadFile,
-  UploadFiles,
   UploadUserFile
 } from 'element-plus'
 import { useUserStore } from '@toystory/lotso'
-import { ExpressAPI, CommonAPI } from '@/api'
-import fileDownload from 'js-file-download'
-const API = new ExpressAPI()
+import { CommonAPI } from '@/api'
 const CommonApi = new CommonAPI()
 const dialogTitle = ref<string>('批量导入')
 const dialogVisible = ref<boolean>(false)
 const upload = ref<UploadInstance>()
-const fileType = ref<string>('.xlsx')
-const selectFile = ref()
 // 上传前校验
-const onChangeHandler = (uploadFile: UploadRawFile) => {
+const onChangeHandler = (uploadFile: UploadFile) => {
   // 校验文件大小
-  if (uploadFile.size / 1024 / 1024 > 300) {
+  if ((uploadFile.size as number) / 1024 / 1024 > 300) {
     ElMessage.error('单个图片和单页PDF文件不超过8M，多页PDF文件单个不超过300M')
     upload.value!.clearFiles()
   }
@@ -62,7 +57,7 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
   upload.value!.handleStart(file)
 }
 
-const fileList = ref([])
+const fileList = ref<UploadUserFile[]>([])
 const tenantUser = ref<string>('')
 const emit = defineEmits(['otherfileinfo'])
 const importHandler = () => {
@@ -70,7 +65,7 @@ const importHandler = () => {
   tenantUser.value = userStore.userInfo?.staffCode as string
   const formData = new FormData()
   fileList.value.forEach((item) => {
-    formData.append('file', item.raw)
+    formData.append('file', item.raw as File)
   })
   formData.append('tenantUser', tenantUser.value)
   formData.append('prefixPath', 'express')
@@ -83,13 +78,13 @@ const importHandler = () => {
           message: '导入成功'
         })
         dialogVisible.value = false
-        const fileCodes = res.data?.fileCodes
+        const fileCodes = res.data?.fileCodes || []
         const fileNames: string[] = []
         fileList.value.forEach((item) => {
           const fileName = item.name.substring(0, item.name.lastIndexOf('.'))
           fileNames.push(fileName)
         })
-        const params = []
+        const params: { fileCode: string; fileName: string }[] = []
         fileCodes.forEach((item, index) => {
           params.push({
             fileCode: item,

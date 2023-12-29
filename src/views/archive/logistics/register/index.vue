@@ -543,7 +543,7 @@ const delHandler = (ids: string[]) => {
 // 导入结果查询
 const importResultHandler = () => {
   router.push({
-    path: '/recordUploadIndex'
+    path: '/recordUpload/index'
   })
 }
 

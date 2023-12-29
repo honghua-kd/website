@@ -37,7 +37,7 @@
                   v-for="(item, index) in expressContentOpts"
                   :key="index"
                   :label="item.label"
-                  :value="item.label"
+                  :value="(item.label as string)"
                 />
               </el-select>
             </el-form-item>
@@ -79,9 +79,15 @@
 
 <script setup lang="ts">
 import { ref, reactive, Ref, watch } from 'vue'
-import type { DictItem } from '@/api'
+import type { ExpressDictItem } from '@/api'
 import { ExpressAPI } from '@/api'
 const API = new ExpressAPI()
+defineProps({
+  title: {
+    type: String,
+    default: ''
+  }
+})
 const expressInfoForm = reactive({
   id: '',
   contentNo: '',
@@ -117,7 +123,7 @@ const open = async (row?: string) => {
     expressInfoForm.contractNo = ''
   }
 }
-const getExpressContentNo = (no: string) => {
+const getExpressContentNo = (no?: string) => {
   const params = {
     expressNo: no
   }
@@ -131,9 +137,11 @@ const getExpressContentNo = (no: string) => {
       console.log(err)
     })
 }
-const expressContentOpts: Ref<DictItem[]> = ref([])
+const expressContentOpts: Ref<ExpressDictItem[]> = ref([])
 const getDicts = () => {
-  expressContentOpts.value = JSON.parse(localStorage.getItem('EXPRESS_CONTENT'))
+  expressContentOpts.value = JSON.parse(
+    localStorage.getItem('EXPRESS_CONTENT') as string
+  )
   expressContentOpts.value.forEach((item) => {
     item.value = Number(item.value)
   })

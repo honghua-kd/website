@@ -31,14 +31,12 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { ElMessage, ElForm, genFileId } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import type {
   UploadRawFile,
   UploadInstance,
   UploadProps,
-  UploadFile,
-  UploadFiles,
-  UploadUserFile
+  UploadFile
 } from 'element-plus'
 import { ExpressAPI, CommonAPI } from '@/api'
 import fileDownload from 'js-file-download'
@@ -50,7 +48,7 @@ const upload = ref<UploadInstance>()
 const fileType = ref<string>('.xlsx')
 const selectFile = ref()
 // 上传前校验
-const onChangeHandler = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
+const onChangeHandler = (uploadFile: UploadFile) => {
   selectFile.value = uploadFile
   // 校验文件格式
   const fileType = uploadFile.name

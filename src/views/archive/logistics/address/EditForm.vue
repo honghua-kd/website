@@ -84,7 +84,8 @@ const basicInfoForm = reactive<UsualAddressListItem>({
   userAddress: '',
   province: '',
   city: '',
-  area: ''
+  area: '',
+  value: ''
 })
 const emit = defineEmits(['success'])
 const addHandler = () => {
