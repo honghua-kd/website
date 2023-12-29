@@ -56,7 +56,6 @@
   .el-sub-menu__title {
     color: $base-color-3 !important;
   }
- 
 }
 .el-menu--horizontal.is-black {
   .el-sub-menu__title {
@@ -84,10 +83,12 @@
   background-color: $base-color-primary !important;
 }
 .el-tag__close:hover {
-  background-color:  $base-color-primary !important;
+  background-color: $base-color-primary !important;
 }
-.el-date-editor,.el-input {
-  .el-range__icon,.el-input__icon {  
+.el-date-editor,
+.el-input {
+  .el-range__icon,
+  .el-input__icon {
     line-height: inherit;
   }
 }
@@ -101,17 +102,18 @@
 }
 .el-pagination.is-background .el-pager li:not(.disabled).active {
   &:focus {
-    outline-color:transparent
+    outline-color: transparent;
   }
 }
 .el-pagination.is-background .el-pager li {
   &:focus {
-    outline-color:transparent
+    outline-color: transparent;
   }
 }
-.el-input__suffix-inner,.el-input__prefix-inner {
-  margin:auto 0;
+.el-input__suffix-inner,
+.el-input__prefix-inner {
+  margin: auto 0;
 }
 .el-input .el-input__clear {
-  margin:auto;
+  margin: auto;
 }
