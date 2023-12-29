@@ -123,8 +123,6 @@
                     clearable
                     placeholder="请输入寄件人名称"
                     @select="handleSelect"
-                    :debounce="100"
-                    @change="handleChange(basicInfoForm.sendUser)"
                   />
                 </el-form-item>
               </el-col>
@@ -153,7 +151,15 @@
                 </el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-button type="primary" @click="addAddressHandler"
+                <el-button
+                  type="primary"
+                  @click="
+                    addAddressHandler(
+                      basicInfoForm.sendUser,
+                      basicInfoForm.sendPhone,
+                      basicInfoForm.sendAddress
+                    )
+                  "
                   >设为常用地址</el-button
                 >
               </el-col>
@@ -187,8 +193,6 @@
                     clearable
                     placeholder="请输入收件人名称"
                     @select="handleSelectRe"
-                    :debounce="100"
-                    @change="handleChange(basicInfoForm.receiveUser)"
                   />
                 </el-form-item>
               </el-col>
@@ -217,7 +221,17 @@
                 </el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-button type="primary">设为常用地址</el-button>
+                <el-button
+                  type="primary"
+                  @click="
+                    addAddressHandler(
+                      basicInfoForm.receiveUser,
+                      basicInfoForm.receivePhone,
+                      basicInfoForm.receiveAddress
+                    )
+                  "
+                  >设为常用地址</el-button
+                >
               </el-col>
             </el-row>
           </el-col>
@@ -502,15 +516,33 @@ const basicInfoForm = reactive<ExpressListItem>({
   otherFileList: []
 })
 const commonContracts = ref<UsualAddressListItem[]>([])
-
+let timeout: ReturnType<typeof setTimeout>
 const queryContractsSearch = (
   queryString: string,
   cb: AutocompleteFetchSuggestionsCallback
 ) => {
-  const results = queryString
-    ? commonContracts.value.filter(createFilter(queryString))
-    : commonContracts.value
-  cb(results)
+  const params = {
+    userName: queryString
+  }
+  API.getUsualAddressList(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        commonContracts.value = res?.data?.list || []
+        commonContracts.value.forEach((item) => {
+          item.value = '常用联系-' + item.userName + '-' + item.userPhone
+        })
+        const results = queryString
+          ? commonContracts.value.filter(createFilter(queryString))
+          : commonContracts.value
+        clearTimeout(timeout)
+        timeout = setTimeout(() => {
+          cb(results)
+        }, 2000 * Math.random())
+      }
+    })
+    .catch((err: Error) => {
+      console.log(err)
+    })
 }
 const createFilter = (queryString: string) => {
   return (res: UsualAddressListItem) => {
@@ -527,29 +559,12 @@ const handleSelectRe = (item: Record<string, undefined>) => {
   basicInfoForm.receivePhone = item.userPhone
   basicInfoForm.receiveAddress = item.userAddress
 }
-const handleChange = (val?: string) => {
-  const params = {
-    userName: val
-  }
-  API.getUsualAddressList(params)
-    .then((res) => {
-      if (res && res.code === 200) {
-        commonContracts.value = res?.data?.list || []
-        commonContracts.value.forEach((item) => {
-          item.value = '常用联系-' + item.userName + '-' + item.userPhone
-        })
-      }
-    })
-    .catch((err: Error) => {
-      console.log(err)
-    })
-}
 
-const addAddressHandler = () => {
+const addAddressHandler = (user?: string, phone?: string, address?: string) => {
   const params = {
-    userName: basicInfoForm.sendUser,
-    userPhone: basicInfoForm.sendPhone,
-    userAddress: basicInfoForm.sendAddress,
+    userName: user,
+    userPhone: phone,
+    userAddress: address,
     userMail: ''
   }
   API.addUsualAddress(params)
