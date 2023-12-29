@@ -105,8 +105,8 @@ const getList = () => {
     .then((res) => {
       if (res && res.code === 200) {
         tableLoading.value = false
-        tableData.value = res.data.list
-        pageTotal.value = res.data.total
+        tableData.value = res?.data?.list || []
+        pageTotal.value = res?.data?.total || 0
       } else {
         tableLoading.value = false
       }

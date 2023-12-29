@@ -152,4 +152,14 @@ export class CommonAPI {
       params: data
     })
   }
+
+  // 通用打包下载接口
+  batchExport(data: FormData): Promise<FileDownload> {
+    return this.request({
+      url: `${prefix}/admin-api/file/attachment/batchExport`,
+      method: 'post',
+      responseType: 'blob',
+      data
+    })
+  }
 }

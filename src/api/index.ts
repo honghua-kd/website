@@ -16,5 +16,8 @@ export type * from './mortgageRelease/types/response'
 export type * from './expressManagement/types/request'
 export type * from './expressManagement/types/response'
 
+// export type * from './downUpload/types/request'
+export type * from './downUpload/types/response'
+
 export type * from './common/types/request'
 export type * from './common/types/response'

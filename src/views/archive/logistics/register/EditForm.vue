@@ -123,8 +123,8 @@
                     clearable
                     placeholder="请输入寄件人名称"
                     @select="handleSelect"
-                    :debounce="500"
-                    @change="handleChange"
+                    :debounce="100"
+                    @change="handleChange(basicInfoForm.sendUser)"
                   />
                 </el-form-item>
               </el-col>
@@ -186,9 +186,9 @@
                     :trigger-on-focus="false"
                     clearable
                     placeholder="请输入收件人名称"
-                    @select="handleSelect"
-                    :debounce="500"
-                    @change="handleChange"
+                    @select="handleSelectRe"
+                    :debounce="100"
+                    @change="handleChange(basicInfoForm.receiveUser)"
                   />
                 </el-form-item>
               </el-col>
@@ -462,6 +462,7 @@ import type {
   UsualAddressListItem
 } from '@/api'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
+import type { AutocompleteFetchSuggestionsCallback } from 'element-plus'
 import { ref, reactive, Ref, watch } from 'vue'
 import { CommonAPI, ExpressAPI } from '@/api'
 import { useUserStore } from '@toystory/lotso'
@@ -502,7 +503,10 @@ const basicInfoForm = reactive<ExpressListItem>({
 })
 const commonContracts = ref<UsualAddressListItem[]>([])
 
-const queryContractsSearch = (queryString: string, cb: any) => {
+const queryContractsSearch = (
+  queryString: string,
+  cb: AutocompleteFetchSuggestionsCallback
+) => {
   const results = queryString
     ? commonContracts.value.filter(createFilter(queryString))
     : commonContracts.value
@@ -513,14 +517,19 @@ const createFilter = (queryString: string) => {
     return res.value.indexOf(queryString) !== -1
   }
 }
-const handleSelect = (item: UsualAddressListItem) => {
+const handleSelect = (item: Record<string, undefined>) => {
   basicInfoForm.sendUser = item.userName
   basicInfoForm.sendPhone = item.userPhone
   basicInfoForm.sendAddress = item.userAddress
 }
-const handleChange = () => {
+const handleSelectRe = (item: Record<string, undefined>) => {
+  basicInfoForm.receiveUser = item.userName
+  basicInfoForm.receivePhone = item.userPhone
+  basicInfoForm.receiveAddress = item.userAddress
+}
+const handleChange = (val?: string) => {
   const params = {
-    userName: basicInfoForm.sendUser
+    userName: val
   }
   API.getUsualAddressList(params)
     .then((res) => {

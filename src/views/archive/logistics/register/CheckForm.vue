@@ -353,6 +353,15 @@ import { ref, reactive, Ref, watch } from 'vue'
 import type { ExpressDictItem, ExpressListItem } from '@/api'
 import fileDownload from 'js-file-download'
 import { CommonAPI, ExpressAPI } from '@/api'
+import {
+  ElForm,
+  ElFormItem,
+  ElButton,
+  ElDatePicker,
+  ElTable,
+  ElTableColumn,
+  ElMessage
+} from 'element-plus'
 const API = new ExpressAPI()
 const CommonApi = new CommonAPI()
 const dialogTitle = ref<string>('邮寄信息登记详情')
@@ -464,20 +473,37 @@ const getOtherContentList = (id: string) => {
 }
 
 const otherFileDownload = () => {
-  const params = {
-    expressNo: basicInfoForm.expressNo
-  }
-  API.downLoadOtherFile(params)
+  // API.downLoadOtherFile(params)
+  //   .then((res) => {
+  //     console.error(res)
+  //     const fileStream = res?.data
+  //     const headers = res?.headers
+  //     const files =
+  //       headers &&
+  //       headers['content-disposition'] &&
+  //       decodeURI(headers['content-disposition'].split(';')[1])
+  //     const fileName = (files && files.split('=')[1]) || ''
+  //     fileDownload(fileStream, fileName)
+  //   })
+  //   .catch((err: Error) => {
+  //     console.log(err)
+  //   })
+  const formData = new FormData()
+  formData.append('businessNo', basicInfoForm.expressNo as string)
+  formData.append('makeExcel', 'true')
+  formData.append('businessCategory', 'EXPRESS')
+  formData.append('businessSubcategory', 'INFO_OTHER')
+  CommonApi.batchExport(formData)
     .then((res) => {
-      console.error(res)
-      const fileStream = res?.data
-      const headers = res?.headers
-      const files =
-        headers &&
-        headers['content-disposition'] &&
-        decodeURI(headers['content-disposition'].split(';')[1])
-      const fileName = (files && files.split('=')[1]) || ''
-      fileDownload(fileStream, fileName)
+      if (res) {
+        ElMessage({
+          type: 'success',
+          message: '导入成功'
+        })
+        const fileStream = res?.data
+        const fileName = '附件.zip'
+        fileDownload(fileStream, fileName)
+      }
     })
     .catch((err: Error) => {
       console.log(err)

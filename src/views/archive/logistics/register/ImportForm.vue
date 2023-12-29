@@ -14,7 +14,7 @@
         :on-change="onChangeHandler"
         :on-exceed="handleExceed"
         :accept="fileType"
-        :limit="1"
+        multiple
         :auto-upload="false"
         action="#"
         v-model:file-list="fileList"
@@ -37,7 +37,8 @@ import type {
   UploadRawFile,
   UploadInstance,
   UploadProps,
-  UploadFile
+  UploadFile,
+  UploadUserFile
 } from 'element-plus'
 import { CommonAPI } from '@/api'
 import fileDownload from 'js-file-download'
@@ -85,17 +86,26 @@ const downloadTemplate = () => {
       throw err
     })
 }
-const fileList = ref([])
+const fileList = ref<UploadUserFile[]>([])
 const importHandler = () => {
   dialogVisible.value = false
   console.error(selectFile.value)
   const formData = new FormData()
-  formData.append('file', selectFile.value.raw)
+  fileList.value.forEach((item) => {
+    formData.append('file', item.raw as File)
+  })
+  // formData.append('file', selectFile.value.raw)
   formData.append('bizType', 'EXPRESS_INFO')
-  fileList.value = []
+  // fileList.value = []
   CommonApi.getAsyncImport(formData)
     .then((res) => {
-      console.error(res)
+      if (res && res.code === 200) {
+        ElMessage({
+          type: 'success',
+          message: '导入成功'
+        })
+      }
+      upload.value!.clearFiles()
     })
     .catch((err: Error) => {
       throw err
