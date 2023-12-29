@@ -1,264 +1,205 @@
 <template>
-  <div>
-    <el-card>
-      <el-form :model="queryParams" ref="formRef">
-        <el-row :gutter="20">
-          <el-col :span="10">
-            <el-form-item label="来源系统:" prop="city">
-              <el-select
-                v-model="queryParams.city"
-                clearable
-                placeholder="请选择"
-              >
-                <el-option
-                  v-for="item in statusOpts"
-                  :key="item.dictValue"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="代理商/办事处:" prop="chepai">
-              <el-input
-                v-model="queryParams.chepai"
-                placeholder="请输入"
-                clearable
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-button type="primary" :icon="Search" @click="searchHandler">
-              搜索
-            </el-button>
-          </el-col>
-        </el-row>
+  <div class="main-part-container">
+    <!-- filter -->
+    <el-card :body-style="{ padding: '10px 10px 0px' }">
+      <el-form :inline="true" :model="formModel" class="filter-form">
+        <el-form-item label="来源系统">
+          <el-select v-model="formModel.sourceSystem1">
+            <el-option
+              v-for="item in sourceArr"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="代理商/办事处">
+          <el-input v-model="formModel.agencyName" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="search">查询</el-button>
+        </el-form-item>
       </el-form>
     </el-card>
-    <el-row :gutter="8" style="margin: 10px 0">
-      <el-col :span="1.5">
-        <el-button type="primary"> 批量导入 </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="primary"> 下载导入模版 </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="primary" @click="addHandler"> 新增 </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="primary"> 下载 </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="primary"> 删除 </el-button>
-      </el-col>
-    </el-row>
-    <el-table :data="tableData" border v-loading="tableLoading">
-      <el-table-column type="selection" width="55" />
-      <template v-for="item in Columns">
+    <!-- action -->
+    <div class="action">
+      <el-button
+        v-for="i in actionList"
+        :key="i.value"
+        type="primary"
+        @click="action(i.value)"
+        >{{ i.label }}</el-button
+      >
+    </div>
+    <!-- list -->
+    <div class="list">
+      <el-table
+        :data="tableData"
+        :border="true"
+        style="width: 100%"
+        @select="selectData"
+        @select-all="selectAllData"
+      >
         <el-table-column
-          v-if="item.show"
-          :label="item.label"
-          :prop="item.prop"
-          :fixed="item.fixed || false"
-          :show-overflow-tooltip="item.showTooltip"
-          :min-width="item.minWidth"
-          :key="item.prop"
+          v-for="i in tableColumn"
+          :key="i.label"
+          :type="i.type"
+          :prop="i.prop"
+          :label="i.label"
+          :width="i.width"
+          :min-width="i.minWidth"
+          :fixed="i.fixed"
         >
-          <template v-slot="scope">
-            <div v-if="item.prop === 'isQingdan'">
-              <el-switch v-model="scope.downloadTime" />
-            </div>
-            <div v-else-if="item.prop === 'isShengpi'">
-              <el-switch v-model="scope.downloadTime" />
-            </div>
-            <div v-else>
-              {{ scope.row[item.prop] }}
-            </div>
+          <template v-if="i.label === '操作'" #default="scope">
+            <el-button
+              v-for="item in tableActionList"
+              :key="item.value"
+              link
+              :type="item.value === 'delete' ? 'danger' : 'primary'"
+              @click="actionTableItem(scope, item.value)"
+              >{{ item.label }}</el-button
+            >
           </template>
         </el-table-column>
-      </template>
-      <el-table-column label="操作" align="center">
-        <template v-slot="scope">
-          <el-button link type="primary" @click="editHandler(scope.row)">
-            编辑
-          </el-button>
-          <el-button link type="primary" @click="handleDelect(scope.row)">
-            删除
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <!-- 分页 -->
-    <el-pagination
-      v-if="pageTotal"
-      background
-      layout="total,sizes,prev, pager, next"
-      :page-sizes="[10, 20, 50, 100]"
-      :total="pageTotal"
-      class="table-page"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
+      </el-table>
+    </div>
+    <div class="page">
+      <el-pagination
+        background
+        layout="total,sizes,prev, pager, next"
+        :page-sizes="[10, 20, 50, 100]"
+        :total="pageTotal"
+        class="table-page"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
+    </div>
+    <!--  -->
+    <EditModel
+      :visible="editModelVisible"
+      :formValue="{}"
+      :title="editModelTitle"
+      @closeModel="closeModel"
     />
-    <OperDialog ref="operRef" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, Ref } from 'vue'
-import { Search } from '@element-plus/icons-vue'
-import OperDialog from '@/views/mortgage/channelList/components/operDialog.vue'
-const statusOpts = reactive([
-  {
-    dictLabel: '城',
-    dictValue: 1
+import { reactive, toRefs } from 'vue'
+import BasicData from '@/views/mortgage/channelList/data'
+import EditModel from '@/views/mortgage/channelList/editModel.vue'
+import type { StateType, RecordType } from '@/views/mortgage/channelList/type'
+import { AgencyAPI } from '@/api'
+const API = new AgencyAPI()
+
+const state = reactive<StateType>({
+  formModel: {
+    agencyName: '',
+    sourceSystem1: '',
+    sourceSystem2: '',
+    pageNo: 1,
+    pageSize: 10
   },
-  {
-    dictLabel: '市',
-    dictValue: 0
-  }
-])
-interface QueryForm {
-  pageNo: number
-  pageSize: number
-  city: string
-  market: string
-  chepai: string
-}
-const queryParams = reactive<QueryForm>({
-  pageNo: 1,
-  pageSize: 10,
-  city: '',
-  market: '',
-  chepai: ''
+  sourceArr: [
+    {
+      label: '全部',
+      value: '全部'
+    },
+    {
+      label: '乘用车',
+      value: '乘用车'
+    },
+    {
+      label: '商用车',
+      value: '商用车'
+    },
+    {
+      label: '乘用车资产转让',
+      value: '乘用车资产转让'
+    },
+    {
+      label: '商用车资产转让',
+      value: '商用车资产转让'
+    }
+  ],
+  actionList: BasicData.actionList,
+  tableColumn: BasicData.tableColumn,
+  tableData: [{}],
+  tableActionList: BasicData.tableActionList,
+  pageTotal: 100,
+  editModelVisible: false,
+  editModelTitle: ''
 })
-const searchHandler = () => {
-  queryParams.pageNo = 1
-  getList()
+const {
+  formModel,
+  sourceArr,
+  actionList,
+  tableColumn,
+  tableData,
+  tableActionList,
+  pageTotal,
+  editModelVisible,
+  editModelTitle
+} = toRefs(state)
+
+const getListData = async () => {
+  await API.getAgencyList(formModel.value)
 }
-const getList = async () => {}
-const pageTotal: Ref<number> = ref(0) // 列表的总页数
-const tableLoading: Ref<boolean> = ref(false)
-interface TableItem {
-  id: number
-  downloadPerson: string
-  downloadTime: string
-  status: string
-  isQingdan: boolean
-  isShengpi: boolean
+const search = () => {
+  formModel.value.pageNo = 1
+  getListData()
 }
-const Columns = [
-  {
-    label: '来源系统',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  },
-  {
-    label: '渠道商/办事处',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  },
-  {
-    label: '是否生成待收款项清单',
-    prop: 'isQingdan',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  },
-  {
-    label: '未收费办理是否需审批',
-    prop: 'isShengpi',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  },
-  {
-    label: '创建人',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  },
-  {
-    label: '创建时间',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  },
-  {
-    label: '最后更新人',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  },
-  {
-    label: '更新时间',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  }
-]
-const tableData: Ref<TableItem[]> = ref([
-  {
-    id: 1,
-    downloadPerson: '张三',
-    downloadTime: '2023-07-18',
-    status: '进行中',
-    isQingdan: false,
-    isShengpi: false
-  }
-])
-const handleDelect = (row: TableItem) => {
-  console.log(row)
+const handleSizeChange = (size: number) => {
+  formModel.value.pageSize = size
+  formModel.value.pageNo = 1
+  getListData()
 }
-// 分页
-const handleCurrentChange = (val: number) => {
-  console.log('value>>>>>', val)
-  queryParams.pageNo = val
-  getList()
+const handleCurrentChange = (page: number) => {
+  formModel.value.pageNo = page
+  getListData()
 }
 
-// 页面条数改变
-const handleSizeChange = (val: number) => {
-  queryParams.pageSize = val
-  getList()
+const action = (val: string | number) => {
+  if (val === 'add') {
+    state.editModelTitle = '新增'
+    state.editModelVisible = true
+  }
+}
+const closeModel = ({ visible, type }: { visible: boolean; type: string }) => {
+  console.log(visible, type)
+  state.editModelVisible = visible
 }
 
-const operRef = ref()
-const addHandler = () => {
-  operRef.value.open('add')
+const selectAllData = (selection: RecordType[]) => {
+  console.log(selection)
 }
-const editHandler = (row: TableItem) => {
-  operRef.value.open('edit', row)
+const selectData = (selection: RecordType[], row: RecordType) => {
+  console.log(selection, row)
+}
+const actionTableItem = (row: RecordType, value: string | number) => {
+  if (value === 'edit') {
+    state.editModelTitle = '编辑'
+    state.editModelVisible = true
+  }
 }
 </script>
 
 <style lang="scss" scoped>
-.city-select {
-  margin-left: 1%;
-  width: 48%;
+.main-part-container {
+  .filter-form {
+    .el-form-item {
+      align-items: center;
+    }
+  }
+  .action {
+    margin: 10px 0;
+  }
+  .list {
+    margin-bottom: 20px;
+  }
+  .page {
+    display: flex;
+    justify-content: flex-end;
+  }
 }
 </style>
