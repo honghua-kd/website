@@ -6,6 +6,7 @@
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       width="60%"
+      @close="closeHandler"
     >
       <el-upload
         ref="upload"
@@ -99,7 +100,10 @@ const importHandler = () => {
       throw err
     })
 }
-
+// 关闭弹窗
+const closeHandler = () => {
+  upload.value!.clearFiles()
+}
 /** 打开弹窗 */
 const open = () => {
   dialogVisible.value = true

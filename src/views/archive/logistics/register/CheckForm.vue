@@ -303,38 +303,22 @@
               :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
               border
               row-key="id"
+              @selection-change="selectionChangeHandler"
             >
               <el-table-column
                 label="序号"
                 prop="number"
-                width="180"
                 align="center"
-                type="index"
+                type="selection"
               />
-              <el-table-column
-                label="文件名"
-                prop="fileName"
-                width="180"
-                align="center"
-              />
-              <el-table-column
-                label="上传用户"
-                prop="creator"
-                width="180"
-                align="center"
-              />
+              <el-table-column label="文件名" prop="fileName" align="center" />
+              <el-table-column label="上传用户" prop="creator" align="center" />
               <el-table-column
                 label="上传时间"
                 prop="createTime"
-                width="180"
                 align="center"
               />
-              <el-table-column
-                label="备注"
-                prop="fileRemark"
-                width="180"
-                align="center"
-              />
+              <el-table-column label="备注" prop="fileRemark" align="center" />
             </el-table>
           </el-form-item>
         </el-col>
@@ -349,8 +333,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, Ref, watch } from 'vue'
-import type { ExpressDictItem, ExpressListItem } from '@/api'
+import { ref, reactive, Ref, watch, computed } from 'vue'
+import type { ExpressDictItem, ExpressListItem, OtherFileList } from '@/api'
 import fileDownload from 'js-file-download'
 import { CommonAPI, ExpressAPI } from '@/api'
 import {
@@ -390,7 +374,21 @@ const basicInfoForm = reactive<ExpressListItem>({
   expressContentList: [],
   otherFileList: []
 })
-
+const selectData: Ref<OtherFileList[]> = ref([])
+// 勾选数据
+const selectionChangeHandler = (item: OtherFileList[]) => {
+  selectData.value.splice(0, selectData.value.length)
+  selectData.value.push(...item)
+}
+const selectIds = computed(() => {
+  const ids: string[] = []
+  selectData.value.forEach((item) => {
+    if (item.fileCode) {
+      ids.push(item.fileCode as string)
+    }
+  })
+  return ids
+})
 // 获取邮寄信息
 const getList = (id: string) => {
   const params = {
@@ -473,41 +471,41 @@ const getOtherContentList = (id: string) => {
 }
 
 const otherFileDownload = () => {
-  // API.downLoadOtherFile(params)
-  //   .then((res) => {
-  //     console.error(res)
-  //     const fileStream = res?.data
-  //     const headers = res?.headers
-  //     const files =
-  //       headers &&
-  //       headers['content-disposition'] &&
-  //       decodeURI(headers['content-disposition'].split(';')[1])
-  //     const fileName = (files && files.split('=')[1]) || ''
-  //     fileDownload(fileStream, fileName)
-  //   })
-  //   .catch((err: Error) => {
-  //     console.log(err)
-  //   })
-  const formData = new FormData()
-  formData.append('businessNo', basicInfoForm.expressNo as string)
-  formData.append('makeExcel', 'true')
-  formData.append('businessCategory', 'EXPRESS')
-  formData.append('businessSubcategory', 'INFO_OTHER')
-  CommonApi.batchExport(formData)
-    .then((res) => {
-      if (res) {
-        ElMessage({
-          type: 'success',
-          message: '导入成功'
-        })
-        const fileStream = res?.data
-        const fileName = '附件.zip'
-        fileDownload(fileStream, fileName)
-      }
+  if (!selectIds.value.length) {
+    ElMessage({
+      type: 'error',
+      message: '请勾选要下载的内容'
     })
-    .catch((err: Error) => {
-      console.log(err)
-    })
+  } else {
+    // const formData = new FormData()
+    // formData.append('businessNo', basicInfoForm.expressNo as string)
+    // formData.append('makeExcel', 'true')
+    // formData.append('businessCategory', 'EXPRESS')
+    // formData.append('businessSubcategory', 'INFO_OTHER')
+    // formData.append('fileCodeList', selectIds.value as string)
+    const params = {
+      businessNo: basicInfoForm.expressNo,
+      makeExcel: true,
+      businessCategory: 'EXPRESS',
+      businessSubcategory: 'INFO_OTHER',
+      fileCodeList: selectIds.value
+    }
+    CommonApi.batchExport(params)
+      .then((res) => {
+        if (res) {
+          ElMessage({
+            type: 'success',
+            message: '下载成功'
+          })
+          const fileStream = res?.data
+          const fileName = '附件.zip'
+          fileDownload(fileStream, fileName)
+        }
+      })
+      .catch((err: Error) => {
+        console.log(err)
+      })
+  }
 }
 const init = () => {
   basicInfoForm.id = ''

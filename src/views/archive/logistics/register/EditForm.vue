@@ -659,7 +659,6 @@ const open = async (row?: ExpressListItem) => {
   dialogVisible.value = true
   getDicts()
   init(row)
-  getOtherContentList()
 }
 const init = (row?: ExpressListItem) => {
   if (row) {
@@ -686,6 +685,7 @@ const init = (row?: ExpressListItem) => {
     basicInfoForm.updateTime = data.updateTime
     basicInfoForm.expressContentList = data.expressContentList || []
     basicInfoForm.otherFileList = data.otherFileList || []
+    getOtherContentList()
   } else {
     disFlag.value = false
     basicInfoForm.id = ''

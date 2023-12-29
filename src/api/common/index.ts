@@ -5,7 +5,8 @@ import type {
   FilePreviewUrlRequest,
   ExportAssetStageResultRequest,
   RecordRequest,
-  RelationListRequest
+  RelationListRequest,
+  BatchExportRequest
 } from './types/request'
 import type {
   UploadFile,
@@ -154,7 +155,7 @@ export class CommonAPI {
   }
 
   // 通用打包下载接口
-  batchExport(data: FormData): Promise<FileDownload> {
+  batchExport(data: BatchExportRequest): Promise<FileDownload> {
     return this.request({
       url: `${prefix}/admin-api/file/attachment/batchExport`,
       method: 'post',

@@ -6,6 +6,7 @@
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       width="60%"
+      @close="closeHandler"
     >
       <el-upload
         ref="upload"
@@ -71,7 +72,6 @@ const downloadTemplate = () => {
   }
   CommonApi.getDownLoadTemplate(params)
     .then((res) => {
-      console.error(res)
       const fileStream = res?.data
       const headers = res?.headers
       const files =
@@ -103,7 +103,7 @@ const importHandler = () => {
         dialogVisible.value = false
         ElMessage({
           type: 'success',
-          message: '导入成功'
+          message: '上传成功'
         })
       }
     })
@@ -111,7 +111,10 @@ const importHandler = () => {
       throw err
     })
 }
-
+// 关闭弹窗
+const closeHandler = () => {
+  upload.value!.clearFiles()
+}
 /** 打开弹窗 */
 const open = (no: string) => {
   dialogVisible.value = true
