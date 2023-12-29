@@ -638,6 +638,7 @@ const init = (row?: ExpressListItem) => {
     basicInfoForm.id = data.id
     basicInfoForm.expressNo = data.expressNo
     basicInfoForm.expressCompany = data.expressCompany
+    basicInfoForm.expressCompanyOther = data.expressCompanyOther
     basicInfoForm.expressStatus = data.expressStatus
     basicInfoForm.expressType = data.expressType
     basicInfoForm.sendTime = data.sendTime
@@ -662,6 +663,7 @@ const init = (row?: ExpressListItem) => {
     basicInfoForm.id = ''
     basicInfoForm.expressNo = ''
     basicInfoForm.expressCompany = ''
+    basicInfoForm.expressCompanyOther = ''
     basicInfoForm.expressStatus = 0
     basicInfoForm.expressType = 0
     basicInfoForm.sendTime = ''
