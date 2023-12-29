@@ -341,5 +341,23 @@ export default [
     menuType: 5,
     sort: 4,
     menu: 'docManage'
+  },
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'messageTemplate',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'messageManage'
+      }
+    ]
   }
 ]

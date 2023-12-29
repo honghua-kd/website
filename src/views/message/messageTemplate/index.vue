@@ -3,26 +3,12 @@
     <el-card>
       <el-form :model="queryParams" ref="formRef">
         <el-row :gutter="20">
-          <el-col :span="10">
-            <el-form-item label="城市:" prop="city">
+          <el-col :span="8">
+            <el-form-item label="来源系统:" prop="city">
               <el-select
                 v-model="queryParams.city"
                 clearable
                 placeholder="请选择"
-                class="city-select"
-              >
-                <el-option
-                  v-for="item in statusOpts"
-                  :key="item.dictValue"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
-                />
-              </el-select>
-              <el-select
-                v-model="queryParams.market"
-                clearable
-                placeholder="请选择"
-                class="city-select"
               >
                 <el-option
                   v-for="item in statusOpts"
@@ -34,7 +20,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="车牌代码:" prop="chepai">
+            <el-form-item label="模板名称:" prop="chepai">
               <el-input
                 v-model="queryParams.chepai"
                 placeholder="请输入"
@@ -42,29 +28,51 @@
               />
             </el-form-item>
           </el-col>
+          <el-col :span="8">
+            <el-form-item label="模板编号:" prop="chepai">
+              <el-input
+                v-model="queryParams.chepai"
+                placeholder="请输入"
+                clearable
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="业务类型:" prop="city">
+              <el-select
+                v-model="queryParams.city"
+                clearable
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="item in statusOpts"
+                  :key="item.dictValue"
+                  :label="item.dictLabel"
+                  :value="item.dictValue"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
           <el-col :span="6">
             <el-button type="primary" :icon="Search" @click="searchHandler">
-              搜索
+              查询
             </el-button>
+            <el-button :icon="Refresh" @click="reset"> 重置 </el-button>
           </el-col>
         </el-row>
       </el-form>
     </el-card>
     <el-row :gutter="8" style="margin: 10px 0">
       <el-col :span="1.5">
-        <el-button type="primary"> 批量导入 </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="primary"> 下载导入模版 </el-button>
-      </el-col>
-      <el-col :span="1.5">
         <el-button type="primary" @click="addHandler"> 新增 </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="primary"> 下载 </el-button>
+        <el-button> 停用 </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="primary"> 删除 </el-button>
+        <el-button> 批量导入 </el-button>
       </el-col>
     </el-row>
     <el-table :data="tableData" border v-loading="tableLoading">
@@ -80,13 +88,7 @@
           :key="item.prop"
         >
           <template v-slot="scope">
-            <div v-if="item.prop === 'isDiYa'">
-              <el-switch v-model="scope.downloadTime" />
-            </div>
-            <div v-else-if="item.prop === 'isJieYa'">
-              <el-switch v-model="scope.downloadTime" />
-            </div>
-            <div v-else>
+            <div>
               {{ scope.row[item.prop] }}
             </div>
           </template>
@@ -95,10 +97,16 @@
       <el-table-column label="操作" align="center">
         <template v-slot="scope">
           <el-button link type="primary" @click="editHandler(scope.row)">
-            编辑
+            修改
+          </el-button>
+          <el-button link type="primary" @click="editHandler(scope.row)">
+            删除
+          </el-button>
+          <el-button link type="primary" @click="editHandler(scope.row)">
+            启用
           </el-button>
           <el-button link type="primary" @click="handleDelect(scope.row)">
-            删除
+            停用
           </el-button>
         </template>
       </el-table-column>
@@ -119,9 +127,121 @@
 </template>
 
 <script setup lang="ts">
+import { Search, Refresh } from '@element-plus/icons-vue'
+import OperDialog from '@/views/message/messageTemplate/components/operDialog.vue'
 import { reactive, ref, Ref } from 'vue'
-import { Search } from '@element-plus/icons-vue'
-import OperDialog from '@/views/mortgage/city/components/operDialog.vue'
+const pageTotal: Ref<number> = ref(0) // 列表的总页数
+const tableLoading: Ref<boolean> = ref(false)
+const Columns = [
+  {
+    label: '来源系统',
+    prop: 'downloadPerson',
+    format: '',
+    fixed: '',
+    minWidth: '60',
+    show: true,
+    showTooltip: true
+  },
+  {
+    label: '模板编号',
+    prop: 'downloadPerson',
+    format: '',
+    fixed: '',
+    minWidth: '60',
+    show: true,
+    showTooltip: true
+  },
+  {
+    label: '模板名称',
+    prop: 'downloadPerson',
+    format: '',
+    fixed: '',
+    minWidth: '60',
+    show: true,
+    showTooltip: true
+  },
+  {
+    label: '模板类型',
+    prop: 'downloadPerson',
+    format: '',
+    fixed: '',
+    minWidth: '60',
+    show: true,
+    showTooltip: true
+  },
+  {
+    label: '短信发送条件',
+    prop: 'downloadPerson',
+    format: '',
+    fixed: '',
+    minWidth: '60',
+    show: true,
+    showTooltip: true
+  },
+  {
+    label: '业务类型',
+    prop: 'downloadPerson',
+    format: '',
+    fixed: '',
+    minWidth: '60',
+    show: true,
+    showTooltip: true
+  },
+  {
+    label: '联系人类型',
+    prop: 'downloadPerson',
+    format: '',
+    fixed: '',
+    minWidth: '60',
+    show: true,
+    showTooltip: true
+  },
+  {
+    label: '模板内容',
+    prop: 'downloadPerson',
+    format: '',
+    fixed: '',
+    minWidth: '60',
+    show: true,
+    showTooltip: true
+  },
+  {
+    label: '模板状态',
+    prop: 'downloadPerson',
+    format: '',
+    fixed: '',
+    minWidth: '60',
+    show: true,
+    showTooltip: true
+  },
+  {
+    label: '修改时间',
+    prop: 'downloadPerson',
+    format: '',
+    fixed: '',
+    minWidth: '60',
+    show: true,
+    showTooltip: true
+  }
+]
+interface TableItem {
+  id: number
+  downloadPerson: string
+  downloadTime: string
+  status: string
+  isQingdan: boolean
+  isShengpi: boolean
+}
+const tableData: Ref<TableItem[]> = ref([
+  {
+    id: 1,
+    downloadPerson: '张三',
+    downloadTime: '2023-07-18',
+    status: '进行中',
+    isQingdan: false,
+    isShengpi: false
+  }
+])
 const statusOpts = reactive([
   {
     dictLabel: '城',
@@ -150,113 +270,8 @@ const searchHandler = () => {
   queryParams.pageNo = 1
   getList()
 }
+const reset = () => {}
 const getList = async () => {}
-const pageTotal: Ref<number> = ref(0) // 列表的总页数
-const tableLoading: Ref<boolean> = ref(false)
-interface TableItem {
-  id: number
-  downloadPerson: string
-  downloadTime: string
-  status: string
-  isDiYa: boolean
-  isJieYa: boolean
-}
-const Columns = [
-  {
-    label: '省份',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  },
-  {
-    label: '城市',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  },
-  {
-    label: '车牌代码',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  },
-  {
-    label: '是否可以办理抵押',
-    prop: 'isDiYa',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  },
-  {
-    label: '是否可以办理解押',
-    prop: 'isJieYa',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  },
-  {
-    label: '创建人',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  },
-  {
-    label: '创建时间',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  },
-  {
-    label: '最后更新人',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  },
-  {
-    label: '更新时间',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  }
-]
-const tableData: Ref<TableItem[]> = ref([
-  {
-    id: 1,
-    downloadPerson: '张三',
-    downloadTime: '2023-07-18',
-    status: '进行中',
-    isJieYa: false,
-    isDiYa: false
-  }
-])
-const handleDelect = (row: TableItem) => {
-  console.log(row)
-}
 // 分页
 const handleCurrentChange = (val: number) => {
   console.log('value>>>>>', val)
@@ -269,7 +284,6 @@ const handleSizeChange = (val: number) => {
   queryParams.pageSize = val
   getList()
 }
-
 const operRef = ref()
 const addHandler = () => {
   operRef.value.open('add')
@@ -279,9 +293,4 @@ const editHandler = (row: TableItem) => {
 }
 </script>
 
-<style lang="scss" scoped>
-.city-select {
-  margin-left: 1%;
-  width: 48%;
-}
-</style>
+<style lang="scss" scoped></style>

@@ -2,6 +2,7 @@ export { CoreAPI } from './core'
 export { SystemAPI } from './system'
 export { MortageAPI } from './mortgageRelease'
 export { CommonAPI } from './common'
+export { SupplierAPI } from './supplier'
 export type * from './types/request'
 export type * from './types/response'
 
@@ -13,3 +14,6 @@ export type * from './mortgageRelease/types/response'
 
 export type * from './common/types/request'
 export type * from './common/types/response'
+
+export type * from './supplier/types/request'
+export type * from './supplier/types/response'
