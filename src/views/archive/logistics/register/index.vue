@@ -541,7 +541,10 @@ const delHandler = (ids: string[]) => {
 // 导入结果查询
 const importResultHandler = () => {
   router.push({
-    path: '/recordUpload/index'
+    path: '/recordUpload/index',
+    query: {
+      tab: 'upload'
+    }
   })
 }
 

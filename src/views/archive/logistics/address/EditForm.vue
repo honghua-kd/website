@@ -7,13 +7,17 @@
       :close-on-press-escape="false"
       width="60%"
     >
-      <el-form ref="formRef" :model="basicInfoForm" label-width="100px">
+      <el-form
+        ref="formRef"
+        :model="basicInfoForm"
+        :label-width="px2rem('100px')"
+      >
         <el-row>
           <el-col :span="8">
             <el-form-item
               label="联系人名称:"
               prop="userName"
-              :rules="[{ required: true }]"
+              :rules="[{ required: true, message: '联系人名称不能为空' }]"
             >
               <el-input
                 v-model="basicInfoForm.userName"
@@ -68,6 +72,7 @@ import { ref, reactive } from 'vue'
 import { ElMessage, ElForm } from 'element-plus'
 import type { UsualAddressListItem } from '@/api'
 import { ExpressAPI } from '@/api'
+import { px2rem } from '@/utils'
 const API = new ExpressAPI()
 const props = defineProps({
   title: {

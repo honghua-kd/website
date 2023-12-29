@@ -7,7 +7,11 @@
     :close-on-press-escape="false"
   >
     <div class="second-title">基本信息</div>
-    <el-form ref="basicInfoFormRef" :model="basicInfoForm" label-width="90px">
+    <el-form
+      ref="basicInfoFormRef"
+      :model="basicInfoForm"
+      :label-width="px2rem('100px')"
+    >
       <el-row :gutter="20">
         <el-col :span="6">
           <el-form-item
@@ -120,7 +124,7 @@
               <el-col :span="8">
                 <el-form-item
                   label="寄件人联系方式:"
-                  label-width="120px"
+                  :label-width="px2rem('120px')"
                   prop="sendPhone"
                 >
                   <el-input
@@ -165,7 +169,7 @@
               <el-col :span="8">
                 <el-form-item
                   label="收件人联系方式:"
-                  label-width="120px"
+                  :label-width="px2rem('120px')"
                   prop="receivePhone"
                 >
                   <el-input
@@ -346,6 +350,7 @@ import {
   ElTableColumn,
   ElMessage
 } from 'element-plus'
+import { px2rem } from '@/utils'
 const API = new ExpressAPI()
 const CommonApi = new CommonAPI()
 const dialogTitle = ref<string>('邮寄信息登记详情')

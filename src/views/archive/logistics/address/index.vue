@@ -5,7 +5,7 @@
         ref="queryFormRef"
         :model="queryParams"
         class="search-bar"
-        label-width="90px"
+        :label-width="px2rem('90px')"
       >
         <el-row :gutter="20">
           <el-col :span="6">
@@ -91,6 +91,7 @@ import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import type { UsualAddressListItem } from '@/api'
 import { ExpressAPI } from '@/api'
+import { px2rem } from '@/utils'
 const API = new ExpressAPI()
 import EditForm from './EditForm.vue'
 const tableLoading = ref<boolean>(false)
