@@ -128,11 +128,9 @@
         border
         show-overflow-tooltip
         v-loading="tableLoading"
-        row-key="id"
-        :tree-props="{ children: 'target' }"
         @selection-change="selectionChangeHandler"
       >
-        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column type="selection" width="40" align="center" />
         <el-table-column
           label="快递状态"
           prop="expressStatus"
