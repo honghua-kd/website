@@ -14,12 +14,19 @@
 <script setup lang="ts">
 import downloadRecord from '@/views/downloadCenter/downloadRecord/index.vue'
 import uploadRecord from '@/views/recordUpload/uploadRecord/index.vue'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRoute } from '@toystory/lotso'
+const route = useRoute()
 // import type { TabsPaneContext } from 'element-plus'
 const activeName = ref<string>('down')
 // const changeTab = (tab: TabsPaneContext, event: Event) => {
 //   console.log(tab, event)
 // }
+onMounted(() => {
+  if (route?.value.query.tab) {
+    activeName.value = 'upload'
+  }
+})
 </script>
 
 <style scoped></style>

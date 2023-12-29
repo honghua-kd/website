@@ -7,13 +7,17 @@
     :close-on-press-escape="false"
   >
     <div class="second-title">基本信息</div>
-    <el-form ref="basicInfoFormRef" :model="basicInfoForm" label-width="90px">
+    <el-form
+      ref="basicInfoFormRef"
+      :model="basicInfoForm"
+      :label-width="px2rem('100px')"
+    >
       <el-row :gutter="20">
         <el-col :span="6">
           <el-form-item
             label="快递单号:"
             prop="expressNo"
-            :rules="[{ required: true }]"
+            :rules="[{ required: true, message: '快递单号不能为空' }]"
           >
             <el-input
               v-model="basicInfoForm.expressNo"
@@ -129,7 +133,7 @@
               <el-col :span="8">
                 <el-form-item
                   label="寄件人联系电话:"
-                  label-width="120px"
+                  :label-width="px2rem('120px')"
                   prop="postPhone"
                 >
                   <el-input
@@ -199,7 +203,7 @@
               <el-col :span="8">
                 <el-form-item
                   label="收件人联系电话:"
-                  label-width="120px"
+                  :label-width="px2rem('120px')"
                   prop="receivePhone"
                 >
                   <el-input
@@ -295,46 +299,35 @@
               :data="basicInfoForm.expressContentList"
               :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
               border
-              row-key="id"
             >
               <el-table-column
                 label="序号"
                 prop="number"
-                width="180"
                 align="center"
                 type="index"
               />
               <el-table-column
                 label="快递内容编号"
                 prop="contentNo"
-                width="180"
                 align="center"
               />
               <el-table-column
                 label="快递内容类型"
                 prop="contentType"
-                width="180"
                 align="center"
               />
               <el-table-column
                 label="类型对应编号"
                 prop="contentTypeNumber"
-                width="180"
                 align="center"
               />
               <el-table-column
                 label="关联合同号"
                 prop="contractNo"
-                width="180"
                 align="center"
               />
 
-              <el-table-column
-                label="操作"
-                fixed="right"
-                width="180"
-                align="center"
-              >
+              <el-table-column label="操作" fixed="right" align="center">
                 <template #default="scope">
                   <el-button
                     link
@@ -384,39 +377,21 @@
               :data="basicInfoForm.otherFileList"
               :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
               border
-              row-key="id"
             >
               <el-table-column
                 label="序号"
                 prop="number"
-                width="180"
                 align="center"
                 type="index"
               />
-              <el-table-column
-                label="文件名"
-                prop="fileName"
-                width="180"
-                align="center"
-              />
-              <el-table-column
-                label="上传用户"
-                prop="creator"
-                width="180"
-                align="center"
-              />
+              <el-table-column label="文件名" prop="fileName" align="center" />
+              <el-table-column label="上传用户" prop="creator" align="center" />
               <el-table-column
                 label="上传时间"
                 prop="createTime"
-                width="180"
                 align="center"
               />
-              <el-table-column
-                label="备注"
-                prop="fileRemark"
-                width="180"
-                align="center"
-              >
+              <el-table-column label="备注" prop="fileRemark" align="center">
                 <template #default="scope">
                   <el-input
                     v-model="scope.row.fileRemark"
@@ -426,12 +401,7 @@
                 </template>
               </el-table-column>
 
-              <el-table-column
-                label="操作"
-                fixed="right"
-                width="180"
-                align="center"
-              >
+              <el-table-column label="操作" fixed="right" align="center">
                 <template #default="scope">
                   <el-button
                     link
@@ -475,6 +445,7 @@ import type {
   OtherFileList,
   UsualAddressListItem
 } from '@/api'
+import { px2rem } from '@/utils'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import type { AutocompleteFetchSuggestionsCallback } from 'element-plus'
 import { ref, reactive, Ref, watch } from 'vue'
@@ -659,7 +630,6 @@ const open = async (row?: ExpressListItem) => {
   dialogVisible.value = true
   getDicts()
   init(row)
-  getOtherContentList()
 }
 const init = (row?: ExpressListItem) => {
   if (row) {
@@ -668,6 +638,7 @@ const init = (row?: ExpressListItem) => {
     basicInfoForm.id = data.id
     basicInfoForm.expressNo = data.expressNo
     basicInfoForm.expressCompany = data.expressCompany
+    basicInfoForm.expressCompanyOther = data.expressCompanyOther
     basicInfoForm.expressStatus = data.expressStatus
     basicInfoForm.expressType = data.expressType
     basicInfoForm.sendTime = data.sendTime
@@ -686,11 +657,13 @@ const init = (row?: ExpressListItem) => {
     basicInfoForm.updateTime = data.updateTime
     basicInfoForm.expressContentList = data.expressContentList || []
     basicInfoForm.otherFileList = data.otherFileList || []
+    getOtherContentList()
   } else {
     disFlag.value = false
     basicInfoForm.id = ''
     basicInfoForm.expressNo = ''
     basicInfoForm.expressCompany = ''
+    basicInfoForm.expressCompanyOther = ''
     basicInfoForm.expressStatus = 0
     basicInfoForm.expressType = 0
     basicInfoForm.sendTime = ''

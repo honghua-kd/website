@@ -7,6 +7,7 @@
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       width="50%"
+      @close="closeHandler"
     >
       <el-upload
         ref="upload"
@@ -94,9 +95,7 @@ const importHandler = () => {
   fileList.value.forEach((item) => {
     formData.append('file', item.raw as File)
   })
-  // formData.append('file', selectFile.value.raw)
   formData.append('bizType', 'EXPRESS_INFO')
-  // fileList.value = []
   CommonApi.getAsyncImport(formData)
     .then((res) => {
       if (res && res.code === 200) {
@@ -110,6 +109,11 @@ const importHandler = () => {
     .catch((err: Error) => {
       throw err
     })
+}
+
+// 关闭弹窗
+const closeHandler = () => {
+  upload.value!.clearFiles()
 }
 
 /** 打开弹窗 */
