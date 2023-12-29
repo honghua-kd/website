@@ -47,3 +47,26 @@ export interface RelationListRequest {
    */
   businessSubCategory?: null | string
 }
+
+export interface BatchExportRequest {
+  /**
+   * 业务大类
+   */
+  businessCategory: string
+  /**
+   * 业务单号
+   */
+  businessNo?: string
+  /**
+   * 业务小类
+   */
+  businessSubcategory: string
+  /**
+   * 附件code集合
+   */
+  fileCodeList?: string[]
+  /**
+   * 是否生成excel
+   */
+  makeExcel: boolean
+}

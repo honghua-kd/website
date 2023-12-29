@@ -126,11 +126,10 @@
         :data="tableData"
         :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
         border
-        show-overflow-tooltip
         v-loading="tableLoading"
         @selection-change="selectionChangeHandler"
       >
-        <el-table-column type="selection" width="40" align="center" />
+        <el-table-column type="selection" width="40" align="center" fixed />
         <el-table-column
           label="快递状态"
           prop="expressStatus"
@@ -183,6 +182,7 @@
           label="快递主要内容"
           prop="expressContentList"
           width="180"
+          show-overflow-tooltip
           align="center"
         >
           <template #default="scope">
@@ -541,7 +541,10 @@ const delHandler = (ids: string[]) => {
 // 导入结果查询
 const importResultHandler = () => {
   router.push({
-    path: '/recordUpload/index'
+    path: '/recordUpload/index',
+    query: {
+      tab: 'upload'
+    }
   })
 }
 
@@ -554,6 +557,7 @@ const handleCurrentChange = (val: number) => {
 // 页面条数改变
 const handleSizeChange = (val: number) => {
   queryParams.pageSize = val
+  getList()
 }
 
 // 批量获取数据字典
