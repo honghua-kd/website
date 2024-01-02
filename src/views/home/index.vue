@@ -16,9 +16,9 @@ export default {
 <style lang="scss" scoped>
 .home-container {
   overflow: hidden;
-  margin: -30px -20px;
-  padding: 20px;
-  height: calc(100vh - 134px);
+  margin: -6px -20px;
+  padding: 6px 20px;
+  height: calc(100vh - 106px);
   background-position: 50%;
   background-repeat: no-repeat;
   background-size: cover;
