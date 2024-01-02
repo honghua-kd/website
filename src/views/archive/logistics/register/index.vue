@@ -425,16 +425,16 @@ const getCheckConfig = () => {
 
 const getContentList = (value: ExpressContentList[]) => {
   let list = ''
-  // value.forEach((item, index) => {
-  //   if (index === value.length - 1) {
-  //     list += item.contentType ? item.contentType : ''
-  //   } else {
-  //     list += item.contentType ? item.contentType + '、' : ''
-  //   }
-  // })
-  value.forEach((item) => {
-    list += item.contentType ? item.contentType + ' ' : ''
+  value.forEach((item, index) => {
+    if (index === value.length - 1) {
+      list += item.contentType ? item.contentType : ''
+    } else {
+      list += item.contentType ? item.contentType + '、' : ''
+    }
   })
+  // value.forEach((item) => {
+  //   list += item.contentType ? item.contentType + ' ' : ''
+  // })
   return list
 }
 

@@ -146,7 +146,17 @@
             </el-row>
             <el-row :gutter="20">
               <el-col :span="18">
-                <el-form-item label="寄件人地址" prop="senderAddress">
+                <el-form-item
+                  label="寄件人地址"
+                  prop="sendAddress"
+                  :rules="[
+                    {
+                      max: 200,
+                      message: '内容超长',
+                      trigger: 'change'
+                    }
+                  ]"
+                >
                   <el-input
                     v-model="basicInfoForm.sendAddress"
                     clearable
@@ -216,7 +226,17 @@
             </el-row>
             <el-row :gutter="20">
               <el-col :span="18">
-                <el-form-item label="收件人地址" prop="receiveAddress">
+                <el-form-item
+                  label="收件人地址"
+                  prop="receiveAddress"
+                  :rules="[
+                    {
+                      max: 200,
+                      message: '内容超长',
+                      trigger: 'change'
+                    }
+                  ]"
+                >
                   <el-input
                     v-model="basicInfoForm.receiveAddress"
                     clearable
@@ -351,7 +371,17 @@
       </el-row>
       <el-row>
         <el-col :span="15">
-          <el-form-item label="备注" prop="expressContentRemark">
+          <el-form-item
+            label="备注"
+            prop="expressContentRemark"
+            :rules="[
+              {
+                max: 200,
+                message: '内容超长',
+                trigger: 'change'
+              }
+            ]"
+          >
             <el-input
               v-model="basicInfoForm.expressContentRemark"
               clearable
