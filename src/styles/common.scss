@@ -16,7 +16,7 @@
     // background-color: rgba(144, 147, 153, 0.3);
   }
 }
-  
+
 @mixin base-scrollbar {
   &::-webkit-scrollbar {
     width: 10px;
@@ -63,7 +63,7 @@ html {
   }
 }
 .page-container {
-  padding: $base-main-padding;
+  padding: $base-main-padding !important;
   background-color: $base-color-white;
 }
 .table-page {
@@ -73,4 +73,11 @@ html {
   padding-right: 20px;
   width: 100%;
   flex-direction: row;
+}
+.el-table .cell {
+  padding: 3px 5px !important;
+  font-size: 13px !important;
+  .el-table__expand-icon {
+    margin-right: 4px !important;
+  }
 }

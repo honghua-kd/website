@@ -10,7 +10,7 @@
         ref="formRef"
         :model="formData"
         v-loading="formLoading"
-        label-width="100"
+        :label-width="px2rem('100px')"
         :rules="formRules"
       >
         <el-form-item label="权限名称：" prop="permissionName">
@@ -119,6 +119,7 @@ import { ref, reactive, Ref } from 'vue'
 import { SystemAPI } from '@/api'
 import { ElMessage, ElForm } from 'element-plus'
 import { formulaList } from '@/views/system/role/config'
+import { px2rem } from '@/utils'
 import type {
   UserListPermission,
   RoleListPermission,

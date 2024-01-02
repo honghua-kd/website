@@ -11,7 +11,7 @@
         :model="formParams"
         v-loading="formLoading"
         :rules="formRules"
-        label-width="80px"
+        :label-width="px2rem('80px')"
       >
         <el-form-item label="字典名称" prop="name">
           <el-input v-model="formParams.name" placeholder="请输入字典名称" />
@@ -57,6 +57,7 @@ import { ref, reactive, Ref } from 'vue'
 import { SystemAPI } from '@/api/system'
 import { ElMessage, ElForm } from 'element-plus'
 import type { DictTypeUpdateRequest, DictTypePage } from '@/api'
+import { px2rem } from '@/utils'
 
 const API = new SystemAPI()
 const dialogTitle: Ref<string> = ref('新增字典')

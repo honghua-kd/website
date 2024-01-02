@@ -899,10 +899,10 @@
   dependencies:
     tinymce "^6.0.0 || ^5.5.1"
 
-"@toystory/lotso@2.1.1":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@toystory/lotso/-/lotso-2.1.1.tgz#190494e2ac86f93270a97c46aea89497a48f1230"
-  integrity sha512-vNv0Z3vnS2G66CR5jqkR0JDR650rih0iQkcnhvE0s8xCm5nL9PJsDEQHOjJPfoPYh+YH95G+no0mv4kScwLFPQ==
+"@toystory/lotso@2.1.4":
+  version "2.1.4"
+  resolved "https://registry.yarnpkg.com/@toystory/lotso/-/lotso-2.1.4.tgz#a9de2da282142cc3b0f170ac1dd5156eae1187b0"
+  integrity sha512-vdfZ3exeu/b7X1daUilc01plgKUiUj9orw1wzvDquNfdH4wCo1tbUiUOUNbCCfZLEvOED8Fjh9N5VlkCbEms7A==
   dependencies:
     "@element-plus/icons-vue" "2.1.0"
     "@vueuse/core" "^10.5.0"
@@ -6794,6 +6794,13 @@ postcss-media-query-parser@^0.2.3:
   resolved "https://registry.npmjs.org/postcss-media-query-parser/-/postcss-media-query-parser-0.2.3.tgz#27b39c6f4d94f81b1a73b8f76351c609e5cef244"
   integrity sha512-3sOlxmbKcSHMjlUXQZKQ06jOswE7oVkXPxmZdoB1r5l0q6gTFTQSHxNxOrCccElbW7dxNytifNEo8qidX2Vsig==
 
+postcss-plugin-px2rem@^0.8.1:
+  version "0.8.1"
+  resolved "https://registry.npmmirror.com/postcss-plugin-px2rem/-/postcss-plugin-px2rem-0.8.1.tgz#e8adf28fd2befbc079a119126b5c62a88905d5e1"
+  integrity sha512-gNxhrnR57pnGrPLLqVNWY9+BWgj46kYkphw+0gpRJf9tjgwI7/tLqQPK7KdlksB2SSAddOb11otDVwri8b8mXw==
+  dependencies:
+    postcss "^5.0.21"
+
 postcss-prefix-selector@^1.6.0:
   version "1.16.0"
   resolved "https://registry.npmjs.org/postcss-prefix-selector/-/postcss-prefix-selector-1.16.0.tgz#ad5b56f9a73a2c090ca7161049632c9d89bcb404"
@@ -6832,7 +6839,7 @@ postcss-value-parser@4.2.0, postcss-value-parser@^4.2.0:
   resolved "https://registry.npmjs.org/postcss-value-parser/-/postcss-value-parser-4.2.0.tgz#723c09920836ba6d3e5af019f92bc0971c02e514"
   integrity sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==
 
-postcss@^5.2.17:
+postcss@^5.0.21, postcss@^5.2.17:
   version "5.2.18"
   resolved "https://registry.npmjs.org/postcss/-/postcss-5.2.18.tgz#badfa1497d46244f6390f58b319830d9107853c5"
   integrity sha512-zrUjRRe1bpXKsX1qAJNJjqZViErVuyEkMTRrwu4ud4sbTtIBRmtaYDrHmcGgmrbsW3MHfmtIf+vJumgQn+PrXg==

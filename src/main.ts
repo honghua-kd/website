@@ -1,5 +1,6 @@
 import options from '@/config/setting'
 import requestConfig from '@/config/request.config'
+import compileConfig from '@/config/compile.config'
 
 // framework
 import {
@@ -8,13 +9,10 @@ import {
   usePermission,
   useUserStore,
   useRoutesStore,
+  usePx2Rem,
   store
 } from '@toystory/lotso'
 import '@toystory/lotso/dist/style.css'
-
-import { CoreAPI } from '@/api'
-import App from './App.vue'
-import { setActivePinia } from 'pinia'
 
 // 注册字节跳动图标
 import iconPark from './plugin/icon-park'
@@ -22,7 +20,19 @@ import iconPark from './plugin/icon-park'
 // svg-icon
 import 'virtual:svg-icons-register'
 
+// Element-plus
 import { ElMessage, ElLoading } from 'element-plus'
+
+import { CoreAPI } from '@/api'
+import App from './App.vue'
+import { setActivePinia } from 'pinia'
+
+// px2rem
+const { usePx2Rem: usePx2RemFlag } = compileConfig
+if (usePx2RemFlag) {
+  usePx2Rem()
+}
+
 // 注册框架，传入项目配置和store，页面路径
 const app = createFrameApp(App, {
   options,

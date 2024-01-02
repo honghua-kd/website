@@ -1,6 +1,6 @@
 <template>
   <div>
-    <template v-if="rowInfo.id">
+    <template v-if="rowInfo.fileCode">
       <span
         :class="
           compareHandler(rowKey, rowInfo.compareResult)

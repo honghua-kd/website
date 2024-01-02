@@ -13,7 +13,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-button type="primary" @click="submitForm()" :icon="Search">
+          <el-button type="primary" @click="getList()" :icon="Search">
             搜索
           </el-button>
           <el-button @click="resetForm()" :icon="Refresh">重置</el-button>
@@ -27,13 +27,16 @@
       v-loading="tableLoading"
     >
       <el-table-column type="index" width="80" label="序号" align="center" />
-      <el-table-column prop="downloadPerson" label="下载人"></el-table-column>
-      <el-table-column prop="downloadTime" label="下载时间"></el-table-column>
-      <el-table-column prop="status" label="状态"></el-table-column>
-      <el-table-column prop="downloadType" label="下载类型"></el-table-column>
+      <el-table-column prop="creatorName" label="下载人"></el-table-column>
+      <el-table-column prop="createTime" label="下载时间"></el-table-column>
+      <el-table-column prop="statusName" label="状态"></el-table-column>
+      <el-table-column
+        prop="downloadTypeName"
+        label="下载类型"
+      ></el-table-column>
       <el-table-column label="操作" align="center">
         <template v-slot="scope">
-          <el-button link type="primary" @click="handleAction(scope.row)">
+          <el-button link type="primary" @click="handleDwon(scope.row)">
             下载
           </el-button>
         </template>
@@ -54,18 +57,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, Ref } from 'vue'
+import { ref, reactive, Ref, onMounted } from 'vue'
 import dayjs from 'dayjs'
 import { Refresh, Search } from '@element-plus/icons-vue'
+import { RecordAPI, ExportTableItem } from '@/api'
 import {
   ElForm,
   ElFormItem,
   ElButton,
   ElDatePicker,
   ElTable,
-  ElTableColumn
+  ElTableColumn,
+  ElMessage
 } from 'element-plus'
-
+import { handleDownloadFile } from '@/utils'
+const API = new RecordAPI()
+onMounted(() => {
+  getList()
+})
 const tableLoading = ref<boolean>(false)
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
 const formRef = ref<InstanceType<typeof ElForm>>()
@@ -81,8 +90,31 @@ const queryForm = reactive<DownloadForm>({
   verifyTime: [dayjs().startOf('day').toDate(), dayjs().endOf('day').toDate()] // 创建时间
 })
 
-const submitForm = () => {
+const getList = () => {
   // 在这里执行搜索逻辑，例如发送一个 API 请求。
+  const parm = {
+    pageNo: queryForm.pageNo,
+    pageSize: queryForm.pageSize,
+    startCreateTime: dayjs(queryForm.verifyTime[0]).format(
+      'YYYY-MM-DD HH:mm:ss'
+    ),
+    endCreateTime: dayjs(queryForm.verifyTime[1]).format('YYYY-MM-DD HH:mm:ss')
+  }
+  tableLoading.value = true
+  API.uploadExportRecordPage(parm)
+    .then((res) => {
+      if (res && res.code === 200) {
+        tableLoading.value = false
+        tableData.value = res?.data?.list || []
+        pageTotal.value = res?.data?.total || 0
+      } else {
+        tableLoading.value = false
+      }
+    })
+    .catch((err: Error) => {
+      tableLoading.value = false
+      throw err
+    })
 }
 
 const resetForm = () => {
@@ -92,42 +124,13 @@ const resetForm = () => {
     dayjs().startOf('day').toDate(),
     dayjs().endOf('day').toDate()
   ]
+  getList()
 }
 
-/** 定义types */
-interface TableItem {
-  id: number
-  downloadPerson: string
-  downloadTime: string
-  status: string
-  downloadType: string
-}
-const tableData: Ref<TableItem[]> = ref([
-  {
-    id: 1,
-    downloadPerson: '张三',
-    downloadTime: '2023-07-18',
-    status: '进行中',
-    downloadType: '文件下载'
-  },
-  {
-    id: 2,
-    downloadPerson: '李四',
-    downloadTime: '2023-07-19',
-    status: '已完成',
-    downloadType: '图片下载'
-  }
-  // 可以根据需要添加更多数据行
-])
-
-const handleAction = (row: TableItem) => {
-  // 在这里处理操作按钮的点击事件，例如弹出一个对话框或执行其他逻辑。
-  console.log(row) // 打印当前行的数据对象，你可以根据需要访问其他属性或执行其他操作。
-}
+const tableData: Ref<ExportTableItem[]> = ref([])
 
 // 分页
 const handleCurrentChange = (val: number) => {
-  console.log('value>>>>>', val)
   queryForm.pageNo = val
   getList()
 }
@@ -137,9 +140,19 @@ const handleSizeChange = (val: number) => {
   queryForm.pageSize = val
   getList()
 }
-
-// 获取列表数据
-const getList = () => {
-  // 在这里处理获取列表数据
+const handleDwon = (row: ExportTableItem) => {
+  API.downLoadFiles({ fileCode: row.fileCode })
+    .then((res) => {
+      if (res) {
+        ElMessage({
+          type: 'success',
+          message: '操作成功'
+        })
+        handleDownloadFile(res, row.fileName)
+      }
+    })
+    .catch((err: Error) => {
+      throw err
+    })
 }
 </script>

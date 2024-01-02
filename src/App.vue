@@ -10,9 +10,10 @@
 import { ref, watch, computed } from 'vue'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import { CoreAPI, SystemAPI } from '@/api'
-import { useRouter, mitt, useRoutesStore } from '@toystory/lotso'
+import { useRouter, mitt, useRoutesStore, store } from '@toystory/lotso'
 import { useDictStore } from '@/store/dict'
 import type { ElScrollbar } from 'element-plus'
+import { px2rem } from '@/utils'
 
 const localLanguage = ref(zhCn)
 
@@ -76,10 +77,21 @@ const isAsyncRoute = computed(() => {
   )
 })
 
+const posi = ref('')
+
 watch(
-  () => isAsyncRoute.value,
-  (newVal) => {
+  [() => isAsyncRoute.value, () => store.state.value.setting.collapse],
+  ([newVal, collapse]) => {
     if (newVal === true) getDictInfo()
+
+    if (!collapse) {
+      posi.value = px2rem('240px')
+    } else {
+      posi.value = px2rem('65px')
+    }
+  },
+  {
+    immediate: true
   }
 )
 </script>
@@ -92,4 +104,22 @@ watch(
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+// .admin-container {
+//   .main {
+//     top: 116px !important;
+//   }
+//   .header {
+//     position: fixed;
+//     top: 0;
+//     left: v-bind(posi) !important;
+//     z-index: 100;
+//     width: calc(100% - v-bind(posi));
+//     height: auto;
+//     background: #f5f7f9;
+//   }
+// }
+// .footer-copyright {
+//   padding: 10px 0 !important;
+//   min-height: 40px !important;
+// }
 </style>
