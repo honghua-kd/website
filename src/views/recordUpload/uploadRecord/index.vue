@@ -38,6 +38,16 @@
       </el-table-column>
       <el-table-column prop="importTypeName" label="导入类型"></el-table-column>
       <el-table-column prop="statusName" label="状态"></el-table-column>
+      <el-table-column prop="statusName" label="失败原因下载">
+        <template v-slot="scope">
+          <el-button
+            v-if="scope.row.status == 2"
+            @click="errDown(scope.row)"
+            type="text"
+            >下载</el-button
+          >
+        </template>
+      </el-table-column>
       <el-table-column
         prop="msg"
         label="说明"
@@ -97,10 +107,16 @@ const getList = () => {
   const parm = {
     pageNo: queryForm.pageNo,
     pageSize: queryForm.pageSize,
-    startCreateTime: dayjs(queryForm.verifyTime[0]).format(
+    startCreateTime: '',
+    endCreateTime: ''
+  }
+  if (queryForm.verifyTime !== null) {
+    parm.startCreateTime = dayjs(queryForm.verifyTime[0]).format(
       'YYYY-MM-DD HH:mm:ss'
-    ),
-    endCreateTime: dayjs(queryForm.verifyTime[1]).format('YYYY-MM-DD HH:mm:ss')
+    )
+    parm.endCreateTime = dayjs(queryForm.verifyTime[1]).format(
+      'YYYY-MM-DD HH:mm:ss'
+    )
   }
   tableLoading.value = true
   API.uploadImportRecordPage(parm)
@@ -130,6 +146,21 @@ const resetForm = () => {
 }
 const downUploadFile = (row: ImportTableItem) => {
   API.downLoadFiles({ fileCode: row.fileCode })
+    .then((res) => {
+      if (res) {
+        ElMessage({
+          type: 'success',
+          message: '操作成功'
+        })
+        handleDownloadFile(res, row.fileName)
+      }
+    })
+    .catch((err: Error) => {
+      throw err
+    })
+}
+const errDown = (row: ImportTableItem) => {
+  API.importResult({ batchNo: row.batchNo, bizType: row.importType })
     .then((res) => {
       if (res) {
         ElMessage({

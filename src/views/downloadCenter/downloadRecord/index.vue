@@ -92,13 +92,20 @@ const queryForm = reactive<DownloadForm>({
 
 const getList = () => {
   // 在这里执行搜索逻辑，例如发送一个 API 请求。
+  console.log(queryForm.verifyTime)
   const parm = {
     pageNo: queryForm.pageNo,
     pageSize: queryForm.pageSize,
-    startCreateTime: dayjs(queryForm.verifyTime[0]).format(
+    startCreateTime: '',
+    endCreateTime: ''
+  }
+  if (queryForm.verifyTime !== null) {
+    parm.startCreateTime = dayjs(queryForm.verifyTime[0]).format(
       'YYYY-MM-DD HH:mm:ss'
-    ),
-    endCreateTime: dayjs(queryForm.verifyTime[1]).format('YYYY-MM-DD HH:mm:ss')
+    )
+    parm.endCreateTime = dayjs(queryForm.verifyTime[1]).format(
+      'YYYY-MM-DD HH:mm:ss'
+    )
   }
   tableLoading.value = true
   API.uploadExportRecordPage(parm)
