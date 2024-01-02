@@ -5,10 +5,10 @@
   "author": "Fintech Department",
   "scripts": {
     "check": "npm run lint:eslint && npm run lint:style && npm run lint:prettier && npm run type:check",
-    "serve": "cross-env NODE_ENV=development --max_old_space_size=6144 vite --mode development",
+    "serve": "cross-env NODE_ENV=development --max_old_space_size=8192 vite --mode development",
     "build": "npm run build:dev && npm run build:sit && npm run build:prod",
-    "build:dev": "cross-env NODE_OPTIONS=--max_old_space_size=6144 NODE_ENV=development APP_ENV=development npm run check && vite build --mode development",
-    "build:sit": "cross-env NODE_OPTIONS=--max_old_space_size=6144 NODE_ENV=development APP_ENV=sit npm run check && vite build --mode sit",
+    "build:dev": "cross-env NODE_OPTIONS=--max_old_space_size=8192 NODE_ENV=development APP_ENV=development npm run check && vite build --mode development",
+    "build:sit": "cross-env NODE_OPTIONS=--max_old_space_size=8192 NODE_ENV=development APP_ENV=sit npm run check && vite build --mode sit",
     "build:prod": "cross-env NODE_ENV=production APP_ENV=production npm run check && vite build --mode production",
     "preview": "cross-env NODE_ENV=production APP_ENV=production vite preview --mode production",
     "build:preview": "npm run build:prod && vite preview",
