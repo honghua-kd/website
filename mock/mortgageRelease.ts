@@ -1,7 +1,7 @@
 const VITE_API = '/api/operations-mortgage'
 export const mortgage = [
   {
-    url: `${VITE_API}/admin-api/mortgage/vehicleRegisterCard/list1`,
+    url: `${VITE_API}/admin-api/mortgage/vehicleRegisterCard/list`,
     method: 'post',
     response: () => {
       return {
@@ -42,8 +42,9 @@ export const mortgage = [
               compareResult: ['registerCardNo', 'vinNo', 'useType'],
               target: [
                 {
-                  fileCode: '123',
-                  fileName: '系统文件',
+                  id: '12301',
+                  fileCode: null,
+                  fileName: null,
                   registerCardArchiveNo: '',
                   verifyResult: '',
                   registerCardNo: '1212234122341223412234',
@@ -69,62 +70,7 @@ export const mortgage = [
                 }
               ]
             },
-            {
-              id: '456',
-              fileCode: '123',
-              fileName: '测试',
-              registerCardArchiveNo: 'sourceValue',
-              verifyResult: 'OCR_STATUS_PRO',
-              registerCardNo: '12',
-              vinNo: '12',
-              engineNo: '12234',
-              engineType: '12234',
-              licensePlateNo: '12234',
-              vehicleOwner: '12234',
-              vehicleColor: '12234',
-              useType: '12234',
-              mortgagee: '12234',
-              mortgageeUscc: '12234',
-              mortgageRegisterDate: '12234',
-              batchNo: '12234',
-              contractNo: '12234',
-              belongSystem: '12234',
-              affiliatesName: '12234',
-              channelName: '12234',
-              creator: '12234',
-              createTime: '12234',
-              archivalStatus: 'ARCHIVE_STATUS_YES',
-              archivalDate: '12234',
-              compareResult: ['registerCardArchiveNo', 'vinNo'],
-              target: [
-                {
-                  fileCode: '123',
-                  fileName: '系统文件',
-                  registerCardArchiveNo: '',
-                  verifyResult: '',
-                  registerCardNo: '12',
-                  vinNo: '12',
-                  engineNo: '12234',
-                  engineType: '12234',
-                  licensePlateNo: '浙B0978E',
-                  vehicleOwner: '12234',
-                  vehicleColor: '12234',
-                  useType: '12234',
-                  mortgagee: '12234',
-                  mortgageeUscc: '12234',
-                  mortgageRegisterDate: '12234',
-                  batchNo: '',
-                  contractNo: '',
-                  belongSystem: '',
-                  affiliatesName: '',
-                  channelName: '',
-                  creator: '',
-                  createTime: '',
-                  archivalStatus: '',
-                  archivalDate: ''
-                }
-              ]
-            },
+
             {
               id: '789',
               fileCode: '123',
@@ -154,8 +100,9 @@ export const mortgage = [
               compareResult: ['registerCardNo', 'vinNo', 'useType'],
               target: [
                 {
-                  fileCode: '123',
-                  fileName: '系统文件',
+                  id: '78901',
+                  fileCode: null,
+                  fileName: null,
                   registerCardArchiveNo: '',
                   verifyResult: '',
                   registerCardNo: '12',
@@ -187,7 +134,7 @@ export const mortgage = [
     }
   },
   {
-    url: `${VITE_API}/admin-api/mortgage/vehicleRegisterCard/getInfo1`,
+    url: `${VITE_API}/admin-api/mortgage/vehicleRegisterCard/getInfo`,
     method: 'post',
     response: () => {
       return {

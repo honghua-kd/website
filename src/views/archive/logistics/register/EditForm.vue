@@ -7,17 +7,22 @@
     :close-on-press-escape="false"
   >
     <div class="second-title">基本信息</div>
-    <el-form ref="basicInfoFormRef" :model="basicInfoForm" label-width="90px">
+    <el-form
+      ref="basicInfoFormRef"
+      :model="basicInfoForm"
+      :label-width="px2rem('100px')"
+    >
       <el-row :gutter="20">
         <el-col :span="6">
           <el-form-item
             label="快递单号:"
             prop="expressNo"
-            :rules="[{ required: true }]"
+            :rules="[{ required: true, message: '快递单号不能为空' }]"
           >
             <el-input
               v-model="basicInfoForm.expressNo"
               clearable
+              :disabled="disFlag"
               placeholder="请输入快递单号"
             />
           </el-form-item>
@@ -27,23 +32,23 @@
             class="express-com"
             label="快递公司:"
             prop="expressCompany"
-            :rules="[{ required: true }]"
+            :rules="[{ required: true, message: '快递公司不能为空' }]"
           >
             <el-select
-              v-model="basicInfoForm.expressCompanyStatus"
+              v-model="basicInfoForm.expressCompany"
               style="width: 100%"
               clearable
             >
               <el-option
-                v-for="(item, index) in archiveStatusOpts"
+                v-for="(item, index) in expressCompanyOpts"
                 :key="index"
                 :label="item.label"
-                :value="item.value"
+                :value="(item.label as string)"
               />
             </el-select>
-            <el-form-item prop="expressNo">
+            <el-form-item v-if="expressCompanyFlag" prop="expressCompanyOther">
               <el-input
-                v-model="basicInfoForm.expressOtherCompany"
+                v-model="basicInfoForm.expressCompanyOther"
                 clearable
                 placeholder="请输入快递公司"
               />
@@ -53,17 +58,17 @@
         <el-col :span="5">
           <el-form-item
             label="寄送/接收:"
-            prop="postOrReceive"
-            :rules="[{ required: true }]"
+            prop="expressType"
+            :rules="[{ required: true, message: '寄送/接收不能为空' }]"
           >
             <el-select
-              v-model="basicInfoForm.postOrReceiveStatus"
+              v-model="basicInfoForm.expressType"
               style="width: 100%"
               clearable
               placeholder="请选择寄送/接收"
             >
               <el-option
-                v-for="(item, index) in postAndReceiveStatusOpts"
+                v-for="(item, index) in expressTypeOpts"
                 :key="index"
                 :label="item.label"
                 :value="item.value"
@@ -72,12 +77,24 @@
           </el-form-item>
         </el-col>
         <el-col :span="5">
-          <el-form-item label="收件日期:" prop="registerTime">
+          <el-form-item
+            v-if="expressStatusFlag"
+            label="收件日期:"
+            prop="receiveTime"
+          >
             <el-date-picker
-              v-model="basicInfoForm.registerTime"
+              v-model="basicInfoForm.receiveTime"
               type="date"
-              :default-value="new Date()"
-              format="YYYY/MM/DD"
+              format="YYYY-MM-DD"
+              value-format="YYYY-MM-DD"
+            />
+          </el-form-item>
+          <el-form-item v-else label="寄件日期:" prop="sendTime">
+            <el-date-picker
+              v-model="basicInfoForm.sendTime"
+              type="date"
+              format="YYYY-MM-DD"
+              value-format="YYYY-MM-DD"
             />
           </el-form-item>
         </el-col>
@@ -93,28 +110,36 @@
           <el-col :span="20">
             <el-row :gutter="20">
               <el-col :span="8">
-                <el-form-item label="寄件人名称:" prop="senderName">
+                <el-form-item
+                  label="寄件人名称:"
+                  prop="sendUser"
+                  :rules="[
+                    {
+                      required: expressStatusFlag,
+                      message: '寄件人名称不能为空'
+                    }
+                  ]"
+                >
                   <el-autocomplete
-                    v-model="basicInfoForm.senderName"
+                    v-model="basicInfoForm.sendUser"
                     :fetch-suggestions="queryContractsSearch"
                     :trigger-on-focus="false"
                     clearable
                     placeholder="请输入寄件人名称"
                     @select="handleSelect"
-                    :debounce="500"
                   />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item
-                  label="寄件人联系方式:"
-                  label-width="120px"
+                  label="寄件人联系电话:"
+                  :label-width="px2rem('120px')"
                   prop="postPhone"
                 >
                   <el-input
-                    v-model="basicInfoForm.senderPhone"
+                    v-model="basicInfoForm.sendPhone"
                     clearable
-                    placeholder="请输入寄件人联系方式"
+                    placeholder="请输入寄件人联系电话"
                   />
                 </el-form-item>
               </el-col>
@@ -123,14 +148,24 @@
               <el-col :span="18">
                 <el-form-item label="寄件人地址:" prop="senderAddress">
                   <el-input
-                    v-model="basicInfoForm.senderAddress"
+                    v-model="basicInfoForm.sendAddress"
                     clearable
                     placeholder="请输入寄件人地址"
                   />
                 </el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-button type="primary">设为常用地址</el-button>
+                <el-button
+                  type="primary"
+                  @click="
+                    addAddressHandler(
+                      basicInfoForm.sendUser,
+                      basicInfoForm.sendPhone,
+                      basicInfoForm.sendAddress
+                    )
+                  "
+                  >设为常用地址</el-button
+                >
               </el-col>
             </el-row>
           </el-col>
@@ -145,40 +180,62 @@
           <el-col :span="20">
             <el-row :gutter="20">
               <el-col :span="8">
-                <el-form-item label="收件人名称:" prop="senderName">
-                  <el-input
-                    v-model="basicInfoForm.recipientName"
+                <el-form-item
+                  label="收件人名称:"
+                  prop="receiveUser"
+                  :rules="[
+                    {
+                      required: !expressStatusFlag,
+                      message: '收件人名称不能为空'
+                    }
+                  ]"
+                >
+                  <el-autocomplete
+                    v-model="basicInfoForm.receiveUser"
+                    :fetch-suggestions="queryContractsSearch"
+                    :trigger-on-focus="false"
                     clearable
                     placeholder="请输入收件人名称"
+                    @select="handleSelectRe"
                   />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item
-                  label="收件人联系方式:"
-                  label-width="120px"
-                  prop="recipientPhone"
+                  label="收件人联系电话:"
+                  :label-width="px2rem('120px')"
+                  prop="receivePhone"
                 >
                   <el-input
-                    v-model="basicInfoForm.recipientPhone"
+                    v-model="basicInfoForm.receivePhone"
                     clearable
-                    placeholder="请输入收件人联系方式"
+                    placeholder="请输入收件人联系电话"
                   />
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row :gutter="20">
               <el-col :span="18">
-                <el-form-item label="收件人地址:" prop="recipientAddress">
+                <el-form-item label="收件人地址:" prop="receiveAddress">
                   <el-input
-                    v-model="basicInfoForm.recipientAddress"
+                    v-model="basicInfoForm.receiveAddress"
                     clearable
                     placeholder="请输入收件人地址"
                   />
                 </el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-button type="primary">设为常用地址</el-button>
+                <el-button
+                  type="primary"
+                  @click="
+                    addAddressHandler(
+                      basicInfoForm.receiveUser,
+                      basicInfoForm.receivePhone,
+                      basicInfoForm.receiveAddress
+                    )
+                  "
+                  >设为常用地址</el-button
+                >
               </el-col>
             </el-row>
           </el-col>
@@ -189,17 +246,17 @@
         <el-col :span="5">
           <el-form-item
             label="快递状态:"
-            prop="postOrReceive"
-            :rules="[{ required: true }]"
+            prop="expressStatus"
+            :rules="[{ required: true, message: '快递状态不能为空' }]"
           >
             <el-select
-              v-model="basicInfoForm.postOrReceiveStatus"
+              v-model="basicInfoForm.expressStatus"
               style="width: 100%"
               clearable
               placeholder="请选择快递状态"
             >
               <el-option
-                v-for="(item, index) in postAndReceiveStatusOpts"
+                v-for="(item, index) in expressStatusOpts"
                 :key="index"
                 :label="item.label"
                 :value="item.value"
@@ -208,11 +265,11 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row>
+      <el-row v-if="problemFlag">
         <el-col :span="15">
-          <el-form-item label="问题描述:" prop="postOrReceive">
+          <el-form-item label="问题描述:" prop="expressStatusRemark">
             <el-input
-              v-model="basicInfoForm.expressNo"
+              v-model="basicInfoForm.expressStatusRemark"
               clearable
               :rows="4"
               type="textarea"
@@ -230,8 +287,8 @@
       <div class="express-content">
         <div class="title">快递内容</div>
         <div>
-          <el-button type="primary">导入</el-button>
-          <el-button type="primary">新增</el-button>
+          <el-button type="primary" @click="importContent">导入</el-button>
+          <el-button type="primary" @click="addExpressHandler">新增</el-button>
         </div>
       </div>
 
@@ -242,48 +299,50 @@
               :data="basicInfoForm.expressContentList"
               :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
               border
-              row-key="id"
             >
               <el-table-column
                 label="序号"
                 prop="number"
-                width="180"
                 align="center"
+                type="index"
               />
               <el-table-column
                 label="快递内容编号"
-                prop="expressContentNo"
-                width="180"
+                prop="contentNo"
                 align="center"
               />
               <el-table-column
                 label="快递内容类型"
-                prop="expressContentType"
-                width="180"
+                prop="contentType"
                 align="center"
               />
               <el-table-column
                 label="类型对应编号"
-                prop="typeNo"
-                width="180"
+                prop="contentTypeNumber"
                 align="center"
               />
               <el-table-column
                 label="关联合同号"
                 prop="contractNo"
-                width="180"
                 align="center"
               />
 
-              <el-table-column
-                label="操作"
-                fixed="right"
-                width="180"
-                align="center"
-              >
+              <el-table-column label="操作" fixed="right" align="center">
                 <template #default="scope">
-                  <el-button link type="primary"> 编辑 </el-button>
-                  <el-button link type="danger"> 删除 </el-button>
+                  <el-button
+                    link
+                    type="primary"
+                    @click="editExpressHandler(scope.row)"
+                  >
+                    编辑
+                  </el-button>
+                  <el-button
+                    link
+                    type="danger"
+                    @click="delExpressHandler(scope.row.contentNo)"
+                  >
+                    删除
+                  </el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -292,9 +351,9 @@
       </el-row>
       <el-row>
         <el-col :span="15">
-          <el-form-item label="备注:" prop="postOrReceive">
+          <el-form-item label="备注:" prop="expressContentRemark">
             <el-input
-              v-model="basicInfoForm.expressNo"
+              v-model="basicInfoForm.expressContentRemark"
               clearable
               :rows="3"
               type="textarea"
@@ -310,61 +369,45 @@
         <el-col>
           <el-form-item label="附件:" prop="otherInfoList">
             <div style="margin-bottom: 20px">
-              <el-button type="primary">上传</el-button>
+              <el-button type="primary" @click="importOtherFile"
+                >上传</el-button
+              >
             </div>
             <el-table
-              :data="basicInfoForm.otherInfoList"
+              :data="basicInfoForm.otherFileList"
               :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
               border
-              row-key="id"
             >
               <el-table-column
                 label="序号"
                 prop="number"
-                width="180"
                 align="center"
+                type="index"
               />
-              <el-table-column
-                label="文件名"
-                prop="expressContentNo"
-                width="180"
-                align="center"
-              />
-              <el-table-column
-                label="上传用户"
-                prop="expressContentType"
-                width="180"
-                align="center"
-              />
+              <el-table-column label="文件名" prop="fileName" align="center" />
+              <el-table-column label="上传用户" prop="creator" align="center" />
               <el-table-column
                 label="上传时间"
-                prop="typeNo"
-                width="180"
+                prop="createTime"
                 align="center"
               />
-              <el-table-column
-                label="备注"
-                prop="remark"
-                width="180"
-                align="center"
-              >
+              <el-table-column label="备注" prop="fileRemark" align="center">
                 <template #default="scope">
                   <el-input
-                    v-model="scope.row.remark"
+                    v-model="scope.row.fileRemark"
                     clearable
                     placeholder="请输入备注"
                   />
                 </template>
               </el-table-column>
 
-              <el-table-column
-                label="操作"
-                fixed="right"
-                width="180"
-                align="center"
-              >
+              <el-table-column label="操作" fixed="right" align="center">
                 <template #default="scope">
-                  <el-button link type="danger">
+                  <el-button
+                    link
+                    type="danger"
+                    @click="delOtherFile(scope.row.fileCode)"
+                  >
                     <el-icon><Delete /></el-icon>
                   </el-button>
                 </template>
@@ -375,92 +418,445 @@
       </el-row>
     </el-form>
     <template #footer>
-      <el-button type="primary"> 保 存 </el-button>
+      <el-button type="primary" @click="updateHandler"> 保 存 </el-button>
       <el-button type="primary" @click="dialogVisible = false">
         关 闭
       </el-button>
     </template>
+    <EditExpressForm
+      ref="editExpressFormRef"
+      :title="dialogExpressTitle"
+      @editcontent="updateExpressHandler"
+    />
+    <ImportContent ref="importContentRef" @importcontent="imContent" />
+    <ImportOtherFile ref="importOtherFileRef" @otherfileinfo="getFileInfo" />
   </el-dialog>
 </template>
 
 <script setup lang="ts">
-import {
-  ArrowDownBold,
-  ArrowUpBold,
-  Plus,
-  Delete,
-  Upload,
-  Download,
-  Check
-} from '@element-plus/icons-vue'
-import { ref, reactive, Ref, watch, onMounted } from 'vue'
-const dialogTitle = ref<string>('编辑邮寄信息')
+import EditExpressForm from './components/EditExpressForm.vue'
+import ImportContent from './components/ImportContent.vue'
+import ImportOtherFile from './components/ImportOtherFile.vue'
+import { Delete } from '@element-plus/icons-vue'
+import type {
+  ExpressDictItem,
+  ExpressListItem,
+  ExpressContentList,
+  OtherFileList,
+  UsualAddressListItem
+} from '@/api'
+import { px2rem } from '@/utils'
+import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
+import type { AutocompleteFetchSuggestionsCallback } from 'element-plus'
+import { ref, reactive, Ref, watch } from 'vue'
+import { CommonAPI, ExpressAPI } from '@/api'
+import { useUserStore } from '@toystory/lotso'
+const API = new ExpressAPI()
+const CommonApi = new CommonAPI()
+const dialogExpressTitle = ref<string>('')
 const dialogVisible = ref<boolean>(false)
-const basicInfoForm = reactive({
-  expressContentList: [
-    {
-      id: '1',
-      number: '1',
-      expressContentNo: 'SF1008926382181-001',
-      expressContentType: '发票',
-      typeNo: '7897979790',
-      contractNo: 'KCG23117833...'
-    }
-  ],
-  otherInfoList: [
-    {
-      id: '1',
-      number: '1',
-      expressContentNo: 'xxx.jpg',
-      expressContentType: 'admin',
-      typeNo: '2023-12-14 12:03:30',
-      remark: '合同'
-    }
-  ]
-})
-defineProps({
+const disFlag = ref<boolean>(false)
+const props = defineProps({
   title: {
     type: String,
     default: ''
   }
 })
-const commonContracts = ref([])
-const loadAll = ref([
-  { name: '曾三', number: '13724513588', address: '桥街大北路420号' },
-  { name: '曾四', number: '13824513588', address: '桥街大北路421号' },
-  { name: '张三', number: '13924513588', address: '桥街大北路422号' }
-])
-
-const queryContractsSearch = (queryString: string, cb: any) => {
-  const results = queryString
-    ? commonContracts.value.filter(createFilter(queryString))
-    : commonContracts.value
-  cb(results)
+const basicInfoForm = reactive<ExpressListItem>({
+  id: '',
+  expressNo: '',
+  expressCompany: '',
+  expressCompanyOther: '',
+  expressStatus: 0,
+  expressType: 0,
+  sendTime: '',
+  receiveTime: '',
+  sendUser: '',
+  sendPhone: '',
+  sendAddress: '',
+  receivePhone: '',
+  receiveAddress: '',
+  expressStatusRemark: '',
+  receiveUser: '',
+  expressContentRemark: '',
+  creator: '',
+  createTime: '',
+  updater: '',
+  updateTime: '',
+  expressContentList: [],
+  otherFileList: []
+})
+const commonContracts = ref<UsualAddressListItem[]>([])
+let timeout: ReturnType<typeof setTimeout>
+const queryContractsSearch = (
+  queryString: string,
+  cb: AutocompleteFetchSuggestionsCallback
+) => {
+  const params = {
+    userName: queryString
+  }
+  API.getUsualAddressList(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        commonContracts.value = res?.data?.list || []
+        commonContracts.value.forEach((item) => {
+          item.value = '常用联系-' + item.userName + '-' + item.userPhone
+        })
+        const results = queryString
+          ? commonContracts.value.filter(createFilter(queryString))
+          : commonContracts.value
+        clearTimeout(timeout)
+        timeout = setTimeout(() => {
+          cb(results)
+        }, 2000 * Math.random())
+      }
+    })
+    .catch((err: Error) => {
+      console.log(err)
+    })
 }
 const createFilter = (queryString: string) => {
-  return (res) => {
+  return (res: UsualAddressListItem) => {
     return res.value.indexOf(queryString) !== -1
   }
 }
-const handleSelect = (item) => {
-  basicInfoForm.senderName = item.name
-  basicInfoForm.senderPhone = item.number
-  basicInfoForm.senderAddress = item.address
+const handleSelect = (item: Record<string, undefined>) => {
+  basicInfoForm.sendUser = item.userName
+  basicInfoForm.sendPhone = item.userPhone
+  basicInfoForm.sendAddress = item.userAddress
+}
+const handleSelectRe = (item: Record<string, undefined>) => {
+  basicInfoForm.receiveUser = item.userName
+  basicInfoForm.receivePhone = item.userPhone
+  basicInfoForm.receiveAddress = item.userAddress
 }
 
-onMounted(() => {
-  commonContracts.value = JSON.parse(JSON.stringify(loadAll.value))
-  commonContracts.value.forEach((item) => {
-    item.value = '常用联系-' + item.name + '-' + item.number
+const addAddressHandler = (user?: string, phone?: string, address?: string) => {
+  const params = {
+    userName: user,
+    userPhone: phone,
+    userAddress: address,
+    userMail: ''
+  }
+  API.addUsualAddress(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        ElMessage({
+          type: 'success',
+          message: '添加成功'
+        })
+      }
+    })
+    .catch((err: Error) => {
+      console.log(err)
+    })
+}
+
+// 新增编辑快递内容弹窗
+const editExpressFormRef = ref()
+const editExpressHandler = (row: ExpressContentList) => {
+  dialogExpressTitle.value = '编辑快递内容'
+  editExpressFormRef.value.open(row)
+}
+const addExpressHandler = () => {
+  dialogExpressTitle.value = '新增快递内容'
+  editExpressFormRef.value.open(basicInfoForm.expressNo)
+}
+
+// 删除快递内容
+const delExpressHandler = (contentNo: string) => {
+  ElMessageBox.confirm('确认要删除吗？', '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
   })
-})
-
-/** 打开弹窗 */
-const open = async (id: string) => {
-  dialogVisible.value = true
+    .then(() => {
+      const index = basicInfoForm.expressContentList!.findIndex(
+        (item) => item.contentNo === contentNo
+      )
+      if (index !== -1) {
+        basicInfoForm.expressContentList!.splice(index, 1)
+      }
+    })
+    .catch((err: Error) => {
+      ElMessage({
+        type: 'error',
+        message: '删除失败'
+      })
+      throw err
+    })
 }
 
+const updateExpressHandler = (val: ExpressContentList) => {
+  if (val) {
+    const index = basicInfoForm.expressContentList!.findIndex(
+      (item) => item.contentNo === val.contentNo
+    )
+    if (index !== -1) {
+      basicInfoForm.expressContentList!.splice(index, 1, val)
+    } else {
+      basicInfoForm.expressContentList!.push(val)
+    }
+  }
+}
+const getOtherContentList = () => {
+  const params = {
+    businessCategory: 'EXPRESS',
+    businessSubCategory: 'INFO_OTHER',
+    businessNoList: [],
+    businessNo: basicInfoForm.expressNo
+  }
+  CommonApi.getRelationList(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        const data = res?.data || []
+        data.forEach((item) => {
+          basicInfoForm.otherFileList.push({
+            fileCode: item.attachmentId,
+            fileName: item.fileName,
+            fileRemark: item.remark,
+            creator: item.creator,
+            createTime: item.createTime
+          })
+        })
+      }
+    })
+    .catch((err: Error) => {
+      console.log(err)
+    })
+}
+/** 打开弹窗 */
+const open = async (row?: ExpressListItem) => {
+  dialogVisible.value = true
+  getDicts()
+  init(row)
+}
+const init = (row?: ExpressListItem) => {
+  if (row) {
+    disFlag.value = true
+    const data = JSON.parse(JSON.stringify(row))
+    basicInfoForm.id = data.id
+    basicInfoForm.expressNo = data.expressNo
+    basicInfoForm.expressCompany = data.expressCompany
+    basicInfoForm.expressCompanyOther = data.expressCompanyOther
+    basicInfoForm.expressStatus = data.expressStatus
+    basicInfoForm.expressType = data.expressType
+    basicInfoForm.sendTime = data.sendTime
+    basicInfoForm.receiveTime = data.receiveTime
+    basicInfoForm.sendUser = data.sendUser
+    basicInfoForm.sendPhone = data.sendPhone
+    basicInfoForm.sendAddress = data.sendAddress
+    basicInfoForm.receivePhone = data.receivePhone
+    basicInfoForm.receiveAddress = data.receiveAddress
+    basicInfoForm.expressStatusRemark = data.expressStatusRemark
+    basicInfoForm.receiveUser = data.receiveUser
+    basicInfoForm.expressContentRemark = data.expressContentRemark
+    basicInfoForm.creator = data.creator
+    basicInfoForm.createTime = data.createTime
+    basicInfoForm.updater = data.updater
+    basicInfoForm.updateTime = data.updateTime
+    basicInfoForm.expressContentList = data.expressContentList || []
+    basicInfoForm.otherFileList = data.otherFileList || []
+    getOtherContentList()
+  } else {
+    disFlag.value = false
+    basicInfoForm.id = ''
+    basicInfoForm.expressNo = ''
+    basicInfoForm.expressCompany = ''
+    basicInfoForm.expressCompanyOther = ''
+    basicInfoForm.expressStatus = 0
+    basicInfoForm.expressType = 0
+    basicInfoForm.sendTime = ''
+    basicInfoForm.receiveTime = ''
+    basicInfoForm.sendUser = ''
+    basicInfoForm.sendPhone = ''
+    basicInfoForm.sendAddress = ''
+    basicInfoForm.receivePhone = ''
+    basicInfoForm.receiveAddress = ''
+    basicInfoForm.expressStatusRemark = ''
+    basicInfoForm.receiveUser = ''
+    basicInfoForm.expressContentRemark = ''
+    basicInfoForm.creator = ''
+    basicInfoForm.createTime = ''
+    basicInfoForm.updater = ''
+    basicInfoForm.updateTime = ''
+    basicInfoForm.expressContentList = []
+    basicInfoForm.otherFileList = []
+  }
+}
+const expressCompanyOpts: Ref<ExpressDictItem[]> = ref([])
+const expressTypeOpts: Ref<ExpressDictItem[]> = ref([])
+const expressStatusOpts: Ref<ExpressDictItem[]> = ref([])
+const getDicts = () => {
+  expressCompanyOpts.value = JSON.parse(
+    localStorage.getItem('EXPRESS_COMPANY') as string
+  )
+  expressTypeOpts.value = JSON.parse(
+    localStorage.getItem('EXPRESS_TYPE') as string
+  )
+  expressTypeOpts.value.forEach((item) => {
+    item.value = Number(item.value)
+  })
+  expressStatusOpts.value = JSON.parse(
+    localStorage.getItem('EXPRESS_STATUS') as string
+  )
+  expressStatusOpts.value.forEach((item) => {
+    item.value = Number(item.value)
+  })
+}
 defineExpose({ open })
+const emit = defineEmits(['success'])
+const updateHandler = () => {
+  basicInfoForm.sendTime = basicInfoForm.sendTime
+    ? basicInfoForm.sendTime.slice(0, 10)
+    : ''
+  basicInfoForm.receiveTime = basicInfoForm.receiveTime
+    ? basicInfoForm.receiveTime.slice(0, 10)
+    : ''
+  if (!basicInfoForm.expressContentList?.length) {
+    ElMessage({
+      type: 'error',
+      message: '快递内容不能为空'
+    })
+  } else {
+    if (props.title === '新增邮寄信息') {
+      const params = basicInfoForm
+      API.addExpressInfo(params)
+        .then((res) => {
+          if (res && res.code === 200) {
+            ElMessage({
+              type: 'success',
+              message: '新增成功'
+            })
+            dialogVisible.value = false
+            emit('success')
+          }
+        })
+        .catch((err: Error) => {
+          console.log(err)
+        })
+    } else {
+      const params = basicInfoForm
+      API.editExpressInfo(params)
+        .then((res) => {
+          if (res && res.code === 200) {
+            ElMessage({
+              type: 'success',
+              message: '修改成功'
+            })
+            dialogVisible.value = false
+            emit('success')
+          }
+        })
+        .catch((err: Error) => {
+          console.log(err)
+        })
+    }
+  }
+}
+const importContentRef = ref()
+const importContent = () => {
+  importContentRef.value.open(basicInfoForm.expressNo)
+}
+// 导入快递内容数据回显
+const imContent = (params: ExpressContentList[]) => {
+  // basicInfoForm.expressContentList?.push([...params])
+  params.forEach((item) => {
+    basicInfoForm.expressContentList?.push({
+      contentNo: item.contentNo,
+      contentType: item.contentType,
+      contentTypeNumber: item.contentTypeNumber
+    })
+  })
+}
+// 导入上传附件数据回显
+const getFileInfo = (params: OtherFileList[]) => {
+  const userStore = useUserStore()
+  const user = userStore.userInfo?.staffCode as string
+  console.error(params)
+  if (params && params.length) {
+    params.forEach((item) => {
+      basicInfoForm.otherFileList.push({
+        fileCode: item.fileCode,
+        fileName: item.fileName,
+        fileRemark: '',
+        creator: user
+      })
+    })
+  }
+}
+// 删除附件信息
+const delOtherFile = (code: string) => {
+  ElMessageBox.confirm('确认要删除吗？', '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(() => {
+      const index = basicInfoForm.otherFileList.findIndex(
+        (item) => item.fileCode === code
+      )
+      if (index !== -1) {
+        basicInfoForm.otherFileList.splice(index, 1)
+      }
+    })
+    .catch((err: Error) => {
+      ElMessage({
+        type: 'error',
+        message: '删除失败'
+      })
+      throw err
+    })
+}
+
+const importOtherFileRef = ref()
+const importOtherFile = () => {
+  importOtherFileRef.value.open()
+}
+
+const expressStatusFlag = ref(true)
+// const requiredMes = ref()
+watch(
+  () => basicInfoForm.expressType,
+  (val) => {
+    if (val === 0) {
+      expressStatusFlag.value = false
+    } else if (val === 1) {
+      expressStatusFlag.value = true
+    }
+  },
+  {
+    immediate: true
+  }
+)
+const expressCompanyFlag = ref(true)
+watch(
+  () => basicInfoForm.expressCompany,
+  (val) => {
+    if (val === '其他') {
+      expressCompanyFlag.value = true
+    } else {
+      expressCompanyFlag.value = false
+    }
+  },
+  {
+    immediate: true
+  }
+)
+const problemFlag = ref(false)
+watch(
+  () => basicInfoForm.expressStatus,
+  (val) => {
+    if (val === 2) {
+      problemFlag.value = true
+    } else {
+      problemFlag.value = false
+    }
+  },
+  {
+    immediate: true
+  }
+)
 </script>
 
 <style lang="scss" scoped>

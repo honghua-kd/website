@@ -11,7 +11,7 @@
         :model="formParams"
         v-loading="formLoading"
         :rules="formRules"
-        label-width="80px"
+        :label-width="px2rem('80px')"
       >
         <el-form-item label="字典类型" prop="dictType">
           <el-input v-model="formParams.dictType" disabled />
@@ -70,6 +70,7 @@ import { ref, reactive, Ref } from 'vue'
 import { SystemAPI } from '@/api/system'
 import { ElMessage, ElForm } from 'element-plus'
 import type { DictDataUpdateRequest } from '@/api'
+import { px2rem } from '@/utils'
 const API = new SystemAPI()
 const dialogTitle: Ref<string> = ref('')
 const formRef = ref<InstanceType<typeof ElForm>>()

@@ -190,6 +190,13 @@ export interface BaseStaffRequest {
 
   staffCode: string
 }
+
+// 查询用户信息
+
+export type StaffInfoRequest = BaseStaffRequest &
+  PageRequest & {
+    orgCode?: string
+  }
 export interface GetStaffSubordinatesRequest extends PageRequest {
   /**
    * 员工工号
