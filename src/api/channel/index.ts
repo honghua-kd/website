@@ -93,7 +93,7 @@ export class AgencyAPI {
     })
   }
 
-  // 渠道商/办事处名单-列表
+  // 渠道商/办事处地址-列表
   getAgencyAddressList(
     data: AgencyAddressListRequest
   ): Response<PageList<AgencyAddressListResponse>> {
@@ -104,7 +104,7 @@ export class AgencyAPI {
     })
   }
 
-  // 渠道商/办事处名单-详情
+  // 渠道商/办事处地址-详情
   getAgencyAddressDetail(
     data: AgencyAddressDetailRequest
   ): Response<AgencyAddressDetailResponse> {
@@ -115,7 +115,7 @@ export class AgencyAPI {
     })
   }
 
-  // 渠道商/办事处名单-编辑
+  // 渠道商/办事处地址-编辑
   getAgencyAddressEdit(
     data: AgencyAddressEditRequest
   ): Response<boolean | null | undefined> {
@@ -126,7 +126,7 @@ export class AgencyAPI {
     })
   }
 
-  // 渠道商/办事处名单-新增
+  // 渠道商/办事处地址-新增
   getAgencyAddressSave(
     data: AgencyAddressSaveRequest
   ): Response<boolean | null | undefined> {
@@ -137,7 +137,7 @@ export class AgencyAPI {
     })
   }
 
-  // 渠道商/办事处名单-删除
+  // 渠道商/办事处地址-删除
   getAgencyAddressDelete(
     data: AgencyAddressDeleteRequest
   ): Response<boolean | null | undefined> {
@@ -148,7 +148,7 @@ export class AgencyAPI {
     })
   }
 
-  // 渠道商/办事处名单-导出
+  // 渠道商/办事处地址-导出
   getAgencyAddressExport(
     data: AgencyAddressExportRequest
   ): Response<AgencyAddressExportResponse> {

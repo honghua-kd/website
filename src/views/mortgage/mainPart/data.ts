@@ -7,7 +7,8 @@ export default {
       columnKey: '',
       width: '40',
       minWidth: '',
-      fixed: true
+      fixed: true,
+      align: 'center'
     },
     {
       type: '',
@@ -16,7 +17,8 @@ export default {
       columnKey: 'name',
       width: '',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      align: 'left'
     },
     {
       type: '',
@@ -25,7 +27,8 @@ export default {
       columnKey: 'fullName',
       width: '',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      align: 'left'
     },
     {
       type: '',
@@ -34,7 +37,8 @@ export default {
       columnKey: 'organCode',
       width: '120',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      align: 'center'
     },
     {
       type: '',
@@ -43,7 +47,8 @@ export default {
       columnKey: 'city',
       width: '70',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      align: 'center'
     },
     {
       type: '',
@@ -52,7 +57,8 @@ export default {
       columnKey: 'area',
       width: '70',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      align: 'center'
     },
     {
       type: '',
@@ -61,7 +67,8 @@ export default {
       columnKey: 'registerAddress',
       width: '100',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      align: 'left'
     },
     {
       type: '',
@@ -70,7 +77,8 @@ export default {
       columnKey: 'address',
       width: '',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      align: 'left'
     },
     {
       type: '',
@@ -79,7 +87,8 @@ export default {
       columnKey: 'person',
       width: '',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      align: 'left'
     },
     {
       type: '',
@@ -88,7 +97,8 @@ export default {
       columnKey: 'phone',
       width: '100',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      align: 'center'
     },
     {
       type: '',
@@ -97,7 +107,8 @@ export default {
       columnKey: 'creator',
       width: '100',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      align: 'left'
     },
     {
       type: '',
@@ -106,7 +117,8 @@ export default {
       columnKey: 'createTime',
       width: '100',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      align: 'center'
     },
     {
       type: '',
@@ -115,7 +127,8 @@ export default {
       columnKey: 'lastUpdatePerson',
       width: '100',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      align: 'left'
     },
     {
       type: '',
@@ -124,7 +137,8 @@ export default {
       columnKey: 'updateTime',
       width: '100',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      align: 'center'
     },
     {
       type: '',
@@ -133,7 +147,8 @@ export default {
       columnKey: '',
       width: '120',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      align: 'center'
     }
   ],
   cityList: [

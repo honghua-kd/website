@@ -10,6 +10,7 @@ type TableColumnType = {
   width: string
   minWidth: string
   fixed: boolean
+  align: string
 }
 export type RecordType<T = any> = Record<string, T>
 export type StateType = {
@@ -19,7 +20,7 @@ export type StateType = {
     areaCode: number[]
   }
   sourceArr: OptionItemType[]
-  actionList: OptionItemType[]
+  tableLoading: boolean
   tableColumn: TableColumnType[]
   tableData: RecordType[]
   tableActionList: OptionItemType[]

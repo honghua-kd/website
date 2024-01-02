@@ -29,7 +29,8 @@ export default {
       columnKey: '',
       width: '40',
       minWidth: '',
-      fixed: true
+      fixed: true,
+      align: 'center'
     },
     {
       type: '',
@@ -38,7 +39,8 @@ export default {
       columnKey: '',
       width: '',
       minWidth: '100',
-      fixed: false
+      fixed: false,
+      align: 'center'
     },
     {
       type: '',
@@ -47,7 +49,8 @@ export default {
       columnKey: '',
       width: '',
       minWidth: '120',
-      fixed: false
+      fixed: false,
+      align: 'left'
     },
     {
       type: '',
@@ -56,7 +59,8 @@ export default {
       columnKey: '',
       width: '',
       minWidth: '100',
-      fixed: false
+      fixed: false,
+      align: 'center'
     },
     {
       type: '',
@@ -65,7 +69,8 @@ export default {
       columnKey: '',
       width: '',
       minWidth: '100',
-      fixed: false
+      fixed: false,
+      align: 'center'
     },
     {
       type: '',
@@ -74,7 +79,8 @@ export default {
       columnKey: '',
       width: '',
       minWidth: '100',
-      fixed: false
+      fixed: false,
+      align: 'center'
     },
     {
       type: '',
@@ -83,7 +89,8 @@ export default {
       columnKey: '',
       width: '',
       minWidth: '170',
-      fixed: false
+      fixed: false,
+      align: 'left'
     },
     {
       type: '',
@@ -92,7 +99,8 @@ export default {
       columnKey: '',
       width: '100',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      align: 'left'
     },
     {
       type: '',
@@ -101,7 +109,8 @@ export default {
       columnKey: '',
       width: '100',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      align: 'center'
     },
     {
       type: '',
@@ -110,7 +119,8 @@ export default {
       columnKey: '',
       width: '',
       minWidth: '100',
-      fixed: false
+      fixed: false,
+      align: 'left'
     },
     {
       type: '',
@@ -119,7 +129,8 @@ export default {
       columnKey: '',
       width: '100',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      align: 'center'
     },
     {
       type: '',
@@ -128,7 +139,8 @@ export default {
       columnKey: '',
       width: '',
       minWidth: '100',
-      fixed: false
+      fixed: false,
+      align: 'left'
     },
     {
       type: '',
@@ -137,7 +149,8 @@ export default {
       columnKey: '',
       width: '',
       minWidth: '100',
-      fixed: false
+      fixed: false,
+      align: 'center'
     },
     {
       type: '',
@@ -146,7 +159,8 @@ export default {
       columnKey: '',
       width: '120',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      align: 'center'
     }
   ],
   tableActionList: [

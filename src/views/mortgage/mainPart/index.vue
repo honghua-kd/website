@@ -1,41 +1,72 @@
 <template>
   <div class="main-part-container">
     <!-- filter -->
-    <el-card :body-style="{ padding: '10px 10px 0px' }">
-      <el-form :inline="true" :model="formModel" class="filter-form">
-        <el-form-item label="代理商/办事处">
-          <el-input v-model="formModel.name" />
-        </el-form-item>
-        <el-form-item label="来源系统">
-          <el-select v-model="formModel.source">
-            <el-option
-              v-for="item in sourceArr"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="search">查询</el-button>
-        </el-form-item>
+    <div class="main-search-container" :ref="searchBoxRef">
+      <el-form
+        :inline="true"
+        :model="formModel"
+        class="filter-form"
+        :label-width="px2rem('110px')"
+      >
+        <el-row :gutter="20">
+          <el-col :span="6"
+            ><el-form-item label="代理商/办事处" style="width: 100%">
+              <el-input v-model="formModel.name" /> </el-form-item
+          ></el-col>
+          <el-col :span="6"
+            ><el-form-item label="来源系统" style="width: 100%">
+              <el-select v-model="formModel.source" style="width: 100%">
+                <el-option
+                  v-for="item in sourceArr"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select> </el-form-item
+          ></el-col>
+        </el-row>
+        <el-row justify="end">
+          <el-col :span="6" class="btn-row"
+            ><el-form-item>
+              <el-button :icon="Search" type="primary" @click="search"
+                >查询</el-button
+              >
+              <el-button :icon="Refresh" @click="refresh">重置</el-button>
+            </el-form-item></el-col
+          >
+        </el-row>
       </el-form>
-    </el-card>
+    </div>
+    <el-divider border-style="dashed" />
     <!-- action -->
     <div class="action">
-      <el-button
-        v-for="i in actionList"
-        :key="i.value"
-        type="primary"
-        @click="action(i.value)"
-        >{{ i.label }}</el-button
+      <el-button :icon="Plus" type="primary" @click="action('Add')"
+        >新增</el-button
       >
+      <el-button :icon="Download" type="primary" @click="action('Download')"
+        >下载</el-button
+      >
+      <el-tooltip content="需勾选要，方可操作" placement="top-start"
+        ><el-button :icon="Delete" type="primary" @click="action('Delete')"
+          >删除</el-button
+        >
+      </el-tooltip>
     </div>
     <!-- list -->
     <div class="list">
       <el-table
         :data="tableData"
-        border
+        :border="true"
+        :header-cell-style="{
+          background: '#eef1f6',
+          color: '#606266',
+          textAlign: 'center'
+        }"
+        v-loading="tableLoading"
+        row-key="id"
+        :tree-props="{ children: 'target' }"
+        :max-height="tableHeight"
+        :cell-style="{ borderRight: '1px solid #fff' }"
         style="width: 100%"
         @select="selectData"
         @select-all="selectAllData"
@@ -48,6 +79,7 @@
           :label="i.label"
           :width="i.width"
           :fixed="i.fixed"
+          :align="i.align"
         >
           <template v-if="i.label === '操作'">
             <el-button link type="primary">编辑</el-button>
@@ -77,10 +109,18 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, toRefs } from 'vue'
+import { reactive, toRefs, ref, computed } from 'vue'
 import BasicData from '@/views/mortgage/mainPart/data'
 import EditModel from '@/views/mortgage/mainPart/editModel.vue'
-import type { StateType, RecordType } from '@/views/mortgage/mainPart/type.ts'
+import type { StateType, RecordType } from '@/views/mortgage/mainPart/type'
+import {
+  Refresh,
+  Search,
+  Plus,
+  Delete,
+  Download
+} from '@element-plus/icons-vue'
+import { px2rem } from '@/utils'
 const state = reactive<StateType>({
   formModel: {
     name: '',
@@ -108,20 +148,7 @@ const state = reactive<StateType>({
       value: '商用车资产转让'
     }
   ],
-  actionList: [
-    {
-      label: '新增',
-      value: 'add'
-    },
-    {
-      label: '下载',
-      value: 'download'
-    },
-    {
-      label: '删除',
-      value: 'delete'
-    }
-  ],
+  tableLoading: false,
   tableColumn: BasicData.tableColumn,
   tableData: [
     {
@@ -161,19 +188,36 @@ const state = reactive<StateType>({
 const {
   formModel,
   sourceArr,
-  actionList,
+  tableLoading,
   tableColumn,
   tableData,
   pageTotal,
   editModelVisible
 } = toRefs(state)
 
+// 表格最大高度
+const searchBoxRef = ref()
+const tableHeight = computed(() => {
+  if (searchBoxRef.value?.clientHeight) {
+    const height = Number(
+      document.documentElement.clientHeight -
+        200 -
+        searchBoxRef.value?.clientHeight
+    )
+    return height
+  } else {
+    const height = Number(document.documentElement.clientHeight - 200)
+    return height
+  }
+})
+
 const search = () => {}
+const refresh = () => {}
 const handleSizeChange = () => {}
 const handleCurrentChange = () => {}
 
 const action = (val: string | number) => {
-  if (val === 'add') {
+  if (val === 'Add') {
     state.editModelVisible = true
   }
 }
@@ -192,9 +236,18 @@ const selectData = (selection: RecordType[], row: RecordType) => {
 
 <style lang="scss" scoped>
 .main-part-container {
+  .main-search-container {
+    width: 100%;
+  }
   .filter-form {
+    padding: 6px 10px;
+    width: 90%;
     .el-form-item {
       align-items: center;
+    }
+    .btn-row {
+      display: flex;
+      justify-content: flex-end;
     }
   }
   .action {

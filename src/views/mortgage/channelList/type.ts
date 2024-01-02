@@ -1,3 +1,7 @@
+import type {
+  AgencyListResponse,
+  AgencyDetailResponse
+} from '@/api/channel/types/response'
 type OptionItemType = {
   label: string
   value: string | number
@@ -10,8 +14,9 @@ type TableColumnType = {
   width: string
   minWidth: string
   fixed: boolean
+  align: string
 }
-export type RecordType<T = any> = Record<string, T>
+// export type RecordType<T = any> = Record<string, T>
 export type StateType = {
   formModel: {
     agencyName: string
@@ -21,16 +26,18 @@ export type StateType = {
     pageSize: number
   }
   sourceArr: OptionItemType[]
-  actionList: OptionItemType[]
+  tableLoading: boolean
   tableColumn: TableColumnType[]
-  tableData: RecordType[]
+  tableData: AgencyListResponse[] | undefined
   tableActionList: OptionItemType[]
-  pageTotal: number
+  pageTotal: number | undefined
   editModelVisible: boolean
   editModelTitle: string
+  selectIdsArr: string[]
+  detailData: AgencyDetailResponse
 }
 export type ModelStateType = {
   dialogVisible: boolean
-  editForm: RecordType
+  editForm: AgencyDetailResponse
   dialogTitle: string
 }

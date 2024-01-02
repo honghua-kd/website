@@ -13,7 +13,7 @@
       <el-form :model="editForm" label-position="top">
         <el-form-item label="来源系统">
           <el-select
-            v-model="editForm.sourceSystem1"
+            v-model="editForm.sourceSystem2"
             style="width: 100%"
           ></el-select>
         </el-form-item>
@@ -49,14 +49,14 @@
 </template>
 <script lang="ts" setup>
 import { watch, toRefs, reactive } from 'vue'
-import type {
-  RecordType,
-  ModelStateType
-} from '@/views/mortgage/channelList/type'
+import type { ModelStateType } from '@/views/mortgage/channelList/type'
+import type { AgencyDetailResponse } from '@/api/channel/types/response'
+import { AgencyAPI } from '@/api'
+const API = new AgencyAPI()
 
 type ModelPropsType = {
   visible: boolean
-  formValue: RecordType
+  formValue: AgencyDetailResponse
   title: string
 }
 const props = withDefaults(defineProps<ModelPropsType>(), {
@@ -92,8 +92,29 @@ const handleClose = () => {
     type: 'click-close'
   })
 }
-const onCloseModel = (type: string) => {
+const onCloseModel = async (type: string) => {
   console.log(editForm.value)
+  if (type === 'update-close') {
+    if (dialogTitle.value === '编辑') {
+      const params = {
+        agencyName: editForm.value.agencyName,
+        id: editForm.value.id,
+        sourceSystem2: editForm.value.sourceSystem2,
+        unpaidNeedApproveFlag: editForm.value.unpaidNeedApproveFlag,
+        createGatherFlag: editForm.value.createGatherFlag
+      }
+      await API.getAgencyEdit(params)
+    }
+    if (dialogTitle.value === '新增') {
+      const params = {
+        agencyName: editForm.value.agencyName,
+        sourceSystem2: editForm.value.sourceSystem2,
+        unpaidNeedApproveFlag: editForm.value.unpaidNeedApproveFlag,
+        createGatherFlag: editForm.value.createGatherFlag
+      }
+      await API.getAgencySave(params)
+    }
+  }
   emit('closeModel', {
     visible: false,
     type

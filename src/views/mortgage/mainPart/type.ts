@@ -10,6 +10,7 @@ type TableColumnType = {
   width: string
   minWidth: string
   fixed: boolean
+  align: string
 }
 export type RecordType<T = any> = Record<string, T>
 export type StateType = {
@@ -18,7 +19,7 @@ export type StateType = {
     source: string
   }
   sourceArr: OptionItemType[]
-  actionList: OptionItemType[]
+  tableLoading: boolean
   tableColumn: TableColumnType[]
   tableData: RecordType[]
   pageTotal: number

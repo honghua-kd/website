@@ -57,7 +57,7 @@ export interface AgencyDetailResponse {
   /**
    * 系统来源1
    */
-  sourceSystem1?: null | string
+  sourceSystem1?: string
   /**
    * 系统来源2
    */

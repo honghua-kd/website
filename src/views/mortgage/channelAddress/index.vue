@@ -1,54 +1,96 @@
 <template>
-  <div class="main-part-container">
+  <div class="channel-container">
     <!-- filter -->
-    <el-card :body-style="{ padding: '10px 10px 0px' }">
-      <el-form :inline="true" :model="formModel" class="filter-form">
-        <el-form-item label="来源系统">
-          <el-select v-model="formModel.source">
-            <el-option
-              v-for="item in sourceArr"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="代理商/办事处">
-          <el-input v-model="formModel.name" />
-        </el-form-item>
-        <el-form-item label="城市">
-          <el-cascader
-            style="width: 100%"
-            v-model="formModel.areaCode"
-            placeholder="请选择"
-            :props="propsObj"
-            :options="BasicData.cityList"
-            collapse-tags
-            collapse-tags-tooltip
-            clearable
-            @change="changeCity"
-          />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="search">查询</el-button>
-        </el-form-item>
+    <div class="channel-search-container" :ref="searchBoxRef">
+      <el-form
+        :inline="true"
+        :model="formModel"
+        class="filter-form"
+        :label-width="px2rem('110px')"
+      >
+        <el-row>
+          <el-col :span="6">
+            <el-form-item label="来源系统" style="width: 100%">
+              <el-select v-model="formModel.source" style="width: 100%">
+                <el-option
+                  v-for="item in sourceArr"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="代理商/办事处" style="width: 100%">
+              <el-input v-model="formModel.name" /> </el-form-item
+          ></el-col>
+          <el-col :span="6"
+            ><el-form-item label="城市" style="width: 100%">
+              <el-cascader
+                style="width: 100%"
+                v-model="formModel.areaCode"
+                placeholder="请选择"
+                :props="propsObj"
+                :options="BasicData.cityList"
+                collapse-tags
+                collapse-tags-tooltip
+                clearable
+                @change="changeCity"
+              /> </el-form-item
+          ></el-col>
+        </el-row>
+        <el-row justify="end">
+          <el-col :span="6" class="btn-row">
+            <el-form-item>
+              <el-button :icon="Search" type="primary" @click="search"
+                >查询</el-button
+              >
+              <el-button :icon="Refresh" @click="refresh">重置</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
-    </el-card>
+    </div>
+    <el-divider border-style="dashed" />
     <!-- action -->
     <div class="action">
-      <el-button
-        v-for="i in actionList"
-        :key="i.value"
-        type="primary"
-        @click="action(i.value)"
-        >{{ i.label }}</el-button
+      <el-button :icon="Plus" type="primary" @click="action('BatchImport')"
+        >批量导入</el-button
       >
+      <el-button
+        :icon="Download"
+        type="primary"
+        @click="action('DownloadTemplate')"
+        >下载导入模版</el-button
+      >
+      <el-button :icon="Plus" type="primary" @click="action('Add')"
+        >新增</el-button
+      >
+      <el-button :icon="Download" type="primary" @click="action('Download')"
+        >下载</el-button
+      >
+      <el-tooltip content="需勾选要，方可操作" placement="top-start"
+        ><el-button :icon="Delete" type="primary" @click="action('Delete')"
+          >删除</el-button
+        >
+      </el-tooltip>
     </div>
     <!-- list -->
     <div class="list">
       <el-table
         :data="tableData"
         :border="true"
+        :header-cell-style="{
+          background: '#eef1f6',
+          color: '#606266',
+          textAlign: 'center'
+        }"
+        v-loading="tableLoading"
+        row-key="id"
+        :tree-props="{ children: 'target' }"
+        :max-height="tableHeight"
+        :cell-style="{ borderRight: '1px solid #fff' }"
         style="width: 100%"
         @select="selectData"
         @select-all="selectAllData"
@@ -62,6 +104,7 @@
           :width="i.width"
           :min-width="i.minWidth"
           :fixed="i.fixed"
+          :align="i.align"
         >
           <template v-if="i.label === '操作'" #default="scope">
             <el-button
@@ -98,7 +141,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, toRefs } from 'vue'
+import { reactive, toRefs, ref, computed } from 'vue'
 import BasicData from '@/views/mortgage/channelAddress/data'
 import EditModel from '@/views/mortgage/channelAddress/editModel.vue'
 import type {
@@ -106,6 +149,14 @@ import type {
   RecordType
 } from '@/views/mortgage/channelAddress/type'
 import type { CascaderProps, CascaderValue } from 'element-plus'
+import {
+  Refresh,
+  Search,
+  Plus,
+  Delete,
+  Download
+} from '@element-plus/icons-vue'
+import { px2rem } from '@/utils'
 // import { AgencyAPI } from '@/api'
 // const API = new AgencyAPI()
 
@@ -137,7 +188,7 @@ const state = reactive<StateType>({
       value: '商用车资产转让'
     }
   ],
-  actionList: BasicData.actionList,
+  tableLoading: false,
   tableColumn: BasicData.tableColumn,
   tableData: [{}],
   tableActionList: BasicData.tableActionList,
@@ -148,7 +199,7 @@ const state = reactive<StateType>({
 const {
   formModel,
   sourceArr,
-  actionList,
+  tableLoading,
   tableColumn,
   tableData,
   tableActionList,
@@ -157,12 +208,29 @@ const {
   editModelTitle
 } = toRefs(state)
 
+// 表格最大高度
+const searchBoxRef = ref()
+const tableHeight = computed(() => {
+  if (searchBoxRef.value?.clientHeight) {
+    const height = Number(
+      document.documentElement.clientHeight -
+        200 -
+        searchBoxRef.value?.clientHeight
+    )
+    return height
+  } else {
+    const height = Number(document.documentElement.clientHeight - 200)
+    return height
+  }
+})
+
 const search = () => {}
+const refresh = () => {}
 const handleSizeChange = () => {}
 const handleCurrentChange = () => {}
 
 const action = (val: string | number) => {
-  if (val === 'add') {
+  if (val === 'Add') {
     state.editModelTitle = '新增'
     state.editModelVisible = true
   }
@@ -201,10 +269,18 @@ const changeCity = (value: CascaderValue): void => {
 </script>
 
 <style lang="scss" scoped>
-.main-part-container {
+.channel-container {
+  .channel-search-container {
+    width: 100%;
+  }
   .filter-form {
+    width: 90%;
     .el-form-item {
       align-items: center;
+    }
+    .btn-row {
+      display: flex;
+      justify-content: flex-end;
     }
   }
   .action {

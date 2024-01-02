@@ -29,11 +29,11 @@ export interface AgencySaveRequest {
   /**
    * 渠道商/办事处名称
    */
-  agencyName: string
+  agencyName: string | undefined
   /**
    * 是否生成待收款项清单（是-1，否-0）
    */
-  createGatherFlag: number
+  createGatherFlag: number | undefined
   /**
    * 系统来源1
    */
@@ -41,11 +41,11 @@ export interface AgencySaveRequest {
   /**
    * 系统来源2
    */
-  sourceSystem2: string
+  sourceSystem2: string | undefined
   /**
    * 未收费办理是都需审批（是-1，否-0）
    */
-  unpaidNeedApproveFlag: number
+  unpaidNeedApproveFlag: number | undefined
 }
 
 // 渠道商/办事处名单-编辑
@@ -53,15 +53,15 @@ export interface AgencyEditRequest {
   /**
    * 渠道商/办事处名称
    */
-  agencyName: string
+  agencyName: string | undefined
   /**
    * 是否生成待收款项清单（是-1，否-0）
    */
-  createGatherFlag: number
+  createGatherFlag: number | undefined
   /**
    * 主键id
    */
-  id: number
+  id: number | undefined | string
   /**
    * 系统来源1
    */
@@ -69,11 +69,11 @@ export interface AgencyEditRequest {
   /**
    * 系统来源2
    */
-  sourceSystem2: string
+  sourceSystem2: string | undefined
   /**
    * 未收费办理是都需审批（是-1，否-0）
    */
-  unpaidNeedApproveFlag: number
+  unpaidNeedApproveFlag: number | undefined
 }
 
 // 渠道商/办事处名单-删除

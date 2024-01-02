@@ -1,26 +1,4 @@
 export default {
-  actionList: [
-    {
-      label: '批量导入',
-      value: 'batchImport'
-    },
-    {
-      label: '下载导入模版',
-      value: 'downloadTemplate'
-    },
-    {
-      label: '新增',
-      value: 'add'
-    },
-    {
-      label: '下载',
-      value: 'download'
-    },
-    {
-      label: '删除',
-      value: 'delete'
-    }
-  ],
   tableColumn: [
     {
       type: 'selection',
@@ -29,7 +7,8 @@ export default {
       columnKey: '',
       width: '40',
       minWidth: '',
-      fixed: true
+      fixed: true,
+      align: 'center'
     },
     {
       type: '',
@@ -38,7 +17,8 @@ export default {
       columnKey: 'sourceSystem1',
       width: '',
       minWidth: '100',
-      fixed: false
+      fixed: false,
+      align: 'center'
     },
     {
       type: '',
@@ -47,7 +27,8 @@ export default {
       columnKey: 'agencyName',
       width: '',
       minWidth: '120',
-      fixed: false
+      fixed: false,
+      align: 'left'
     },
     {
       type: '',
@@ -56,7 +37,8 @@ export default {
       columnKey: 'createGatherFlag',
       width: '',
       minWidth: '170',
-      fixed: false
+      fixed: false,
+      align: 'center'
     },
     {
       type: '',
@@ -65,7 +47,8 @@ export default {
       columnKey: 'unpaidNeedApproveFlag',
       width: '',
       minWidth: '170',
-      fixed: false
+      fixed: false,
+      align: 'center'
     },
     {
       type: '',
@@ -74,7 +57,8 @@ export default {
       columnKey: 'creatorName',
       width: '',
       minWidth: '100',
-      fixed: false
+      fixed: false,
+      align: 'left'
     },
     {
       type: '',
@@ -83,7 +67,8 @@ export default {
       columnKey: 'createTime',
       width: '100',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      align: 'center'
     },
     {
       type: '',
@@ -92,7 +77,8 @@ export default {
       columnKey: 'updaterName',
       width: '',
       minWidth: '100',
-      fixed: false
+      fixed: false,
+      align: 'left'
     },
     {
       type: '',
@@ -101,7 +87,8 @@ export default {
       columnKey: 'updatedTime',
       width: '',
       minWidth: '100',
-      fixed: false
+      fixed: false,
+      align: 'center'
     },
     {
       type: '',
@@ -110,7 +97,8 @@ export default {
       columnKey: '',
       width: '100',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      align: 'center'
     },
     {
       type: '',
@@ -119,7 +107,8 @@ export default {
       columnKey: '',
       width: '120',
       minWidth: '',
-      fixed: false
+      fixed: false,
+      align: 'center'
     }
   ],
   cityList: [
