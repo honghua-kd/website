@@ -2,13 +2,23 @@
   <div>
     <el-form :model="queryForm" ref="formRef">
       <el-row :gutter="20">
-        <el-col :span="8">
-          <el-form-item label="下载时间：">
+        <el-col :span="6">
+          <el-form-item label="开始时间：">
             <el-date-picker
-              v-model="queryForm.verifyTime"
-              type="datetimerange"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
+              v-model="queryForm.startCreateTime"
+              type="date"
+              style="width: 100%"
+              placeholder="开始日期"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="结束时间：">
+            <el-date-picker
+              v-model="queryForm.endCreateTime"
+              type="date"
+              placeholder="结束日期"
+              style="width: 100%"
             />
           </el-form-item>
         </el-col>
@@ -82,12 +92,14 @@ const formRef = ref<InstanceType<typeof ElForm>>()
 interface DownloadForm {
   pageNo: number
   pageSize: number
-  verifyTime: [Date, Date]
+  startCreateTime: '' | Date
+  endCreateTime: '' | Date
 }
 const queryForm = reactive<DownloadForm>({
   pageNo: 1,
   pageSize: 10,
-  verifyTime: [dayjs().startOf('day').toDate(), dayjs().endOf('day').toDate()] // 创建时间
+  startCreateTime: '',
+  endCreateTime: ''
 })
 
 const getList = () => {
@@ -95,10 +107,14 @@ const getList = () => {
   const parm = {
     pageNo: queryForm.pageNo,
     pageSize: queryForm.pageSize,
-    startCreateTime: dayjs(queryForm.verifyTime[0]).format(
-      'YYYY-MM-DD HH:mm:ss'
-    ),
-    endCreateTime: dayjs(queryForm.verifyTime[1]).format('YYYY-MM-DD HH:mm:ss')
+    startCreateTime:
+      queryForm.startCreateTime !== ''
+        ? dayjs(queryForm.startCreateTime).format('YYYY-MM-DD HH:mm:ss')
+        : '',
+    endCreateTime:
+      queryForm.endCreateTime !== ''
+        ? dayjs(queryForm.endCreateTime).format('YYYY-MM-DD HH:mm:ss')
+        : ''
   }
   tableLoading.value = true
   API.uploadExportRecordPage(parm)
@@ -120,10 +136,8 @@ const getList = () => {
 const resetForm = () => {
   queryForm.pageNo = 1
   queryForm.pageSize = 10
-  queryForm.verifyTime = [
-    dayjs().startOf('day').toDate(),
-    dayjs().endOf('day').toDate()
-  ]
+  queryForm.startCreateTime = ''
+  queryForm.endCreateTime = ''
   getList()
 }
 

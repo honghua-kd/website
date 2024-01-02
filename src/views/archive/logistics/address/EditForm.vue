@@ -73,6 +73,7 @@ import { ElMessage, ElForm } from 'element-plus'
 import type { UsualAddressListItem } from '@/api'
 import { ExpressAPI } from '@/api'
 import { px2rem } from '@/utils'
+const formRef = ref<InstanceType<typeof ElForm>>()
 const API = new ExpressAPI()
 const props = defineProps({
   title: {
@@ -93,7 +94,10 @@ const basicInfoForm = reactive<UsualAddressListItem>({
   value: ''
 })
 const emit = defineEmits(['success'])
-const addHandler = () => {
+const addHandler = async () => {
+  if (!formRef.value) return
+  const valid = await formRef.value.validate()
+  if (!valid) return
   if (props.title === '新增联系人信息') {
     const params = {
       userName: basicInfoForm.userName,
