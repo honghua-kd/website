@@ -2,77 +2,104 @@
   <div class="supplier-container">
     <!-- filter -->
     <el-card :body-style="{ padding: '10px 10px 0px' }">
-      <el-form :inline="true" :model="formModel" class="filter-form">
-        <el-form-item label="公司名称">
-          <el-input v-model="formModel.supplierName" />
-        </el-form-item>
-        <el-form-item label="归属公司">
-          <el-input v-model="formModel.belongCompany" />
-        </el-form-item>
-        <el-form-item label="区域">
-          <el-cascader
-            style="width: 100%"
-            v-model="formModel.areaCode"
-            placeholder="请选择"
-            :props="propsObj"
-            :options="BasicData.cityList"
-            collapse-tags
-            collapse-tags-tooltip
-            clearable
-            @change="changeCity"
-          />
-          <!-- <el-select
-            :style="{ width: '130px', marginRight: '10px' }"
-            placeholder="省"
-            v-model="formModel.province"
-          ></el-select>
-          <el-select
-            :style="{ width: '130px', marginRight: '10px' }"
-            placeholder="市"
-            v-model="formModel.city"
-          ></el-select>
-          <el-select
-            :style="{ width: '130px' }"
-            placeholder="区"
-            v-model="formModel.area"
-          ></el-select> -->
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-select v-model="formModel.status">
-            <el-option
-              v-for="item in statusArr"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="类型">
-          <el-select v-model="formModel.supplierType">
-            <el-option
-              v-for="item in typeArr"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="到期时间">
-          <el-date-picker
-            v-model="formModel.expireDate"
-            type="daterange"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-            format="YYYY-MM-DD"
-          />
-        </el-form-item>
-        <el-form-item label="内部对接人">
-          <el-input v-model="formModel.innerInterfaceStaffCode" />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="search">查询</el-button>
-          <el-button @click="reset()">重置</el-button>
-        </el-form-item>
+      <el-form :model="formModel" class="filter-form" label-width="80px">
+        <el-row :gutter="25">
+          <el-col :span="5">
+            <el-form-item label="公司名称">
+              <el-input v-model="formModel.name" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item label="归属公司">
+              <el-input v-model="formModel.belongCompany" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item label="区域">
+              <el-cascader
+                style="width: 100%"
+                v-model="formModel.areaCode"
+                placeholder="请选择"
+                :props="propsObj"
+                :options="BasicData.cityList"
+                collapse-tags
+                collapse-tags-tooltip
+                clearable
+                @change="changeCity"
+              />
+              <!-- <el-select
+                :style="{ width: '130px', marginRight: '10px' }"
+                placeholder="省"
+                v-model="formModel.province"
+              ></el-select>
+              <el-select
+                :style="{ width: '130px', marginRight: '10px' }"
+                placeholder="市"
+                v-model="formModel.city"
+              ></el-select>
+              <el-select
+                :style="{ width: '130px' }"
+                placeholder="区"
+                v-model="formModel.area"
+              ></el-select> -->
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item label="状态">
+              <el-select v-model="formModel.status">
+                <el-option
+                  v-for="item in statusArr"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="25">
+          <el-col :span="5">
+            <el-form-item label="类型">
+              <el-select v-model="formModel.type">
+                <el-option
+                  v-for="item in typeArr"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item label="开始时间">
+              <el-date-picker
+                v-model="formModel.expireDateStart"
+                type="date"
+                placeholder="开始时间"
+                format="YYYY-MM-DD"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item label="结束时间">
+              <el-date-picker
+                v-model="formModel.expireDateEnd"
+                type="date"
+                placeholder="结束时间"
+                format="YYYY-MM-DD"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item label="内部对接人">
+              <el-input v-model="formModel.innerInterfaceStaffCode" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-button type="primary" @click="getList">查询</el-button>
+            <el-button @click="reset()">重置</el-button>
+          </el-col>
+        </el-row>
       </el-form>
     </el-card>
     <!-- action -->
@@ -134,31 +161,46 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, toRefs, onMounted } from 'vue'
+import { reactive, toRefs, ref, onMounted } from 'vue'
 import BasicData from '@/views/supplier/supplierManage/data'
 import EditModel from '@/views/supplier/supplierManage/editModel.vue'
 import type {
   StateType,
-  RecordType
+  RecordType,
+  queryForm
 } from '@/views/supplier/supplierManage/type.ts'
-// import { SupplierAPI } from '@/api'
-// const API = new SupplierAPI()
+import { SupplierAPI } from '@/api'
+const API = new SupplierAPI()
 
+const queryFormList = ref<queryForm>({
+  name: '',
+  belongCompany: '',
+  provinceCode: '',
+  cityCode: '',
+  countyCode: '',
+  status: '',
+  expireDateStart: '',
+  expireDateEnd: '',
+  innerInterfaceStaffCode: '',
+  areaCode: [], // 地区
+  type: '',
+  pageNo: 1,
+  pageSize: 10
+})
 const state = reactive<StateType>({
   // filter form
   formModel: {
-    supplierName: '',
+    name: '',
     belongCompany: '',
     provinceCode: '',
     cityCode: '',
     countyCode: '',
     status: '',
-    supplierType: '',
     expireDateStart: '',
     expireDateEnd: '',
     innerInterfaceStaffCode: '',
-    expireDate: '', // 自行添加
     areaCode: [], // 地区
+    type: '',
     pageNo: 1,
     pageSize: 10
   },
@@ -244,21 +286,27 @@ const {
 } = toRefs(state)
 
 onMounted(() => {
-  getSupplierList()
+  getList()
 })
 
 // 获取列表数据
-const getSupplierList = async () => {
-  // await API.getSupplierList(formModel)
+const getList = async () => {
+  console.log(queryFormList.value)
+  await API.getSupplierList(queryFormList.value)
+    .then((res) => {
+      search()
+      console.log(res)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
 }
 // 查询
 const search = () => {
-  const { areaCode, expireDate } = formModel.value
+  const { areaCode } = formModel.value
   formModel.value.provinceCode = areaCode[0] || ''
   formModel.value.cityCode = areaCode[1] || ''
   formModel.value.countyCode = areaCode[2] || ''
-  formModel.value.expireDateStart = expireDate[0] || ''
-  formModel.value.expireDateEnd = expireDate[1] || ''
   formModel.value.pageNo = 1
   console.log(formModel.value)
 }
@@ -268,12 +316,12 @@ const reset = () => {}
 const handleSizeChange = (size: number) => {
   formModel.value.pageSize = size
   formModel.value.pageNo = 1
-  getSupplierList()
+  getList()
 }
 // 表格分页
 const handleCurrentChange = (page: number) => {
   formModel.value.pageNo = page
-  getSupplierList()
+  getList()
 }
 const action = (val: string | number) => {
   if (val === 'add') {

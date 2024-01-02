@@ -13,20 +13,34 @@ type TableColumnType = {
   tooltip: boolean
 }
 export type RecordType<T = any> = Record<string, T>
+export interface queryForm {
+  name: string
+  belongCompany: string
+  provinceCode: number | ''
+  cityCode: number | ''
+  countyCode: number | ''
+  status: number | ''
+  expireDateStart: string
+  expireDateEnd: string
+  innerInterfaceStaffCode: string
+  areaCode: number[]
+  type: number | ''
+  pageNo: number
+  pageSize: number
+}
 export type StateType = {
   formModel: {
-    supplierName: string
+    name: string
     belongCompany: string
     provinceCode: number | ''
     cityCode: number | ''
     countyCode: number | ''
     status: number | ''
-    supplierType: number | ''
     expireDateStart: string
     expireDateEnd: string
     innerInterfaceStaffCode: string
-    expireDate: string
     areaCode: number[]
+    type: number | ''
     pageNo: number
     pageSize: number
   }
