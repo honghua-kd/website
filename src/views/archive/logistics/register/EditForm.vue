@@ -443,7 +443,9 @@ import type {
   ExpressListItem,
   ExpressContentList,
   OtherFileList,
-  UsualAddressListItem
+  UsualAddressListItem,
+  PageRequest,
+  ExpressInfoCardListRequest
 } from '@/api'
 import { px2rem } from '@/utils'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
@@ -457,6 +459,7 @@ const dialogExpressTitle = ref<string>('')
 const dialogVisible = ref<boolean>(false)
 const disFlag = ref<boolean>(false)
 const basicInfoFormRef = ref<InstanceType<typeof ElForm>>()
+type QueryParams = ExpressInfoCardListRequest & PageRequest
 const props = defineProps({
   title: {
     type: String,
@@ -466,7 +469,7 @@ const props = defineProps({
 const basicInfoForm = reactive<ExpressListItem>({
   id: '',
   expressNo: '',
-  expressCompany: '',
+  expressCompany: '顺丰',
   expressCompanyOther: '',
   expressStatus: 0,
   expressType: 0,
@@ -677,7 +680,7 @@ const init = (row?: ExpressListItem) => {
     disFlag.value = false
     basicInfoForm.id = ''
     basicInfoForm.expressNo = ''
-    basicInfoForm.expressCompany = ''
+    basicInfoForm.expressCompany = '顺丰'
     basicInfoForm.expressCompanyOther = ''
     basicInfoForm.expressStatus = 0
     basicInfoForm.expressType = 0
@@ -739,16 +742,39 @@ const updateHandler = async () => {
     })
   } else {
     if (props.title === '新增邮寄信息') {
-      const params = basicInfoForm
-      API.addExpressInfo(params)
+      const preParams: QueryParams = {
+        pageNo: 1,
+        pageSize: 10,
+        expressNo: basicInfoForm.expressNo as string,
+        expressCompany: '',
+        createTime: '',
+        expressType: '',
+        expressContent: '',
+        expressContentRemark: ''
+      }
+      API.getExpressInfoCardList(preParams)
         .then((res) => {
-          if (res && res.code === 200) {
+          if (res && res.code === 200 && res.data?.list.length !== 0) {
             ElMessage({
-              type: 'success',
-              message: '新增成功'
+              type: 'error',
+              message: '快递单号已存在'
             })
-            dialogVisible.value = false
-            emit('success')
+          } else {
+            const params = basicInfoForm
+            API.addExpressInfo(params)
+              .then((res) => {
+                if (res && res.code === 200) {
+                  ElMessage({
+                    type: 'success',
+                    message: '新增成功'
+                  })
+                  dialogVisible.value = false
+                  emit('success')
+                }
+              })
+              .catch((err: Error) => {
+                console.log(err)
+              })
           }
         })
         .catch((err: Error) => {
