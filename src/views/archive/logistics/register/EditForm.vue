@@ -15,7 +15,7 @@
       <el-row :gutter="20">
         <el-col :span="6">
           <el-form-item
-            label="快递单号:"
+            label="快递单号"
             prop="expressNo"
             :rules="[{ required: true, message: '快递单号不能为空' }]"
           >
@@ -27,10 +27,10 @@
             />
           </el-form-item>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="7">
           <el-form-item
             class="express-com"
-            label="快递公司:"
+            label="快递公司"
             prop="expressCompany"
             :rules="[{ required: true, message: '快递公司不能为空' }]"
           >
@@ -57,7 +57,7 @@
         </el-col>
         <el-col :span="5">
           <el-form-item
-            label="寄送/接收:"
+            label="寄送/接收"
             prop="expressType"
             :rules="[{ required: true, message: '寄送/接收不能为空' }]"
           >
@@ -76,10 +76,10 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="5">
+        <el-col :span="6">
           <el-form-item
             v-if="expressStatusFlag"
-            label="收件日期:"
+            label="收件日期"
             prop="receiveTime"
           >
             <el-date-picker
@@ -89,7 +89,7 @@
               value-format="YYYY-MM-DD"
             />
           </el-form-item>
-          <el-form-item v-else label="寄件日期:" prop="sendTime">
+          <el-form-item v-else label="寄件日期" prop="sendTime">
             <el-date-picker
               v-model="basicInfoForm.sendTime"
               type="date"
@@ -111,7 +111,7 @@
             <el-row :gutter="20">
               <el-col :span="8">
                 <el-form-item
-                  label="寄件人名称:"
+                  label="寄件人名称"
                   prop="sendUser"
                   :rules="[
                     {
@@ -132,7 +132,7 @@
               </el-col>
               <el-col :span="8">
                 <el-form-item
-                  label="寄件人联系电话:"
+                  label="寄件人联系电话"
                   :label-width="px2rem('120px')"
                   prop="postPhone"
                 >
@@ -146,7 +146,7 @@
             </el-row>
             <el-row :gutter="20">
               <el-col :span="18">
-                <el-form-item label="寄件人地址:" prop="senderAddress">
+                <el-form-item label="寄件人地址" prop="senderAddress">
                   <el-input
                     v-model="basicInfoForm.sendAddress"
                     clearable
@@ -181,7 +181,7 @@
             <el-row :gutter="20">
               <el-col :span="8">
                 <el-form-item
-                  label="收件人名称:"
+                  label="收件人名称"
                   prop="receiveUser"
                   :rules="[
                     {
@@ -202,7 +202,7 @@
               </el-col>
               <el-col :span="8">
                 <el-form-item
-                  label="收件人联系电话:"
+                  label="收件人联系电话"
                   :label-width="px2rem('120px')"
                   prop="receivePhone"
                 >
@@ -216,7 +216,7 @@
             </el-row>
             <el-row :gutter="20">
               <el-col :span="18">
-                <el-form-item label="收件人地址:" prop="receiveAddress">
+                <el-form-item label="收件人地址" prop="receiveAddress">
                   <el-input
                     v-model="basicInfoForm.receiveAddress"
                     clearable
@@ -245,7 +245,7 @@
       <el-row style="margin-top: 20px">
         <el-col :span="5">
           <el-form-item
-            label="快递状态:"
+            label="快递状态"
             prop="expressStatus"
             :rules="[{ required: true, message: '快递状态不能为空' }]"
           >
@@ -267,7 +267,7 @@
       </el-row>
       <el-row v-if="problemFlag">
         <el-col :span="15">
-          <el-form-item label="问题描述:" prop="expressStatusRemark">
+          <el-form-item label="问题描述" prop="expressStatusRemark">
             <el-input
               v-model="basicInfoForm.expressStatusRemark"
               clearable
@@ -294,7 +294,7 @@
 
       <el-row :gutter="20">
         <el-col>
-          <el-form-item label="快递内容:" prop="expressContentList">
+          <el-form-item label="快递内容" prop="expressContentList">
             <el-table
               :data="basicInfoForm.expressContentList"
               :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
@@ -351,7 +351,7 @@
       </el-row>
       <el-row>
         <el-col :span="15">
-          <el-form-item label="备注:" prop="expressContentRemark">
+          <el-form-item label="备注" prop="expressContentRemark">
             <el-input
               v-model="basicInfoForm.expressContentRemark"
               clearable
@@ -367,7 +367,7 @@
       <!-- <div>附件：<el-button type="primary">上传</el-button></div> -->
       <el-row :gutter="20">
         <el-col>
-          <el-form-item label="附件:" prop="otherInfoList">
+          <el-form-item label="附件" prop="otherInfoList">
             <div style="margin-bottom: 20px">
               <el-button type="primary" @click="importOtherFile"
                 >上传</el-button
@@ -456,6 +456,7 @@ const CommonApi = new CommonAPI()
 const dialogExpressTitle = ref<string>('')
 const dialogVisible = ref<boolean>(false)
 const disFlag = ref<boolean>(false)
+const basicInfoFormRef = ref<InstanceType<typeof ElForm>>()
 const props = defineProps({
   title: {
     type: String,
@@ -532,6 +533,13 @@ const handleSelectRe = (item: Record<string, undefined>) => {
 }
 
 const addAddressHandler = (user?: string, phone?: string, address?: string) => {
+  if (!user || !phone || !address) {
+    ElMessage({
+      type: 'error',
+      message: '请填写信息'
+    })
+    return
+  }
   const params = {
     userName: user,
     userPhone: phone,
@@ -559,8 +567,15 @@ const editExpressHandler = (row: ExpressContentList) => {
   editExpressFormRef.value.open(row)
 }
 const addExpressHandler = () => {
-  dialogExpressTitle.value = '新增快递内容'
-  editExpressFormRef.value.open(basicInfoForm.expressNo)
+  if (!basicInfoForm.expressNo) {
+    ElMessage({
+      type: 'error',
+      message: '请先填写快递单号'
+    })
+  } else {
+    dialogExpressTitle.value = '新增快递内容'
+    editExpressFormRef.value.open(basicInfoForm.expressNo)
+  }
 }
 
 // 删除快递内容
@@ -706,7 +721,11 @@ const getDicts = () => {
 }
 defineExpose({ open })
 const emit = defineEmits(['success'])
-const updateHandler = () => {
+const updateHandler = async () => {
+  // 校验
+  if (!basicInfoFormRef.value) return
+  const valid = await basicInfoFormRef.value.validate()
+  if (!valid) return
   basicInfoForm.sendTime = basicInfoForm.sendTime
     ? basicInfoForm.sendTime.slice(0, 10)
     : ''
