@@ -363,11 +363,18 @@ export default [
   {
     children: [
       {
-        children: [],
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'recordUploadIndex',
+            sort: 1
+          }
+        ],
         elements: [],
-        menuType: 3,
-        sort: 0,
-        menu: 'recordUploadIndex'
+        menuType: 5,
+        menu: 'recordUploadMenu'
       }
     ],
     elements: [],
