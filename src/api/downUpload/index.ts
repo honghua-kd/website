@@ -5,7 +5,11 @@ import type { Response, PageList } from '../types/response'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
 
-import type { UploadFileRequest, downParms } from './types/request'
+import type {
+  UploadFileRequest,
+  downParms,
+  errDownParms
+} from './types/request'
 import type { ImportTableItem, ExportTableItem } from './types/response'
 
 import type { FileDownload } from '../common/types/response'
@@ -48,6 +52,16 @@ export class RecordAPI {
       method: 'post',
       responseType: 'blob',
       params: data
+    })
+  }
+
+  // 文件导入结果下载
+  importResult(params: errDownParms): Promise<FileDownload> {
+    return this.request({
+      url: `${prefix}/import/file/record/importResult`,
+      method: 'get',
+      responseType: 'blob',
+      params
     })
   }
 }
