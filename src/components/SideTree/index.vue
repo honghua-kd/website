@@ -8,26 +8,28 @@
       @input="searchHandler"
       clearable
     />
-    <el-tree
-      ref="treeRef"
-      :data="orgList"
-      :props="defaultProps"
-      @node-click="handleNodeClick"
-      highlight-current
-      :filter-node-method="filterNode"
-      v-loading="treeLoading"
-    >
-      <template #empty>
-        <div class="empty-container">
-          <el-empty description="暂无数据" :image-size="100" />
-        </div>
-      </template>
-    </el-tree>
+    <div class="tree-box">
+      <el-tree
+        ref="treeRef"
+        :data="orgList"
+        :props="defaultProps"
+        @node-click="handleNodeClick"
+        highlight-current
+        :filter-node-method="filterNode"
+        v-loading="treeLoading"
+      >
+        <template #empty>
+          <div class="empty-container">
+            <el-empty description="暂无数据" :image-size="100" />
+          </div>
+        </template>
+      </el-tree>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, Ref } from 'vue'
+import { ref, Ref, computed } from 'vue'
 import { SystemAPI } from '@/api'
 import { Search } from '@element-plus/icons-vue'
 import debounce from 'lodash.debounce'
@@ -45,6 +47,16 @@ const treeLoading: Ref<boolean> = ref(false)
 const searchKey: Ref<string> = ref('')
 
 const systemAPI = new SystemAPI()
+
+const props = withDefaults(
+  defineProps<{
+    height: string
+  }>(),
+  {
+    height: ''
+  }
+)
+const treehight = computed(() => props.height)
 
 /** 定义方法 */
 const handleNodeClick = (data: OrgInfoItem) => {
@@ -83,11 +95,20 @@ init()
 
 <style lang="scss" scoped>
 .container {
-  padding: 10px 0;
+  position: relative;
+  padding: 45px 0 15px;
   width: 100%;
-}
-.searchbar {
-  margin-bottom: 10px;
+  .searchbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    margin-bottom: 10px;
+  }
+  .tree-box {
+    overflow: auto;
+    max-height: v-bind(treehight);
+  }
 }
 .empty-container {
   width: 100%;

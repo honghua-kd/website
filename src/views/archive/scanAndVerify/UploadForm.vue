@@ -11,7 +11,8 @@
         ref="formRef"
         :model="formParams"
         v-loading="formLoading"
-        label-width="130px"
+        :label-width="px2rem('130px')"
+        :rules="formRules"
       >
         <el-row>
           <el-col :span="8">
@@ -25,13 +26,14 @@
           </el-col>
         </el-row>
 
-        <el-form-item label="上传文件">
+        <el-form-item label="上传文件" prop="formParams.fileInfoList">
           <el-upload
             :show-file-list="false"
             :before-upload="beforeUploadHandler"
             :http-request="uploadHandler"
             :accept="fileType"
             action="#"
+            :multiple="multiple"
           >
             <el-button type="primary" :icon="UploadFilled" :loading="upLoading">
               上传文件
@@ -68,7 +70,7 @@
                       :zoom-rate="1.2"
                       :max-scale="5"
                       :min-scale="0.2"
-                      :preview-src-list="[item.url]"
+                      :preview-src-list="[item.url as string]"
                       fit="cover"
                     />
                   </div>
@@ -111,9 +113,7 @@
         <el-button :disabled="formLoading" type="primary" @click="checkHandler">
           识别 & 核验
         </el-button>
-        <el-button type="primary" @click="dialogVisible = false">
-          关 闭
-        </el-button>
+        <el-button @click="dialogVisible = false"> 关 闭 </el-button>
       </template>
     </el-dialog>
     <Preview
@@ -133,16 +133,17 @@ import pdfImg from '@/assets/common/pdf.png'
 import { ElMessage, ElForm } from 'element-plus'
 import dayjs from 'dayjs'
 import { MortageAPI, CommonAPI } from '@/api'
-import { openLink, isPdf } from '@/utils'
-import { useGetPreviewURL } from '@/hooks'
+import { openLink, isPdf, px2rem } from '@/utils'
+import useGetPreviewURL from '@/hooks/useGetPreviewURL/index'
 import type { UploadRawFile, UploadRequestOptions } from 'element-plus'
 import type { UploadFileRequest, UploadFileListItemRequest } from '@/api'
-
+const { getSinglePreviewURL } = useGetPreviewURL()
 const API = new MortageAPI()
 const CommonApi = new CommonAPI()
 const dialogTitle = ref<string>('上传车辆登记证')
 const dialogVisible = ref<boolean>(false)
 const formLoading = ref<boolean>(false)
+const multiple = ref<boolean>()
 const emit = defineEmits(['success'])
 const formParams = reactive<UploadFileRequest>({
   batchNo: '', // 处理批次号
@@ -157,10 +158,21 @@ const chooseFileNum = computed(() => {
   return number
 })
 
+// 校验
+const formRules = reactive({
+  batchNo: [{ required: true, message: '处理批次号不能为空', trigger: 'blur' }]
+})
+
 /** 打开弹窗 */
 const tenantUser = ref<string>('')
-const open = (type: string, title: string, user: string) => {
+const open = (
+  type: string,
+  title: string,
+  user: string,
+  isMultiple?: boolean
+) => {
   dialogVisible.value = true
+  multiple.value = isMultiple
   reset()
   formParams.batchNo = title
   tenantUser.value = user
@@ -169,7 +181,12 @@ const open = (type: string, title: string, user: string) => {
 defineExpose({ open })
 
 // 识别 & 核验
-const checkHandler = () => {
+const formRef = ref<InstanceType<typeof ElForm>>()
+const checkHandler = async () => {
+  // 校验表单
+  if (!formRef.value) return
+  const valid = await formRef.value.validate()
+  if (!valid) return
   if (!chooseFileNum.value) {
     ElMessage({
       type: 'error',
@@ -199,7 +216,6 @@ const checkHandler = () => {
 
 // 上传前校验
 const beforeUploadHandler = (file: UploadRawFile) => {
-  console.log('fileType>>>>', file)
   // 校验文件格式
   if (!fileType.value.includes(file.type)) {
     ElMessage.error('上传文件支持 jpg/jpeg/png/pdf 格式，请重新选择！')
@@ -216,8 +232,12 @@ const beforeUploadHandler = (file: UploadRawFile) => {
 // 上传
 const preFileName = ref<string>('')
 const upLoading = ref<boolean>(false)
+let uploadCount = 0
+let uploadSuccCount = 0
 const uploadHandler = async (options: UploadRequestOptions) => {
   upLoading.value = true
+  uploadCount++
+
   const file = options.file
   const formData = new FormData()
   formData.append('file', file)
@@ -225,16 +245,21 @@ const uploadHandler = async (options: UploadRequestOptions) => {
   formData.append('tenantUser', tenantUser.value)
   formData.append('prefixPath', 'attachment')
   formData.append('expireDays', '-1')
+
   CommonApi.uploadFiles(formData)
     .then(async (res) => {
       if (res && res.code === 200) {
-        const fileCode = res.data?.fileCode
-        // 拿到fileCode 换取 文件地址 URL
+        uploadSuccCount++
 
-        const { preUrl, fileName } = await useGetPreviewURL(fileCode)
-        upLoading.value = false
-        previewUrl.value = preUrl
-        preFileName.value = fileName
+        if (uploadCount === uploadSuccCount) {
+          upLoading.value = false
+        }
+        const fileCode = res.data?.fileCode as string
+        // 拿到fileCode 换取 文件地址 URL
+        const data = await getSinglePreviewURL(fileCode)
+
+        previewUrl.value = data?.preUrl as string
+        preFileName.value = data?.fileName as string
         const fileCreateTime = dayjs(file.lastModified).format(
           'YYYY-MM-DD HH:mm:ss'
         )
@@ -243,12 +268,14 @@ const uploadHandler = async (options: UploadRequestOptions) => {
           name,
           fileCode,
           fileCreateTime,
-          url: preUrl
+          url: data?.preUrl
         } as UploadFileListItemRequest
+
         formParams.fileInfoList.push(obj)
       }
     })
     .catch((err: Error) => {
+      upLoading.value = false
       throw err
     })
 }
@@ -274,6 +301,7 @@ const handlePictureCardPreview = (uploadFile: UploadFileListItemRequest) => {
 const reset = () => {
   formParams.batchNo = ''
   formParams.fileInfoList = []
+  formRef.value?.resetFields()
 }
 
 // 删除文件缩略图

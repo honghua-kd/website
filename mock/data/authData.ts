@@ -359,5 +359,20 @@ export default [
         menu: 'messageManage'
       }
     ]
+  },
+  {
+    children: [
+      {
+        children: [],
+        elements: [],
+        menuType: 3,
+        sort: 0,
+        menu: 'recordUploadIndex'
+      }
+    ],
+    elements: [],
+    menuType: 5,
+    sort: 5,
+    menu: 'recordUpload'
   }
 ]
