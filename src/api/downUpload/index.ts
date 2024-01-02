@@ -58,7 +58,7 @@ export class RecordAPI {
   // 文件导入结果下载
   importResult(params: errDownParms): Promise<FileDownload> {
     return this.request({
-      url: `${prefix}/file/record/importResult`,
+      url: `${prefix}/import/file/record/importResult`,
       method: 'get',
       responseType: 'blob',
       params
