@@ -257,7 +257,7 @@ import { MortageAPI } from '@/api'
 import { ElMessage } from 'element-plus'
 import Preview from '@/components/Preview/index.vue'
 import { openLink, isPdf, px2rem } from '@/utils'
-import useGetPreviewURL from '@/hooks/useGetPreviewURL/index'
+import { useGetPreviewURL } from '@/hooks/useGetPreviewURL'
 import dayjs from 'dayjs'
 
 const API = new MortageAPI()

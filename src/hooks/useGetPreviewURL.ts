@@ -2,11 +2,10 @@ import { ref } from 'vue'
 import { CommonAPI } from '@/api'
 import type { FilePreviewItem } from '@/api'
 
-const CommonApi = new CommonAPI()
-const preUrl = ref<string>('')
-const fileName = ref<string>('')
-
-const useGetPreviewURL = () => {
+export const useGetPreviewURL = () => {
+  const CommonApi = new CommonAPI()
+  const preUrl = ref<string>('')
+  const fileName = ref<string>('')
   // 获取单个文件预览地址链接-decode
   const getSinglePreviewURL = async (fileCode: string) => {
     const params = {
@@ -47,5 +46,3 @@ const useGetPreviewURL = () => {
     getPreviewUrl
   }
 }
-
-export default useGetPreviewURL

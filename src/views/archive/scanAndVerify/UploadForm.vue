@@ -134,7 +134,7 @@ import { ElMessage, ElForm } from 'element-plus'
 import dayjs from 'dayjs'
 import { MortageAPI, CommonAPI } from '@/api'
 import { openLink, isPdf, px2rem } from '@/utils'
-import useGetPreviewURL from '@/hooks/useGetPreviewURL/index'
+import { useGetPreviewURL } from '@/hooks/useGetPreviewURL'
 import type { UploadRawFile, UploadRequestOptions } from 'element-plus'
 import type { UploadFileRequest, UploadFileListItemRequest } from '@/api'
 const { getSinglePreviewURL } = useGetPreviewURL()

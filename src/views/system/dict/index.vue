@@ -132,6 +132,7 @@ import { formatDate } from '@/utils'
 import DictTypeForm from './DictTypeForm.vue'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import type { DictTypePage, DictTypePageRequest } from '@/api'
+import { useDictStore } from '@/store/dict'
 
 const API = new SystemAPI()
 
@@ -246,8 +247,30 @@ const handleSizeChange = (val: number) => {
   getList()
 }
 
+// 获取字典信息
+const dictStore = useDictStore()
+const getDictInfo = () => {
+  const dictCache = JSON.parse(sessionStorage.getItem('DICTMAP') || 'null')
+  if (dictCache) {
+    dictStore.setDictMap(dictCache)
+    return
+  }
+  API.getAllDictType()
+    .then((res) => {
+      if (res && res.code === 200) {
+        sessionStorage.setItem('DICTMAP', JSON.stringify(res.data))
+        const dictMap = res.data || []
+        dictStore.setDictMap(dictMap)
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
 const init = () => {
   searchHandler()
+  getDictInfo()
 }
 init()
 </script>

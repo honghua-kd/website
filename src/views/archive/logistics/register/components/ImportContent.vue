@@ -105,6 +105,11 @@ const importHandler = () => {
           type: 'success',
           message: '上传成功'
         })
+      } else {
+        ElMessage({
+          type: 'error',
+          message: res.msg
+        })
       }
     })
     .catch((err: Error) => {
