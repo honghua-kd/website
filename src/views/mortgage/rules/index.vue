@@ -69,50 +69,31 @@
         <el-button type="primary"> 删除 </el-button>
       </el-col>
     </el-row>
-    <el-table :data="tableData" border v-loading="tableLoading">
-      <el-table-column type="selection" width="55" />
-      <template v-for="item in Columns">
-        <el-table-column
-          v-if="item.show"
-          :label="item.label"
-          :prop="item.prop"
-          :fixed="item.fixed || false"
-          :show-overflow-tooltip="item.showTooltip"
-          :min-width="item.minWidth"
-          :key="item.prop"
-        >
-          <template v-slot="scope">
-            <div v-if="item.prop === 'isJieYa'">
-              <el-switch v-model="scope.downloadTime" />
-            </div>
-            <div v-else>
-              {{ scope.row[item.prop] }}
-            </div>
-          </template>
-        </el-table-column>
-      </template>
-      <el-table-column label="操作" align="center">
-        <template v-slot="scope">
-          <el-button link type="primary" @click="editHandler(scope.row)">
-            编辑
-          </el-button>
-          <el-button link type="primary" @click="handleDelect(scope.row)">
-            删除
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <!-- 分页 -->
-    <el-pagination
-      v-if="pageTotal"
-      background
-      layout="total,sizes,prev, pager, next"
-      :page-sizes="[10, 20, 50, 100]"
-      :total="pageTotal"
-      class="table-page"
+
+    <Table
+      :isSelected="true"
+      :data="tableData"
+      :columnConfig="Columns"
+      :loading="tableLoading"
+      :page-total="pageTotal"
+      :setColumnEnable="true"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-    />
+      @selection-change="selectionChangeHandler"
+      @header-click="headerClickHandler"
+    >
+      <template #column-switch="{ row, prop }">
+        <el-switch v-model="row[prop]" @click="editHandler(row[prop])" />
+      </template>
+      <template #action="scope">
+        <el-button link type="primary" @click="editHandler(scope.row)">
+          编辑
+        </el-button>
+        <el-button link type="primary" @click="handleDelect(scope.row)">
+          删除
+        </el-button>
+      </template>
+    </Table>
     <OperDialog ref="operRef" />
   </div>
 </template>
@@ -121,6 +102,8 @@
 import { reactive, ref, Ref } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import OperDialog from '@/views/mortgage/rules/components/operDialog.vue'
+import Table from '@/components/Table.vue'
+
 const statusOpts = reactive([
   {
     dictLabel: '城',
@@ -150,159 +133,192 @@ const searchHandler = () => {
   getList()
 }
 const getList = async () => {}
-const pageTotal: Ref<number> = ref(0) // 列表的总页数
+const pageTotal: Ref<number> = ref(100) // 列表的总页数
 const tableLoading: Ref<boolean> = ref(false)
 interface TableItem {
   id: number
-  downloadPerson: string
-  downloadTime: string
+  ruleName: string
+  riskType: string
+  dataOrigin: string
+  city: string
+  assignType: string
+  assignPerson: string
+  autoAssign: string
+  sendMsg: string
+  msgTemplate: string
   status: string
-  isDiYa: boolean
+  lastModifyTime: string
+  creator: string
+  createTime: string
+  lastModifier: string
+  updateTime: string
   isJieYa: boolean
 }
 const Columns = [
   {
     label: '规则名称',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
+    prop: 'ruleName',
+    valueType: 'display',
+    fixed: 'left',
+    width: 120,
     show: true,
-    showTooltip: true
+    align: 'center',
+    showOverflowTooltip: true,
+    showDisabled: true,
+    icon: 'sortAsc',
+    customStyle: {
+      color: 'red'
+    }
   },
   {
     label: '任务类型',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
+    prop: 'riskType',
+    valueType: 'display',
+    width: 120,
     show: true,
-    showTooltip: true
+    align: 'center',
+    showOverflowTooltip: true
   },
   {
     label: '数据来源',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
+    prop: 'dataOrigin',
+    valueType: 'display',
+    width: 120,
     show: true,
-    showTooltip: true
+    align: 'center',
+    showOverflowTooltip: true
   },
   {
     label: '城市',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
+    prop: 'city',
+    valueType: 'display',
+    width: 120,
     show: true,
-    showTooltip: true
+    align: 'center',
+    showOverflowTooltip: true
   },
   {
     label: '分配类型',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
+    prop: 'assignType',
+    valueType: 'display',
+    width: 120,
     show: true,
-    showTooltip: true
+    align: 'center',
+    showOverflowTooltip: true
   },
   {
     label: '分配人员',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
+    prop: 'assignPerson',
+    valueType: 'display',
+    width: 120,
     show: true,
-    showTooltip: true
+    align: 'center',
+    showOverflowTooltip: true
   },
   {
     label: '是否自动分配',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
+    prop: 'autoAssign',
+    valueType: 'display',
+    width: 120,
     show: true,
-    showTooltip: true
+    align: 'center',
+    showOverflowTooltip: true
   },
   {
     label: '是否发送短信',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
+    prop: 'sendMsg',
+    valueType: 'display',
+    width: 120,
     show: true,
-    showTooltip: true
+    align: 'center',
+    showOverflowTooltip: true
   },
   {
     label: '短信模版',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
+    prop: 'msgTemplate',
+    valueType: 'display',
+    width: 120,
+    align: 'center',
     show: true,
-    showTooltip: true
+    showOverflowTooltip: true
   },
   {
     label: '状态',
-    prop: 'isJieYa',
-    format: '',
-    fixed: '',
-    minWidth: '60',
+    valueType: 'custom',
+    prop: 'status',
+    width: 110,
     show: true,
-    showTooltip: true
+    align: 'center',
+    showOverflowTooltip: true,
+    slotName: 'column-switch'
   },
   {
     label: '最新执行日期',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
+    valueType: 'dateType',
+    prop: 'lastModifyTime',
+    width: 150,
     show: true,
-    showTooltip: true
+    align: 'center',
+    showOverflowTooltip: true,
+    customStyle: {
+      color: 'red'
+    }
   },
   {
     label: '创建人',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
+    prop: 'creator',
+    valueType: 'display',
+    width: 120,
     show: true,
-    showTooltip: true
+    align: 'center',
+    showOverflowTooltip: true
   },
   {
     label: '创建时间',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
+    prop: 'createTime',
+    valueType: 'dateType',
+    width: 150,
     show: true,
-    showTooltip: true
+    align: 'center',
+    showOverflowTooltip: true
   },
   {
     label: '最后更新人',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
+    prop: 'lastModifier',
+    valueType: 'display',
+    width: 120,
     show: true,
-    showTooltip: true
+    align: 'center',
+    showOverflowTooltip: true
   },
   {
     label: '更新时间',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
+    prop: 'updateTime',
+    valueType: 'dateType',
+    width: 150,
     show: true,
-    showTooltip: true
+    align: 'center',
+    showOverflowTooltip: true
   }
 ]
 const tableData: Ref<TableItem[]> = ref([
   {
     id: 1,
-    downloadPerson: '张三',
-    downloadTime: '2023-07-18',
+    ruleName: '规则名称',
+    riskType: '任务类型',
+    dataOrigin: '数据来源',
+    city: '上海',
+    assignType: '分配类型',
+    assignPerson: '分配人员',
+    autoAssign: '是',
+    sendMsg: '是否发送短信',
+    msgTemplate: '短信模版',
     status: '进行中',
+    creator: '张三',
+    lastModifier: '张三',
+    createTime: '2023-07-18',
+    lastModifyTime: '2023-07-18',
+    updateTime: '2023-07-18',
     isJieYa: false,
     isDiYa: false
   }
@@ -312,15 +328,26 @@ const handleDelect = (row: TableItem) => {
 }
 // 分页
 const handleCurrentChange = (val: number) => {
-  console.log('value>>>>>', val)
+  console.log('value>>>>>handleCurrentChange', val)
   queryParams.pageNo = val
   getList()
 }
 
 // 页面条数改变
 const handleSizeChange = (val: number) => {
+  console.log('value>>>>>handleSizeChange', val)
   queryParams.pageSize = val
   getList()
+}
+
+// 选中条数
+const selectionChangeHandler = (val: TableItem) => {
+  console.log('value', val)
+}
+
+// 点击表头回调
+const headerClickHandler = (column: TableItem) => {
+  console.log('column-value', column)
 }
 
 const operRef = ref()
@@ -328,6 +355,7 @@ const addHandler = () => {
   operRef.value.open('add')
 }
 const editHandler = (row: TableItem) => {
+  console.log('edit_row', row)
   operRef.value.open('edit', row)
 }
 </script>

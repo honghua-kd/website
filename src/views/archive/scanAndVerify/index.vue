@@ -208,7 +208,7 @@
           </el-button>
         </div>
         <!-- 设置表格列 -->
-        <el-dropdown
+        <!-- <el-dropdown
           trigger="click"
           placement="top-end"
           :hide-on-click="false"
@@ -240,7 +240,7 @@
               </el-checkbox-group>
             </el-dropdown-menu>
           </template>
-        </el-dropdown>
+        </el-dropdown> -->
       </div>
 
       <el-table
@@ -374,6 +374,101 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
+
+      <!-- table 组件引入 -->
+      <Table
+        :data="tableData"
+        :loading="tableLoading"
+        :columnConfig="tableConfig"
+        :isSelected="true"
+        :page-total="pageTotal"
+        :setColumnEnable="true"
+        row-key="id"
+        :tree-props="{ children: 'target' }"
+        :height="tableHeight"
+        @selection-change="selectionChangeHandler"
+        @header-click="sortChangeHandler"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      >
+        <template #selection>
+          <el-table-column
+            type="selection"
+            width="40"
+            :selectable="selectableHandler"
+            align="center"
+          />
+        </template>
+        <template #header="item">
+          <span>{{ item.label }}</span>
+          <svg-icon
+            v-if="item.slotHeader"
+            :name="setSortFlag((queryParams[item.prop + 'Sort'] as string) || '')"
+            size="20"
+          />
+        </template>
+
+        <template #default="{ row, prop }">
+          <!-- 归档状态 -->
+          <span v-if="prop === 'archivalStatus'">
+            {{ getAchivalStatus(row[prop]) }}
+          </span>
+          <!-- 核对结果 -->
+          <span v-if="row.fileCode && prop === 'verifyResult'">
+            <svg-icon :name="getVerifyResult(row)" size="20" color="#f39b1c" />
+          </span>
+          <!-- 登记证归档序号 -->
+          <span
+            :class="row.fileCode ? '' : 'font-color-system'"
+            v-if="prop === 'registerCardArchiveNo'"
+          >
+            {{ row.registerCardArchiveNo }}
+          </span>
+          <!-- 文件名 -->
+          <span v-if="prop === 'fileName'">
+            <span
+              v-if="row.fileCode"
+              @click="openPreview(row.fileCode)"
+              class="file-name"
+            >
+              {{ row.fileName }}
+            </span>
+            <span v-else class="font-color-system">
+              {{ row.fileName || '系统数据' }}
+            </span>
+          </span>
+        </template>
+
+        <template #soltItem="{ row, prop }">
+          <span>
+            <TableSlotItem :rowInfo="row" :rowKey="prop" />
+          </span>
+        </template>
+
+        <template #action="scope">
+          <template v-if="scope.row.fileCode">
+            <el-button
+              v-if="
+                scope.row.archivalStatus === ARCHIVE_STATUS.UNACHIVED &&
+                scope.row.verifyResult !== VERIFY_RESULTS.PROCESSING
+              "
+              link
+              type="primary"
+              @click="editHandler(scope.row.id)"
+            >
+              编辑
+            </el-button>
+            <el-button
+              v-if="scope.row.archivalStatus !== ARCHIVE_STATUS.ACHIVED"
+              link
+              type="danger"
+              @click="delHandler([scope.row.id])"
+            >
+              删除
+            </el-button>
+          </template>
+        </template>
+      </Table>
     </div>
     <EditForm ref="editFormRef" @success="getList()" />
     <UploadForm ref="uploadFormRef" @success="getList()" />
@@ -387,21 +482,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, Ref, computed, onMounted, toRefs } from 'vue'
+import { ref, reactive, Ref, computed, onMounted } from 'vue'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import { openLink, isPdf, handleDownloadFile, px2rem } from '@/utils'
 import EditForm from './EditForm.vue'
 import UploadForm from './UploadForm.vue'
 import { CommonAPI, MortageAPI } from '@/api'
-import type { TableColumnCtx, CheckboxValueType } from 'element-plus'
+import Table from '@/components/Table.vue'
+
+import type { TableColumnCtx } from 'element-plus'
 import {
   ArrowDownBold,
   ArrowUpBold,
   Plus,
   Delete,
   Download,
-  Check,
-  Setting
+  Check
 } from '@element-plus/icons-vue'
 import type {
   VehiRegisterCardListRequest,
@@ -412,16 +508,14 @@ import type {
 } from '@/api'
 import TableSlotItem from './components/TableSlotItem.vue'
 import { ARCHIVE_STATUS, VERIFY_RESULTS } from '@/constants'
-import { useUserStore, useRoute } from '@toystory/lotso'
+import { useUserStore } from '@toystory/lotso'
 import dayjs from 'dayjs'
 import Preview from '@/components/Preview/index.vue'
 import useGetPreviewURL from '@/hooks/useGetPreviewURL/index'
-import BasicData from '@/views/archive/scanAndVerify/data'
+import { tableConfig } from '@/views/archive/scanAndVerify/data'
 
 const API = new MortageAPI()
 const CommonApi = new CommonAPI()
-const route = useRoute()
-const pathName = 'Table:' + (route?.value.name as string)
 
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
@@ -457,37 +551,37 @@ const queryParams = reactive<QueryParams>({
 const selectData: Ref<CardListItem[]> = ref([])
 const curStaffCode = ref<string>('')
 
-type ITableConfigObj = {
-  label: string
-  prop: string
-  valueType: string
-  minWidth?: number | string
-  width?: number | string
-  align: string
-  showOverflowTooltip?: boolean
-  fixed?: boolean
-  show: boolean
-  showDisabled?: boolean
-}
+// type ITableConfigObj = {
+//   label: string
+//   prop: string
+//   valueType: string
+//   minWidth?: number | string
+//   width?: number | string
+//   align: string
+//   showOverflowTooltip?: boolean
+//   fixed?: boolean
+//   show: boolean
+//   showDisabled?: boolean
+// }
 
-type IState = {
-  tableConfig: ITableConfigObj[]
-  checkAll: boolean
-  checkedConfig: string[]
-  checkboxTableConfig: ITableConfigObj[]
-  isIndeterminate: boolean
-}
+// type IState = {
+//   tableConfig: ITableConfigObj[]
+//   checkAll: boolean
+//   checkedConfig: string[]
+//   checkboxTableConfig: ITableConfigObj[]
+//   isIndeterminate: boolean
+// }
 
-const state = reactive<IState>({
-  tableConfig: BasicData.tableConfig,
-  checkAll: true,
-  checkedConfig: [],
-  checkboxTableConfig: BasicData.tableConfig,
-  isIndeterminate: true
-})
+// const state = reactive<IState>({
+//   tableConfig: BasicData.tableConfig,
+//   checkAll: true,
+//   checkedConfig: [],
+//   checkboxTableConfig: BasicData.tableConfig,
+//   isIndeterminate: true
+// })
 
-const { tableConfig, checkAll, checkedConfig, checkboxTableConfig } =
-  toRefs(state)
+// const { tableConfig, checkAll, checkedConfig, checkboxTableConfig } =
+//   toRefs(state)
 
 // 表格最大高度
 const searchBoxRef = ref()
@@ -505,40 +599,40 @@ const tableHeight = computed(() => {
   }
 })
 
-// 自定义表格列
-const handleCheckedConfig = (value: CheckboxValueType[]) => {
-  const checkedCount = value.length
-  state.checkAll = checkedCount === state.checkboxTableConfig.length
-  state.checkedConfig = value as string[]
-  localStorage.setItem(pathName, JSON.stringify(value))
+// // 自定义表格列
+// const handleCheckedConfig = (value: CheckboxValueType[]) => {
+//   const checkedCount = value.length
+//   state.checkAll = checkedCount === state.checkboxTableConfig.length
+//   state.checkedConfig = value as string[]
+//   localStorage.setItem(pathName, JSON.stringify(value))
 
-  state.tableConfig.forEach((item) => {
-    if (!item.showDisabled) {
-      item.show = state.checkedConfig.includes(item.prop)
-    }
-  })
-}
+//   state.tableConfig.forEach((item) => {
+//     if (!item.showDisabled) {
+//       item.show = state.checkedConfig.includes(item.prop)
+//     }
+//   })
+// }
 
-// 自定义表格列-全选
-const handleCheckAllChange = (val: string | number | boolean) => {
-  const arr = state.checkboxTableConfig.map((item) => item.prop)
-  const arrRequired = state.checkboxTableConfig.filter(
-    (item) => item.showDisabled
-  )
+// // 自定义表格列-全选
+// const handleCheckAllChange = (val: string | number | boolean) => {
+//   const arr = state.checkboxTableConfig.map((item) => item.prop)
+//   const arrRequired = state.checkboxTableConfig.filter(
+//     (item) => item.showDisabled
+//   )
 
-  const _val = val as boolean
+//   const _val = val as boolean
 
-  state.checkedConfig = _val ? arr : arrRequired.map((item) => item.prop)
-  state.isIndeterminate = !_val
+//   state.checkedConfig = _val ? arr : arrRequired.map((item) => item.prop)
+//   state.isIndeterminate = !_val
 
-  localStorage.setItem(pathName, JSON.stringify(state.checkedConfig))
+//   localStorage.setItem(pathName, JSON.stringify(state.checkedConfig))
 
-  state.tableConfig.forEach((item) => {
-    if (!item.showDisabled) {
-      item.show = !!_val
-    }
-  })
-}
+//   state.tableConfig.forEach((item) => {
+//     if (!item.showDisabled) {
+//       item.show = !!_val
+//     }
+//   })
+// }
 
 // 归档状态处理
 const getAchivalStatus = (status: string) => {
@@ -591,6 +685,7 @@ const getVerifyResult = (row: CardListItem) => {
 
 // 选择的数据
 const selectionChangeHandler = (item: CardListItem[]) => {
+  console.log('item', item)
   selectData.value.splice(0, selectData.value.length)
   selectData.value.push(...item)
 }
@@ -665,7 +760,7 @@ const editHandler = (id: string) => {
 // 排序
 const sortCols = ['fileName', 'registerCardArchiveNo', 'verifyResult']
 const sortChangeHandler = (column: TableColumnCtx<CardListItem>) => {
-  const prop = column?.property
+  const prop = column?.prop
   if (sortCols.indexOf(prop) === -1) {
     return
   }
@@ -847,7 +942,6 @@ const getList = () => {
     .then((res) => {
       tableLoading.value = false
       if (res && res.code === 200) {
-        // tableData.value.splice(0, tableData.value.length)
         tableData.value = res?.data?.list || []
         pageTotal.value = res?.data?.total || 0
       }
@@ -879,18 +973,18 @@ const getDicts = () => {
 }
 
 // 获取表格设置表头内容
-const getCheckConfig = () => {
-  state.checkedConfig = localStorage.getItem(pathName)
-    ? JSON.parse(localStorage.getItem(pathName) || '')
-    : state.checkboxTableConfig.map((item) => item.prop)
+// const getCheckConfig = () => {
+//   state.checkedConfig = localStorage.getItem(pathName)
+//     ? JSON.parse(localStorage.getItem(pathName) || '')
+//     : state.checkboxTableConfig.map((item) => item.prop)
 
-  state.tableConfig.forEach((item) => {
-    if (!item.showDisabled) {
-      item.show = state.checkedConfig.includes(item.prop)
-    }
-  })
-  state.checkAll = !(state.checkedConfig.length < BasicData.tableConfig.length)
-}
+//   state.tableConfig.forEach((item) => {
+//     if (!item.showDisabled) {
+//       item.show = state.checkedConfig.includes(item.prop)
+//     }
+//   })
+//   state.checkAll = !(state.checkedConfig.length < BasicData.tableConfig.length)
+// }
 
 const init = () => {
   getList()
@@ -902,7 +996,7 @@ onMounted(() => {
   queryParams.creatorName = userStore.userInfo?.staffName as string
   curStaffCode.value = userStore.userInfo?.staffCode as string
   init()
-  getCheckConfig()
+  // getCheckConfig()
 })
 </script>
 
