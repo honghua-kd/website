@@ -38,7 +38,7 @@
 
   <el-table
     :data="data"
-    :loading="loading"
+    v-loading="loading"
     :header-cell-style="{
       background: '#eef1f6',
       color: '#606266',
