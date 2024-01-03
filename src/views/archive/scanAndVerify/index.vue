@@ -2,175 +2,14 @@
   <div>
     <!-- 搜索工作栏 -->
     <div class="scan-search-container" ref="searchBoxRef">
-      <el-form
-        ref="queryFormRef"
-        class="scan-form"
-        :model="queryParams"
-        :label-width="px2rem('90px')"
-      >
-        <div class="scan-search-bar">
-          <el-row :gutter="20">
-            <el-col :span="12">
-              <el-form-item label="核验时间" class="width-full">
-                <el-date-picker
-                  v-model="queryParams.startVerifyTime"
-                  type="datetime"
-                  placeholder="核验开始时间"
-                  style="margin-right: 4%; width: 48%"
-                />
-                <el-date-picker
-                  v-model="queryParams.endVerifyTime"
-                  type="datetime"
-                  placeholder="核验结束时间"
-                  style="width: 48%"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="创建人" prop="creatorName">
-                <el-input
-                  v-model="queryParams.creatorName"
-                  clearable
-                  placeholder="请输入创建人"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="核对结果" prop="verifyResult">
-                <el-select
-                  v-model="queryParams.verifyResult"
-                  style="width: 100%"
-                  placeholder="请选择核对结果"
-                  clearable
-                >
-                  <el-option
-                    v-for="(item, index) in verifyOpts"
-                    :key="index"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="6">
-              <el-form-item label="批次号" prop="batchNo">
-                <el-input
-                  v-model="queryParams.batchNo"
-                  clearable
-                  placeholder="请输入批次号"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="发动机号" prop="engineNo">
-                <el-input
-                  v-model="queryParams.engineNo"
-                  clearable
-                  placeholder="请输入发动机号"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="发动机型号" prop="engineType">
-                <el-input
-                  v-model="queryParams.engineType"
-                  clearable
-                  placeholder="请输入发动机型号"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="归档状态" prop="archivalStatus">
-                <el-select
-                  v-model="queryParams.archivalStatus"
-                  style="width: 100%"
-                  clearable
-                  placeholder="请选择归档状态"
-                >
-                  <el-option
-                    v-for="(item, index) in archiveStatusOpts"
-                    :key="index"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20" v-if="expandFlag">
-            <el-col :span="6">
-              <el-form-item label="合同号" prop="contractNo">
-                <el-input
-                  v-model="queryParams.contractNo"
-                  clearable
-                  placeholder="请输入合同号"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="车牌号" prop="licensePlateNo">
-                <el-input
-                  v-model="queryParams.licensePlateNo"
-                  clearable
-                  placeholder="请输入车牌号"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="车架号" prop="vinNo">
-                <el-input
-                  v-model="queryParams.vinNo"
-                  clearable
-                  placeholder="请输入车架号"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="办事处" prop="agencyName">
-                <el-input
-                  v-model="queryParams.agencyName"
-                  clearable
-                  placeholder="请输入办事处"
-                />
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20" v-if="expandFlag">
-            <el-col :span="12">
-              <el-form-item label="挂靠商" prop="affiliatesName">
-                <el-input
-                  v-model="queryParams.affiliatesName"
-                  clearable
-                  placeholder="请输入挂靠商"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="渠道商" prop="channelName">
-                <el-input
-                  v-model="queryParams.channelName"
-                  clearable
-                  placeholder="请输入渠道商"
-                />
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
-        <div class="search-btn">
-          <el-button type="primary" :icon="Search" @click="searchHandler"
-            >查询</el-button
-          >
-          <el-button :icon="Refresh" @click="reset">重置</el-button>
-        </div>
-      </el-form>
-      <div class="arrow" @click="expandHandler">
-        <el-icon v-if="!expandFlag"><ArrowDownBold /></el-icon>
-        <el-icon v-if="expandFlag"><ArrowUpBold /></el-icon>
-        <span v-if="!expandFlag" style="margin-left: 4px"> 展开 </span>
-        <span v-if="expandFlag" style="margin-left: 4px"> 收回 </span>
-      </div>
+      <SearchBar
+        :query="queryParams"
+        :dictArray="dictTypes"
+        :searchConfig="searchConfig"
+        :showExpand="true"
+        @reset="reset"
+        @searchHandler="searchHandler"
+      />
     </div>
     <el-divider border-style="dashed" />
     <!-- 表格 -->
@@ -315,46 +154,35 @@
 
 <script setup lang="ts">
 import { ref, reactive, Ref, computed, onMounted } from 'vue'
-import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
-import { openLink, isPdf, handleDownloadFile, px2rem } from '@/utils'
+import { ElMessageBox, ElMessage } from 'element-plus'
+import { openLink, isPdf, handleDownloadFile } from '@/utils'
 import EditForm from './EditForm.vue'
 import UploadForm from './UploadForm.vue'
-import { CommonAPI, MortageAPI } from '@/api'
+import { MortageAPI } from '@/api'
 import Table from '@/components/Table/index.vue'
 
 import type { TableColumnCtx } from 'element-plus'
-import {
-  Refresh,
-  Search,
-  ArrowDownBold,
-  ArrowUpBold,
-  Plus,
-  Delete,
-  Download,
-  Check
-} from '@element-plus/icons-vue'
+import { Plus, Delete, Download, Check } from '@element-plus/icons-vue'
 
 import type {
   VehiRegisterCardListRequest,
   PageRequest,
   SortParamsRequest,
-  CardListItem,
-  DictItem
+  CardListItem
 } from '@/api'
 import TableSlotItem from './components/TableSlotItem.vue'
 import { ARCHIVE_STATUS, VERIFY_RESULTS } from '@/constants'
 import { useUserStore } from '@toystory/lotso'
 import dayjs from 'dayjs'
 import Preview from '@/components/Preview/index.vue'
-import useGetPreviewURL from '@/hooks/useGetPreviewURL/index'
-import { tableConfig } from '@/views/archive/scanAndVerify/data'
+import { useGetPreviewURL } from '@/hooks/useGetPreviewURL'
+import { tableConfig, searchConfig } from '@/views/archive/scanAndVerify/data'
+import SearchBar from '@/components/SearchBar/index.vue'
 
 const API = new MortageAPI()
-const CommonApi = new CommonAPI()
 
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
-const queryFormRef = ref<InstanceType<typeof ElForm>>()
-const expandFlag = ref<boolean>(false)
+
 const tableLoading = ref<boolean>(false)
 const tableData: Ref<CardListItem[]> = ref([])
 type QueryParams = VehiRegisterCardListRequest &
@@ -385,6 +213,7 @@ const queryParams = reactive<QueryParams>({
 
 const selectData: Ref<CardListItem[]> = ref([])
 const curStaffCode = ref<string>('')
+const dictTypes = ['ARCHIVE_STATUS', 'OCR_STATUS']
 
 // 表格最大高度
 const searchBoxRef = ref()
@@ -471,10 +300,6 @@ const selectIds = computed(() => {
 // 是否可选
 const selectableHandler = (row: CardListItem) => {
   return !!(row.fileCode && row.archivalStatus !== ARCHIVE_STATUS.ACHIVED)
-}
-// 展开-收回处理
-const expandHandler = (): boolean => {
-  return (expandFlag.value = !expandFlag.value)
 }
 
 // 上传车辆登记证
@@ -568,7 +393,8 @@ const handleSizeChange = (val: number) => {
 }
 
 // 查询
-const searchHandler = () => {
+const searchHandler = (query: QueryParams) => {
+  Object.assign(queryParams, query)
   queryParams.pageNo = 1
   getList()
 }
@@ -720,29 +546,8 @@ const getList = () => {
     })
 }
 
-// 批量获取数据字典
-const verifyOpts: Ref<DictItem[]> = ref([])
-const archiveStatusOpts: Ref<DictItem[]> = ref([])
-const getDicts = () => {
-  const dictTypes = ['ARCHIVE_STATUS', 'OCR_STATUS']
-  const params = {
-    dictTypes
-  }
-  CommonApi.getDictsList(params)
-    .then((res) => {
-      if (res && res.code === 200) {
-        archiveStatusOpts.value = res?.data?.ARCHIVE_STATUS as DictItem[]
-        verifyOpts.value = res?.data?.OCR_STATUS as DictItem[]
-      }
-    })
-    .catch((err: Error) => {
-      throw err
-    })
-}
-
 const init = () => {
   getList()
-  getDicts()
 }
 onMounted(() => {
   const userStore = useUserStore()
@@ -797,14 +602,5 @@ onMounted(() => {
 }
 :deep(.el-form-item) {
   margin-bottom: 12px;
-}
-.dropdown-column {
-  display: flex;
-  padding-top: 10px;
-  flex-direction: row;
-  .icon {
-    margin-top: -2px;
-    margin-right: 5px;
-  }
 }
 </style>

@@ -45,7 +45,9 @@ const frameSetting: FrameSetting = {
   // 是否显示刷新
   refresh: true,
   // 是否显示通知
-  notice: false,
+  notice: true,
+  // 是否显示搜索
+  search: false,
   // 是否显示面包导航
   isBreadcrumb: true,
   // 是否显示logo
