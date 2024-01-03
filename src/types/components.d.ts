@@ -7,6 +7,8 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    Card: typeof import('./../components/Card/index.vue')['default']
+    CityCascader: typeof import('./../components/CityCascader/index.vue')['default']
     DataPermissonForm: typeof import('./../components/PermiForm/DataPermissonForm.vue')['default']
     ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
     ElButton: typeof import('element-plus/es')['ElButton']
@@ -14,6 +16,7 @@ declare module 'vue' {
     ElCheckboxGroup: typeof import('element-plus/es')['ElCheckboxGroup']
     ElCol: typeof import('element-plus/es')['ElCol']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
+    ElCord: typeof import('element-plus/es')['ElCord']
     ElDatePicker: typeof import('element-plus/es')['ElDatePicker']
     ElDialog: typeof import('element-plus/es')['ElDialog']
     ElDivider: typeof import('element-plus/es')['ElDivider']
@@ -38,17 +41,22 @@ declare module 'vue' {
     ElTimeline: typeof import('element-plus/es')['ElTimeline']
     ElTimelineItem: typeof import('element-plus/es')['ElTimelineItem']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
+    ElTree: typeof import('element-plus/es')['ElTree']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     ErrorPage: typeof import('./../components/ErrorPage/index.vue')['default']
+    FilterForm: typeof import('./../components/FilterForm/index.vue')['default']
     Icon: typeof import('./../components/Icon/index.vue')['default']
     MdEditor: typeof import('./../components/MdEditor/index.vue')['default']
     PermiListDialog: typeof import('./../components/PermiForm/PermiListDialog.vue')['default']
     Preview: typeof import('./../components/Preview/index.vue')['default']
+    Readme: typeof import('./../components/Table/readme.md')['default']
+    README: typeof import('./../components/Table/README.md')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SecondaryTitle: typeof import('./../components/SecondaryTitle/index.vue')['default']
     SideTree: typeof import('./../components/SideTree/index.vue')['default']
     SvgIcon: typeof import('./../components/SvgIcon/index.vue')['default']
+    Table: typeof import('./../components/Table/index.vue')['default']
   }
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']

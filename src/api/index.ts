@@ -21,3 +21,6 @@ export type * from './downUpload/types/response'
 
 export type * from './common/types/request'
 export type * from './common/types/response'
+
+export type * from './supplier/types/request'
+export type * from './supplier/types/response'
