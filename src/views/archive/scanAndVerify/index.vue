@@ -158,7 +158,7 @@ import { ElMessageBox, ElMessage } from 'element-plus'
 import { openLink, isPdf, handleDownloadFile } from '@/utils'
 import EditForm from './EditForm.vue'
 import UploadForm from './UploadForm.vue'
-import { CommonAPI, MortageAPI } from '@/api'
+import { MortageAPI } from '@/api'
 import Table from '@/components/Table/index.vue'
 
 import type { TableColumnCtx } from 'element-plus'
@@ -168,8 +168,7 @@ import type {
   VehiRegisterCardListRequest,
   PageRequest,
   SortParamsRequest,
-  CardListItem,
-  DictItem
+  CardListItem
 } from '@/api'
 import TableSlotItem from './components/TableSlotItem.vue'
 import { ARCHIVE_STATUS, VERIFY_RESULTS } from '@/constants'
@@ -181,7 +180,6 @@ import { tableConfig, searchConfig } from '@/views/archive/scanAndVerify/data'
 import SearchBar from '@/components/SearchBar/index.vue'
 
 const API = new MortageAPI()
-const CommonApi = new CommonAPI()
 
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
 
@@ -215,6 +213,7 @@ const queryParams = reactive<QueryParams>({
 
 const selectData: Ref<CardListItem[]> = ref([])
 const curStaffCode = ref<string>('')
+const dictTypes = ['ARCHIVE_STATUS', 'OCR_STATUS']
 
 // 表格最大高度
 const searchBoxRef = ref()
@@ -547,30 +546,8 @@ const getList = () => {
     })
 }
 
-// 批量获取数据字典
-const verifyOpts: Ref<DictItem[]> = ref([])
-const archiveStatusOpts: Ref<DictItem[]> = ref([])
-const dictTypes = ['ARCHIVE_STATUS', 'OCR_STATUS']
-
-const getDicts = () => {
-  const params = {
-    dictTypes
-  }
-  CommonApi.getDictsList(params)
-    .then((res) => {
-      if (res && res.code === 200) {
-        archiveStatusOpts.value = res?.data?.ARCHIVE_STATUS as DictItem[]
-        verifyOpts.value = res?.data?.OCR_STATUS as DictItem[]
-      }
-    })
-    .catch((err: Error) => {
-      throw err
-    })
-}
-
 const init = () => {
   getList()
-  getDicts()
 }
 onMounted(() => {
   const userStore = useUserStore()

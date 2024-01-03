@@ -1,3 +1,4 @@
+import { useDictStore } from '@/store/dict';
 <template>
   <div>
     <!-- 搜索工作栏 -->
@@ -88,6 +89,7 @@ import {
   ArrowUpBold
 } from '@element-plus/icons-vue'
 import { ElForm } from 'element-plus'
+import { useDictStore } from '@/store/dict'
 
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
 
@@ -123,12 +125,14 @@ const props = withDefaults(defineProps<IProps>(), {
 })
 
 const emit = defineEmits(['searchHandler', 'reset'])
-
 const queryParams = ref({})
 const dictObj = reactive<dictState>({})
+
 const generateOptions = () => {
+  const dictStore = useDictStore()
+  const dictMap = dictStore.dicts
   props.dictArray.forEach((item) => {
-    dictObj[item] = []
+    dictObj[item] = dictMap[item] || []
   })
 }
 
