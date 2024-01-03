@@ -1,3 +1,55 @@
+# Table 组件
+
+## Table属性说明
+
+```js
+interface IProps {
+  columnConfig: ITableConfigProps[]   // 表格column 配置接收字段
+  data: TableRecord[]   // 表格渲染数据
+  loading?: boolean    // loading
+  height?: number     // 表格高度，通常为计算高度
+  isSelected?: boolean  // 是否需要selection 功能 true | false，若默认的selection不满足，可以传入插槽 #selection
+  pageTotal?: number  // 总页数 分页功能
+  setColumnEnable?: boolean  // 控制表格列开关  true | false
+}
+```
+
+## Table 回调方法
+
+```js
+const emit = defineEmits([
+  'selection-change',  // 选中表格回调
+  'size-change',       // 分页-切换pageSize
+  'current-change',    // 分页-切换页数
+  'header-click'       // 表头点击回调
+])
+
+```
+
+## 配置表格列属性配置
+
+```js
+interface ITableConfigProps {
+  label: string   // 表头名称
+  prop: string    // 表字段名
+  align?: string  // 'left' | 'right' | 'center'
+  headerIcon?: string | boolean  // 自定义表头标识设置为 true
+  slotName?: string    // 若column为自定义插槽，这个字段同步插槽名
+  showOverflowTooltip?: boolean // 是否展示tooltip
+  fixed?: string | boolean   // 是否固定-同步 element-plus table 的fixed 属性
+  valueType?: string   // 该配置的类型，若时间格式 'dateType' | '' 默认展示行
+  width?: string | number // 宽度
+  minWidth?: string | number  // 最小宽度
+  show?: boolean       // 和设置表格列功能同步，通常设置为true
+  showDisabled?: boolean  // 和设置表格列功能同步，若为true代表表格的固定列，不会被隐藏
+  customStyle?: CustomStyleType  // 单元格 自定义样式 写法通style写法
+  slotHeader?: string  // 若表头为自定义插槽，这个字段同步插槽名
+}
+```
+
+## column 配置demo
+
+```js
 export const tableConfig = [
   {
     label: '文件名',
@@ -236,121 +288,4 @@ export const tableConfig = [
     show: true
   }
 ]
-export const searchConfig = [
-  [
-    {
-      compType: 'el-date-picker',
-      colSpan: 12,
-      label: '核验时间',
-      valueType: 'datetime',
-      propStart: 'startVerifyTime',
-      propEnd: 'endVerifyTime',
-      placeholderStart: '核验开始时间',
-      placeholderEnd: '核验结束时间'
-    },
-    {
-      compType: 'el-input',
-      colSpan: 6,
-      label: '创建人',
-      valueType: 'input',
-      prop: 'creatorName',
-      placeholder: '请输入创建人'
-    },
-    {
-      compType: 'el-select',
-      colSpan: 6,
-      label: '核对结果',
-      valueType: 'select',
-      prop: 'verifyResult',
-      placeholder: '请选择核对结果',
-      options: 'OCR_STATUS'
-    }
-  ],
-  [
-    {
-      compType: 'el-input',
-      colSpan: 6,
-      label: '批次号',
-      valueType: 'input',
-      prop: 'batchNo',
-      placeholder: '请输入批次号'
-    },
-    {
-      compType: 'el-input',
-      colSpan: 6,
-      label: '发动机号',
-      valueType: 'input',
-      prop: 'engineNo',
-      placeholder: '请输入发动机号'
-    },
-    {
-      compType: 'el-input',
-      colSpan: 6,
-      label: '发动机型号',
-      valueType: 'input',
-      prop: 'engineType',
-      placeholder: '请输入发动机型号'
-    },
-    {
-      compType: 'el-select',
-      colSpan: 6,
-      label: '归档状态',
-      valueType: 'select',
-      prop: 'archivalStatus',
-      placeholder: '请选择归档状态',
-      options: 'ARCHIVE_STATUS'
-    }
-  ],
-  [
-    {
-      compType: 'el-input',
-      colSpan: 6,
-      label: '合同号',
-      valueType: 'input',
-      prop: 'contractNo',
-      placeholder: '请输入合同号'
-    },
-    {
-      compType: 'el-input',
-      colSpan: 6,
-      label: '车牌号',
-      valueType: 'input',
-      prop: 'licensePlateNo',
-      placeholder: '请输入车牌号'
-    },
-    {
-      compType: 'el-input',
-      colSpan: 6,
-      label: '车架号',
-      valueType: 'input',
-      prop: 'vinNo',
-      placeholder: '请输入车架号'
-    },
-    {
-      compType: 'el-input',
-      colSpan: 6,
-      label: '办事处',
-      valueType: 'input',
-      prop: 'agencyName',
-      placeholder: '请输入办事处'
-    }
-  ],
-  [
-    {
-      compType: 'el-input',
-      colSpan: 12,
-      label: '挂靠商',
-      valueType: 'input',
-      prop: 'affiliatesName',
-      placeholder: '请输入挂靠商'
-    },
-    {
-      compType: 'el-input',
-      colSpan: 12,
-      label: '渠道商',
-      valueType: 'input',
-      prop: 'channelName',
-      placeholder: '请输入渠道商'
-    }
-  ]
-]
+```
