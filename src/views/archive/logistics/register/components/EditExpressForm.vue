@@ -18,7 +18,7 @@
                 v-model="expressInfoForm.contentNo"
                 clearable
                 placeholder="请输入快递内容编号"
-                disabled
+                :disabled="title == '新增快递内容' ? false : true"
               />
             </el-form-item>
           </el-col>
@@ -27,6 +27,7 @@
               class="express-com"
               label="快递内容类型:"
               prop="contentType"
+              :rules="[{ required: true, message: '快递内容类型不能为空' }]"
             >
               <el-select
                 v-model="expressInfoForm.contentType"
@@ -81,6 +82,7 @@
 import { ref, reactive, Ref, watch } from 'vue'
 import type { ExpressDictItem } from '@/api'
 import { ExpressAPI } from '@/api'
+import { ElForm } from 'element-plus'
 const API = new ExpressAPI()
 defineProps({
   title: {
@@ -91,14 +93,18 @@ defineProps({
 const expressInfoForm = reactive({
   id: '',
   contentNo: '',
-  contentType: '',
+  contentType: '车辆登记证',
   contentTypeNumber: '',
   contractNo: ''
 })
 const dialogVisible = ref<boolean>(false)
-const expressRef = ref()
+const expressRef = ref<InstanceType<typeof ElForm>>()
 const emit = defineEmits(['editcontent'])
-const saveExpressHandler = () => {
+const saveExpressHandler = async () => {
+  // 校验
+  if (!expressRef.value) return
+  const valid = await expressRef.value.validate()
+  if (!valid) return
   dialogVisible.value = false
   const params = JSON.parse(JSON.stringify(expressInfoForm))
   emit('editcontent', params)
@@ -118,7 +124,7 @@ const open = async (row?: string) => {
     getExpressContentNo(row)
     expressInfoForm.id = ''
     expressInfoForm.contentNo = ''
-    expressInfoForm.contentType = ''
+    expressInfoForm.contentType = '车辆登记证'
     expressInfoForm.contentTypeNumber = ''
     expressInfoForm.contractNo = ''
   }
@@ -147,14 +153,14 @@ const getDicts = () => {
   })
 }
 const resetForm = () => {
-  expressRef.value.resetFields()
+  expressRef.value!.resetFields()
 }
 defineExpose({ open })
 const contentTypePlaceHolder = ref('')
 watch(
   () => expressInfoForm.contentType,
   (val) => {
-    if (val === '登记证') {
+    if (val === '车辆登记证') {
       contentTypePlaceHolder.value = '请输入车架号'
     } else if (val === '抵押材料') {
       contentTypePlaceHolder.value = '请输入抵押任务号'

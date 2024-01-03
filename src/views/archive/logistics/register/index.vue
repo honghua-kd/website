@@ -41,6 +41,7 @@
                 type="date"
                 :default-value="new Date()"
                 format="YYYY-MM-DD"
+                style="width: 100%"
                 value-format="YYYY-MM-DD"
               />
             </el-form-item>
@@ -424,12 +425,15 @@ const getCheckConfig = () => {
 
 const getContentList = (value: ExpressContentList[]) => {
   let list = ''
-  value.forEach((item, index) => {
-    if (index === value.length - 1) {
-      list += item.contentType
-    } else {
-      list += item.contentType + '、'
-    }
+  // value.forEach((item, index) => {
+  //   if (index === value.length - 1) {
+  //     list += item.contentType ? item.contentType : ''
+  //   } else {
+  //     list += item.contentType ? item.contentType + '、' : ''
+  //   }
+  // })
+  value.forEach((item) => {
+    list += item.contentType ? item.contentType + ' ' : ''
   })
   return list
 }
