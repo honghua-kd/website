@@ -5,6 +5,7 @@ export { ExpressAPI } from './expressManagement'
 export { CommonAPI } from './common'
 export { SupplierAPI } from './supplier'
 export { RecordAPI } from './downUpload'
+export { MortgageCityAPI } from './mortgageCity'
 export type * from './types/request'
 export type * from './types/response'
 
@@ -25,3 +26,6 @@ export type * from './common/types/response'
 
 export type * from './supplier/types/request'
 export type * from './supplier/types/response'
+
+export type * from './mortgageCity/types/request'
+export type * from './mortgageCity/types/response'

@@ -50,10 +50,12 @@
     </el-card>
     <el-row :gutter="8" style="margin: 10px 0">
       <el-col :span="1.5">
-        <el-button type="primary"> 批量导入 </el-button>
+        <el-button type="primary" @click="importHandler"> 批量导入 </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="primary"> 下载导入模版 </el-button>
+        <el-button type="primary" @click="downloadTemplate">
+          下载导入模版
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="primary" @click="addHandler"> 新增 </el-button>
@@ -113,13 +115,18 @@
       @current-change="handleCurrentChange"
     />
     <OperDialog ref="operRef" />
+    <ImportForm ref="importFormRef" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, Ref } from 'vue'
-import { Search } from '@element-plus/icons-vue'
+import { reactive, ref, Ref, onMounted } from 'vue'
 import OperDialog from '@/views/mortgage/city/components/operDialog.vue'
+import ImportForm from './ImportForm.vue'
+import { CommonAPI, MortgageCityAPI } from '@/api'
+import { handleDownloadFile } from '@/utils'
+const CommonApi = new CommonAPI()
+const MortgageCityApi = new MortgageCityAPI()
 const statusOpts = reactive([
   {
     dictLabel: '城',
@@ -275,6 +282,39 @@ const addHandler = () => {
 const editHandler = (row: TableItem) => {
   operRef.value.open('edit', row)
 }
+
+const importFormRef = ref()
+const importHandler = () => {
+  importFormRef.value.open()
+}
+// 下载模板
+const downloadTemplate = () => {
+  const params = {
+    bizType: 'EXPRESS_INFO'
+  }
+  CommonApi.getDownLoadTemplate(params)
+    .then((res) => {
+      handleDownloadFile(res)
+    })
+    .catch((err: Error) => {
+      throw err
+    })
+}
+onMounted(() => {
+  MortgageCityApi.getAllProvince()
+    .then((res) => {
+      console.error(res)
+      // if (res && res.code === 200) {
+      //   ElMessage({
+      //     type: 'success',
+      //     message: '导入成功'
+      //   })
+      // }
+    })
+    .catch((err: Error) => {
+      throw err
+    })
+})
 </script>
 
 <style lang="scss" scoped>
