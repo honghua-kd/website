@@ -117,6 +117,11 @@
                     {
                       required: expressStatusFlag,
                       message: '寄件人名称不能为空'
+                    },
+                    {
+                      max: 200,
+                      message: '内容超长',
+                      trigger: 'change'
                     }
                   ]"
                 >
@@ -135,11 +140,26 @@
                   label="寄件人联系电话"
                   :label-width="px2rem('120px')"
                   prop="postPhone"
+                  :rules="[
+                    {
+                      max: 200,
+                      message: '内容超长',
+                      trigger: 'change'
+                    }
+                  ]"
                 >
-                  <el-input
+                  <!-- <el-input
                     v-model="basicInfoForm.sendPhone"
                     clearable
                     placeholder="请输入寄件人联系电话"
+                  /> -->
+                  <el-autocomplete
+                    v-model="basicInfoForm.sendPhone"
+                    :fetch-suggestions="queryContractsSearchByPhone"
+                    :trigger-on-focus="false"
+                    clearable
+                    placeholder="请输入寄件人联系电话"
+                    @select="handleSelect"
                   />
                 </el-form-item>
               </el-col>
@@ -197,6 +217,11 @@
                     {
                       required: !expressStatusFlag,
                       message: '收件人名称不能为空'
+                    },
+                    {
+                      max: 200,
+                      message: '内容超长',
+                      trigger: 'change'
                     }
                   ]"
                 >
@@ -215,11 +240,26 @@
                   label="收件人联系电话"
                   :label-width="px2rem('120px')"
                   prop="receivePhone"
+                  :rules="[
+                    {
+                      max: 200,
+                      message: '内容超长',
+                      trigger: 'change'
+                    }
+                  ]"
                 >
-                  <el-input
+                  <!-- <el-input
                     v-model="basicInfoForm.receivePhone"
                     clearable
                     placeholder="请输入收件人联系电话"
+                  /> -->
+                  <el-autocomplete
+                    v-model="basicInfoForm.receivePhone"
+                    :fetch-suggestions="queryContractsSearchByPhone"
+                    :trigger-on-focus="false"
+                    clearable
+                    placeholder="请输入收件人联系电话"
+                    @select="handleSelect"
                   />
                 </el-form-item>
               </el-col>
@@ -528,6 +568,33 @@ const queryContractsSearch = (
 ) => {
   const params = {
     userName: queryString
+  }
+  API.getUsualAddressList(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        commonContracts.value = res?.data?.list || []
+        commonContracts.value.forEach((item) => {
+          item.value = '常用联系-' + item.userName + '-' + item.userPhone
+        })
+        const results = queryString
+          ? commonContracts.value.filter(createFilter(queryString))
+          : commonContracts.value
+        clearTimeout(timeout)
+        timeout = setTimeout(() => {
+          cb(results)
+        }, 2000 * Math.random())
+      }
+    })
+    .catch((err: Error) => {
+      console.log(err)
+    })
+}
+const queryContractsSearchByPhone = (
+  queryString: string,
+  cb: AutocompleteFetchSuggestionsCallback
+) => {
+  const params = {
+    userPhone: queryString
   }
   API.getUsualAddressList(params)
     .then((res) => {

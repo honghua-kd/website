@@ -17,7 +17,14 @@
             <el-form-item
               label="联系人名称:"
               prop="userName"
-              :rules="[{ required: true, message: '联系人名称不能为空' }]"
+              :rules="[
+                { required: true, message: '联系人名称不能为空' },
+                {
+                  max: 200,
+                  message: '内容超长',
+                  trigger: 'change'
+                }
+              ]"
             >
               <el-input
                 v-model="basicInfoForm.userName"
@@ -27,7 +34,17 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="联系人电话:" prop="userPhone">
+            <el-form-item
+              label="联系人电话:"
+              prop="userPhone"
+              :rules="[
+                {
+                  max: 200,
+                  message: '内容超长',
+                  trigger: 'change'
+                }
+              ]"
+            >
               <el-input
                 v-model="basicInfoForm.userPhone"
                 clearable
@@ -36,7 +53,17 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="邮箱:" prop="userMail">
+            <el-form-item
+              label="邮箱:"
+              prop="userMail"
+              :rules="[
+                {
+                  max: 200,
+                  message: '内容超长',
+                  trigger: 'change'
+                }
+              ]"
+            >
               <el-input
                 v-model="basicInfoForm.userMail"
                 clearable

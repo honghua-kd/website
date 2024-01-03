@@ -700,11 +700,11 @@ const getDicts = () => {
 // 快递状态处理
 const getExpressStatus = (status: number) => {
   let topic = ''
-  if (status === EXPRESS_STATUS.REJECT) {
+  if (status === 0) {
     topic = '未接收'
-  } else if (status === EXPRESS_STATUS.RECEIVE) {
+  } else if (status === 1) {
     topic = '已接收'
-  } else if (status === EXPRESS_STATUS.PROBLEM) {
+  } else if (status === 2) {
     topic = '问题件'
   }
   return topic
@@ -713,9 +713,9 @@ const getExpressStatus = (status: number) => {
 // 寄送接收状态
 const getExpressType = (status: number) => {
   let topic = ''
-  if (status === EXPRESS_TYPE.RECEIVE) {
+  if (status === 1) {
     topic = '接收'
-  } else if (status === EXPRESS_TYPE.SEND) {
+  } else if (status === 0) {
     topic = '寄送'
   }
   return topic
