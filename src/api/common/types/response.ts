@@ -21,18 +21,7 @@ export interface DictItem {
   cssClass?: string
 }
 
-interface DictTypes {
-  ARCHIVE_STATUS: string
-  OCR_STATUS: string
-  EXPRESS_COMPANY: string
-  EXPRESS_TYPE: string
-  EXPRESS_CONTENT: string
-  EXPRESS_STATUS: string
-}
-
-type DictType = keyof DictTypes
-
-export type DictList = Record<DictType, DictItem[]>
+export type DictList = Record<string, DictItem[]>
 
 interface FileHeader extends RawAxiosRequestHeaders {
   'content-disposition'?: string
