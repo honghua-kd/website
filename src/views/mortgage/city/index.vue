@@ -3,7 +3,7 @@
     <el-card>
       <el-form :model="queryParams" ref="formRef">
         <el-row :gutter="20">
-          <el-col :span="10">
+          <el-col :span="8">
             <el-form-item label="城市:" prop="city">
               <el-select
                 v-model="queryParams.city"
@@ -33,7 +33,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="车牌代码:" prop="chepai">
               <el-input
                 v-model="queryParams.chepai"
@@ -43,9 +43,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-button type="primary" :icon="Search" @click="searchHandler">
-              搜索
-            </el-button>
+            <el-button type="primary" @click="searchHandler"> 查询 </el-button>
           </el-col>
         </el-row>
       </el-form>

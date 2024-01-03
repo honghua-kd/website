@@ -12,7 +12,7 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="10">
+          <el-col :span="6">
             <el-form-item label="适用业务类型:" prop="city">
               <el-select
                 v-model="queryParams.city"
@@ -28,7 +28,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="规则状态:" prop="chepai">
               <el-select
                 v-model="queryParams.city"
@@ -45,9 +45,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-button type="primary" :icon="Search" @click="searchHandler">
-              搜索
-            </el-button>
+            <el-button type="primary" @click="searchHandler"> 查询 </el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -70,7 +68,7 @@
       </el-col>
     </el-row>
     <el-table :data="tableData" border v-loading="tableLoading">
-      <el-table-column type="selection" width="55" />
+      <el-table-column type="selection" width="55" align="center"/>
       <template v-for="item in Columns">
         <el-table-column
           v-if="item.show"

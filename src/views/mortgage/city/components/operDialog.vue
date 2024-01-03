@@ -11,7 +11,7 @@
         ref="formRef"
         :model="formParams"
         v-loading="formLoading"
-        label-width="80px"
+        :label-width="px2rem('140px')"
         :rules="formRules"
       >
         <el-row>
@@ -21,6 +21,7 @@
                 v-model="formParams.market"
                 clearable
                 placeholder="请选择省份"
+                style="width: 100%"
               >
                 <el-option
                   v-for="item in statusOpts"
@@ -37,6 +38,7 @@
                 v-model="formParams.city"
                 clearable
                 placeholder="请选择城市"
+                style="width: 100%"
               >
                 <el-option
                   v-for="item in statusOpts"
@@ -55,6 +57,7 @@
                 v-model="formParams.market"
                 clearable
                 placeholder="请选择"
+                style="width: 100%"
               >
                 <el-option
                   v-for="item in statusOpts"
@@ -71,6 +74,7 @@
                 v-model="formParams.market"
                 clearable
                 placeholder="请选择"
+                style="width: 100%"
               >
                 <el-option
                   v-for="item in statusOpts"
@@ -128,6 +132,7 @@
 <script setup lang="ts">
 import { reactive, ref, Ref } from 'vue'
 import { ElForm } from 'element-plus'
+import { px2rem } from '@/utils'
 const dialogTitle: Ref<string> = ref('新增')
 const dialogVisible: Ref<boolean> = ref(false)
 const formLoading: Ref<boolean> = ref(false)
@@ -190,13 +195,9 @@ defineExpose({ open })
 <style lang="scss" scoped>
 .city-select {
   margin-left: 1%;
-  width: 48%;
+  width: 28%;
 }
 :deep(.el-dialog__header) {
   text-align: initial;
-}
-:deep(.el-form-item__label) {
-  line-height: normal;
-  text-align: end;
 }
 </style>

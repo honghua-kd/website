@@ -5,19 +5,18 @@
       v-model="dialogVisible"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
-      center
     >
-      <div class="base-title">基础信息</div>
+      <div class="second-title">基础信息</div>
       <el-form
         ref="formRef"
         :model="formParams"
         v-loading="formLoading"
-        label-width="80px"
+        :label-width="px2rem('120px')"
         :rules="formRules"
       >
         <el-row>
           <el-col :span="12">
-            <el-form-item label="规则名称" prop="market">
+            <el-form-item label="规则名称" prop="market" align="center">
               <el-input
                 v-model="formParams.chepai"
                 placeholder="请输入"
@@ -26,11 +25,12 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="任务类型" prop="type">
+            <el-form-item label="任务类型" prop="type" align="center">
               <el-select
                 v-model="formParams.type"
                 clearable
                 placeholder="请选择"
+                style="width: 100%"
               >
                 <el-option
                   v-for="item in statusOpts"
@@ -44,11 +44,12 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="数据来源" prop="laiyuan">
+            <el-form-item label="数据来源" prop="laiyuan" align="center">
               <el-select
                 v-model="formParams.laiyuan"
                 clearable
                 placeholder="请选择"
+                style="width: 100%"
               >
                 <el-option
                   v-for="item in statusOpts"
@@ -60,11 +61,12 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="城市" prop="city">
+            <el-form-item label="城市" prop="city" align="center">
               <el-select
                 v-model="formParams.city"
                 clearable
                 placeholder="请选择"
+                style="width: 100%"
               >
                 <el-option
                   v-for="item in statusOpts"
@@ -76,14 +78,15 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <div class="base-Title">分配规则</div>
+        <div class="second-title">分配规则</div>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="分配类型" prop="market">
+            <el-form-item label="分配类型" prop="market" align="center">
               <el-select
                 v-model="formParams.market"
                 clearable
                 placeholder="请选择"
+                style="width: 100%"
               >
                 <el-option
                   v-for="item in statusOpts"
@@ -95,45 +98,12 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="分配人员" prop="market">
+            <el-form-item label="分配人员" prop="market" align="center">
               <el-select
                 v-model="formParams.market"
                 clearable
                 placeholder="请选择"
-              >
-                <el-option
-                  v-for="item in statusOpts"
-                  :key="item.dictValue"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="是否自动分配" prop="market">
-              <el-select
-                v-model="formParams.market"
-                clearable
-                placeholder="请选择"
-              >
-                <el-option
-                  v-for="item in statusOpts"
-                  :key="item.dictValue"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="是否发送短信" prop="market">
-              <el-select
-                v-model="formParams.market"
-                clearable
-                placeholder="请选择"
+                style="width: 100%"
               >
                 <el-option
                   v-for="item in statusOpts"
@@ -146,12 +116,49 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col>
-            <el-form-item label="短信模版" prop="market">
+          <el-col :span="12">
+            <el-form-item label="是否自动分配" prop="market" align="center">
               <el-select
                 v-model="formParams.market"
                 clearable
                 placeholder="请选择"
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="item in statusOpts"
+                  :key="item.dictValue"
+                  :label="item.dictLabel"
+                  :value="item.dictValue"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="是否发送短信" prop="market" align="center">
+              <el-select
+                v-model="formParams.market"
+                clearable
+                placeholder="请选择"
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="item in statusOpts"
+                  :key="item.dictValue"
+                  :label="item.dictLabel"
+                  :value="item.dictValue"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="短信模版" prop="market" align="center">
+              <el-select
+                v-model="formParams.market"
+                clearable
+                placeholder="请选择"
+                style="width: 100%"
               >
                 <el-option
                   v-for="item in statusOpts"
@@ -176,6 +183,7 @@
 
 <script setup lang="ts">
 import { reactive, ref, Ref } from 'vue'
+import { px2rem } from '@/utils'
 import { ElForm } from 'element-plus'
 const dialogTitle: Ref<string> = ref('新增')
 const dialogVisible: Ref<boolean> = ref(false)
@@ -229,7 +237,7 @@ interface TableItem {
 const open = (type: string, row: TableItem) => {
   dialogVisible.value = true
   currentType.value = type
-  dialogTitle.value = type === 'add' ? '新增' : '编辑'
+  dialogTitle.value = type === 'add' ? '新增任务分配规则' : '编辑任务分配规则'
   if (type === 'edit') {
     console.log('object', row)
     // formParams.id = row?.id
@@ -243,16 +251,16 @@ defineExpose({ open })
 </script>
 
 <style lang="scss" scoped>
+.second-title {
+  margin-bottom: 20px;
+  font-size: $base-font-size-big;
+}
 .city-select {
   margin-left: 1%;
   width: 48%;
 }
 :deep(.el-dialog__header) {
   text-align: initial;
-}
-:deep(.el-form-item__label) {
-  line-height: normal;
-  text-align: end;
 }
 .base-title {
   margin-bottom: 20px;
