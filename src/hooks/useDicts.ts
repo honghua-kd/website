@@ -2,18 +2,17 @@ import { CommonAPI } from '@/api'
 import { useDictStore } from '@/store/dict'
 import { ElMessageBox, ElLoading } from 'element-plus'
 
-const API = new CommonAPI()
-const dictStore = useDictStore()
-
 export const useDicts = (dictTypes: string[]) => {
+  const API = new CommonAPI()
   const params = {
     dictTypes
   }
   const loading = ElLoading.service({
     lock: true,
     text: '加载中，请稍候...',
-    background: 'rgba(0, 0, 0, 0.5)'
+    background: 'rgba(0, 0, 0, 0)'
   })
+  const dictStore = useDictStore()
   API.getDictsList(params)
     .then((res) => {
       loading.close()
