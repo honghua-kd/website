@@ -1,5 +1,6 @@
 import options from '@/config/setting'
 import requestConfig from '@/config/request.config'
+import compileConfig from '@/config/compile.config'
 
 // framework
 import {
@@ -8,6 +9,7 @@ import {
   usePermission,
   useUserStore,
   useRoutesStore,
+  usePx2Rem,
   store
 } from '@toystory/lotso'
 import '@toystory/lotso/dist/style.css'
@@ -24,12 +26,12 @@ import { ElMessage, ElLoading } from 'element-plus'
 import { CoreAPI } from '@/api'
 import App from './App.vue'
 import { setActivePinia } from 'pinia'
-import { setDomFontSize, debounce } from './utils'
 
 // px2rem
-setDomFontSize()
-const setDomFontSizeDebounce = debounce(setDomFontSize, 400)
-window.addEventListener('resize', setDomFontSizeDebounce)
+const { usePx2Rem: usePx2RemFlag } = compileConfig
+if (usePx2RemFlag) {
+  usePx2Rem()
+}
 
 // 注册框架，传入项目配置和store，页面路径
 const app = createFrameApp(App, {

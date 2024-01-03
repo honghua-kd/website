@@ -37,20 +37,32 @@
       v-loading="tableLoading"
     >
       <el-table-column type="index" width="80" label="序号" align="center" />
-      <el-table-column prop="creatorName" label="下载人"></el-table-column>
-      <el-table-column prop="createTime" label="下载时间"></el-table-column>
-      <el-table-column prop="statusName" label="状态"></el-table-column>
-      <el-table-column
-        prop="downloadTypeName"
-        label="下载类型"
-      ></el-table-column>
-      <el-table-column label="操作" align="center">
+      <el-table-column prop="creatorName" label="上传人"></el-table-column>
+      <el-table-column prop="createTime" label="上传时间"></el-table-column>
+      <el-table-column prop="fileName" label="上传文件">
         <template v-slot="scope">
-          <el-button link type="primary" @click="handleDwon(scope.row)">
-            下载
-          </el-button>
+          <el-button @click="downUploadFile(scope.row)" type="text">{{
+            scope.row.fileName
+          }}</el-button>
         </template>
       </el-table-column>
+      <el-table-column prop="importTypeName" label="导入类型"></el-table-column>
+      <el-table-column prop="statusName" label="状态"></el-table-column>
+      <el-table-column prop="statusName" label="失败原因下载">
+        <template v-slot="scope">
+          <el-button
+            v-if="scope.row.status == 2"
+            @click="errDown(scope.row)"
+            type="text"
+            >下载</el-button
+          >
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="msg"
+        label="说明"
+        show-overflow-tooltip
+      ></el-table-column>
     </el-table>
     <!-- 分页 -->
     <el-pagination
@@ -70,7 +82,7 @@
 import { ref, reactive, Ref, onMounted } from 'vue'
 import dayjs from 'dayjs'
 import { Refresh, Search } from '@element-plus/icons-vue'
-import { RecordAPI, ExportTableItem } from '@/api'
+import { RecordAPI, ImportTableItem } from '@/api'
 import {
   ElForm,
   ElFormItem,
@@ -92,8 +104,8 @@ const formRef = ref<InstanceType<typeof ElForm>>()
 interface DownloadForm {
   pageNo: number
   pageSize: number
-  startCreateTime: '' | Date
-  endCreateTime: '' | Date
+  startCreateTime: Date | ''
+  endCreateTime: Date | ''
 }
 const queryForm = reactive<DownloadForm>({
   pageNo: 1,
@@ -117,7 +129,7 @@ const getList = () => {
         : ''
   }
   tableLoading.value = true
-  API.uploadExportRecordPage(parm)
+  API.uploadImportRecordPage(parm)
     .then((res) => {
       if (res && res.code === 200) {
         tableLoading.value = false
@@ -140,21 +152,7 @@ const resetForm = () => {
   queryForm.endCreateTime = ''
   getList()
 }
-
-const tableData: Ref<ExportTableItem[]> = ref([])
-
-// 分页
-const handleCurrentChange = (val: number) => {
-  queryForm.pageNo = val
-  getList()
-}
-
-// 页面条数改变
-const handleSizeChange = (val: number) => {
-  queryForm.pageSize = val
-  getList()
-}
-const handleDwon = (row: ExportTableItem) => {
+const downUploadFile = (row: ImportTableItem) => {
   API.downLoadFiles({ fileCode: row.fileCode })
     .then((res) => {
       if (res) {
@@ -168,5 +166,33 @@ const handleDwon = (row: ExportTableItem) => {
     .catch((err: Error) => {
       throw err
     })
+}
+const errDown = (row: ImportTableItem) => {
+  API.importResult({ batchNo: row.batchNo, bizType: row.importType })
+    .then((res) => {
+      if (res) {
+        ElMessage({
+          type: 'success',
+          message: '操作成功'
+        })
+        handleDownloadFile(res, row.fileName)
+      }
+    })
+    .catch((err: Error) => {
+      throw err
+    })
+}
+const tableData: Ref<ImportTableItem[]> = ref([])
+
+// 分页
+const handleCurrentChange = (val: number) => {
+  queryForm.pageNo = val
+  getList()
+}
+
+// 页面条数改变
+const handleSizeChange = (val: number) => {
+  queryForm.pageSize = val
+  getList()
 }
 </script>

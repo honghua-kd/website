@@ -4,174 +4,172 @@
     <div class="scan-search-container" ref="searchBoxRef">
       <el-form
         ref="queryFormRef"
+        class="scan-form"
         :model="queryParams"
-        class="scan-search-bar"
         :label-width="px2rem('90px')"
       >
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="核验时间" class="width-full">
-              <el-date-picker
-                v-model="queryParams.startVerifyTime"
-                type="datetime"
-                placeholder="核验开始时间"
-                style="margin-right: 4%; width: 48%"
-              />
-              <el-date-picker
-                v-model="queryParams.endVerifyTime"
-                type="datetime"
-                placeholder="核验结束时间"
-                style="width: 48%"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="创建人" prop="creatorName">
-              <el-input
-                v-model="queryParams.creatorName"
-                clearable
-                placeholder="请输入创建人"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="核对结果" prop="verifyResult">
-              <el-select
-                v-model="queryParams.verifyResult"
-                style="width: 100%"
-                placeholder="请选择核对结果"
-                clearable
-              >
-                <el-option
-                  v-for="(item, index) in verifyOpts"
-                  :key="index"
-                  :label="item.label"
-                  :value="item.value"
+        <div class="scan-search-bar">
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="核验时间" class="width-full">
+                <el-date-picker
+                  v-model="queryParams.startVerifyTime"
+                  type="datetime"
+                  placeholder="核验开始时间"
+                  style="margin-right: 4%; width: 48%"
                 />
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="6">
-            <el-form-item label="批次号" prop="batchNo">
-              <el-input
-                v-model="queryParams.batchNo"
-                clearable
-                placeholder="请输入批次号"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="发动机号" prop="engineNo">
-              <el-input
-                v-model="queryParams.engineNo"
-                clearable
-                placeholder="请输入发动机号"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="发动机型号" prop="engineType">
-              <el-input
-                v-model="queryParams.engineType"
-                clearable
-                placeholder="请输入发动机型号"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="归档状态" prop="archivalStatus">
-              <el-select
-                v-model="queryParams.archivalStatus"
-                style="width: 100%"
-                clearable
-                placeholder="请选择归档状态"
-              >
-                <el-option
-                  v-for="(item, index) in archiveStatusOpts"
-                  :key="index"
-                  :label="item.label"
-                  :value="item.value"
+                <el-date-picker
+                  v-model="queryParams.endVerifyTime"
+                  type="datetime"
+                  placeholder="核验结束时间"
+                  style="width: 48%"
                 />
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20" v-if="expandFlag">
-          <el-col :span="6">
-            <el-form-item label="合同号" prop="contractNo">
-              <el-input
-                v-model="queryParams.contractNo"
-                clearable
-                placeholder="请输入合同号"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="车牌号" prop="licensePlateNo">
-              <el-input
-                v-model="queryParams.licensePlateNo"
-                clearable
-                placeholder="请输入车牌号"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="车架号" prop="vinNo">
-              <el-input
-                v-model="queryParams.vinNo"
-                clearable
-                placeholder="请输入车架号"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="办事处" prop="agencyName">
-              <el-input
-                v-model="queryParams.agencyName"
-                clearable
-                placeholder="请输入办事处"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20" v-if="expandFlag">
-          <el-col :span="12">
-            <el-form-item label="挂靠商" prop="affiliatesName">
-              <el-input
-                v-model="queryParams.affiliatesName"
-                clearable
-                placeholder="请输入挂靠商"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="渠道商" prop="channelName">
-              <el-input
-                v-model="queryParams.channelName"
-                clearable
-                placeholder="请输入渠道商"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row justify="end">
-          <el-col :span="6" class="btn-row">
-            <el-form-item>
-              <el-button type="primary" @click="searchHandler">查询</el-button>
-              <el-button @click="reset">重置</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-      <div class="search-btn">
-        <div class="arrow" @click="expandHandler">
-          <el-icon v-if="!expandFlag"><ArrowDownBold /></el-icon>
-          <el-icon v-if="expandFlag"><ArrowUpBold /></el-icon>
-          <span v-if="!expandFlag" style="margin-left: 4px"> 展开 </span>
-          <span v-if="expandFlag" style="margin-left: 4px"> 收回 </span>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="创建人" prop="creatorName">
+                <el-input
+                  v-model="queryParams.creatorName"
+                  clearable
+                  placeholder="请输入创建人"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="核对结果" prop="verifyResult">
+                <el-select
+                  v-model="queryParams.verifyResult"
+                  style="width: 100%"
+                  placeholder="请选择核对结果"
+                  clearable
+                >
+                  <el-option
+                    v-for="(item, index) in verifyOpts"
+                    :key="index"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="6">
+              <el-form-item label="批次号" prop="batchNo">
+                <el-input
+                  v-model="queryParams.batchNo"
+                  clearable
+                  placeholder="请输入批次号"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="发动机号" prop="engineNo">
+                <el-input
+                  v-model="queryParams.engineNo"
+                  clearable
+                  placeholder="请输入发动机号"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="发动机型号" prop="engineType">
+                <el-input
+                  v-model="queryParams.engineType"
+                  clearable
+                  placeholder="请输入发动机型号"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="归档状态" prop="archivalStatus">
+                <el-select
+                  v-model="queryParams.archivalStatus"
+                  style="width: 100%"
+                  clearable
+                  placeholder="请选择归档状态"
+                >
+                  <el-option
+                    v-for="(item, index) in archiveStatusOpts"
+                    :key="index"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20" v-if="expandFlag">
+            <el-col :span="6">
+              <el-form-item label="合同号" prop="contractNo">
+                <el-input
+                  v-model="queryParams.contractNo"
+                  clearable
+                  placeholder="请输入合同号"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="车牌号" prop="licensePlateNo">
+                <el-input
+                  v-model="queryParams.licensePlateNo"
+                  clearable
+                  placeholder="请输入车牌号"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="车架号" prop="vinNo">
+                <el-input
+                  v-model="queryParams.vinNo"
+                  clearable
+                  placeholder="请输入车架号"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="办事处" prop="agencyName">
+                <el-input
+                  v-model="queryParams.agencyName"
+                  clearable
+                  placeholder="请输入办事处"
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20" v-if="expandFlag">
+            <el-col :span="12">
+              <el-form-item label="挂靠商" prop="affiliatesName">
+                <el-input
+                  v-model="queryParams.affiliatesName"
+                  clearable
+                  placeholder="请输入挂靠商"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="渠道商" prop="channelName">
+                <el-input
+                  v-model="queryParams.channelName"
+                  clearable
+                  placeholder="请输入渠道商"
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
         </div>
+        <div class="search-btn">
+          <el-button type="primary" :icon="Search" @click="searchHandler"
+            >查询</el-button
+          >
+          <el-button :icon="Refresh" @click="reset">重置</el-button>
+        </div>
+      </el-form>
+      <div class="arrow" @click="expandHandler">
+        <el-icon v-if="!expandFlag"><ArrowDownBold /></el-icon>
+        <el-icon v-if="expandFlag"><ArrowUpBold /></el-icon>
+        <span v-if="!expandFlag" style="margin-left: 4px"> 展开 </span>
+        <span v-if="expandFlag" style="margin-left: 4px"> 收回 </span>
       </div>
     </div>
     <el-divider border-style="dashed" />
@@ -183,7 +181,7 @@
             上传车辆登记证
           </el-button>
           <el-tooltip
-            content="如有需要，请点击右侧设置表格列选择表格列内容"
+            content="需勾选要归档的条目，方可操作"
             placement="top-start"
           >
             <el-button type="primary" :icon="Check" @click="achiveHandler">
@@ -191,7 +189,7 @@
             </el-button>
           </el-tooltip>
           <el-tooltip
-            content="如有需要，请点击右侧设置表格列选择表格列内容"
+            content="需勾选要删除的条目，方可操作"
             placement="top-start"
           >
             <el-button
@@ -326,6 +324,8 @@ import Table from '@/components/Table/index.vue'
 
 import type { TableColumnCtx } from 'element-plus'
 import {
+  Refresh,
+  Search,
   ArrowDownBold,
   ArrowUpBold,
   Plus,
@@ -333,6 +333,7 @@ import {
   Download,
   Check
 } from '@element-plus/icons-vue'
+
 import type {
   VehiRegisterCardListRequest,
   PageRequest,
@@ -752,24 +753,27 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.scan-search-container {
+.scan-form {
   display: flex;
+  align-items: flex-end;
+  width: 100%;
+}
+.scan-search-container {
   width: 100%;
 }
 .scan-search-bar {
   padding: 6px 10px;
-  width: 90%;
+  width: calc(100% - 216px);
 }
 .search-btn {
-  display: flex;
-  margin-top: 3%;
-  padding: 20px 10px;
-  height: 60px;
-  flex-direction: column;
+  padding: 6px 10px;
+  height: 44px;
 }
 .arrow {
-  cursor: pointer;
+  margin-bottom: 10px;
+  text-align: center;
   color: $base-color-primary;
+  cursor: pointer;
 }
 .btn-row {
   display: flex;
@@ -790,9 +794,6 @@ onMounted(() => {
 }
 .width-full {
   width: 100%;
-}
-:deep(.el-divider--horizontal) {
-  margin: 0 0 10px;
 }
 :deep(.el-form-item) {
   margin-bottom: 12px;

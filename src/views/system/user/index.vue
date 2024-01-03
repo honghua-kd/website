@@ -1,7 +1,7 @@
 <template>
   <div class="user-container">
     <el-card class="tree-container">
-      <SideTree @getSelect="getSelectNodeHandler" />
+      <SideTree height="500px" @getSelect="getSelectNodeHandler" />
     </el-card>
     <el-card class="right-part">
       <!-- 搜索工作栏 -->
@@ -10,7 +10,7 @@
           <el-row :gutter="20">
             <el-col :span="6">
               <el-form-item
-                label="员工工号:"
+                label="员工工号"
                 prop="staffCode"
                 class="width-full"
               >
@@ -24,7 +24,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item
-                label="员工姓名:"
+                label="员工姓名"
                 prop="staffName"
                 class="width-full"
               >
@@ -38,10 +38,10 @@
             </el-col>
 
             <el-col :span="6" style="text-align: right">
-              <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
               <el-button type="primary" :icon="Search" @click="searchHandler">
-                搜索
+                查询
               </el-button>
+              <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
             </el-col>
           </el-row>
         </el-form>
@@ -55,6 +55,7 @@
           border
           v-loading="loading"
           class="table-container"
+          max-height="410"
         >
           <el-table-column
             type="index"
@@ -267,7 +268,7 @@ const assignPermiHandler = (row: StaffListItem) => {
   font-size: 14px;
 }
 .right-part {
-  width: 70%;
+  width: 76%;
 }
 .width-full {
   width: 100%;
@@ -276,14 +277,8 @@ const assignPermiHandler = (row: StaffListItem) => {
   margin-bottom: 10px;
 }
 .tree-container {
-  overflow-y: scroll;
   margin-right: 20px;
   width: 22%;
-  height: 550px;
-}
-.table-container {
-  overflow-y: scroll;
-  height: 410px;
 }
 :deep(.el-card__body) {
   padding: 12px !important;

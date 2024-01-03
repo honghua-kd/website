@@ -104,22 +104,22 @@ watch(
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-.admin-container {
-  .main {
-    top: 116px !important;
-  }
-  .header {
-    position: fixed;
-    top: 0;
-    left: v-bind(posi) !important;
-    z-index: 100;
-    width: calc(100% - v-bind(posi));
-    height: auto;
-    background: #f5f7f9;
-  }
-}
-.footer-copyright {
-  padding: 10px 0 !important;
-  min-height: 40px !important;
-}
+// .admin-container {
+//   .main {
+//     top: 116px !important;
+//   }
+//   .header {
+//     position: fixed;
+//     top: 0;
+//     left: v-bind(posi) !important;
+//     z-index: 100;
+//     width: calc(100% - v-bind(posi));
+//     height: auto;
+//     background: #f5f7f9;
+//   }
+// }
+// .footer-copyright {
+//   padding: 10px 0 !important;
+//   min-height: 40px !important;
+// }
 </style>

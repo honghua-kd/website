@@ -6,7 +6,6 @@
 // 框架默认主题色
 $base-color-primary: var(--el-color-primary);
 
-
 // 主题色透明
 $base-color-primary-light1: var(--el-color-primary-light-1);
 $base-color-primary-light2: var(--el-color-primary-light-2);
@@ -63,15 +62,15 @@ $app-main-min-height-no-header: calc(100vh - 292px);
 
 // top
 // 移动端内容距顶部高度
-$base-main-mobile-top: 110px;
+$base-main-mobile-top: 94px;
 // 移动端内容无标签距离顶部高度
-$base-main-mobile-no-tag-top: 60px;
+$base-main-mobile-no-tag-top: 38px;
 // 纵向布局内容呢距顶部距离
-$base-main-vertical-top: 60px;
+$base-main-vertical-top: 38px;
 // 内容呢距顶部距离(固定头部,有标签)
-$base-main-fixed-top: 110px;
+$base-main-fixed-top: 94px;
 // 内容呢距顶部距离(固定头部， 无标签)
-$base-main-vertical-fixed-notag-top: 60px;
+$base-main-vertical-fixed-notag-top: 38px;
 // 内容呢距顶部距离(无固定，无标签)
 $base-main-notag-top: 0;
 
@@ -135,8 +134,8 @@ $base-margin-20: 25px;
 
 //默认阴影
 $base-box-shadow: 0 1px 4px rgb(0 21 41 / 8%);
-$base-tabs-bar-height: 55px;
-$base-tag-item-height: 34px;
+$base-tabs-bar-height: 36px;
+$base-tag-item-height: 28px;
 $base-nav-bar-height: 56px;
 
 //默认动画
@@ -147,4 +146,3 @@ $base-transition-time: 0.3s;
 $base-transition-time-4: 0.4s;
 $base-color: $base-color-primary;
 $green-color: #11d86c;
-

@@ -51,10 +51,10 @@
             </el-form-item>
           </el-col>
           <el-col :span="4" style="text-align: right">
-            <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
             <el-button type="primary" :icon="Search" @click="searchHandler">
-              搜索
+              查询
             </el-button>
+            <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
           </el-col>
         </el-row>
       </el-form>

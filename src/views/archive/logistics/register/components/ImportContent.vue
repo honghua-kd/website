@@ -1,4 +1,3 @@
-<!-- eslint-disable no-unused-vars -->
 <template>
   <div>
     <el-dialog
@@ -6,7 +5,7 @@
       v-model="dialogVisible"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
-      width="50%"
+      width="60%"
       @close="closeHandler"
     >
       <el-upload
@@ -15,7 +14,7 @@
         :on-change="onChangeHandler"
         :on-exceed="handleExceed"
         :accept="fileType"
-        multiple
+        :limit="1"
         :auto-upload="false"
         action="#"
         v-model:file-list="fileList"
@@ -38,11 +37,11 @@ import type {
   UploadRawFile,
   UploadInstance,
   UploadProps,
-  UploadFile,
-  UploadUserFile
+  UploadFile
 } from 'element-plus'
-import { CommonAPI } from '@/api'
+import { ExpressAPI, CommonAPI } from '@/api'
 import fileDownload from 'js-file-download'
+const API = new ExpressAPI()
 const CommonApi = new CommonAPI()
 const dialogTitle = ref<string>('批量导入')
 const dialogVisible = ref<boolean>(false)
@@ -69,11 +68,10 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
 
 const downloadTemplate = () => {
   const params = {
-    bizType: 'EXPRESS_INFO'
+    bizType: 'EXPRESS_CONTENT'
   }
   CommonApi.getDownLoadTemplate(params)
     .then((res) => {
-      console.error(res)
       const fileStream = res?.data
       const headers = res?.headers
       const files =
@@ -87,7 +85,9 @@ const downloadTemplate = () => {
       throw err
     })
 }
-const fileList = ref<UploadUserFile[]>([])
+const fileList = ref([])
+const expressNo = ref('')
+const emit = defineEmits(['importcontent'])
 const importHandler = () => {
   if (!fileList.value.length) {
     ElMessage({
@@ -99,33 +99,38 @@ const importHandler = () => {
   dialogVisible.value = false
   console.error(selectFile.value)
   const formData = new FormData()
-  fileList.value.forEach((item) => {
-    formData.append('file', item.raw as File)
-  })
-  formData.append('bizType', 'EXPRESS_INFO')
-  CommonApi.getAsyncImport(formData)
+  formData.append('file', selectFile.value.raw)
+  formData.append('bizType', 'EXPRESS_CONTENT')
+  formData.append('expressNo', expressNo.value)
+  fileList.value = []
+  API.importExpressContent(formData)
     .then((res) => {
       if (res && res.code === 200) {
+        emit('importcontent', res.data)
+        dialogVisible.value = false
         ElMessage({
           type: 'success',
-          message: '导入成功'
+          message: '上传成功'
+        })
+      } else {
+        ElMessage({
+          type: 'error',
+          message: res.msg
         })
       }
-      upload.value!.clearFiles()
     })
     .catch((err: Error) => {
       throw err
     })
 }
-
 // 关闭弹窗
 const closeHandler = () => {
   upload.value!.clearFiles()
 }
-
 /** 打开弹窗 */
-const open = () => {
+const open = (no: string) => {
   dialogVisible.value = true
+  expressNo.value = no
 }
 defineExpose({ open })
 </script>
