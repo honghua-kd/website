@@ -31,7 +31,7 @@ export interface AgencyListResponse {
    * 未收费办理是都需审批（是-1，否-0）
    */
   unpaidNeedApproveFlag: number
-  updatedTime?: null | string
+  updateTime?: null | string
   updater?: null | string
   updaterName?: null | string
 }

@@ -92,15 +92,23 @@
           :fixed="i.fixed"
           :align="i.align"
         >
-          <template v-if="i.label === '操作'" #default="scope">
-            <el-button
-              v-for="item in tableActionList"
-              :key="item.value"
-              link
-              :type="item.value === 'delete' ? 'danger' : 'primary'"
-              @click="actionTableItem(scope, item.value)"
-              >{{ item.label }}</el-button
-            >
+          <template #default="scope">
+            <span v-if="i.prop === 'createGatherFlag'">{{
+              scope.row.createGatherFlag === 1 ? '是' : '否'
+            }}</span>
+            <span v-if="i.prop === 'unpaidNeedApproveFlag'">{{
+              scope.row.unpaidNeedApproveFlag === 1 ? '是' : '否'
+            }}</span>
+            <template v-if="i.prop === 'action'">
+              <el-button
+                v-for="item in tableActionList"
+                :key="item.value"
+                link
+                :type="item.value === 'delete' ? 'danger' : 'primary'"
+                @click="actionTableItem(scope, item.value)"
+                >{{ item.label }}</el-button
+              >
+            </template>
           </template>
         </el-table-column>
       </el-table>
@@ -121,6 +129,7 @@
       :visible="editModelVisible"
       :formValue="detailData"
       :title="editModelTitle"
+      :sourceArr="sourceArr"
       @closeModel="closeModel"
     />
   </div>
@@ -141,8 +150,9 @@ import {
 } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { px2rem } from '@/utils'
-import { AgencyAPI } from '@/api'
+import { AgencyAPI, CommonAPI } from '@/api'
 const API = new AgencyAPI()
+const COMMONAPI = new CommonAPI()
 
 const state = reactive<StateType>({
   formModel: {
@@ -152,28 +162,7 @@ const state = reactive<StateType>({
     pageNo: 1,
     pageSize: 10
   },
-  sourceArr: [
-    {
-      label: '全部',
-      value: '全部'
-    },
-    {
-      label: '乘用车',
-      value: '乘用车'
-    },
-    {
-      label: '商用车',
-      value: '商用车'
-    },
-    {
-      label: '乘用车资产转让',
-      value: '乘用车资产转让'
-    },
-    {
-      label: '商用车资产转让',
-      value: '商用车资产转让'
-    }
-  ],
+  sourceArr: [],
   tableLoading: false,
   tableColumn: BasicData.tableColumn,
   tableData: [],
@@ -215,8 +204,21 @@ const tableHeight = computed(() => {
 })
 
 onMounted(() => {
+  getDictsListData()
   getListData()
 })
+
+const getDictsListData = async () => {
+  const dictTypes = ['SOURCE_SYSTEM']
+  const params = {
+    dictTypes
+  }
+  const res = await COMMONAPI.getDictsList(params)
+  console.log(res)
+  if (res && res.code === 200) {
+    state.sourceArr = res.data ? res.data.SOURCE_SYSTEM : []
+  }
+}
 
 const getListData = async () => {
   state.tableLoading = true
@@ -339,7 +341,7 @@ const actionTableItem = async (
   const rowData = row.row
   console.log(rowData)
   if (value === 'edit') {
-    const res = await API.getAgencyDetail({ ids: rowData.id })
+    const res = await API.getAgencyDetail({ id: rowData.id })
     console.log(res)
     if (res && res.code === 200) {
       if (res.data) {

@@ -2,7 +2,7 @@ import type {
   AgencyListResponse,
   AgencyDetailResponse
 } from '@/api/channel/types/response'
-type OptionItemType = {
+export type OptionItemType = {
   label: string
   value: string | number
 }
@@ -40,4 +40,5 @@ export type ModelStateType = {
   dialogVisible: boolean
   editForm: AgencyDetailResponse
   dialogTitle: string
+  systemSourceArr: OptionItemType[]
 }

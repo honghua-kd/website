@@ -21,7 +21,7 @@ export interface AgencyDetailRequest {
   /**
    * 主键ids
    */
-  ids: string
+  id: string
 }
 
 // 渠道商/办事处名单-新增

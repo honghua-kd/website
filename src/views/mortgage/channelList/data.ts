@@ -83,8 +83,8 @@ export default {
     {
       type: '',
       label: '更新时间',
-      prop: 'updatedTime',
-      columnKey: 'updatedTime',
+      prop: 'updateTime',
+      columnKey: 'updateTime',
       width: '',
       minWidth: '100',
       fixed: false,
@@ -92,18 +92,8 @@ export default {
     },
     {
       type: '',
-      label: '联系电话',
-      prop: '',
-      columnKey: '',
-      width: '100',
-      minWidth: '',
-      fixed: false,
-      align: 'center'
-    },
-    {
-      type: '',
       label: '操作',
-      prop: '',
+      prop: 'action',
       columnKey: '',
       width: '120',
       minWidth: '',

@@ -28,6 +28,7 @@ interface DictTypes {
   EXPRESS_TYPE: string
   EXPRESS_CONTENT: string
   EXPRESS_STATUS: string
+  SOURCE_SYSTEM: string
 }
 
 type DictType = keyof DictTypes

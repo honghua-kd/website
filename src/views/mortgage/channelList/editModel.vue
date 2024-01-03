@@ -12,10 +12,14 @@
     <div>
       <el-form :model="editForm" label-position="top">
         <el-form-item label="来源系统">
-          <el-select
-            v-model="editForm.sourceSystem2"
-            style="width: 100%"
-          ></el-select>
+          <el-select v-model="editForm.sourceSystem2" style="width: 100%">
+            <el-option
+              v-for="i in systemSourceArr"
+              :key="i.value"
+              :label="i.label"
+              :value="i.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="渠道商/办事处">
           <el-input v-model="editForm.agencyName" />
@@ -49,7 +53,10 @@
 </template>
 <script lang="ts" setup>
 import { watch, toRefs, reactive } from 'vue'
-import type { ModelStateType } from '@/views/mortgage/channelList/type'
+import type {
+  ModelStateType,
+  OptionItemType
+} from '@/views/mortgage/channelList/type'
 import type { AgencyDetailResponse } from '@/api/channel/types/response'
 import { AgencyAPI } from '@/api'
 const API = new AgencyAPI()
@@ -58,6 +65,7 @@ type ModelPropsType = {
   visible: boolean
   formValue: AgencyDetailResponse
   title: string
+  sourceArr: OptionItemType[]
 }
 const props = withDefaults(defineProps<ModelPropsType>(), {
   visible: false,
@@ -68,15 +76,22 @@ const props = withDefaults(defineProps<ModelPropsType>(), {
 const state = reactive<ModelStateType>({
   dialogVisible: false,
   editForm: {},
-  dialogTitle: ''
+  dialogTitle: '',
+  systemSourceArr: []
 })
-const { dialogVisible, editForm, dialogTitle } = toRefs(state)
+const { dialogVisible, editForm, dialogTitle, systemSourceArr } = toRefs(state)
 watch(
-  [() => props.visible, () => props.formValue, () => props.title],
-  ([newVisible, newValue, newTitle]) => {
+  [
+    () => props.visible,
+    () => props.formValue,
+    () => props.title,
+    () => props.sourceArr
+  ],
+  ([newVisible, newValue, newTitle, newArr]) => {
     state.dialogVisible = newVisible
     state.editForm = newValue
     state.dialogTitle = newTitle
+    state.systemSourceArr = newArr
   },
   {
     immediate: true
