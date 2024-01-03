@@ -1,4 +1,3 @@
-import { useDictStore } from '@/store/dict';
 <template>
   <div>
     <!-- 搜索工作栏 -->
