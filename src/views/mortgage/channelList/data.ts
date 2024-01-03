@@ -13,8 +13,8 @@ export default {
     {
       type: '',
       label: '来源系统',
-      prop: 'sourceSystem1',
-      columnKey: 'sourceSystem1',
+      prop: 'sourceSystem2',
+      columnKey: 'sourceSystem2',
       width: '',
       minWidth: '100',
       fixed: false,

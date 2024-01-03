@@ -20,7 +20,7 @@ type TableColumnType = {
 export type StateType = {
   formModel: {
     agencyName: string
-    sourceSystem1: string
+    // sourceSystem1: string
     sourceSystem2: string
     pageNo: number
     pageSize: number

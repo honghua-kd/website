@@ -157,7 +157,7 @@ const COMMONAPI = new CommonAPI()
 const state = reactive<StateType>({
   formModel: {
     agencyName: '',
-    sourceSystem1: '',
+    // sourceSystem1: '',
     sourceSystem2: '',
     pageNo: 1,
     pageSize: 10
@@ -237,7 +237,7 @@ const search = () => {
 const refresh = () => {
   formModel.value.pageNo = 1
   formModel.value.agencyName = ''
-  formModel.value.sourceSystem1 = ''
+  // formModel.value.sourceSystem1 = ''
   formModel.value.sourceSystem2 = ''
   getListData()
 }
