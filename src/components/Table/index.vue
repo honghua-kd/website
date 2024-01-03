@@ -75,21 +75,24 @@
           </slot>
         </template>
         <template #default="{ row }">
-          <!-- 时间类型转换 -->
-          <span
-            v-if="item.valueType === 'dateType'"
-            :style="item.customStyle ? item.customStyle : {}"
-          >
-            {{ formatDate(row[item.prop]) }}
-          </span>
           <!-- 自定义列-添加插槽 -->
-          <template v-else-if="item.valueType === 'custom'">
-            <slot :name="item.slotName" :row="row" :prop="item.prop"></slot>
-          </template>
-          <!-- 普通展示列 -->
-          <span v-else :style="item.customStyle ? item.customStyle : {}">
-            {{ row[item.prop] }}
-          </span>
+          <slot
+            :name="item.slotName ? item.slotName : 'default'"
+            :row="row"
+            :prop="item.prop"
+          >
+            <!-- 时间类型转换 -->
+            <span
+              v-if="item.valueType === 'dateType'"
+              :style="item.customStyle ? item.customStyle : {}"
+            >
+              {{ formatDate(row[item.prop]) }}
+            </span>
+            <!-- 普通展示列 -->
+            <span v-else :style="item.customStyle ? item.customStyle : {}">
+              {{ row[item.prop] }}
+            </span>
+          </slot>
         </template>
       </el-table-column>
     </template>
@@ -132,10 +135,10 @@ interface ITableConfigProps {
   headerIcon?: string | boolean
   slotName?: string
   showOverflowTooltip?: boolean
-  fixed?: string
+  fixed?: string | boolean
   valueType?: string
   width?: string | number
-  format?: string
+  minWidth?: string | number
   show?: boolean
   showDisabled?: boolean
   customStyle?: CustomStyleType

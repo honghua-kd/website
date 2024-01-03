@@ -52,12 +52,14 @@ declare module 'vue' {
     MdEditor: typeof import('./../components/MdEditor/index.vue')['default']
     PermiListDialog: typeof import('./../components/PermiForm/PermiListDialog.vue')['default']
     Preview: typeof import('./../components/Preview/index.vue')['default']
+    Readme: typeof import('./../components/Table/readme.md')['default']
+    README: typeof import('./../components/Table/README.md')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SecondaryTitle: typeof import('./../components/SecondaryTitle/index.vue')['default']
     SideTree: typeof import('./../components/SideTree/index.vue')['default']
     SvgIcon: typeof import('./../components/SvgIcon/index.vue')['default']
-    Table: typeof import('./../components/Table.vue')['default']
+    Table: typeof import('./../components/Table/index.vue')['default']
   }
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']

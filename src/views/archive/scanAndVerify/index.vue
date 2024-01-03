@@ -207,173 +207,7 @@
             导出
           </el-button>
         </div>
-        <!-- 设置表格列 -->
-        <!-- <el-dropdown
-          trigger="click"
-          placement="top-end"
-          :hide-on-click="false"
-          max-height="300px"
-        >
-          <div class="dropdown-column">
-            <el-icon :size="15" class="icon"><Setting /></el-icon>
-            设置表格列
-          </div>
-          <template #dropdown>
-            <el-dropdown-menu class="custom-drop-menu">
-              <el-dropdown-item>
-                <el-checkbox v-model="checkAll" @change="handleCheckAllChange">
-                  全选
-                </el-checkbox>
-              </el-dropdown-item>
-              <el-checkbox-group
-                v-model="checkedConfig"
-                @change="handleCheckedConfig"
-              >
-                <el-dropdown-item
-                  v-for="cfg in checkboxTableConfig"
-                  :key="cfg.prop"
-                >
-                  <el-checkbox :label="cfg.prop" :disabled="cfg.showDisabled">
-                    {{ cfg.label }}
-                  </el-checkbox>
-                </el-dropdown-item>
-              </el-checkbox-group>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown> -->
       </div>
-
-      <el-table
-        :data="tableData"
-        :header-cell-style="{
-          background: '#eef1f6',
-          color: '#606266',
-          textAlign: 'center'
-        }"
-        v-loading="tableLoading"
-        row-key="id"
-        :tree-props="{ children: 'target' }"
-        :max-height="tableHeight"
-        border
-        :cell-style="{ borderRight: '1px solid #fff' }"
-        @selection-change="selectionChangeHandler"
-        @header-click="sortChangeHandler"
-      >
-        <el-table-column
-          type="selection"
-          width="40"
-          :selectable="selectableHandler"
-          align="center"
-        />
-
-        <template v-for="item in tableConfig" :key="item.prop">
-          <el-table-column v-if="!!item.show" v-bind="item">
-            <template #header>
-              <!-- 核对结果 -->
-              <span
-                v-if="
-                  item.prop === 'verifyResult' ||
-                  item.prop === 'registerCardArchiveNo' ||
-                  item.prop === 'fileName'
-                "
-              >
-                {{ item.label }}
-                <svg-icon
-                  :name="setSortFlag((queryParams[item.prop + 'Sort'] as string) || '')"
-                  size="20"
-                />
-              </span>
-              <!-- 登记证归档序号 -->
-              <span v-else>{{ item.label }}</span>
-            </template>
-
-            <template #default="{ row }">
-              <!-- 归档状态 -->
-              <span v-if="item.valueType === 'archivalStatus'">
-                {{ getAchivalStatus(row.archivalStatus) }}
-              </span>
-
-              <!-- 登记证编号、车架号、发动机号、发动机型号、车牌号、机动车所有人、车身颜色、使用性质、抵押权人、统一社会信用代码、抵押登记日期 -->
-              <span v-else-if="item.valueType === 'soltItem'">
-                <TableSlotItem :rowInfo="row" :rowKey="item.prop" />
-              </span>
-
-              <!-- 自定义 -->
-              <span v-else-if="item.valueType === 'custom'">
-                <!-- 核对结果 -->
-                <span v-if="row.fileCode && item.prop === 'verifyResult'">
-                  <svg-icon
-                    :name="getVerifyResult(row)"
-                    size="20"
-                    color="#f39b1c"
-                  />
-                </span>
-                <!-- 登记证归档序号 -->
-                <span
-                  v-if="item.prop === 'registerCardArchiveNo'"
-                  :class="row.fileCode ? '' : 'font-color-system'"
-                >
-                  {{ row.registerCardArchiveNo }}
-                </span>
-                <!-- 文件名 -->
-                <span v-if="item.prop === 'fileName'">
-                  <span
-                    v-if="row.fileCode"
-                    @click="openPreview(row.fileCode)"
-                    class="file-name"
-                  >
-                    {{ row.fileName }}
-                  </span>
-                  <span v-else class="font-color-system">
-                    {{ row.fileName || '系统数据' }}
-                  </span>
-                </span>
-              </span>
-
-              <!-- other -->
-              <span v-else>{{ row[item.prop] }}</span>
-            </template>
-          </el-table-column>
-        </template>
-
-        <el-table-column label="操作" fixed="right" width="120" align="center">
-          <template #default="scope">
-            <template v-if="scope.row.fileCode">
-              <el-button
-                v-if="
-                  scope.row.archivalStatus === ARCHIVE_STATUS.UNACHIVED &&
-                  scope.row.verifyResult !== VERIFY_RESULTS.PROCESSING
-                "
-                link
-                type="primary"
-                @click="editHandler(scope.row.id)"
-              >
-                编辑
-              </el-button>
-              <el-button
-                v-if="scope.row.archivalStatus !== ARCHIVE_STATUS.ACHIVED"
-                link
-                type="danger"
-                @click="delHandler([scope.row.id])"
-              >
-                删除
-              </el-button>
-            </template>
-          </template>
-        </el-table-column>
-      </el-table>
-      <!-- 分页 -->
-      <el-pagination
-        v-if="pageTotal"
-        background
-        small
-        layout="total,sizes,prev, pager, next"
-        :page-sizes="[10, 20, 50, 100]"
-        :total="pageTotal"
-        class="table-page"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
 
       <!-- table 组件引入 -->
       <Table
@@ -419,8 +253,8 @@
           </span>
           <!-- 登记证归档序号 -->
           <span
-            :class="row.fileCode ? '' : 'font-color-system'"
             v-if="prop === 'registerCardArchiveNo'"
+            :class="row.fileCode ? '' : 'font-color-system'"
           >
             {{ row.registerCardArchiveNo }}
           </span>
@@ -488,7 +322,7 @@ import { openLink, isPdf, handleDownloadFile, px2rem } from '@/utils'
 import EditForm from './EditForm.vue'
 import UploadForm from './UploadForm.vue'
 import { CommonAPI, MortageAPI } from '@/api'
-import Table from '@/components/Table.vue'
+import Table from '@/components/Table/index.vue'
 
 import type { TableColumnCtx } from 'element-plus'
 import {
@@ -551,38 +385,6 @@ const queryParams = reactive<QueryParams>({
 const selectData: Ref<CardListItem[]> = ref([])
 const curStaffCode = ref<string>('')
 
-// type ITableConfigObj = {
-//   label: string
-//   prop: string
-//   valueType: string
-//   minWidth?: number | string
-//   width?: number | string
-//   align: string
-//   showOverflowTooltip?: boolean
-//   fixed?: boolean
-//   show: boolean
-//   showDisabled?: boolean
-// }
-
-// type IState = {
-//   tableConfig: ITableConfigObj[]
-//   checkAll: boolean
-//   checkedConfig: string[]
-//   checkboxTableConfig: ITableConfigObj[]
-//   isIndeterminate: boolean
-// }
-
-// const state = reactive<IState>({
-//   tableConfig: BasicData.tableConfig,
-//   checkAll: true,
-//   checkedConfig: [],
-//   checkboxTableConfig: BasicData.tableConfig,
-//   isIndeterminate: true
-// })
-
-// const { tableConfig, checkAll, checkedConfig, checkboxTableConfig } =
-//   toRefs(state)
-
 // 表格最大高度
 const searchBoxRef = ref()
 const tableHeight = computed(() => {
@@ -598,41 +400,6 @@ const tableHeight = computed(() => {
     return height
   }
 })
-
-// // 自定义表格列
-// const handleCheckedConfig = (value: CheckboxValueType[]) => {
-//   const checkedCount = value.length
-//   state.checkAll = checkedCount === state.checkboxTableConfig.length
-//   state.checkedConfig = value as string[]
-//   localStorage.setItem(pathName, JSON.stringify(value))
-
-//   state.tableConfig.forEach((item) => {
-//     if (!item.showDisabled) {
-//       item.show = state.checkedConfig.includes(item.prop)
-//     }
-//   })
-// }
-
-// // 自定义表格列-全选
-// const handleCheckAllChange = (val: string | number | boolean) => {
-//   const arr = state.checkboxTableConfig.map((item) => item.prop)
-//   const arrRequired = state.checkboxTableConfig.filter(
-//     (item) => item.showDisabled
-//   )
-
-//   const _val = val as boolean
-
-//   state.checkedConfig = _val ? arr : arrRequired.map((item) => item.prop)
-//   state.isIndeterminate = !_val
-
-//   localStorage.setItem(pathName, JSON.stringify(state.checkedConfig))
-
-//   state.tableConfig.forEach((item) => {
-//     if (!item.showDisabled) {
-//       item.show = !!_val
-//     }
-//   })
-// }
 
 // 归档状态处理
 const getAchivalStatus = (status: string) => {
@@ -972,31 +739,15 @@ const getDicts = () => {
     })
 }
 
-// 获取表格设置表头内容
-// const getCheckConfig = () => {
-//   state.checkedConfig = localStorage.getItem(pathName)
-//     ? JSON.parse(localStorage.getItem(pathName) || '')
-//     : state.checkboxTableConfig.map((item) => item.prop)
-
-//   state.tableConfig.forEach((item) => {
-//     if (!item.showDisabled) {
-//       item.show = state.checkedConfig.includes(item.prop)
-//     }
-//   })
-//   state.checkAll = !(state.checkedConfig.length < BasicData.tableConfig.length)
-// }
-
 const init = () => {
   getList()
   getDicts()
 }
-
 onMounted(() => {
   const userStore = useUserStore()
   queryParams.creatorName = userStore.userInfo?.staffName as string
   curStaffCode.value = userStore.userInfo?.staffCode as string
   init()
-  // getCheckConfig()
 })
 </script>
 
