@@ -53,7 +53,12 @@
       >
         <el-table-column label="联系人名称" prop="userName" align="center" />
         <el-table-column label="联系电话" prop="userPhone" align="center" />
-        <el-table-column label="地址" prop="userAddress" align="center" />
+        <el-table-column
+          label="地址"
+          prop="userAddress"
+          align="center"
+          show-overflow-tooltip
+        />
         <el-table-column label="邮箱" prop="userMail" align="center" />
 
         <el-table-column label="操作" fixed="right" width="240" align="center">
@@ -159,11 +164,11 @@ const handleCurrentChange = (val: number) => {
 // 获取列表
 const getList = () => {
   tableLoading.value = true
-  const params = {
-    userName: queryParams.userName,
-    userPhone: queryParams.userPhone
-  }
-  API.getUsualAddressList(params)
+  // const params = {
+  //   userName: queryParams.userName,
+  //   userPhone: queryParams.userPhone
+  // }
+  API.getUsualAddressList(queryParams)
     .then((res) => {
       tableLoading.value = false
       if (res && res.code === 200) {
@@ -179,6 +184,7 @@ const getList = () => {
 // 页面条数改变
 const handleSizeChange = (val: number) => {
   queryParams.pageSize = val
+  getList()
 }
 
 // 查询

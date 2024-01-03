@@ -225,7 +225,10 @@
           <template #default="scope">
             <template v-if="scope.row.id">
               <el-button
-                v-if="scope.row.expressType == 0"
+                v-if="
+                  scope.row.expressType == 0 &&
+                  scope.row.expressCompany !== '其它'
+                "
                 link
                 type="primary"
                 @click="logisticsInfo(scope.row.expressNo)"

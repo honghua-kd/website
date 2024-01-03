@@ -40,7 +40,7 @@
               <el-input
                 v-model="basicInfoForm.userMail"
                 clearable
-                placeholder="请输入联系人名称"
+                placeholder="请输入联系人邮箱"
               />
             </el-form-item>
           </el-col>
