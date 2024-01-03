@@ -7,11 +7,13 @@ import type { AxiosInstance } from 'axios'
 import type {
   MartgageCityListRequest,
   AddMortgageCityRequest,
-  EditMortgageCityRequest
+  EditMortgageCityRequest,
+  CodeRequest
 } from './types/request'
 import type {
   MortgageCityListResponse,
-  ProvinceResponse
+  ProvinceResponse,
+  ProvinceDataResponse
 } from './types/response'
 import type { FileDownload } from '../common/types/response'
 const prefix = '/operations-management'
@@ -36,7 +38,7 @@ export class MortgageCityAPI {
 
   // 新增抵解押城市配置
   addMortgageCity(
-    data: AddMortgageCityRequest
+    data: Omit<EditMortgageCityRequest, 'id'>
   ): Response<boolean | null | undefined> {
     return this.request({
       url: `${prefix}/admin-api/mortgage/cityConfiguration/add`,
@@ -88,10 +90,19 @@ export class MortgageCityAPI {
   }
 
   // 获取所有省份信息
-  getAllProvince(): Response<ProvinceResponse> {
+  getAllProvince(): Response<Omit<ProvinceResponse, 'haveChildren'>[]> {
     return this.request({
-      url: `${prefix}/admin-api//area/getAllProvinces`,
+      url: `${prefix}/admin-api/area/getAllProvinces`,
       method: 'post'
+    })
+  }
+
+  // 获取所有省份子节点信息
+  getProvinceChildren(data: CodeRequest): Response<ProvinceResponse[]> {
+    return this.request({
+      url: `${prefix}/admin-api/area/getChildren`,
+      method: 'post',
+      data
     })
   }
 }

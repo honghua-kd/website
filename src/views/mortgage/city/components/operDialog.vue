@@ -16,37 +16,20 @@
       >
         <el-row>
           <el-col :span="12">
-            <el-form-item label="省份" prop="market">
-              <el-select
-                v-model="formParams.market"
+            <el-form-item
+              label="省市"
+              prop="market"
+              :rules="[
+                { required: true, message: '不能为空', trigger: 'change' }
+              ]"
+            >
+              <el-cascader
+                v-model="selCity"
+                :props="props"
                 clearable
-                placeholder="请选择省份"
-                style="width: 100%"
-              >
-                <el-option
-                  v-for="item in statusOpts"
-                  :key="item.dictValue"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="城市" prop="city">
-              <el-select
-                v-model="formParams.city"
-                clearable
-                placeholder="请选择城市"
-                style="width: 100%"
-              >
-                <el-option
-                  v-for="item in statusOpts"
-                  :key="item.dictValue"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
-                />
-              </el-select>
+                @change="changeCity"
+                style="wdith: 100%"
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -133,32 +116,31 @@
 import { reactive, ref, Ref } from 'vue'
 import { ElForm } from 'element-plus'
 import { px2rem } from '@/utils'
+import type { MortgageCityListResponse,EditMortgageCityRequest } from '@/api'
+import { CommonAPI, MortgageCityAPI } from '@/api'
+const MortgageCityApi = new MortgageCityAPI()
 const dialogTitle: Ref<string> = ref('新增')
 const dialogVisible: Ref<boolean> = ref(false)
 const formLoading: Ref<boolean> = ref(false)
-const currentType: Ref<string> = ref('')
 const statusOpts = reactive([
   {
-    dictLabel: '城',
+    dictLabel: '是',
     dictValue: 1
   },
   {
-    dictLabel: '市',
+    dictLabel: '否',
     dictValue: 0
   }
 ])
-interface paramsForm {
-  city: string
-  market: string
-  chepai: string
-}
-const formParams = reactive<paramsForm>({
-  city: '',
-  market: '',
-  chepai: ''
-})
-const formRules = reactive({
-  city: [{ required: true, message: '城市不能为空', trigger: 'change' }]
+const formParams = reactive<EditMortgageCityRequest>({
+  id: '',
+  provinceCode: '',
+  provinceName: '',
+  cityCode: '',
+  cityName: '',
+  licensePlateCode: '',
+  applyMortgage: 0,
+  applyDischarge: 0
 })
 const formRef = ref<InstanceType<typeof ElForm>>()
 
@@ -166,27 +148,57 @@ const submitForm = async () => {
   if (!formRef.value) return
   const valid = await formRef.value.validate()
   if (!valid) return
-  console.log('object')
+  if (dialogTitle.value === '新增') {
+    MortgageCityApi.addMortgageCity(formParams)
+      .then((res) => {
+        if (res && res.code === 200) {
+          ElMessage({
+            type: 'success',
+            message: '新增成功'
+          })
+          dialogVisible.value = false
+        }
+      })
+      .catch((err: Error) => {
+        throw err
+      })
+  } else {
+    MortgageCityApi.editMortgageCity(formParams)
+      .then((res) => {
+        if (res && res.code === 200) {
+          ElMessage({
+            type: 'success',
+            message: '修改成功'
+          })
+          dialogVisible.value = false
+        }
+      })
+      .catch((err: Error) => {
+        throw err
+      })
+  }
 }
-interface TableItem {
-  id: number
-  downloadPerson: string
-  downloadTime: string
-  status: string
-  isDiYa: boolean
-  isJieYa: boolean
-}
-const open = (type: string, row: TableItem) => {
+const open = (type: string, row: MortgageCityListResponse) => {
   dialogVisible.value = true
-  currentType.value = type
   dialogTitle.value = type === 'add' ? '新增' : '编辑'
   if (type === 'edit') {
-    console.log('object', row)
-    // formParams.id = row?.id
-    // formParams.name = row?.name
-    // formParams.type = row?.type
-    // formParams.status = row?.status || 0
-    // formParams.remark = row?.remark
+    formParams.id = row.id
+    formParams.provinceCode = row.provinceCode
+    formParams.provinceName = row.provinceName
+    formParams.cityCode = row.cityCode
+    formParams.cityName = row.cityName
+    formParams.licensePlateCode = row.licensePlateCode
+    formParams.applyMortgage = row.applyMortgage
+    formParams.applyDischarge = row.applyDischarge
+  } else {
+    formParams.id = ''
+    formParams.provinceCode = ''
+    formParams.provinceName = ''
+    formParams.cityCode = ''
+    formParams.cityName = ''
+    formParams.licensePlateCode = ''
+    formParams.applyMortgage = 0
+    formParams.applyDischarge = 0
   }
 }
 defineExpose({ open })

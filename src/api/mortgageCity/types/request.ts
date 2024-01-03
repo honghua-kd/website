@@ -87,3 +87,9 @@ export interface EditMortgageCityRequest {
    */
   provinceName?: null | string
 }
+export interface CodeRequest {
+  /**
+   * 行政规划代码
+   */
+  code: number
+}

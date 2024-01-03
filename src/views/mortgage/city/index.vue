@@ -5,32 +5,13 @@
         <el-row :gutter="20">
           <el-col :span="8">
             <el-form-item label="城市:" prop="city">
-              <el-select
-                v-model="queryParams.city"
+              <el-cascader
+                v-model="selCity"
                 clearable
-                placeholder="请选择"
-                class="city-select"
-              >
-                <el-option
-                  v-for="item in statusOpts"
-                  :key="item.dictValue"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
-                />
-              </el-select>
-              <el-select
-                v-model="queryParams.market"
-                clearable
-                placeholder="请选择"
-                class="city-select"
-              >
-                <el-option
-                  v-for="item in statusOpts"
-                  :key="item.dictValue"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
-                />
-              </el-select>
+                :props="props"
+                @change="changeCity"
+                :options="cascaderOptions"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -64,69 +45,119 @@
         <el-button type="primary"> 下载 </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="primary"> 删除 </el-button>
+        <el-button type="primary" @click="delHandler(selectIds)">
+          删除
+        </el-button>
       </el-col>
     </el-row>
-    <el-table :data="tableData" border v-loading="tableLoading">
-      <el-table-column type="selection" width="55" />
-      <template v-for="item in Columns">
-        <el-table-column
-          v-if="item.show"
-          :label="item.label"
-          :prop="item.prop"
-          :fixed="item.fixed || false"
-          :show-overflow-tooltip="item.showTooltip"
-          :min-width="item.minWidth"
-          :key="item.prop"
-        >
-          <template v-slot="scope">
-            <div v-if="item.prop === 'isDiYa'">
-              <el-switch v-model="scope.downloadTime" />
-            </div>
-            <div v-else-if="item.prop === 'isJieYa'">
-              <el-switch v-model="scope.downloadTime" />
-            </div>
-            <div v-else>
-              {{ scope.row[item.prop] }}
-            </div>
-          </template>
-        </el-table-column>
+    <!-- table 组件引入 -->
+    <Table
+      :data="tableData"
+      :loading="tableLoading"
+      :columnConfig="tableConfig"
+      :isSelected="true"
+      :page-total="pageTotal"
+      :setColumnEnable="true"
+      row-key="id"
+      :tree-props="{ children: 'target' }"
+      :height="tableHeight"
+      @selection-change="selectionChangeHandler"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    >
+      <template #selection>
+        <el-table-column type="selection" width="40" align="center" />
       </template>
-      <el-table-column label="操作" align="center">
-        <template v-slot="scope">
+
+      <template #action="scope">
+        <template v-if="scope.row.fileCode">
           <el-button link type="primary" @click="editHandler(scope.row)">
             编辑
           </el-button>
-          <el-button link type="primary" @click="handleDelect(scope.row)">
+          <el-button link type="danger" @click="delHandler([scope.row.id])">
             删除
           </el-button>
         </template>
-      </el-table-column>
-    </el-table>
-    <!-- 分页 -->
-    <el-pagination
-      v-if="pageTotal"
-      background
-      layout="total,sizes,prev, pager, next"
-      :page-sizes="[10, 20, 50, 100]"
-      :total="pageTotal"
-      class="table-page"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    />
+      </template>
+    </Table>
     <OperDialog ref="operRef" />
     <ImportForm ref="importFormRef" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, Ref, onMounted } from 'vue'
+import { reactive, ref, Ref, onMounted, computed } from 'vue'
+import { tableConfig } from '@/views/mortgage/city/data'
+import type { CascaderProps } from 'element-plus'
 import OperDialog from '@/views/mortgage/city/components/operDialog.vue'
 import ImportForm from './ImportForm.vue'
 import { CommonAPI, MortgageCityAPI } from '@/api'
 import { handleDownloadFile } from '@/utils'
+import Table from '@/components/Table/index.vue'
+import type {
+  PageRequest,
+  MartgageCityListRequest,
+  MortgageCityListResponse
+} from '@/api'
 const CommonApi = new CommonAPI()
 const MortgageCityApi = new MortgageCityAPI()
+type QueryParams = MartgageCityListRequest & PageRequest
+const selCity = ref([])
+const props: CascaderProps = {
+  lazy: true,
+  // value: 'code',
+  // label: 'name',
+  // children: 'children',
+  lazyLoad(node, resolve) {
+    const nodes = [] // 动态节点
+    if (node.value) {
+      const params = {
+        code: node.value as number
+      }
+      MortgageCityApi.getProvinceChildren(params)
+        .then((res) => {
+          if (res && res?.data.length) {
+            res.data.map((item) => {
+              const area = {
+                value: item.code,
+                label: item.name,
+                leaf: node.level >= 1
+              }
+              nodes.push(area)
+            })
+            resolve(nodes) // 回调
+          }
+        })
+        .catch((err: Error) => {
+          throw err
+        })
+    }
+  }
+}
+const changeCity = (val) => {
+  console.error(val)
+
+  // if (selCity.value && selCity.value[0]) {
+  //   const params = {
+  //     code: selCity.value[0]
+  //   }
+  //   MortgageCityApi.getProvinceChildren(params)
+  //     .then((res) => {
+  //       console.error('child', res)
+  //       // if (res && res.code === 200) {
+  //       //   ElMessage({
+  //       //     type: 'success',
+  //       //     message: '导入成功'
+  //       //   })
+  //       // }
+  //       console.error(props.lazyLoad());
+
+  //     })
+  //     .catch((err: Error) => {
+  //       throw err
+  //     })
+  // }
+}
 const statusOpts = reactive([
   {
     dictLabel: '城',
@@ -137,149 +168,108 @@ const statusOpts = reactive([
     dictValue: 0
   }
 ])
-interface QueryForm {
-  pageNo: number
-  pageSize: number
-  city: string
-  market: string
-  chepai: string
-}
-const queryParams = reactive<QueryForm>({
+const queryParams = reactive<QueryParams>({
   pageNo: 1,
   pageSize: 10,
-  city: '',
-  market: '',
-  chepai: ''
+  provinceCityCodes: []
 })
 const searchHandler = () => {
   queryParams.pageNo = 1
   getList()
 }
-const getList = async () => {}
+const getList = async () => {
+  MortgageCityApi.getMortgageCityList(queryParams)
+    .then((res) => {
+      console.error(res)
+      if (res && res.code === 200) {
+        tableData.value = res?.data?.list || []
+        pageTotal.value = res?.data?.total || 0
+      }
+    })
+    .catch((err: Error) => {
+      throw err
+    })
+}
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
 const tableLoading: Ref<boolean> = ref(false)
-interface TableItem {
-  id: number
-  downloadPerson: string
-  downloadTime: string
-  status: string
-  isDiYa: boolean
-  isJieYa: boolean
-}
-const Columns = [
-  {
-    label: '省份',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  },
-  {
-    label: '城市',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  },
-  {
-    label: '车牌代码',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  },
-  {
-    label: '是否可以办理抵押',
-    prop: 'isDiYa',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  },
-  {
-    label: '是否可以办理解押',
-    prop: 'isJieYa',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  },
-  {
-    label: '创建人',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  },
-  {
-    label: '创建时间',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  },
-  {
-    label: '最后更新人',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  },
-  {
-    label: '更新时间',
-    prop: 'downloadPerson',
-    format: '',
-    fixed: '',
-    minWidth: '60',
-    show: true,
-    showTooltip: true
-  }
-]
-const tableData: Ref<TableItem[]> = ref([
-  {
-    id: 1,
-    downloadPerson: '张三',
-    downloadTime: '2023-07-18',
-    status: '进行中',
-    isJieYa: false,
-    isDiYa: false
-  }
-])
-const handleDelect = (row: TableItem) => {
-  console.log(row)
-}
+const tableData: Ref<MortgageCityListResponse[]> = ref([])
 // 分页
 const handleCurrentChange = (val: number) => {
   console.log('value>>>>>', val)
   queryParams.pageNo = val
   getList()
 }
-
+// 表格最大高度
+const searchBoxRef = ref()
+const tableHeight = computed(() => {
+  if (searchBoxRef.value?.clientHeight) {
+    const height = Number(
+      document.documentElement.clientHeight -
+        200 -
+        searchBoxRef.value?.clientHeight
+    )
+    return height
+  } else {
+    const height = Number(document.documentElement.clientHeight - 200)
+    return height
+  }
+})
 // 页面条数改变
 const handleSizeChange = (val: number) => {
   queryParams.pageSize = val
   getList()
+}
+const selectData: Ref<MortgageCityListResponse[]> = ref([])
+// 选择的数据
+const selectionChangeHandler = (item: MortgageCityListResponse[]) => {
+  selectData.value.splice(0, selectData.value.length)
+  selectData.value.push(...item)
+}
+const selectIds = computed(() => {
+  const ids: string[] = []
+  selectData.value.forEach((item) => {
+    ids.push(item.id as string)
+  })
+  return ids
+})
+
+const delHandler = (ids: string[]) => {
+  if (!ids.length) {
+    ElMessage({
+      type: 'error',
+      message: '请选择要删除的内容'
+    })
+    return
+  }
+  // 二次确认
+  ElMessageBox.confirm('确认要删除吗？', '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(() => {
+      // 调用删除接口
+      MortgageCityApi.delMortgageCity(queryParams).then((res) => {
+        console.error(res)
+        if (res && res.code === 200) {
+          ElMessage({
+            type: 'success',
+            message: '删除成功'
+          })
+          getList()
+        }
+      })
+    })
+    .catch((err: Error) => {
+      throw err
+    })
 }
 
 const operRef = ref()
 const addHandler = () => {
   operRef.value.open('add')
 }
-const editHandler = (row: TableItem) => {
+const editHandler = (row: MortgageCityListResponse) => {
   operRef.value.open('edit', row)
 }
 
@@ -300,20 +290,41 @@ const downloadTemplate = () => {
       throw err
     })
 }
-onMounted(() => {
-  MortgageCityApi.getAllProvince()
+const getDicts = () => {
+  const dictTypes = []
+  const params = {
+    dictTypes
+  }
+  CommonApi.getDictsList(params)
     .then((res) => {
-      console.error(res)
-      // if (res && res.code === 200) {
-      //   ElMessage({
-      //     type: 'success',
-      //     message: '导入成功'
-      //   })
-      // }
+      if (res && res.code === 200) {
+      }
     })
     .catch((err: Error) => {
       throw err
     })
+}
+const cascaderOptions = ref([])
+const getProvinces = () => {
+  MortgageCityApi.getAllProvince()
+    .then((res) => {
+      if (res && res?.data.length) {
+        cascaderOptions.value = res.data.map((item) => {
+          return {
+            value: item.code,
+            label: item.name
+          }
+        })
+      }
+    })
+    .catch((err: Error) => {
+      throw err
+    })
+}
+onMounted(() => {
+  getList()
+  getDicts()
+  getProvinces()
 })
 </script>
 

@@ -65,4 +65,8 @@ export interface ProvinceResponse {
    * 顶级行政区划代码
    */
   topParentCode: number
+  /**
+   * 是否有子集 0-没有, 1-有
+   */
+  haveChildren: number
 }

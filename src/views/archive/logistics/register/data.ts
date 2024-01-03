@@ -16,6 +16,7 @@ export default {
       width: 160,
       valueType: '',
       align: 'left',
+      headerAlign: 'center',
       showOverflowTooltip: true,
       show: true,
       showDisabled: false
@@ -33,7 +34,7 @@ export default {
     {
       label: '寄送/接收',
       prop: 'expressType',
-      width: 120,
+      width: 110,
       valueType: '',
       align: 'center',
       showOverflowTooltip: true,
@@ -78,7 +79,7 @@ export default {
     {
       label: '收件人',
       prop: 'receiveUser',
-      width: 150,
+      width: 110,
       valueType: '',
       align: 'center',
       showOverflowTooltip: true,
@@ -105,7 +106,7 @@ export default {
     {
       label: '更新时间',
       prop: 'updateTime',
-      width: 170,
+      width: 110,
       valueType: '',
       align: 'center',
       showOverflowTooltip: true,
@@ -114,7 +115,7 @@ export default {
     {
       label: '更新人',
       prop: 'updater',
-      width: 170,
+      width: 110,
       valueType: '',
       align: 'center',
       showOverflowTooltip: true,
