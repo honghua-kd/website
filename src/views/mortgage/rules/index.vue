@@ -67,8 +67,7 @@
         <el-button type="primary"> 删除 </el-button>
       </el-col>
     </el-row>
-
-    <Table
+    <!-- <Table
       :isSelected="true"
       :data="tableData"
       :columnConfig="Columns"
@@ -91,7 +90,7 @@
           删除
         </el-button>
       </template>
-    </Table>
+    </Table> -->
     <OperDialog ref="operRef" />
   </div>
 </template>
@@ -99,9 +98,8 @@
 <script setup lang="ts">
 import { reactive, ref, Ref } from 'vue'
 import { Search } from '@element-plus/icons-vue'
-import OperDialog from '@/views/mortgage/rules/components/operDialog.vue'
+import OperDialog from './components/operDialog.vue'
 import Table from '@/components/Table.vue'
-
 const statusOpts = reactive([
   {
     dictLabel: '城',
@@ -126,6 +124,7 @@ const queryParams = reactive<QueryForm>({
   market: '',
   chepai: ''
 })
+
 const searchHandler = () => {
   queryParams.pageNo = 1
   getList()
@@ -358,9 +357,4 @@ const editHandler = (row: TableItem) => {
 }
 </script>
 
-<style lang="scss" scoped>
-.city-select {
-  margin-left: 1%;
-  width: 48%;
-}
-</style>
+<style scoped></style>

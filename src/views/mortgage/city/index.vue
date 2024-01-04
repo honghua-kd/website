@@ -68,9 +68,26 @@
       <template #selection>
         <el-table-column type="selection" width="40" align="center" />
       </template>
-
+      <template #default="{ row, prop }">
+        <span v-if="prop === 'applyMortgage'">
+          <el-switch
+            v-model="row[prop]"
+            :active-value="1"
+            :inactive-value="0"
+            @click="changeStatus(row)"
+          />
+        </span>
+        <span v-else-if="prop === 'applyDischarge'">
+          <el-switch
+            v-model="row[prop]"
+            :active-value="1"
+            :inactive-value="0"
+            @click="changeStatus(row)"
+          />
+        </span>
+      </template>
       <template #action="scope">
-        <template v-if="scope.row.fileCode">
+        <template v-if="scope.row.id">
           <el-button link type="primary" @click="editHandler(scope.row)">
             编辑
           </el-button>
@@ -97,7 +114,8 @@ import Table from '@/components/Table/index.vue'
 import type {
   PageRequest,
   MartgageCityListRequest,
-  MortgageCityListResponse
+  MortgageCityListResponse,
+  EditMortgageCityRequest
 } from '@/api'
 const CommonApi = new CommonAPI()
 const MortgageCityApi = new MortgageCityAPI()
@@ -134,40 +152,6 @@ const props: CascaderProps = {
     }
   }
 }
-const changeCity = (val) => {
-  console.error(val)
-
-  // if (selCity.value && selCity.value[0]) {
-  //   const params = {
-  //     code: selCity.value[0]
-  //   }
-  //   MortgageCityApi.getProvinceChildren(params)
-  //     .then((res) => {
-  //       console.error('child', res)
-  //       // if (res && res.code === 200) {
-  //       //   ElMessage({
-  //       //     type: 'success',
-  //       //     message: '导入成功'
-  //       //   })
-  //       // }
-  //       console.error(props.lazyLoad());
-
-  //     })
-  //     .catch((err: Error) => {
-  //       throw err
-  //     })
-  // }
-}
-const statusOpts = reactive([
-  {
-    dictLabel: '城',
-    dictValue: 1
-  },
-  {
-    dictLabel: '市',
-    dictValue: 0
-  }
-])
 const queryParams = reactive<QueryParams>({
   pageNo: 1,
   pageSize: 10,
@@ -264,7 +248,21 @@ const delHandler = (ids: string[]) => {
       throw err
     })
 }
-
+const changeStatus = (val?: EditMortgageCityRequest) => {
+  MortgageCityApi.editMortgageCity(val)
+    .then((res) => {
+      if (res && res.code === 200) {
+        ElMessage({
+          type: 'success',
+          message: '修改成功'
+        })
+        getList()
+      }
+    })
+    .catch((err: Error) => {
+      throw err
+    })
+}
 const operRef = ref()
 const addHandler = () => {
   operRef.value.open('add')

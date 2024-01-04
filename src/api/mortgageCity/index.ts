@@ -30,7 +30,7 @@ export class MortgageCityAPI {
     data: MartgageCityListRequest
   ): Response<PageList<MortgageCityListResponse>> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage/cityConfiguration/list`,
+      url: `${prefix}/admin-api/mortgage/cityConfiguration/list1`,
       method: 'post',
       data
     })

@@ -1,44 +1,87 @@
 export const tableConfig = [
   {
-    label: '省份',
+    label: '规则名称',
     prop: 'provinceCode',
     valueType: '',
     align: 'center',
-    width: 200,
+    showOverflowTooltip: true,
+    show: true
+  },
+  {
+    label: '任务类型',
+    prop: 'cityCode',
+    valueType: '',
+    align: 'center',
+    showOverflowTooltip: true,
+    show: true
+  },
+  {
+    label: '数据来源',
+    prop: 'licensePlateCode',
+    valueType: '',
+    align: 'center',
     showOverflowTooltip: true,
     show: true
   },
   {
     label: '城市',
-    prop: 'cityCode',
-    valueType: '',
-    width: 200,
-    align: 'center',
-    showOverflowTooltip: true,
-    show: true
-  },
-  {
-    label: '车牌代码',
-    prop: 'licensePlateCode',
-    valueType: '',
-    width: 200,
-    align: 'center',
-    showOverflowTooltip: true,
-    show: true
-  },
-  {
-    label: '是否可以办理抵押',
     prop: 'applyMortgage',
-    width: 200,
     valueType: '',
     align: 'center',
     showOverflowTooltip: true,
     show: true
   },
   {
-    label: '是否可以办理解押',
+    label: '分配类型',
     prop: 'applyDischarge',
-    width: 200,
+    valueType: '',
+    align: 'center',
+    showOverflowTooltip: true,
+    show: true
+  },
+  {
+    label: '分配人员',
+    prop: 'creator',
+    valueType: '',
+    align: 'center',
+    showOverflowTooltip: true,
+    show: true
+  },
+  {
+    label: '是否自动分配',
+    prop: 'createTime',
+    valueType: '',
+    align: 'center',
+    showOverflowTooltip: true,
+    show: true
+  },
+  {
+    label: '是否发送短信',
+    prop: 'updater',
+    valueType: '',
+    align: 'center',
+    showOverflowTooltip: true,
+    show: true
+  },
+  {
+    label: '短信模版',
+    prop: 'updateTime',
+    valueType: '',
+    align: 'center',
+    showOverflowTooltip: true,
+    show: true
+  },
+  {
+    label: '状态',
+    prop: 'updateTime',
+    valueType: '',
+    align: 'center',
+    showOverflowTooltip: true,
+    show: true
+  },
+  {
+    label: '最新执行日期',
+    prop: 'updateTime',
     valueType: '',
     align: 'center',
     showOverflowTooltip: true,
@@ -46,27 +89,24 @@ export const tableConfig = [
   },
   {
     label: '创建人',
-    prop: 'creator',
+    prop: 'updateTime',
     valueType: '',
-    width: 200,
     align: 'center',
     showOverflowTooltip: true,
     show: true
   },
   {
     label: '创建时间',
-    prop: 'createTime',
+    prop: 'updateTime',
     valueType: '',
-    width: 200,
     align: 'center',
     showOverflowTooltip: true,
     show: true
   },
   {
     label: '最后更新人',
-    prop: 'updater',
+    prop: 'updateTime',
     valueType: '',
-    width: 200,
     align: 'center',
     showOverflowTooltip: true,
     show: true
@@ -75,7 +115,6 @@ export const tableConfig = [
     label: '更新时间',
     prop: 'updateTime',
     valueType: '',
-    width: 200,
     align: 'center',
     showOverflowTooltip: true,
     show: true
