@@ -160,6 +160,7 @@ const addHandler = () => {
 // 分页
 const handleCurrentChange = (val: number) => {
   queryParams.pageNo = val
+  getList()
 }
 // 获取列表
 const getList = () => {

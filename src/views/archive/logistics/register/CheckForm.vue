@@ -270,7 +270,7 @@
       </el-row>
       <el-row>
         <el-col :span="15">
-          <el-form-item label="备注" prop="postOrReceive">
+          <el-form-item label="备注" prop="expressContentRemark">
             <el-input
               v-model="basicInfoForm.expressContentRemark"
               clearable

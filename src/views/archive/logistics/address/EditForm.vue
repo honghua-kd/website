@@ -39,8 +39,9 @@
               prop="userPhone"
               :rules="[
                 {
-                  max: 200,
-                  message: '内容超长',
+                  message: '请输入正确的电话号码',
+                  type: 'string',
+                  pattern: /^1[3456789]\d{9}$/,
                   trigger: 'change'
                 }
               ]"
@@ -58,9 +59,9 @@
               prop="userMail"
               :rules="[
                 {
-                  max: 200,
-                  message: '内容超长',
-                  trigger: 'change'
+                  type: 'email',
+                  message: '请输入正确的邮箱地址',
+                  trigger: ['blur', 'change']
                 }
               ]"
             >

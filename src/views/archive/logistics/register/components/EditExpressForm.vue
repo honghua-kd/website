@@ -27,7 +27,6 @@
               class="express-com"
               label="快递内容类型:"
               prop="contentType"
-              :rules="[{ required: true, message: '快递内容类型不能为空' }]"
             >
               <el-select
                 v-model="expressInfoForm.contentType"
@@ -60,7 +59,6 @@
                 v-model="expressInfoForm.contractNo"
                 clearable
                 disabled
-                placeholder="请输入关联合同号"
               />
             </el-form-item>
           </el-col>

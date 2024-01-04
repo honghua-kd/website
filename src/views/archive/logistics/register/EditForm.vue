@@ -139,20 +139,16 @@
                 <el-form-item
                   label="寄件人联系电话"
                   :label-width="px2rem('120px')"
-                  prop="postPhone"
+                  prop="sendPhone"
                   :rules="[
                     {
-                      max: 200,
-                      message: '内容超长',
+                      message: '请输入正确的联系电话',
+                      type: 'string',
+                      pattern: /^1[3456789]\d{9}$/,
                       trigger: 'change'
                     }
                   ]"
                 >
-                  <!-- <el-input
-                    v-model="basicInfoForm.sendPhone"
-                    clearable
-                    placeholder="请输入寄件人联系电话"
-                  /> -->
                   <el-autocomplete
                     v-model="basicInfoForm.sendPhone"
                     :fetch-suggestions="queryContractsSearchByPhone"
@@ -242,24 +238,20 @@
                   prop="receivePhone"
                   :rules="[
                     {
-                      max: 200,
-                      message: '内容超长',
+                      message: '请输入正确的联系电话',
+                      type: 'string',
+                      pattern: /^1[3456789]\d{9}$/,
                       trigger: 'change'
                     }
                   ]"
                 >
-                  <!-- <el-input
-                    v-model="basicInfoForm.receivePhone"
-                    clearable
-                    placeholder="请输入收件人联系电话"
-                  /> -->
                   <el-autocomplete
                     v-model="basicInfoForm.receivePhone"
                     :fetch-suggestions="queryContractsSearchByPhone"
                     :trigger-on-focus="false"
                     clearable
                     placeholder="请输入收件人联系电话"
-                    @select="handleSelect"
+                    @select="handleSelectRe"
                   />
                 </el-form-item>
               </el-col>
