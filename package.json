@@ -53,7 +53,8 @@
     "vue-router": "^4.2.5",
     "vue3-ace-editor": "^2.2.2",
     "vue3-count-to": "^1.0.11",
-    "vue3-treeselect": "^0.1.10"
+    "vue3-treeselect": "^0.1.10",
+    "ws": "^8.16.0"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.6",
@@ -61,6 +62,7 @@
     "@types/node": "^16.7.1",
     "@types/nprogress": "^0.2.3",
     "@types/pdfjs-dist": "^2.10.378",
+    "@types/ws": "^8.5.10",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "@typescript-eslint/parser": "^6.11.0",
     "@vitejs/plugin-legacy": "^1.5.3",
