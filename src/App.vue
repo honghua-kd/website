@@ -11,7 +11,8 @@ import { ref, watch } from 'vue'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import { CoreAPI } from '@/api'
 import { useRouter, mitt } from '@toystory/lotso'
-import { useNoticeCenter, useDicts } from '@/hooks'
+import { useDicts } from '@/hooks'
+// import { useNoticeCenter, useDicts } from '@/hooks'
 import { DICT_TYPES } from '@/constants'
 import type { ElScrollbar } from 'element-plus'
 
@@ -25,7 +26,7 @@ const { router } = useRouter()
 useDicts(DICT_TYPES)
 
 // 启用消息中心
-useNoticeCenter()
+// useNoticeCenter()
 
 watch(
   () => router.currentRoute.value,
