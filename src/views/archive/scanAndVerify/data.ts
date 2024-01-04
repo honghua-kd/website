@@ -1,4 +1,6 @@
-export const tableConfig = [
+import type { ISearchUnit } from '@/components/SearchBar/type'
+import type { ITableConfigProps } from '@/components/Table/type'
+export const tableConfig: ITableConfigProps[] = [
   {
     label: '文件名',
     prop: 'fileName',
@@ -236,7 +238,8 @@ export const tableConfig = [
     show: true
   }
 ]
-export const searchConfig = [
+
+export const searchConfig: ISearchUnit[] = [
   [
     {
       compType: 'el-date-picker',
