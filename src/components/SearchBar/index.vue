@@ -17,14 +17,14 @@
                     <!-- el-date-picker -->
                     <template v-if="item.compType === 'el-date-picker'">
                       <el-date-picker
-                        v-model="queryParams[item.propStart]"
-                        :type="item.valueType"
+                        v-model="queryParams[item.propStart as keyof ISearchConfigDateTime]"
+                        type="datetime"
                         :placeholder="item.placeholderStart"
                         style="margin-right: 4%; width: 48%"
                       />
                       <el-date-picker
-                        v-model="queryParams[item.propEnd]"
-                        :type="item.valueType"
+                        v-model="queryParams[item.propEnd as keyof ISearchConfigDateTime]"
+                        type="datetime"
                         :placeholder="item.placeholderEnd"
                         style="width: 48%"
                       />
@@ -46,10 +46,10 @@
                         :placeholder="item.placeholder"
                       >
                         <el-option
-                          v-for="(item, index) in dictObj[item.options]"
+                          v-for="(cell, index) in dictObj[item.options as string]"
                           :key="index"
-                          :label="item.label"
-                          :value="item.value"
+                          :label="cell.label"
+                          :value="cell.value"
                         />
                       </el-select>
                     </template>
@@ -79,7 +79,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, reactive } from 'vue'
+import { ref, watch, reactive, Ref } from 'vue'
 import { px2rem } from '@/utils'
 import {
   Refresh,
@@ -89,29 +89,37 @@ import {
 } from '@element-plus/icons-vue'
 import { ElForm } from 'element-plus'
 import { useDictStore } from '@/store/dict'
+import type { DictItem } from '@/api'
 
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
 
 type queryState = Record<string, any>
-type dictState = Record<string, any>
+type dictState = Record<string, DictItem[]>
 
-interface ISearchConfigProps {
+interface ISearchConfigDateTime {
+  propStart?: string
+  propEnd?: string
+  placeholderStart?: string
+  placeholderEnd?: string
+}
+
+interface ISearchConfigCommon {
   compType: string
   colSpan: number
   label: string
   valueType: string
-  prop?: string
-  propStart?: string
-  propEnd?: string
+  prop: string
   placeholder?: string
-  placeholderStart?: string
-  placeholderEnd?: string
   options?: string
   slotName?: string
 }
 
+type ISearchConfigProps = ISearchConfigCommon & ISearchConfigDateTime
+
+type ISearchUnit = ISearchConfigProps[]
+
 interface IProps {
-  searchConfig: ISearchConfigProps[]
+  searchConfig: ISearchUnit[]
   query: queryState
   dictArray?: string[]
   showExpand?: boolean
@@ -119,20 +127,25 @@ interface IProps {
 
 const props = withDefaults(defineProps<IProps>(), {
   searchConfig: () => [],
-  query: () => {},
+  query: () => {
+    return {}
+  },
   showExpand: false
 })
 
 const emit = defineEmits(['searchHandler', 'reset'])
-const queryParams = ref({})
+const queryParams: Ref<queryState> = ref({})
 const dictObj = reactive<dictState>({})
 
 const generateOptions = () => {
   const dictStore = useDictStore()
   const dictMap = dictStore.dicts
-  props.dictArray.forEach((item) => {
-    dictObj[item] = dictMap[item] || []
-  })
+  if (props.dictArray) {
+    props.dictArray.forEach((item) => {
+      const tempArray = dictMap[item] || []
+      dictObj[item] = tempArray
+    })
+  }
 }
 
 const expandFlag = ref<boolean>(false)
