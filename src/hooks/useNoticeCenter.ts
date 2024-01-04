@@ -115,4 +115,9 @@ export const useNoticeCenter = () => {
   })
 
   getNoticeCount()
+
+  return {
+    getNoticeCount,
+    getUnreadNotice
+  }
 }
