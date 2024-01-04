@@ -298,7 +298,6 @@ import EditForm from './EditForm.vue'
 import LogisticsInfoForm from './LogisticsInfoForm.vue'
 import CheckForm from './CheckForm.vue'
 import ImportForm from './ImportForm.vue'
-import { EXPRESS_STATUS, EXPRESS_TYPE } from '@/constants'
 import type {
   PageRequest,
   ExpressInfoCardListRequest,
