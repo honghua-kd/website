@@ -459,6 +459,7 @@
                     v-model="scope.row.fileRemark"
                     clearable
                     placeholder="请输入备注"
+                    @input="limitWords"
                   />
                 </template>
               </el-table-column>
@@ -737,6 +738,14 @@ const open = async (row?: ExpressListItem) => {
   dialogVisible.value = true
   getDicts()
   init(row)
+}
+const limitWords = (val: string) => {
+  if (val.length > 200) {
+    ElMessage({
+      type: 'error',
+      message: '内容超长'
+    })
+  }
 }
 const init = (row?: ExpressListItem) => {
   if (row) {
