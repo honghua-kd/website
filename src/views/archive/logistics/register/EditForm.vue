@@ -145,7 +145,7 @@
                       message: '请输入正确的联系电话',
                       type: 'string',
                       pattern: /^1[3456789]\d{9}$/,
-                      trigger: 'change'
+                      trigger: 'blur'
                     }
                   ]"
                 >
@@ -241,7 +241,7 @@
                       message: '请输入正确的联系电话',
                       type: 'string',
                       pattern: /^1[3456789]\d{9}$/,
-                      trigger: 'change'
+                      trigger: 'blur'
                     }
                   ]"
                 >

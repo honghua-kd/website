@@ -99,7 +99,7 @@ export default {
     },
     {
       label: '登记人',
-      prop: 'creator',
+      prop: 'creatorName',
       width: 110,
       valueType: '',
       align: 'center',
@@ -117,7 +117,7 @@ export default {
     },
     {
       label: '更新人',
-      prop: 'updater',
+      prop: 'updaterName',
       width: 110,
       valueType: '',
       align: 'center',
