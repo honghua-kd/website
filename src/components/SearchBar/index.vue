@@ -13,26 +13,29 @@
             <template v-for="item in unit" :key="item.prop">
               <slot :name="item.slotName ? item.slotName : 'default'">
                 <el-col :span="item.colSpan">
-                  <el-form-item :label="item.label" :prop="[item.prop]">
+                  <el-form-item
+                    :label="item.label"
+                    :prop="[(item as ISearchConfigCommon).prop]"
+                  >
                     <!-- el-date-picker -->
                     <template v-if="item.compType === 'el-date-picker'">
                       <el-date-picker
-                        v-model="queryParams[item.propStart as keyof ISearchConfigDateTime]"
+                        v-model="queryParams[(item as ISearchConfigTimer).propStart]"
                         type="datetime"
-                        :placeholder="item.placeholderStart"
+                        :placeholder="(item as ISearchConfigTimer).placeholderStart"
                         style="margin-right: 4%; width: 48%"
                       />
                       <el-date-picker
-                        v-model="queryParams[item.propEnd as keyof ISearchConfigDateTime]"
+                        v-model="queryParams[(item as ISearchConfigTimer).propEnd ]"
                         type="datetime"
-                        :placeholder="item.placeholderEnd"
+                        :placeholder="(item as ISearchConfigTimer).placeholderEnd"
                         style="width: 48%"
                       />
                     </template>
                     <!-- el-input -->
                     <template v-else-if="item.compType === 'el-input'">
                       <el-input
-                        v-model="queryParams[item.prop]"
+                        v-model="queryParams[(item as ISearchConfigCommon).prop]"
                         clearable
                         :placeholder="item.placeholder"
                       />
@@ -40,7 +43,7 @@
                     <!-- el-select -->
                     <template v-else-if="item.compType === 'el-select'">
                       <el-select
-                        v-model="queryParams[item.prop]"
+                        v-model="queryParams[(item as ISearchConfigCommon).prop]"
                         style="width: 100%"
                         clearable
                         :placeholder="item.placeholder"
@@ -89,41 +92,14 @@ import {
 } from '@element-plus/icons-vue'
 import { ElForm } from 'element-plus'
 import { useDictStore } from '@/store/dict'
-import type { DictItem } from '@/api'
-
+import type {
+  IProps,
+  queryState,
+  dictState,
+  ISearchConfigCommon,
+  ISearchConfigTimer
+} from './type'
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
-
-type queryState = Record<string, any>
-type dictState = Record<string, DictItem[]>
-
-interface ISearchConfigDateTime {
-  propStart?: string
-  propEnd?: string
-  placeholderStart?: string
-  placeholderEnd?: string
-}
-
-interface ISearchConfigCommon {
-  compType: string
-  colSpan: number
-  label: string
-  valueType: string
-  prop: string
-  placeholder?: string
-  options?: string
-  slotName?: string
-}
-
-type ISearchConfigProps = ISearchConfigCommon & ISearchConfigDateTime
-
-type ISearchUnit = ISearchConfigProps[]
-
-interface IProps {
-  searchConfig: ISearchUnit[]
-  query: queryState
-  dictArray?: string[]
-  showExpand?: boolean
-}
 
 const props = withDefaults(defineProps<IProps>(), {
   searchConfig: () => [],
