@@ -10,14 +10,13 @@
                 clearable
                 :props="props"
                 @change="changeCity"
-                :options="cascaderOptions"
               />
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="车牌代码:" prop="chepai">
+            <el-form-item label="车牌代码:" prop="licensePlateCode">
               <el-input
-                v-model="queryParams.chepai"
+                v-model="queryParams.licensePlateCode"
                 placeholder="请输入"
                 clearable
               />
@@ -88,7 +87,6 @@
 <script setup lang="ts">
 import { reactive, ref, Ref, onMounted, computed } from 'vue'
 import { tableConfig } from '@/views/mortgage/city/data'
-import type { CascaderProps } from 'element-plus'
 import OperDialog from '@/views/mortgage/city/components/operDialog.vue'
 import ImportForm from './ImportForm.vue'
 import { CommonAPI, MortgageCityAPI } from '@/api'
@@ -99,79 +97,59 @@ import type {
   MartgageCityListRequest,
   MortgageCityListResponse
 } from '@/api'
+import type { CascaderProps, CascaderOption, CascaderValue } from 'element-plus'
+
 const CommonApi = new CommonAPI()
 const MortgageCityApi = new MortgageCityAPI()
 type QueryParams = MartgageCityListRequest & PageRequest
+
 const selCity = ref([])
+
 const props: CascaderProps = {
   lazy: true,
-  // value: 'code',
-  // label: 'name',
-  // children: 'children',
-  lazyLoad(node, resolve) {
-    const nodes = [] // 动态节点
-    if (node.value) {
+  async lazyLoad(node, resolve) {
+    const nodes: CascaderOption[] = [] // 动态节点
+    const { level } = node
+    if (level === 0) {
+      const resParent = await MortgageCityApi.getAllProvince()
+      if (resParent && resParent?.data) {
+        resParent?.data.map((item) => {
+          const area = {
+            value: item.code,
+            label: item.name,
+            leaf: level >= 1
+          }
+          nodes.push(area)
+        })
+      }
+    } else {
       const params = {
         code: node.value as number
       }
-      MortgageCityApi.getProvinceChildren(params)
-        .then((res) => {
-          if (res && res?.data.length) {
-            res.data.map((item) => {
-              const area = {
-                value: item.code,
-                label: item.name,
-                leaf: node.level >= 1
-              }
-              nodes.push(area)
-            })
-            resolve(nodes) // 回调
+      const res = await MortgageCityApi.getProvinceChildren(params)
+      if (res && res.data) {
+        res?.data.map((item) => {
+          const area = {
+            value: item.code,
+            label: item.name,
+            leaf: level >= 1
           }
+          nodes.push(area)
         })
-        .catch((err: Error) => {
-          throw err
-        })
+      }
     }
+    resolve(nodes) // 回调
   }
 }
-const changeCity = (val) => {
-  console.error(val)
-
-  // if (selCity.value && selCity.value[0]) {
-  //   const params = {
-  //     code: selCity.value[0]
-  //   }
-  //   MortgageCityApi.getProvinceChildren(params)
-  //     .then((res) => {
-  //       console.error('child', res)
-  //       // if (res && res.code === 200) {
-  //       //   ElMessage({
-  //       //     type: 'success',
-  //       //     message: '导入成功'
-  //       //   })
-  //       // }
-  //       console.error(props.lazyLoad());
-
-  //     })
-  //     .catch((err: Error) => {
-  //       throw err
-  //     })
-  // }
+const changeCity = (val: CascaderValue) => {
+  console.log(val)
 }
-const statusOpts = reactive([
-  {
-    dictLabel: '城',
-    dictValue: 1
-  },
-  {
-    dictLabel: '市',
-    dictValue: 0
-  }
-])
+
 const queryParams = reactive<QueryParams>({
   pageNo: 1,
   pageSize: 10,
-  provinceCityCodes: []
+  provinceCityCodes: [],
+  licensePlateCode: ''
 })
 const searchHandler = () => {
   queryParams.pageNo = 1
@@ -290,41 +268,9 @@ const downloadTemplate = () => {
       throw err
     })
 }
-const getDicts = () => {
-  const dictTypes = []
-  const params = {
-    dictTypes
-  }
-  CommonApi.getDictsList(params)
-    .then((res) => {
-      if (res && res.code === 200) {
-      }
-    })
-    .catch((err: Error) => {
-      throw err
-    })
-}
-const cascaderOptions = ref([])
-const getProvinces = () => {
-  MortgageCityApi.getAllProvince()
-    .then((res) => {
-      if (res && res?.data.length) {
-        cascaderOptions.value = res.data.map((item) => {
-          return {
-            value: item.code,
-            label: item.name
-          }
-        })
-      }
-    })
-    .catch((err: Error) => {
-      throw err
-    })
-}
+
 onMounted(() => {
   getList()
-  getDicts()
-  getProvinces()
 })
 </script>
 
