@@ -16,7 +16,8 @@ import type {
   AgencyAddressSaveRequest,
   AgencyAddressEditRequest,
   AgencyAddressDeleteRequest,
-  AgencyAddressExportRequest
+  AgencyAddressExportRequest,
+  downLoadTemplateRequest
 } from './types/request'
 import type {
   AgencyListResponse,
@@ -24,7 +25,8 @@ import type {
   AgencyExportResponse,
   AgencyAddressListResponse,
   AgencyAddressDetailResponse,
-  AgencyAddressExportResponse
+  AgencyAddressExportResponse,
+  downLoadTemplateResponse
 } from './types/response'
 
 const prefix = '/operations-mortgage'
@@ -154,6 +156,17 @@ export class AgencyAPI {
   ): Response<AgencyAddressExportResponse> {
     return this.request({
       url: `${prefix}/admin-api/mortgage/agency/address/export`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 根据地业务类型下载导入模版
+  getDownloadTemplate(
+    data: downLoadTemplateRequest
+  ): Response<downLoadTemplateResponse> {
+    return this.request({
+      url: `/operations-management/admin-api/import/file/downloadTemplate`,
       method: 'post',
       data
     })

@@ -57,15 +57,16 @@ export interface AgencyDetailResponse {
   /**
    * 系统来源1
    */
-  sourceSystem1?: string
+  sourceSystem1: string
   /**
    * 系统来源2
    */
-  sourceSystem2?: string
+  sourceSystem2: string
   /**
    * 未收费办理是都需审批（是-1，否-0）
    */
   unpaidNeedApproveFlag?: number
+  systemSourceValue?: string[]
 }
 
 // 渠道商/办事处名单-导出
@@ -223,6 +224,18 @@ export interface AgencyAddressDetailResponse {
 
 // 渠道商/办事处地址-导出
 export interface AgencyAddressExportResponse {
+  /**
+   * 附件code
+   */
+  fileCode?: string
+  /**
+   * 0异步 1同步
+   */
+  sync?: number
+}
+
+// 下载导入模版
+export interface downLoadTemplateResponse {
   /**
    * 附件code
    */

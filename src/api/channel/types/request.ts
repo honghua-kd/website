@@ -13,7 +13,14 @@ export interface AgencyListRequest extends PageRequest {
   /**
    * 系统来源2
    */
-  sourceSystem2?: string
+  sourceSystem12List?: {
+    label?: string | null | undefined
+    value?: string | null | undefined
+    chiuldren?: {
+      label: string | null | undefined
+      value: string | null | undefined
+    }
+  }[]
 }
 
 // 渠道商/办事处名单-详情
@@ -57,7 +64,7 @@ export interface AgencyEditRequest {
   /**
    * 是否生成待收款项清单（是-1，否-0）
    */
-  createGatherFlag: number | undefined
+  createGatherFlag: boolean | string | number | undefined
   /**
    * 主键id
    */
@@ -73,7 +80,7 @@ export interface AgencyEditRequest {
   /**
    * 未收费办理是都需审批（是-1，否-0）
    */
-  unpaidNeedApproveFlag: number | undefined
+  unpaidNeedApproveFlag: boolean | string | number | undefined
 }
 
 // 渠道商/办事处名单-删除
@@ -292,4 +299,9 @@ export interface AgencyAddressExportRequest {
    * 来源系统2
    */
   sourceSystem2?: string
+}
+
+// 下载导入模版
+export interface downLoadTemplateRequest {
+  bizType?: string
 }

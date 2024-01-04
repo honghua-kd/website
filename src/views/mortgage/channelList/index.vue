@@ -11,19 +11,24 @@
         <el-row :gutter="20">
           <el-col :span="6">
             <el-form-item label="来源系统" style="width: 100%">
-              <el-select v-model="formModel.sourceSystem2" style="width: 100%">
-                <el-option
-                  v-for="item in sourceArr"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
+              <el-cascader
+                v-model="formModel.sourceSystem12List"
+                :options="sourceArr"
+                :props="{ multiple: true }"
+                collapse-tags
+                collapse-tags-tooltip
+                clearable
+                :placeholder="
+                  formModel.sourceSystem12List.length === 0 ? '全部' : '请选择'
+                "
+                style="width: 100%"
+                @change="selectSourceSystem"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="代理商/办事处" style="width: 100%">
-              <el-input v-model="formModel.agencyName" />
+              <el-input v-model="formModel.agencyName" :maxlength="50" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -93,12 +98,28 @@
           :align="i.align"
         >
           <template #default="scope">
-            <span v-if="i.prop === 'createGatherFlag'">{{
-              scope.row.createGatherFlag === 1 ? '是' : '否'
+            <span v-if="i.prop === 'sourceSystem2'">{{
+              getDictLabel(scope.row.sourceSystem1, scope.row.sourceSystem2)
             }}</span>
-            <span v-if="i.prop === 'unpaidNeedApproveFlag'">{{
-              scope.row.unpaidNeedApproveFlag === 1 ? '是' : '否'
-            }}</span>
+            <span v-if="i.prop === 'createGatherFlag'"
+              ><el-switch
+                v-model="scope.row.createGatherFlag"
+                :active-value="1"
+                :inactive-value="0"
+                @change="
+                  (value) => changeSwitch(value, scope.row, 'createGatherFlag')
+                "
+            /></span>
+            <span v-if="i.prop === 'unpaidNeedApproveFlag'"
+              ><el-switch
+                v-model="scope.row.unpaidNeedApproveFlag"
+                :active-value="1"
+                :inactive-value="0"
+                @change="
+                  (value) =>
+                    changeSwitch(value, scope.row, 'unpaidNeedApproveFlag')
+                "
+            /></span>
             <template v-if="i.prop === 'action'">
               <el-button
                 v-for="item in tableActionList"
@@ -139,8 +160,12 @@
 import { reactive, toRefs, ref, computed, onMounted } from 'vue'
 import BasicData from '@/views/mortgage/channelList/data'
 import EditModel from '@/views/mortgage/channelList/editModel.vue'
-import type { StateType } from '@/views/mortgage/channelList/type'
+import type {
+  StateType,
+  OptionItemTypeString
+} from '@/views/mortgage/channelList/type'
 import type { AgencyListResponse } from '@/api/channel/types/response'
+import type { DictDataTreeResponse } from '@/api/common/types/response'
 import {
   Refresh,
   Search,
@@ -149,18 +174,25 @@ import {
   Download
 } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { px2rem } from '@/utils'
+import { px2rem, handleDownloadFile } from '@/utils'
 import { AgencyAPI, CommonAPI } from '@/api'
+import type { CascaderValue, CascaderOption } from 'element-plus'
 const API = new AgencyAPI()
 const COMMONAPI = new CommonAPI()
 
+type SourceItem = {
+  value?: string | null | undefined
+  label?: string | null | undefined
+  children?: SourceItem[]
+}
 const state = reactive<StateType>({
   formModel: {
     agencyName: '',
     // sourceSystem1: '',
-    sourceSystem2: '',
+    sourceSystem12List: [],
     pageNo: 1,
-    pageSize: 10
+    pageSize: 10,
+    sourceSystem12ListParams: []
   },
   sourceArr: [],
   tableLoading: false,
@@ -171,7 +203,10 @@ const state = reactive<StateType>({
   editModelVisible: false,
   editModelTitle: '',
   selectIdsArr: [],
-  detailData: {}
+  detailData: {
+    sourceSystem1: '',
+    sourceSystem2: ''
+  }
 })
 const {
   formModel,
@@ -203,26 +238,66 @@ const tableHeight = computed(() => {
   }
 })
 
+const getDictLabel = (value1: string, value2: string) => {
+  const sourceArrClone = JSON.parse(JSON.stringify(sourceArr.value))
+  let result = ''
+  sourceArrClone.forEach((i: OptionItemTypeString) => {
+    if (i.value === value1) {
+      const childrenClone = JSON.parse(JSON.stringify(i.children))
+      childrenClone.forEach((j: OptionItemTypeString) => {
+        if (value2 === j.value) {
+          result = j.label
+        }
+      })
+    }
+  })
+  return result
+}
 onMounted(() => {
   getDictsListData()
   getListData()
 })
 
 const getDictsListData = async () => {
-  const dictTypes = ['SOURCE_SYSTEM']
   const params = {
-    dictTypes
+    dictType: 'SOURCE_SYSTEM'
   }
-  const res = await COMMONAPI.getDictsList(params)
+  const res = await COMMONAPI.getDictTreeList(params)
   console.log(res)
   if (res && res.code === 200) {
-    state.sourceArr = res.data ? res.data.SOURCE_SYSTEM : []
+    // state.sourceArr = res?.data ? res.data : []
+    if (res.data) {
+      const result: CascaderOption[] = []
+      const dataClone = JSON.parse(JSON.stringify(res.data))
+      dataClone.forEach((i: DictDataTreeResponse) => {
+        const obj: CascaderOption = {
+          label: i.label as string,
+          value: i.value as string,
+          children: []
+        }
+        i.children?.forEach((j: DictDataTreeResponse) => {
+          obj.children?.push({
+            label: j.label as string,
+            value: j.value as string
+          })
+        })
+        result.push(obj)
+      })
+      console.log(result)
+      state.sourceArr = result
+    }
   }
 }
 
 const getListData = async () => {
   state.tableLoading = true
-  const res = await API.getAgencyList(formModel.value)
+  const params = {
+    agencyName: formModel.value.agencyName,
+    pageNo: formModel.value.pageNo,
+    pageSize: formModel.value.pageSize,
+    sourceSystem12List: formModel.value.sourceSystem12ListParams
+  }
+  const res = await API.getAgencyList(params)
   state.tableLoading = false
   console.log(res)
   if (res && res.code === 200) {
@@ -230,6 +305,37 @@ const getListData = async () => {
     state.pageTotal = res?.data?.total
   }
 }
+const selectSourceSystem = (value: CascaderValue) => {
+  console.log(value)
+  const valueClone = JSON.parse(JSON.stringify(value))
+  const sourceArrClone = JSON.parse(JSON.stringify(sourceArr.value))
+  const soureSystem2Arr: string[] = []
+  const result: SourceItem[] = []
+  valueClone.forEach((valueItem: string[]) => {
+    soureSystem2Arr.push(valueItem[1])
+  })
+  sourceArrClone.forEach((j: DictDataTreeResponse) => {
+    const system1: SourceItem = {
+      label: j.label,
+      value: j.value,
+      children: []
+    }
+    soureSystem2Arr.forEach((i) => {
+      j.children?.forEach((k) => {
+        console.log('qqq', k.value, i)
+        if (k.value === i) {
+          system1.children?.push({ label: k.label, value: k.value })
+        }
+      })
+    })
+    if (system1.children && system1.children.length > 0) {
+      result.push(system1)
+    }
+  })
+  console.log(result)
+  formModel.value.sourceSystem12ListParams = result
+}
+
 const search = () => {
   formModel.value.pageNo = 1
   getListData()
@@ -237,8 +343,8 @@ const search = () => {
 const refresh = () => {
   formModel.value.pageNo = 1
   formModel.value.agencyName = ''
-  // formModel.value.sourceSystem1 = ''
-  formModel.value.sourceSystem2 = ''
+  formModel.value.sourceSystem12List = []
+  formModel.value.sourceSystem12ListParams = []
   getListData()
 }
 const handleSizeChange = (size: number) => {
@@ -257,7 +363,7 @@ const action = (val: string | number) => {
     state.editModelVisible = true
   } else if (val === 'Delete') {
     deleteData()
-  } else if (val === 'Downloa') {
+  } else if (val === 'Download') {
     downloadData()
   } else if (val === 'DownloadTemplate') {
     downloadTemplate()
@@ -297,18 +403,37 @@ const deleteData = () => {
     })
 }
 
-const downloadData = () => {
+const downloadData = async () => {
   console.log(selectIdsArr.value)
+  let params = {}
   if (selectIdsArr.value.length === 0) {
-    ElMessage({
-      type: 'error',
-      message: '请选择要下载的数据'
-    })
+    // ElMessage({
+    //   type: 'error',
+    //   message: '请选择要下载的数据'
+    params = {
+      agencyName: formModel.value.agencyName,
+      sourceSystem12List: formModel.value.sourceSystem12ListParams
+    }
+    // })
+  } else {
+    params = { ids: selectIdsArr.value }
   }
-  // API.AgencyExportRequest()
+  const res = await API.getAgencyExport(params)
+  console.log(res)
+  if (res && res.code === 200) {
+    if (res.data?.sync === 1) {
+      const params = { fileCode: res.data.fileCode as string }
+      COMMONAPI.downLoadFiles(params).then((res) => handleDownloadFile(res))
+    }
+  }
 }
 
-const downloadTemplate = () => {}
+const downloadTemplate = () => {
+  // const params = {
+  //   bizType: 'AGENCY_CONFIG'
+  // }
+  // API.getDownloadTemplate(params).then((res) => handleDownloadFile(res))
+}
 
 const batchImport = () => {}
 const closeModel = ({ visible, type }: { visible: boolean; type: string }) => {
@@ -319,7 +444,7 @@ const closeModel = ({ visible, type }: { visible: boolean; type: string }) => {
     // formModel.value.pageNo = 1
     getListData()
   }
-  state.detailData = {}
+  state.detailData = { sourceSystem1: '', sourceSystem2: '' }
 }
 
 const selectData = (selection: AgencyListResponse[]) => {
@@ -373,6 +498,28 @@ const actionTableItem = async (
       .catch((err: Error) => {
         throw err
       })
+  }
+}
+
+const changeSwitch = async (
+  val: boolean | string | number,
+  row: AgencyListResponse,
+  type: string
+) => {
+  console.log(val, row.id)
+  const params = {
+    id: row.id,
+    sourceSystem1: row.sourceSystem1,
+    sourceSystem2: row.sourceSystem2,
+    agencyName: row.agencyName,
+    createGatherFlag: type === 'createGatherFlag' ? val : row.createGatherFlag,
+    unpaidNeedApproveFlag:
+      type === 'unpaidNeedApproveFlag' ? val : row.unpaidNeedApproveFlag
+  }
+  try {
+    await API.getAgencyEdit(params)
+  } catch {
+    getListData()
   }
 }
 </script>

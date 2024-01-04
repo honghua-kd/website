@@ -2,9 +2,11 @@ import type {
   AgencyListResponse,
   AgencyDetailResponse
 } from '@/api/channel/types/response'
+import type { CascaderOption } from 'element-plus'
 export type OptionItemType = {
   label: string
   value: string | number
+  children?: OptionItemType
 }
 type TableColumnType = {
   type: string
@@ -17,15 +19,29 @@ type TableColumnType = {
   align: string
 }
 // export type RecordType<T = any> = Record<string, T>
+export type sourceListItem = {
+  label?: string | null | undefined
+  value?: string | null | undefined
+  chuildren?: {
+    label: string | null | undefined
+    value: string | null | undefined
+  }[]
+}
+export type OptionItemTypeString = {
+  label: string
+  value: string
+  children?: OptionItemTypeString
+}
 export type StateType = {
   formModel: {
     agencyName: string
     // sourceSystem1: string
-    sourceSystem2: string
+    sourceSystem12List: string[]
     pageNo: number
     pageSize: number
+    sourceSystem12ListParams: sourceListItem[]
   }
-  sourceArr: OptionItemType[]
+  sourceArr: CascaderOption[]
   tableLoading: boolean
   tableColumn: TableColumnType[]
   tableData: AgencyListResponse[] | undefined
@@ -40,5 +56,5 @@ export type ModelStateType = {
   dialogVisible: boolean
   editForm: AgencyDetailResponse
   dialogTitle: string
-  systemSourceArr: OptionItemType[]
+  systemSourceArr: CascaderOption[]
 }

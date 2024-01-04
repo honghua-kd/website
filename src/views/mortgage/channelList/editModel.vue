@@ -10,27 +10,50 @@
     :before-close="handleClose"
   >
     <div>
-      <el-form :model="editForm" label-position="top">
-        <el-form-item label="来源系统">
-          <el-select v-model="editForm.sourceSystem2" style="width: 100%">
+      <el-form
+        ref="ruleFormRef"
+        :model="editForm"
+        label-position="top"
+        :rules="rules"
+      >
+        <el-form-item label="来源系统" props="systemSourceValue" required>
+          <el-cascader
+            v-model="editForm.systemSourceValue"
+            :options="systemSourceArr"
+            clearable
+            style="width: 100%"
+          />
+          <!-- <el-select v-model="editForm.sourceSystem2" style="width: 100%">
             <el-option
               v-for="i in systemSourceArr"
               :key="i.value"
               :label="i.label"
               :value="i.value"
             />
-          </el-select>
+          </el-select> -->
         </el-form-item>
-        <el-form-item label="渠道商/办事处">
-          <el-input v-model="editForm.agencyName" />
+        <el-form-item label="渠道商/办事处" prop="agencyName" required>
+          <el-input
+            v-model="editForm.agencyName"
+            :maxlength="50"
+            placeholder="请输入"
+          />
         </el-form-item>
-        <el-form-item label="是否生成待收款项清单">
+        <el-form-item
+          label="是否生成待收款项清单"
+          prop="createGatherFlag"
+          required
+        >
           <el-select v-model="editForm.createGatherFlag" style="width: 100%">
             <el-option label="是" :value="1" />
             <el-option label="否" :value="0" />
           </el-select>
         </el-form-item>
-        <el-form-item label="未收费办理是否需审批">
+        <el-form-item
+          label="未收费办理是否需审批"
+          prop="unpaidNeedApproveFlag"
+          required
+        >
           <el-select
             v-model="editForm.unpaidNeedApproveFlag"
             style="width: 100%"
@@ -43,8 +66,12 @@
     </div>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="onCloseModel('click-close')">取消</el-button>
-        <el-button type="primary" @click="onCloseModel('update-close')"
+        <el-button @click="onCloseModel(ruleFormRef, 'click-close')"
+          >取消</el-button
+        >
+        <el-button
+          type="primary"
+          @click="onCloseModel(ruleFormRef, 'update-close')"
           >确认</el-button
         >
       </span>
@@ -52,12 +79,10 @@
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import { watch, toRefs, reactive } from 'vue'
-import type {
-  ModelStateType,
-  OptionItemType
-} from '@/views/mortgage/channelList/type'
+import { watch, toRefs, reactive, ref } from 'vue'
+import type { ModelStateType } from '@/views/mortgage/channelList/type'
 import type { AgencyDetailResponse } from '@/api/channel/types/response'
+import type { FormInstance, FormRules, CascaderOption } from 'element-plus'
 import { AgencyAPI } from '@/api'
 const API = new AgencyAPI()
 
@@ -65,17 +90,20 @@ type ModelPropsType = {
   visible: boolean
   formValue: AgencyDetailResponse
   title: string
-  sourceArr: OptionItemType[]
+  sourceArr: CascaderOption[]
 }
 const props = withDefaults(defineProps<ModelPropsType>(), {
   visible: false,
-  formValue: () => ({}),
+  formValue: () => ({
+    sourceSystem1: '',
+    sourceSystem2: ''
+  }),
   title: ''
 })
 
 const state = reactive<ModelStateType>({
   dialogVisible: false,
-  editForm: {},
+  editForm: { sourceSystem1: '', sourceSystem2: '', systemSourceValue: [] },
   dialogTitle: '',
   systemSourceArr: []
 })
@@ -92,11 +120,58 @@ watch(
     state.editForm = newValue
     state.dialogTitle = newTitle
     state.systemSourceArr = newArr
+    if (newValue.sourceSystem1 === '' && newValue.sourceSystem2 === '') {
+      state.editForm.systemSourceValue = []
+    } else {
+      state.editForm.systemSourceValue = [
+        newValue.sourceSystem1,
+        newValue.sourceSystem2
+      ]
+    }
   },
   {
     immediate: true
   }
 )
+
+const ruleFormRef = ref<FormInstance>()
+const rules = reactive<FormRules<typeof editForm>>({
+  systemSourceValue: [
+    {
+      validator: (rule: any, value: any, callback: any) => {
+        console.log(value)
+        callback(new Error('请选择来源系统'))
+        // if (value.length === 0) {
+        //   callback(new Error('请选择来源系统'))
+        // } else {
+        //   callback()
+        // }
+      },
+      trigger: 'change'
+    }
+  ],
+  agencyName: [
+    {
+      required: true,
+      message: '请输入名称',
+      trigger: 'blur'
+    }
+  ],
+  createGatherFlag: [
+    {
+      required: true,
+      message: '请选择是否生成待收款项清单',
+      trigger: 'change'
+    }
+  ],
+  unpaidNeedApproveFlag: [
+    {
+      required: true,
+      message: '请选择未收费办理是否需审批',
+      trigger: 'change'
+    }
+  ]
+})
 
 const emit = defineEmits<{
   (e: 'closeModel', { visible, type }: { visible: boolean; type: string }): void
@@ -107,32 +182,49 @@ const handleClose = () => {
     type: 'click-close'
   })
 }
-const onCloseModel = async (type: string) => {
+const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
   console.log(editForm.value)
-  if (type === 'update-close') {
-    if (dialogTitle.value === '编辑') {
-      const params = {
-        agencyName: editForm.value.agencyName,
-        id: editForm.value.id,
-        sourceSystem2: editForm.value.sourceSystem2,
-        unpaidNeedApproveFlag: editForm.value.unpaidNeedApproveFlag,
-        createGatherFlag: editForm.value.createGatherFlag
+  if (!formEl) return
+  await formEl.validate(async (valid, fields) => {
+    if (valid) {
+      if (type === 'update-close') {
+        if (dialogTitle.value === '编辑') {
+          const params = {
+            agencyName: editForm.value.agencyName,
+            id: editForm.value.id,
+            sourceSystem1: editForm.value.systemSourceValue
+              ? editForm.value.systemSourceValue[0]
+              : '',
+            sourceSystem2: editForm.value.systemSourceValue
+              ? editForm.value.systemSourceValue[1]
+              : '',
+            unpaidNeedApproveFlag: editForm.value.unpaidNeedApproveFlag,
+            createGatherFlag: editForm.value.createGatherFlag
+          }
+          await API.getAgencyEdit(params)
+        }
+        if (dialogTitle.value === '新增') {
+          const params = {
+            agencyName: editForm.value.agencyName,
+            sourceSystem1: editForm.value.systemSourceValue
+              ? editForm.value.systemSourceValue[0]
+              : '',
+            sourceSystem2: editForm.value.systemSourceValue
+              ? editForm.value.systemSourceValue[1]
+              : '',
+            unpaidNeedApproveFlag: editForm.value.unpaidNeedApproveFlag,
+            createGatherFlag: editForm.value.createGatherFlag
+          }
+          await API.getAgencySave(params)
+        }
+        emit('closeModel', {
+          visible: false,
+          type
+        })
       }
-      await API.getAgencyEdit(params)
+    } else {
+      console.log('error submit!', fields)
     }
-    if (dialogTitle.value === '新增') {
-      const params = {
-        agencyName: editForm.value.agencyName,
-        sourceSystem2: editForm.value.sourceSystem2,
-        unpaidNeedApproveFlag: editForm.value.unpaidNeedApproveFlag,
-        createGatherFlag: editForm.value.createGatherFlag
-      }
-      await API.getAgencySave(params)
-    }
-  }
-  emit('closeModel', {
-    visible: false,
-    type
   })
 }
 </script>
