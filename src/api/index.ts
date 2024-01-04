@@ -6,6 +6,7 @@ export { CommonAPI } from './common'
 export { SupplierAPI } from './supplier'
 export { RecordAPI } from './downUpload'
 export { MortgageCityAPI } from './mortgageCity'
+export { RuleAPI } from './mortgageRule'
 export type * from './types/request'
 export type * from './types/response'
 
@@ -29,3 +30,6 @@ export type * from './supplier/types/response'
 
 export type * from './mortgageCity/types/request'
 export type * from './mortgageCity/types/response'
+
+export type * from './mortgageRule/types/request'
+export type * from './mortgageRule/types/response'

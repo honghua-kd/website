@@ -12,6 +12,10 @@ export interface MortgageCityListResponse {
    */
   cityCode?: null | string
   /**
+   * 城市名称
+   */
+  cityName?: null | string
+  /**
    * 创建时间
    */
   createTime?: null | string
@@ -20,9 +24,9 @@ export interface MortgageCityListResponse {
    */
   creator?: null | string
   /**
-   * 是否删除
+   * 创建人名称
    */
-  deleted?: boolean | null
+  creatorName?: null | string
   /**
    * 主键id
    */
@@ -36,9 +40,17 @@ export interface MortgageCityListResponse {
    */
   provinceCode?: null | string
   /**
+   * 省份名称
+   */
+  provinceName?: null | string
+  /**
    * 更新人
    */
   updater?: null | string
+  /**
+   * 更新人名称
+   */
+  updaterName?: null | string
   /**
    * 更新时间
    */

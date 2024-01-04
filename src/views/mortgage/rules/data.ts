@@ -1,7 +1,7 @@
 export const tableConfig = [
   {
     label: '规则名称',
-    prop: 'provinceCode',
+    prop: 'ruleName',
     valueType: '',
     align: 'center',
     showOverflowTooltip: true,
@@ -17,7 +17,7 @@ export const tableConfig = [
   },
   {
     label: '数据来源',
-    prop: 'licensePlateCode',
+    prop: 'sourceSystem1',
     valueType: '',
     align: 'center',
     showOverflowTooltip: true,
@@ -41,7 +41,7 @@ export const tableConfig = [
   },
   {
     label: '分配人员',
-    prop: 'creator',
+    prop: 'ruleActionContent',
     valueType: '',
     align: 'center',
     showOverflowTooltip: true,

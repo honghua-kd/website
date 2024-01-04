@@ -15,10 +15,10 @@ export const mortgageCity = [
           list: [
             {
               id: 10,
-              provinceCode: '100000',
-              provinceName: '北京',
-              cityCode: '100100',
-              cityName: '北京',
+              provinceCode: '140000',
+              provinceName: '山西省',
+              cityCode: '140100',
+              cityName: '太原市',
               licensePlateCode: '沪W',
               applyMortgage: 0,
               applyDischarge: 1,

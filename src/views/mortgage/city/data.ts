@@ -1,7 +1,7 @@
 export const tableConfig = [
   {
     label: '省份',
-    prop: 'provinceCode',
+    prop: 'provinceName',
     valueType: '',
     align: 'center',
     width: 200,
@@ -10,7 +10,7 @@ export const tableConfig = [
   },
   {
     label: '城市',
-    prop: 'cityCode',
+    prop: 'cityName',
     valueType: '',
     width: 200,
     align: 'center',

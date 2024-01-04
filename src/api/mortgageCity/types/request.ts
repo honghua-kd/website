@@ -3,11 +3,11 @@ export interface CityProvinceConfig {
   /**
    * 城市
    */
-  cityCode?: string[] | null
+  cityCode?: string | null
   /**
    * 省份
    */
-  provinceCode?: string[] | null
+  provinceCode?: string | null
 }
 export interface MartgageCityListRequest extends PageRequest {
   /**
@@ -21,7 +21,7 @@ export interface MartgageCityListRequest extends PageRequest {
   /**
    * 省份城市
    */
-  provinceCityCodes?: CityProvinceConfig[] | null
+  provinceCityCodes: CityProvinceConfig[]
 }
 export interface AddMortgageCityRequest {
   /**
@@ -57,11 +57,11 @@ export interface EditMortgageCityRequest {
   /**
    * 是否可以办理解押
    */
-  applyDischarge?: number | null
+  applyDischarge?: number
   /**
    * 是否可以办理抵押
    */
-  applyMortgage?: number | null
+  applyMortgage?: number
   /**
    * 城市代码
    */
@@ -77,11 +77,11 @@ export interface EditMortgageCityRequest {
   /**
    * 车牌代码
    */
-  licensePlateCode?: null | string
+  licensePlateCode?: string | null
   /**
    * 省份代码
    */
-  provinceCode?: null | string
+  provinceCode?: string | null
   /**
    * 省份名称
    */
