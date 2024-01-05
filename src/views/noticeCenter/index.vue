@@ -20,8 +20,6 @@
       :isSelected="true"
       :page-total="pageTotal"
       :setColumnEnable="true"
-      row-key="id"
-      :tree-props="{ children: 'target' }"
       :height="tableHeight"
       :actionWidth="px2rem('100px')"
       v-model:pageSize="queryParams.pageSize"
