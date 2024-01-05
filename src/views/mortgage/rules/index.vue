@@ -102,7 +102,7 @@
 import { reactive, ref, Ref } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import OperDialog from '@/views/mortgage/rules/components/operDialog.vue'
-import Table from '@/components/Table.vue'
+import Table from '@/components/Table/index.vue'
 
 const statusOpts = reactive([
   {
@@ -164,7 +164,7 @@ const Columns = [
     show: true,
     align: 'center',
     showOverflowTooltip: true,
-    showDisabled: true,
+    forbiddenEdit: true,
     icon: 'sortAsc',
     customStyle: {
       color: 'red'

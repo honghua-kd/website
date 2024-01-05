@@ -1,41 +1,48 @@
 <template>
-  <!-- 设置表格列 -->
-  <div class="dropdown-column" v-if="setColumnEnable">
-    <el-dropdown
-      trigger="click"
-      placement="top-end"
-      :hide-on-click="false"
-      max-height="300px"
-    >
-      <div>
-        <el-icon :size="px2rem('15px')" class="icon"><Setting /></el-icon>
-        <span>设置表格列</span>
-      </div>
-      <template #dropdown>
-        <el-dropdown-menu class="custom-drop-menu">
-          <el-dropdown-item>
-            <el-checkbox v-model="checkAll" @change="handleCheckAllChange">
-              全选
-            </el-checkbox>
-          </el-dropdown-item>
-          <el-checkbox-group
-            v-model="checkedConfig"
-            @change="handleCheckedConfig"
-          >
-            <el-dropdown-item
-              v-for="cfg in checkboxTableConfig"
-              :key="cfg.prop"
-            >
-              <el-checkbox :label="cfg.prop" :disabled="cfg.showDisabled">
-                {{ cfg.label }}
+  <div class="operation-row">
+    <!-- 批量操作 -->
+    <div class="table-btn-box">
+      <slot name="btnsBox"> </slot>
+    </div>
+    <!-- 设置表格列 -->
+    <div class="dropdown-column" v-if="setColumnEnable">
+      <el-dropdown
+        trigger="click"
+        placement="top-end"
+        :hide-on-click="false"
+        max-height="300px"
+      >
+        <div class="set-btn">
+          <el-icon :size="px2rem('16px')" class="icon"><Setting /></el-icon>
+          <span>设置表格列</span>
+        </div>
+        <template #dropdown>
+          <el-dropdown-menu class="custom-drop-menu">
+            <el-dropdown-item>
+              <el-checkbox v-model="checkAll" @change="handleCheckAllChange">
+                全选
               </el-checkbox>
             </el-dropdown-item>
-          </el-checkbox-group>
-        </el-dropdown-menu>
-      </template>
-    </el-dropdown>
+            <el-checkbox-group
+              v-model="checkedConfig"
+              @change="handleCheckedConfig"
+            >
+              <el-dropdown-item
+                v-for="cfg in checkboxTableConfig.filter(
+                  (item) => !item.forbiddenEdit && item.type !== 'action'
+                )"
+                :key="cfg.prop"
+              >
+                <el-checkbox :label="cfg.prop">
+                  {{ cfg.label }}
+                </el-checkbox>
+              </el-dropdown-item>
+            </el-checkbox-group>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+    </div>
   </div>
-
   <el-table
     :data="data"
     v-loading="loading"
@@ -62,45 +69,46 @@
 
     <template v-for="item in tableConfig" :key="item.prop">
       <el-table-column
-        v-if="item.show"
+        v-if="!item.hide"
         v-bind="item"
         :align="item.align"
         :showOverflowTooltip="item.showOverflowTooltip"
-        :width="item.width ? item.width : 120"
-        :fixed="item.fixed ? item.fixed : false"
+        :width="item.width"
+        :fixed="item.fixed || false"
       >
         <template #header>
           <slot name="header" v-bind="item">
             <span>{{ item.label }}</span>
           </slot>
         </template>
-        <template #default="{ row }">
+        <template #default="scope">
           <!-- 自定义列-添加插槽 -->
           <slot
             :name="item.slotName ? item.slotName : 'default'"
-            :row="row"
+            :row="scope.row"
             :prop="item.prop"
           >
             <!-- 时间类型转换 -->
             <span
-              v-if="item.valueType === 'dateType'"
+              v-if="item.type === 'date'"
               :style="item.customStyle ? item.customStyle : {}"
             >
-              {{ formatDate(row[item.prop]) }}
+              {{ formatDate(scope.row[item.prop]) }}
             </span>
             <!-- 普通展示列 -->
             <span v-else :style="item.customStyle ? item.customStyle : {}">
-              {{ row[item.prop] }}
+              {{ scope.row[item.prop] }}
             </span>
           </slot>
+          <!-- 操作列插槽 -->
+          <slot
+            v-if="item.type === 'action'"
+            name="action"
+            v-bind="scope"
+          ></slot>
         </template>
       </el-table-column>
     </template>
-    <el-table-column label="操作" fixed="right" width="120" align="center">
-      <template #default="scope">
-        <slot name="action" v-bind="scope"></slot>
-      </template>
-    </el-table-column>
   </el-table>
   <!-- 分页 -->
   <el-pagination
@@ -108,12 +116,20 @@
     background
     layout="total,sizes,prev, pager, next"
     :page-sizes="[10, 20, 50, 100]"
+    :page-size="pageSize"
+    :current-page="pageNo"
     :total="pageTotal"
     class="table-page"
     @size-change="handleSizeChange"
     @current-change="handleCurrentChange"
   />
 </template>
+
+<script lang="ts">
+export default {
+  name: 'Table'
+}
+</script>
 
 <script lang="ts" setup>
 import { reactive, toRefs, watch } from 'vue'
@@ -122,46 +138,10 @@ import { useRoute } from '@toystory/lotso'
 import { formatDate, px2rem } from '@/utils'
 
 import type { CheckboxValueType, TableColumnCtx } from 'element-plus'
+import type { IProps, IColumnState, TableRecord } from './type'
 const route = useRoute()
 const pathName = 'Table:' + (route?.value.name as string)
 
-type TableRecord = Record<string, any>
-type CustomStyleType = Record<string, string>
-
-interface ITableConfigProps {
-  label: string
-  prop: string
-  align?: string
-  headerIcon?: string | boolean
-  slotName?: string
-  showOverflowTooltip?: boolean
-  fixed?: string | boolean
-  valueType?: string
-  width?: string | number
-  minWidth?: string | number
-  show?: boolean
-  showDisabled?: boolean
-  customStyle?: CustomStyleType
-  slotHeader?: string
-}
-
-interface IProps {
-  columnConfig: ITableConfigProps[]
-  data: TableRecord[]
-  loading?: boolean
-  height?: number
-  isSelected?: boolean
-  pageTotal?: number
-  setColumnEnable?: boolean
-}
-
-type IColumnState = {
-  checkAll: boolean
-  checkedConfig: string[]
-  checkboxTableConfig: ITableConfigProps[]
-  isIndeterminate: boolean
-  tableConfig: ITableConfigProps[]
-}
 const props = withDefaults(defineProps<IProps>(), {
   columnConfig: () => [],
   data: () => [],
@@ -187,7 +167,9 @@ const emit = defineEmits([
   'selection-change',
   'size-change',
   'current-change',
-  'header-click'
+  'header-click',
+  'update:pageSize',
+  'update:pageNo'
 ])
 
 // 点击表头回调
@@ -207,11 +189,13 @@ const selectionChangeHandler = (item: TableRecord[]) => {
 
 // pageSize 大小
 const handleSizeChange = (size: number) => {
+  emit('update:pageSize', size)
   emit('size-change', size)
 }
 
 // 切换页数
 const handleCurrentChange = (pageNo: number) => {
+  emit('update:pageNo', pageNo)
   emit('current-change', pageNo)
 }
 
@@ -224,8 +208,8 @@ const handleCheckedConfig = (value: CheckboxValueType[]) => {
   localStorage.setItem(pathName, JSON.stringify(value))
 
   setColumnState.tableConfig.forEach((item) => {
-    if (!item.showDisabled) {
-      item.show = setColumnState.checkedConfig.includes(item.prop)
+    if (!item.forbiddenEdit) {
+      item.hide = !setColumnState.checkedConfig.includes(item.prop)
     }
   })
 }
@@ -234,7 +218,7 @@ const handleCheckedConfig = (value: CheckboxValueType[]) => {
 const handleCheckAllChange = (val: string | number | boolean) => {
   const arr = setColumnState.checkboxTableConfig.map((item) => item.prop)
   const arrRequired = setColumnState.checkboxTableConfig.filter(
-    (item) => item.showDisabled
+    (item) => item.forbiddenEdit
   )
 
   const _val = val as boolean
@@ -247,8 +231,8 @@ const handleCheckAllChange = (val: string | number | boolean) => {
   localStorage.setItem(pathName, JSON.stringify(setColumnState.checkedConfig))
 
   setColumnState.tableConfig.forEach((item) => {
-    if (!item.showDisabled) {
-      item.show = !!_val
+    if (!item.forbiddenEdit) {
+      item.hide = !_val
     }
   })
 }
@@ -259,8 +243,8 @@ const getCheckConfig = () => {
     : setColumnState.checkboxTableConfig.map((item) => item.prop)
 
   setColumnState.tableConfig.forEach((item) => {
-    if (!item.showDisabled) {
-      item.show = setColumnState.checkedConfig.includes(item.prop)
+    if (!item.forbiddenEdit) {
+      item.hide = !setColumnState.checkedConfig.includes(item.prop)
     }
   })
   setColumnState.checkAll = !(
@@ -281,6 +265,15 @@ watch(
 </script>
 
 <style lang="scss" scoped>
+.operation-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  .table-btn-box {
+    max-width: calc(100% - 100px);
+  }
+}
 .dropdown-column {
   display: flex;
   justify-content: flex-end;
@@ -289,6 +282,21 @@ watch(
   flex-direction: row;
   .icon {
     margin-right: 5px;
+  }
+}
+.set-btn {
+  cursor: pointer;
+  line-height: 24px;
+  margin-bottom: 6px;
+  .el-icon {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  span {
+    display: inline-block;
+    vertical-align: middle;
+    height: 24px;
+    line-height: 24px;
   }
 }
 </style>

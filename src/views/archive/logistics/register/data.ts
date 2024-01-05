@@ -8,7 +8,7 @@ export default {
       align: 'center',
       showOverflowTooltip: true,
       show: true,
-      showDisabled: false
+      forbiddenEdit: false
     },
     {
       label: '快递单号',
@@ -19,7 +19,7 @@ export default {
       headerAlign: 'center',
       showOverflowTooltip: true,
       show: true,
-      showDisabled: false
+      forbiddenEdit: false
     },
     {
       label: '快递公司',
@@ -29,7 +29,7 @@ export default {
       align: 'center',
       showOverflowTooltip: true,
       show: true,
-      showDisabled: false
+      forbiddenEdit: false
     },
     {
       label: '寄送/接收',

@@ -1,21 +1,21 @@
 import { CommonAPI } from '@/api'
 import { useDictStore } from '@/store/dict'
-import { ElMessageBox, ElLoading } from 'element-plus'
+import { ElMessageBox } from 'element-plus'
 
 export const useDicts = (dictTypes: string[]) => {
   const API = new CommonAPI()
   const params = {
     dictTypes
   }
-  const loading = ElLoading.service({
-    lock: true,
-    text: '加载中，请稍候...',
-    background: 'rgba(0, 0, 0, 0)'
-  })
+  // const loading = ElLoading.service({
+  //   lock: true,
+  //   text: '加载中，请稍候...',
+  //   background: 'rgba(0, 0, 0, 0.1)'
+  // })
   const dictStore = useDictStore()
   API.getDictsList(params)
     .then((res) => {
-      loading.close()
+      // loading.close()
       if (res && res.code === 200) {
         dictStore.setDicts(res.data || {})
       } else {
@@ -26,7 +26,7 @@ export const useDicts = (dictTypes: string[]) => {
       }
     })
     .catch((err: Error) => {
-      loading.close()
+      // loading.close()
       ElMessageBox.alert('获取字典表失败，请联系管理员', '提示', {
         confirmButtonText: '确定',
         type: 'warning'

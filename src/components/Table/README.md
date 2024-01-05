@@ -41,7 +41,7 @@ interface ITableConfigProps {
   width?: string | number // 宽度
   minWidth?: string | number  // 最小宽度
   show?: boolean       // 和设置表格列功能同步，通常设置为true
-  showDisabled?: boolean  // 和设置表格列功能同步，若为true代表表格的固定列，不会被隐藏
+  forbiddenEdit?: boolean  // 和设置表格列功能同步，若为true代表表格的固定列，不会被隐藏
   customStyle?: CustomStyleType  // 单元格 自定义样式 写法通style写法
   slotHeader?: string  // 若表头为自定义插槽，这个字段同步插槽名
 }
@@ -60,7 +60,7 @@ export const tableConfig = [
     showOverflowTooltip: true,
     fixed: true,
     show: true,
-    showDisabled: true,
+    forbiddenEdit: true,
     slotHeader: 'fileNameHeader'
   },
   {
@@ -71,7 +71,7 @@ export const tableConfig = [
     align: 'center',
     showOverflowTooltip: true,
     show: true,
-    showDisabled: true,
+    forbiddenEdit: true,
     headerIcon: true,
     slotHeader: 'registerCardArchiveNoHeader'
   },
@@ -83,7 +83,7 @@ export const tableConfig = [
     align: 'center',
     showOverflowTooltip: true,
     show: true,
-    showDisabled: true,
+    forbiddenEdit: true,
     headerIcon: true,
     slotHeader: 'verifyResultHeader'
   },

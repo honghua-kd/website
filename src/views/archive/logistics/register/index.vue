@@ -169,7 +169,7 @@
                   v-for="cfg in checkboxTableConfig"
                   :key="cfg.prop"
                 >
-                  <el-checkbox :label="cfg.prop" :disabled="cfg.showDisabled">
+                  <el-checkbox :label="cfg.prop" :disabled="cfg.forbiddenEdit">
                     {{ cfg.label }}
                   </el-checkbox>
                 </el-dropdown-item>
@@ -354,7 +354,7 @@ type ITableConfigObj = {
   showOverflowTooltip?: boolean
   fixed?: boolean
   show: boolean
-  showDisabled?: boolean
+  forbiddenEdit?: boolean
 }
 
 type IState = {
@@ -384,7 +384,7 @@ const handleCheckedConfig = (value: CheckboxValueType[]) => {
   localStorage.setItem(pathName, JSON.stringify(value))
 
   state.tableConfig.forEach((item) => {
-    if (!item.showDisabled) {
+    if (!item.forbiddenEdit) {
       item.show = state.checkedConfig.includes(item.prop)
     }
   })
@@ -393,7 +393,7 @@ const handleCheckedConfig = (value: CheckboxValueType[]) => {
 const handleCheckAllChange = (val: string | number | boolean) => {
   const arr = state.checkboxTableConfig.map((item) => item.prop)
   const arrRequired = state.checkboxTableConfig.filter(
-    (item) => item.showDisabled
+    (item) => item.forbiddenEdit
   )
 
   const _val = val as boolean
@@ -404,7 +404,7 @@ const handleCheckAllChange = (val: string | number | boolean) => {
   localStorage.setItem(pathName, JSON.stringify(state.checkedConfig))
 
   state.tableConfig.forEach((item) => {
-    if (!item.showDisabled) {
+    if (!item.forbiddenEdit) {
       item.show = !!_val
     }
   })
@@ -416,7 +416,7 @@ const getCheckConfig = () => {
     : state.checkboxTableConfig.map((item) => item.prop)
 
   state.tableConfig.forEach((item) => {
-    if (!item.showDisabled) {
+    if (!item.forbiddenEdit) {
       item.show = state.checkedConfig.includes(item.prop)
     }
   })
