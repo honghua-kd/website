@@ -36,7 +36,6 @@ interface DictTypes {
 type DictType = keyof DictTypes
 
 export type DictList = Record<DictType, DictItem[]>
-
 interface FileHeader extends RawAxiosRequestHeaders {
   'content-disposition'?: string
 }

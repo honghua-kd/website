@@ -1,2 +1,3 @@
-import useGetPreviewURL from './useGetPreviewURL'
-export { useGetPreviewURL }
+export { useGetPreviewURL } from './useGetPreviewURL'
+// export { useNoticeCenter } from './useNoticeCenter'
+export { useDicts } from './useDicts'
