@@ -3,144 +3,147 @@
     <!-- 搜索工作栏 -->
     <div class="scan-search-container" ref="searchBoxRef">
       <SearchBar
-        :query="queryParams"
+        v-model="queryParams"
         :dictArray="dictTypes"
         :searchConfig="searchConfig"
         :showExpand="true"
         @reset="reset"
-        @searchHandler="searchHandler"
+        @search="searchHandler"
       />
     </div>
     <el-divider border-style="dashed" />
     <!-- 表格 -->
-    <div>
-      <div class="table-btn-box">
-        <div>
-          <el-button type="primary" :icon="Plus" @click="uploadHandler">
-            上传车辆登记证
+    <!-- table 组件引入 -->
+    <Table
+      :data="tableData"
+      :loading="tableLoading"
+      :columnConfig="tableConfig"
+      :isSelected="true"
+      :page-total="pageTotal"
+      :setColumnEnable="true"
+      row-key="id"
+      :tree-props="{ children: 'target' }"
+      :height="tableHeight"
+      v-model:pageSize="queryParams.pageSize"
+      v-model:pageNo="queryParams.pageNo"
+      @selection-change="selectionChangeHandler"
+      @header-click="sortChangeHandler"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    >
+      <!-- 批量操作 -->
+      <template #btnsBox>
+        <el-button type="primary" :icon="Plus" @click="uploadHandler">
+          上传车辆登记证
+        </el-button>
+        <el-tooltip
+          content="需勾选要归档的条目，方可操作"
+          placement="top-start"
+        >
+          <el-button type="primary" :icon="Check" @click="achiveHandler">
+            选择 & 归档
           </el-button>
-          <el-tooltip
-            content="需勾选要归档的条目，方可操作"
-            placement="top-start"
+        </el-tooltip>
+        <el-tooltip
+          content="需勾选要删除的条目，方可操作"
+          placement="top-start"
+        >
+          <el-button
+            type="primary"
+            :icon="Delete"
+            @click="delHandler(selectIds)"
           >
-            <el-button type="primary" :icon="Check" @click="achiveHandler">
-              选择 & 归档
-            </el-button>
-          </el-tooltip>
-          <el-tooltip
-            content="需勾选要删除的条目，方可操作"
-            placement="top-start"
-          >
-            <el-button
-              type="primary"
-              :icon="Delete"
-              @click="delHandler(selectIds)"
-            >
-              删除
-            </el-button>
-          </el-tooltip>
-
-          <el-button type="primary" :icon="Download" @click="exportHandler">
-            导出
+            删除
           </el-button>
-        </div>
-      </div>
+        </el-tooltip>
 
-      <!-- table 组件引入 -->
-      <Table
-        :data="tableData"
-        :loading="tableLoading"
-        :columnConfig="tableConfig"
-        :isSelected="true"
-        :page-total="pageTotal"
-        :setColumnEnable="true"
-        row-key="id"
-        :tree-props="{ children: 'target' }"
-        :height="tableHeight"
-        @selection-change="selectionChangeHandler"
-        @header-click="sortChangeHandler"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      >
-        <template #selection>
-          <el-table-column
-            type="selection"
-            width="40"
-            :selectable="selectableHandler"
-            align="center"
-          />
-        </template>
-        <template #header="item">
-          <span>{{ item.label }}</span>
+        <el-button type="primary" :icon="Download" @click="exportHandler">
+          导出
+        </el-button>
+      </template>
+      <!-- 表格插槽 -->
+      <template #selection>
+        <el-table-column
+          type="selection"
+          :width="px2rem('40px')"
+          :selectable="selectableHandler"
+          align="center"
+        />
+      </template>
+      <template #header="item">
+        <span>{{ item.label }}</span>
+        <svg-icon
+          v-if="item.slotHeader"
+          :name="setSortFlag((queryParams[item.prop + 'Sort'] as string) || '')"
+          :size="px2rem('20px')"
+        />
+      </template>
+
+      <template #default="{ row, prop }">
+        <!-- 归档状态 -->
+        <span v-if="prop === 'archivalStatus'">
+          {{ getAchivalStatus(row[prop]) }}
+        </span>
+        <!-- 核对结果 -->
+        <span v-if="row.fileCode && prop === 'verifyResult'">
           <svg-icon
-            v-if="item.slotHeader"
-            :name="setSortFlag((queryParams[item.prop + 'Sort'] as string) || '')"
-            size="20"
+            :name="getVerifyResult(row)"
+            :size="px2rem('20px')"
+            color="#f39b1c"
           />
-        </template>
-
-        <template #default="{ row, prop }">
-          <!-- 归档状态 -->
-          <span v-if="prop === 'archivalStatus'">
-            {{ getAchivalStatus(row[prop]) }}
-          </span>
-          <!-- 核对结果 -->
-          <span v-if="row.fileCode && prop === 'verifyResult'">
-            <svg-icon :name="getVerifyResult(row)" size="20" color="#f39b1c" />
-          </span>
-          <!-- 登记证归档序号 -->
+        </span>
+        <!-- 登记证归档序号 -->
+        <span
+          v-if="prop === 'registerCardArchiveNo'"
+          :class="row.fileCode ? '' : 'font-color-system'"
+        >
+          {{ row.registerCardArchiveNo }}
+        </span>
+        <!-- 文件名 -->
+        <span v-if="prop === 'fileName'">
           <span
-            v-if="prop === 'registerCardArchiveNo'"
-            :class="row.fileCode ? '' : 'font-color-system'"
+            v-if="row.fileCode"
+            @click="openPreview(row.fileCode)"
+            class="file-name"
           >
-            {{ row.registerCardArchiveNo }}
+            {{ row.fileName }}
           </span>
-          <!-- 文件名 -->
-          <span v-if="prop === 'fileName'">
-            <span
-              v-if="row.fileCode"
-              @click="openPreview(row.fileCode)"
-              class="file-name"
-            >
-              {{ row.fileName }}
-            </span>
-            <span v-else class="font-color-system">
-              {{ row.fileName || '系统数据' }}
-            </span>
+          <span v-else class="font-color-system">
+            {{ row.fileName || '系统数据' }}
           </span>
-        </template>
+        </span>
+      </template>
 
-        <template #soltItem="{ row, prop }">
-          <span>
-            <TableSlotItem :rowInfo="row" :rowKey="prop" />
-          </span>
-        </template>
+      <template #soltItem="{ row, prop }">
+        <span>
+          <TableSlotItem :rowInfo="row" :rowKey="prop" />
+        </span>
+      </template>
 
-        <template #action="scope">
-          <template v-if="scope.row.fileCode">
-            <el-button
-              v-if="
-                scope.row.archivalStatus === ARCHIVE_STATUS.UNACHIVED &&
-                scope.row.verifyResult !== VERIFY_RESULTS.PROCESSING
-              "
-              link
-              type="primary"
-              @click="editHandler(scope.row.id)"
-            >
-              编辑
-            </el-button>
-            <el-button
-              v-if="scope.row.archivalStatus !== ARCHIVE_STATUS.ACHIVED"
-              link
-              type="danger"
-              @click="delHandler([scope.row.id])"
-            >
-              删除
-            </el-button>
-          </template>
+      <template #action="scope">
+        <template v-if="scope.row.fileCode">
+          <el-button
+            v-if="
+              scope.row.archivalStatus === ARCHIVE_STATUS.UNACHIVED &&
+              scope.row.verifyResult !== VERIFY_RESULTS.PROCESSING
+            "
+            link
+            type="primary"
+            @click="editHandler(scope.row.id)"
+          >
+            编辑
+          </el-button>
+          <el-button
+            v-if="scope.row.archivalStatus !== ARCHIVE_STATUS.ACHIVED"
+            link
+            type="danger"
+            @click="delHandler([scope.row.id])"
+          >
+            删除
+          </el-button>
         </template>
-      </Table>
-    </div>
+      </template>
+    </Table>
     <EditForm ref="editFormRef" @success="getList()" />
     <UploadForm ref="uploadFormRef" @success="getList()" />
     <Preview
@@ -155,7 +158,7 @@
 <script setup lang="ts">
 import { ref, reactive, Ref, computed, onMounted } from 'vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { openLink, isPdf, handleDownloadFile } from '@/utils'
+import { openLink, isPdf, handleDownloadFile, px2rem } from '@/utils'
 import EditForm from './EditForm.vue'
 import UploadForm from './UploadForm.vue'
 import { MortageAPI } from '@/api'
@@ -176,7 +179,7 @@ import { useUserStore } from '@toystory/lotso'
 import dayjs from 'dayjs'
 import Preview from '@/components/Preview/index.vue'
 import { useGetPreviewURL } from '@/hooks/useGetPreviewURL'
-import { tableConfig, searchConfig } from '@/views/archive/scanAndVerify/data'
+import { tableConfig, searchConfig } from './data'
 import SearchBar from '@/components/SearchBar/index.vue'
 
 const API = new MortageAPI()
@@ -393,8 +396,7 @@ const handleSizeChange = (val: number) => {
 }
 
 // 查询
-const searchHandler = (query: QueryParams) => {
-  Object.assign(queryParams, query)
+const searchHandler = () => {
   queryParams.pageNo = 1
   getList()
 }

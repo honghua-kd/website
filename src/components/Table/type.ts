@@ -9,11 +9,11 @@ interface ITableConfigProps {
   slotName?: string
   showOverflowTooltip?: boolean
   fixed?: string | boolean
-  valueType?: string
+  type?: 'date' | 'text' | 'action'
   width?: string | number
   minWidth?: string | number
-  show?: boolean
-  showDisabled?: boolean
+  hide?: boolean
+  forbiddenEdit?: boolean
   customStyle?: CustomStyleType
   slotHeader?: string
 }
@@ -24,6 +24,8 @@ interface IProps {
   loading?: boolean
   height?: number
   isSelected?: boolean
+  pageSize?: number
+  pageNo?: number
   pageTotal?: number
   setColumnEnable?: boolean
 }

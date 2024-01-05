@@ -164,7 +164,7 @@ const Columns = [
     show: true,
     align: 'center',
     showOverflowTooltip: true,
-    showDisabled: true,
+    forbiddenEdit: true,
     icon: 'sortAsc',
     customStyle: {
       color: 'red'

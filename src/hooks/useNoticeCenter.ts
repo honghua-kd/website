@@ -3,9 +3,9 @@ import { NoticeCenterAPI } from '@/api'
 import type { NoticeListItem } from '@/api'
 import { useDictStore } from '@/store/dict'
 import { computed } from 'vue'
+import { NOTICE_STATUS } from '@/constants'
 
-const UNREAD_STATUS = 0
-const READ_STATUS = 1
+const { UNREAD, READ } = NOTICE_STATUS
 
 export const useNoticeCenter = () => {
   const noticeStore = useNoticeStore()
@@ -13,7 +13,7 @@ export const useNoticeCenter = () => {
 
   const getNoticeCount = () => {
     API.getNoticeCount({
-      status: UNREAD_STATUS
+      status: UNREAD
     }).then((res) => {
       if (res.data) {
         const badgeVal = String(res.data)
@@ -28,7 +28,7 @@ export const useNoticeCenter = () => {
     const dictStore = useDictStore()
     noticeStore.setLoading(true)
     API.getAllNotice({
-      status: UNREAD_STATUS
+      status: UNREAD
     })
       .then((res) => {
         noticeStore.setLoading(false)
@@ -84,7 +84,7 @@ export const useNoticeCenter = () => {
   mitt.on('noticeItemClick', (item) => {
     API.changeNoticeStatus({
       ids: [(item as NoticeListItem).id],
-      status: READ_STATUS
+      status: READ
     })
     router.push({
       path: (item as NoticeListItem).router,
@@ -107,7 +107,7 @@ export const useNoticeCenter = () => {
     const markIds = currentNoticeList.value.map((item) => String(item.id))
     API.changeNoticeStatus({
       ids: markIds,
-      status: READ_STATUS
+      status: READ
     }).then(() => {
       getUnreadNotice()
       getNoticeCount()

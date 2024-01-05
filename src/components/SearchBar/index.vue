@@ -4,7 +4,7 @@
     <el-form
       ref="queryFormRef"
       class="scan-form"
-      :model="queryParams"
+      :model="modelValue"
       :label-width="px2rem('90px')"
     >
       <div class="scan-search-bar">
@@ -20,13 +20,13 @@
                     <!-- el-date-picker -->
                     <template v-if="item.compType === 'el-date-picker'">
                       <el-date-picker
-                        v-model="queryParams[(item as ISearchConfigTimer).propStart]"
+                        v-model="modelValue[(item as ISearchConfigTimer).propStart]"
                         type="datetime"
                         :placeholder="(item as ISearchConfigTimer).placeholderStart"
                         style="margin-right: 4%; width: 48%"
                       />
                       <el-date-picker
-                        v-model="queryParams[(item as ISearchConfigTimer).propEnd ]"
+                        v-model="modelValue[(item as ISearchConfigTimer).propEnd ]"
                         type="datetime"
                         :placeholder="(item as ISearchConfigTimer).placeholderEnd"
                         style="width: 48%"
@@ -35,7 +35,7 @@
                     <!-- el-input -->
                     <template v-else-if="item.compType === 'el-input'">
                       <el-input
-                        v-model="queryParams[(item as ISearchConfigCommon).prop]"
+                        v-model="modelValue[(item as ISearchConfigCommon).prop]"
                         clearable
                         :placeholder="item.placeholder"
                       />
@@ -43,7 +43,7 @@
                     <!-- el-select -->
                     <template v-else-if="item.compType === 'el-select'">
                       <el-select
-                        v-model="queryParams[(item as ISearchConfigCommon).prop]"
+                        v-model="modelValue[(item as ISearchConfigCommon).prop]"
                         style="width: 100%"
                         clearable
                         :placeholder="item.placeholder"
@@ -65,7 +65,7 @@
       </div>
       <slot name="form-button">
         <div class="search-btn">
-          <el-button type="primary" :icon="Search" @click="searchHandler"
+          <el-button type="primary" :icon="Search" @click="search"
             >查询</el-button
           >
           <el-button :icon="Refresh" @click="reset">重置</el-button>
@@ -81,8 +81,14 @@
   </div>
 </template>
 
+<script lang="ts">
+export default {
+  name: 'SearchBar'
+}
+</script>
+
 <script lang="ts" setup>
-import { ref, watch, reactive, Ref } from 'vue'
+import { ref, watch, reactive, computed } from 'vue'
 import { px2rem } from '@/utils'
 import {
   Refresh,
@@ -94,7 +100,6 @@ import { ElForm } from 'element-plus'
 import { useDictStore } from '@/store/dict'
 import type {
   IProps,
-  queryState,
   dictState,
   ISearchConfigCommon,
   ISearchConfigTimer
@@ -102,15 +107,10 @@ import type {
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
 
 const props = withDefaults(defineProps<IProps>(), {
-  searchConfig: () => [],
-  query: () => {
-    return {}
-  },
   showExpand: false
 })
 
-const emit = defineEmits(['searchHandler', 'reset'])
-const queryParams: Ref<queryState> = ref({})
+const emit = defineEmits(['search', 'reset', 'update:modelValue'])
 const dictObj = reactive<dictState>({})
 
 const generateOptions = () => {
@@ -131,8 +131,8 @@ const expandHandler = (): boolean => {
 }
 
 // 查询
-const searchHandler = () => {
-  emit('searchHandler', queryParams.value)
+const search = () => {
+  emit('search')
 }
 
 // 重置
@@ -141,19 +141,32 @@ const reset = () => {
 }
 
 watch(
-  () => props.query,
-  () => {
-    queryParams.value = props.query
-    generateOptions()
+  () => props.modelValue,
+  (newVal) => {
+    emit('update:modelValue', newVal)
   },
   {
     immediate: true,
     deep: true
   }
 )
+generateOptions()
+
+const searchwidth = computed(() => {
+  let width = 'calc(100% - 216px)'
+  if (props.searchConfig.length === 1) {
+    const configRow = props.searchConfig[0]
+    const colLength = configRow.length
+    if (colLength < 4) {
+      width = `calc((100% - 216px) * ${colLength} / 4)`
+    }
+  }
+  return width
+})
 </script>
 
 <style lang="scss" scoped>
+$searchbarwidth: v-bind(searchwidth);
 .scan-form {
   display: flex;
   align-items: flex-end;
@@ -161,7 +174,7 @@ watch(
 }
 .scan-search-bar {
   padding: 6px 10px;
-  width: calc(100% - 216px);
+  width: $searchbarwidth;
 }
 .search-btn {
   padding: 6px 10px;

@@ -30,7 +30,7 @@ type dictState = Record<string, DictItem[]>
 
 interface IProps {
   searchConfig: ISearchUnit[]
-  query: queryState
+  modelValue: queryState
   dictArray?: string[]
   showExpand?: boolean
 }
