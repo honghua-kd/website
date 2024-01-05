@@ -307,7 +307,11 @@
                 type="selection"
               />
               <el-table-column label="文件名" prop="fileName" align="center" />
-              <el-table-column label="上传用户" prop="creator" align="center" />
+              <el-table-column
+                label="上传用户"
+                prop="creatorName"
+                align="center"
+              />
               <el-table-column
                 label="上传时间"
                 prop="createTime"
@@ -455,7 +459,7 @@ const getOtherContentList = (id: string) => {
             fileCode: item.attachmentId,
             fileName: item.fileName,
             fileRemark: item.remark,
-            creator: item.creator,
+            creatorName: item.creatorName,
             createTime: item.createTime
           })
         })

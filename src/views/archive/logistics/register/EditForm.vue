@@ -372,6 +372,7 @@
                 label="类型对应编号"
                 prop="contentTypeNumber"
                 align="center"
+                show-overflow-tooltip
               />
               <el-table-column
                 label="关联合同号"
@@ -447,7 +448,11 @@
                 type="index"
               />
               <el-table-column label="文件名" prop="fileName" align="center" />
-              <el-table-column label="上传用户" prop="creator" align="center" />
+              <el-table-column
+                label="上传用户"
+                prop="creatorName"
+                align="center"
+              />
               <el-table-column
                 label="上传时间"
                 prop="createTime"
@@ -723,7 +728,7 @@ const getOtherContentList = () => {
             fileCode: item.attachmentId,
             fileName: item.fileName,
             fileRemark: item.remark,
-            creator: item.creator,
+            creatorName: item.creatorName,
             createTime: item.createTime
           })
         })
@@ -915,7 +920,7 @@ const imContent = (params: ExpressContentList[]) => {
 // 导入上传附件数据回显
 const getFileInfo = (params: OtherFileList[]) => {
   const userStore = useUserStore()
-  const user = userStore.userInfo?.staffCode as string
+  const user = userStore.userInfo?.staffName as string
   console.error(params)
   if (params && params.length) {
     params.forEach((item) => {
@@ -923,7 +928,7 @@ const getFileInfo = (params: OtherFileList[]) => {
         fileCode: item.fileCode,
         fileName: item.fileName,
         fileRemark: '',
-        creator: user
+        creatorName: user
       })
     })
   }

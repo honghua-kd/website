@@ -45,7 +45,17 @@
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="类型对应编号:" prop="contentTypeNumber">
+            <el-form-item
+              label="类型对应编号:"
+              prop="contentTypeNumber"
+              :rules="[
+                {
+                  max: 200,
+                  message: '内容超长',
+                  trigger: 'change'
+                }
+              ]"
+            >
               <el-input
                 v-model="expressInfoForm.contentTypeNumber"
                 clearable

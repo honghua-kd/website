@@ -108,6 +108,7 @@ export interface RelationListItem {
    * 使用 String 类型的原因是，未来可能会存在非数值的情况，留好拓展性。
    */
   creator?: null | string
+  creatorName?: null | string
   /**
    * 是否删除
    */
