@@ -535,10 +535,6 @@ const batchReceiveHandler = () => {
         })
     })
     .catch((err: Error) => {
-      ElMessage({
-        type: 'error',
-        message: '操作失败'
-      })
       throw err
     })
 }
