@@ -9,7 +9,6 @@
                 v-model="selCity"
                 clearable
                 :props="props"
-                @change="changeCity"
                 style="width: 100%"
               />
             </el-form-item>
@@ -31,7 +30,7 @@
     </el-card>
     <el-row :gutter="8" style="margin: 10px 0">
       <el-col :span="1.5">
-        <el-button type="primary" @click="importHandler"> 批量导入 </el-button>
+        <el-button type="primary" @click="importHandler"> 导入 </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="primary" @click="downloadTemplate">
@@ -42,11 +41,16 @@
         <el-button type="primary" @click="addHandler"> 新增 </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="primary"> 下载 </el-button>
+        <el-button type="primary" @click="exportHandler"> 下载 </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="primary" @click="delHandler(selectIds)">
           删除
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button type="primary" @click="importResultHandler">
+          导入结果查询
         </el-button>
       </el-col>
     </el-row>
@@ -72,16 +76,16 @@
         <span v-if="prop === 'applyMortgage'">
           <el-switch
             v-model="row[prop]"
-            :active-value="1"
-            :inactive-value="0"
+            :active-value="0"
+            :inactive-value="1"
             @click="changeStatus(row)"
           />
         </span>
         <span v-else-if="prop === 'applyDischarge'">
           <el-switch
             v-model="row[prop]"
-            :active-value="1"
-            :inactive-value="0"
+            :active-value="0"
+            :inactive-value="1"
             @click="changeStatus(row)"
           />
         </span>
@@ -110,13 +114,15 @@ import ImportForm from './ImportForm.vue'
 import { CommonAPI, MortgageCityAPI } from '@/api'
 import { handleDownloadFile } from '@/utils'
 import Table from '@/components/Table/index.vue'
+import { useRouter } from '@toystory/lotso'
+const { router } = useRouter()
 import type {
   PageRequest,
   MartgageCityListRequest,
   MortgageCityListResponse,
   EditMortgageCityRequest
 } from '@/api'
-import type { CascaderProps, CascaderOption, CascaderValue } from 'element-plus'
+import type { CascaderProps, CascaderOption } from 'element-plus'
 
 const CommonApi = new CommonAPI()
 const MortgageCityApi = new MortgageCityAPI()
@@ -161,8 +167,48 @@ const props: CascaderProps = {
     resolve(nodes) // 回调
   }
 }
-const changeCity = (val: CascaderValue) => {
-  console.log(val)
+const exportHandler = () => {
+  console.error(selectIds.value)
+  let params
+  const ids = selectIds.value.map((item) => String(item))
+  if (selectIds.value.length) {
+    params = {
+      pageNo: queryParams.pageNo,
+      pageSize: queryParams.pageSize,
+      provinceCityCodes: queryParams.provinceCityCodes,
+      licensePlateCode: queryParams.licensePlateCode,
+      ids: ids
+    }
+  } else {
+    params = {
+      pageNo: queryParams.pageNo,
+      pageSize: queryParams.pageSize,
+      provinceCityCodes: queryParams.provinceCityCodes,
+      licensePlateCode: queryParams.licensePlateCode
+    }
+  }
+  MortgageCityApi.mortgageCityExport(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        const params = {
+          fileCode: res?.data?.fileCode || ''
+        }
+        CommonApi.downLoadFiles(params)
+          .then((res) => {
+            handleDownloadFile(res)
+            ElMessage({
+              type: 'success',
+              message: '操作成功'
+            })
+          })
+          .catch((err: Error) => {
+            throw err
+          })
+      }
+    })
+    .catch((err: Error) => {
+      throw err
+    })
 }
 
 const queryParams = reactive<QueryParams>({
@@ -289,6 +335,15 @@ const changeStatus = (val?: EditMortgageCityRequest) => {
         throw err
       })
   }
+}
+// 导入结果查询
+const importResultHandler = () => {
+  router.push({
+    path: '/recordUpload/index',
+    query: {
+      tab: 'upload'
+    }
+  })
 }
 const operRef = ref()
 const addHandler = () => {

@@ -49,7 +49,7 @@ export const tableConfig = [
   },
   {
     label: '是否自动分配',
-    prop: 'createTime',
+    prop: 'ruleActionContent',
     valueType: '',
     align: 'center',
     showOverflowTooltip: true,
@@ -57,7 +57,7 @@ export const tableConfig = [
   },
   {
     label: '是否发送短信',
-    prop: 'updater',
+    prop: 'ruleActionContent',
     valueType: '',
     align: 'center',
     showOverflowTooltip: true,

@@ -13,11 +13,11 @@
         ref="upload"
         :show-file-list="true"
         :on-change="onChangeHandler"
-        :accept="fileType"
-        :auto-upload="false"
         :on-exceed="handleExceed"
+        :accept="fileType"
+        multiple
+        :auto-upload="false"
         action="#"
-        :limit="1"
         v-model:file-list="fileList"
       >
         上传文件: &nbsp;&nbsp;&nbsp;
@@ -34,21 +34,22 @@
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import type {
+  UploadRawFile,
   UploadInstance,
-  UploadFile,
-  UploadUserFile,
   UploadProps,
-  UploadRawFile
+  UploadFile,
+  UploadUserFile
 } from 'element-plus'
 import { MortgageCityAPI } from '@/api'
 const MortgageCityApi = new MortgageCityAPI()
-const dialogTitle = ref<string>('导入')
+const dialogTitle = ref<string>('批量导入')
 const dialogVisible = ref<boolean>(false)
 const upload = ref<UploadInstance>()
 const fileType = ref<string>('.xlsx')
-const fileList = ref<UploadUserFile[]>([])
-// 状态改变
+const selectFile = ref()
+// 上传前校验
 const onChangeHandler = (uploadFile: UploadFile) => {
+  selectFile.value = uploadFile
   // 校验文件格式
   const fileType = uploadFile.name
     .slice(uploadFile.name.lastIndexOf('.'))
@@ -63,11 +64,16 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
   const file = files[0] as UploadRawFile
   upload.value!.handleStart(file)
 }
+
+const fileList = ref<UploadUserFile[]>([])
 const importHandler = () => {
   dialogVisible.value = false
+  console.error(selectFile.value)
   const formData = new FormData()
-  formData.append('file', fileList.value[0].raw as File)
-  // formData.append('bizType', 'EXPRESS_INFO')
+  fileList.value.forEach((item) => {
+    formData.append('file', item.raw as File)
+  })
+  formData.append('bizType', 'CITY_CONFIG')
   MortgageCityApi.mortgageCityBatchImport(formData)
     .then((res) => {
       if (res && res.code === 200) {

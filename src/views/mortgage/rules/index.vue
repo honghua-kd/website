@@ -55,7 +55,7 @@
         <el-button type="primary" @click="addHandler"> 新增 </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="primary"> 批量导入 </el-button>
+        <el-button type="primary" @click="importHandler"> 批量导入 </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="primary" @click="downloadTemplate">

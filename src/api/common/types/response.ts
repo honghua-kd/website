@@ -28,6 +28,9 @@ interface DictTypes {
   EXPRESS_TYPE: string
   EXPRESS_CONTENT: string
   EXPRESS_STATUS: string
+  MORTGAGE_CITYCONFIG: string
+  MORTGAGE_CITYCONFIG_NO: string
+  YESNO: string
 }
 
 type DictType = keyof DictTypes

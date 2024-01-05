@@ -82,3 +82,10 @@ export interface ProvinceResponse {
    */
   haveChildren: number
 }
+
+export interface CityExportResponse {
+  /**
+   * 附件code
+   */
+  fileCode: string
+}

@@ -19,7 +19,7 @@ export const mortgageCity = [
               provinceName: '山西省',
               cityCode: '140100',
               cityName: '太原市',
-              licensePlateCode: '沪W',
+              licensePlateCode: '沪A,沪B,沪C',
               applyMortgage: 0,
               applyDischarge: 1,
               creator: '张三',

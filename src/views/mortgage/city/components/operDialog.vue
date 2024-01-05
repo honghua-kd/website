@@ -35,67 +35,66 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="是否可以办理抵押" prop="applyDischarge">
+            <el-form-item label="是否可以办理抵押" prop="mortgageName">
               <el-select
-                v-model="formParams.applyMortgage"
+                v-model="formParams.mortgageName"
                 clearable
                 placeholder="请选择"
                 style="width: 100%"
               >
                 <el-option
-                  v-for="item in statusOpts"
-                  :key="item.dictValue"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
+                  v-for="item in mortgageOpts"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
                 />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="是否可以办理解押" prop="applyDischarge">
+            <el-form-item label="是否可以办理解押" prop="dischargeName">
               <el-select
-                v-model="formParams.applyDischarge"
+                v-model="formParams.dischargeName"
                 clearable
                 placeholder="请选择"
                 style="width: 100%"
               >
                 <el-option
-                  v-for="item in statusOpts"
-                  :key="item.dictValue"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
+                  v-for="item in releaseOpts"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
                 />
               </el-select>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="18">
+          <el-col :span="12">
             <el-form-item label="车牌代码" prop="market">
               <el-select
-                v-model="formParams.licensePlateCode"
+                v-model="formParams.carProvince"
                 clearable
-                placeholder="请选择"
-                class="city-select"
+                style="width: 40%"
               >
                 <el-option
-                  v-for="item in statusOpts"
-                  :key="item.dictValue"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
+                  v-for="item in carProOpts"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
                 />
               </el-select>
               <el-select
-                v-model="formParams.licensePlateCode"
+                v-model="formParams.carCode"
                 clearable
-                placeholder="请选择"
-                class="city-select"
+                style="width: 60%"
+                multiple
               >
                 <el-option
-                  v-for="item in statusOpts"
-                  :key="item.dictValue"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
+                  v-for="item in carNoOpts"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
                 />
               </el-select>
             </el-form-item>
@@ -116,10 +115,15 @@
 import { reactive, ref, Ref } from 'vue'
 import { ElForm } from 'element-plus'
 import { px2rem } from '@/utils'
-import type { MortgageCityListResponse, EditMortgageCityRequest } from '@/api'
-import { MortgageCityAPI } from '@/api'
+import type {
+  MortgageCityListResponse,
+  EditMortgageCityRequest,
+  DictItem
+} from '@/api'
+import { CommonAPI, MortgageCityAPI } from '@/api'
 import type { CascaderProps, CascaderOption } from 'element-plus'
 const MortgageCityApi = new MortgageCityAPI()
+const CommonApi = new CommonAPI()
 const dialogTitle: Ref<string> = ref('新增')
 const dialogVisible: Ref<boolean> = ref(false)
 const formLoading: Ref<boolean> = ref(false)
@@ -168,6 +172,7 @@ const props: CascaderProps = {
 }
 
 const initOptions = async () => {
+  casOption.value = []
   const resParent = await MortgageCityApi.getAllProvince()
   if (resParent && resParent?.data) {
     resParent?.data.map(async (item) => {
@@ -198,29 +203,28 @@ const initOptions = async () => {
     })
   }
 }
-const statusOpts = reactive([
-  {
-    dictLabel: '是',
-    dictValue: 1
-  },
-  {
-    dictLabel: '否',
-    dictValue: 0
-  }
-])
-const formParams = reactive<EditMortgageCityRequest & { proandcity: string[] }>(
-  {
-    proandcity: [],
-    id: '',
-    provinceCode: '',
-    provinceName: '',
-    cityCode: '',
-    cityName: '',
-    licensePlateCode: '',
-    applyMortgage: 0,
-    applyDischarge: 0
-  }
-)
+interface ExtendParams {
+  proandcity: string[]
+  carCode: string[]
+  carProvince?: string
+  mortgageName: string
+  dischargeName: string
+}
+const formParams = reactive<EditMortgageCityRequest & ExtendParams>({
+  proandcity: [],
+  id: '',
+  provinceCode: '',
+  provinceName: '',
+  cityCode: '',
+  cityName: '',
+  licensePlateCode: '',
+  applyMortgage: 0,
+  applyDischarge: 0,
+  carProvince: '',
+  carCode: [],
+  mortgageName: '',
+  dischargeName: ''
+})
 const formRef = ref<InstanceType<typeof ElForm>>()
 
 const submitForm = async () => {
@@ -232,8 +236,25 @@ const submitForm = async () => {
   formParams.provinceName =
     cascader.value.getCheckedNodes()[0].pathLabels[0] || ''
   formParams.cityName = cascader.value.getCheckedNodes()[0].pathLabels[1] || ''
+  let codesArray = JSON.parse(JSON.stringify(formParams.carCode))
+  if (formParams.carProvince) {
+    codesArray = formParams.carCode.map(
+      (item: string) => formParams.carProvince + item
+    )
+    formParams.licensePlateCode = codesArray.join(',')
+  }
+  const params = {
+    id: formParams.id,
+    provinceCode: formParams.provinceCode,
+    provinceName: formParams.provinceName,
+    cityCode: formParams.cityCode,
+    cityName: formParams.cityName,
+    licensePlateCode: formParams.licensePlateCode,
+    applyMortgage: formParams.mortgageName === '是' ? 0 : 1,
+    applyDischarge: formParams.dischargeName === '是' ? 0 : 1
+  }
   if (dialogTitle.value === '新增') {
-    MortgageCityApi.addMortgageCity(formParams)
+    MortgageCityApi.addMortgageCity(params)
       .then((res) => {
         if (res && res.code === 200) {
           ElMessage({
@@ -247,7 +268,7 @@ const submitForm = async () => {
         throw err
       })
   } else {
-    MortgageCityApi.editMortgageCity(formParams)
+    MortgageCityApi.editMortgageCity(params)
       .then((res) => {
         if (res && res.code === 200) {
           ElMessage({
@@ -262,11 +283,36 @@ const submitForm = async () => {
       })
   }
 }
+// 批量获取数据字典
+const carProOpts: Ref<DictItem[]> = ref([])
+const carNoOpts: Ref<DictItem[]> = ref([])
+const mortgageOpts: Ref<DictItem[]> = ref([])
+const releaseOpts: Ref<DictItem[]> = ref([])
+const getDicts = () => {
+  const dictTypes = ['YESNO', 'MORTGAGE_CITYCONFIG', 'MORTGAGE_CITYCONFIG_NO']
+  const params = {
+    dictTypes
+  }
+  CommonApi.getDictsList(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        console.error(res)
+        carProOpts.value = res?.data?.MORTGAGE_CITYCONFIG as DictItem[]
+        carNoOpts.value = res?.data?.MORTGAGE_CITYCONFIG_NO as DictItem[]
+        mortgageOpts.value = res?.data?.YESNO as DictItem[]
+        releaseOpts.value = res?.data?.YESNO as DictItem[]
+      }
+    })
+    .catch((err: Error) => {
+      throw err
+    })
+}
 const open = async (
   type: string,
   row: MortgageCityListResponse & { proandcity?: string[] | null }
 ) => {
   dialogTitle.value = type === 'add' ? '新增' : '编辑'
+  getDicts()
   if (type === 'edit') {
     formParams.id = row.id
     formParams.provinceCode = row.provinceCode
@@ -277,6 +323,13 @@ const open = async (
     formParams.licensePlateCode = row.licensePlateCode
     formParams.applyMortgage = row.applyMortgage || 0
     formParams.applyDischarge = row.applyDischarge || 0
+    formParams.carProvince = formParams.licensePlateCode!.split(',')[0][0]
+    formParams.carCode = []
+    formParams.licensePlateCode!.split(',').forEach((item: string) => {
+      formParams.carCode.push(item[1])
+    })
+    formParams.mortgageName = formParams.applyMortgage === 1 ? '否' : '是'
+    formParams.dischargeName = formParams.applyDischarge === 1 ? '否' : '是'
     await initOptions()
   } else {
     formParams.id = ''
@@ -288,6 +341,10 @@ const open = async (
     formParams.applyMortgage = 0
     formParams.applyDischarge = 0
     formParams.proandcity = []
+    formParams.carProvince = ''
+    formParams.carCode = []
+    formParams.mortgageName = ''
+    formParams.dischargeName = ''
   }
   dialogVisible.value = true
 }

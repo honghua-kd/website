@@ -74,3 +74,64 @@ export interface RuleItemResponse {
    */
   sourceSystem2?: string
 }
+
+export interface ProvinceChild {
+  /**
+   * 子集
+   */
+  children: { [key: string]: any }[]
+  /**
+   * 行政规划代码
+   */
+  code: number
+  /**
+   * 是否有子集 0-没有, 1-有
+   */
+  haveChildren: number
+  /**
+   * 级别 1-省, 2-市, 3-区
+   */
+  level: number
+  /**
+   * 行政规划名称
+   */
+  name: string
+  /**
+   * 父级行政规划代码
+   */
+  parentCode: number
+  /**
+   * 顶级行政区划代码
+   */
+  topParentCode: number
+}
+export interface ProvinceCityResponse {
+  /**
+   * 子集
+   */
+  children: ProvinceChild[]
+  /**
+   * 行政规划代码
+   */
+  code: number
+  /**
+   * 是否有子集 0-没有, 1-有
+   */
+  haveChildren: number
+  /**
+   * 级别 1-省, 2-市, 3-区
+   */
+  level: number
+  /**
+   * 行政规划名称
+   */
+  name: string
+  /**
+   * 父级行政规划代码
+   */
+  parentCode: number
+  /**
+   * 顶级行政区划代码
+   */
+  topParentCode: number
+}

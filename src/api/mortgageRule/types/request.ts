@@ -96,3 +96,13 @@ export interface OnOffRequest {
    */
   ruleCode: string
 }
+export interface ProvinceCityRequest {
+  /**
+   * 城市名称模糊检索条件
+   */
+  cityName?: string
+  /**
+   * 省份名称模糊检索条件
+   */
+  provinceName?: string
+}

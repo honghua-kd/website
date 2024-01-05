@@ -62,19 +62,13 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="城市" prop="city" align="center">
-              <el-select
-                v-model="formParams.city"
+              <el-cascader
+                ref="cascader"
                 clearable
-                placeholder="请选择"
+                :options="casOption"
+                filterable
                 style="width: 100%"
-              >
-                <el-option
-                  v-for="item in statusOpts"
-                  :key="item.dictValue"
-                  :label="item.dictLabel"
-                  :value="item.dictValue"
-                />
-              </el-select>
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -185,10 +179,13 @@
 import { reactive, ref, Ref } from 'vue'
 import { px2rem } from '@/utils'
 import { ElForm } from 'element-plus'
+import { RuleAPI } from '@/api'
+const RuleApi = new RuleAPI()
 const dialogTitle: Ref<string> = ref('新增')
 const dialogVisible: Ref<boolean> = ref(false)
 const formLoading: Ref<boolean> = ref(false)
 const currentType: Ref<string> = ref('')
+const casOption = ref([])
 const statusOpts = reactive([
   {
     dictLabel: '城',
@@ -246,6 +243,35 @@ const open = (type: string, row: TableItem) => {
     // formParams.status = row?.status || 0
     // formParams.remark = row?.remark
   }
+  initOptions()
+}
+const initOptions = async () => {
+  const params = {
+    provinceName: '',
+    cityName: '蚌埠'
+  }
+  const resParent = await RuleApi.getProvinceCity(params)
+  console.error(resParent)
+  resParent.data.forEach((item) => {
+    const children = []
+    if (item.haveChildren) {
+      item.children.forEach((value) => {
+        const area = {
+          value: value.code,
+          label: value.name,
+          leaf: true
+        }
+        children.push(area)
+      })
+    }
+    const resArea = {
+      value: item.code,
+      label: item.name,
+      children: children,
+      leaf: false
+    }
+    casOption.value.push(resArea)
+  })
 }
 defineExpose({ open })
 </script>

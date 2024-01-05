@@ -7,9 +7,10 @@ import type { AxiosInstance } from 'axios'
 import type {
   RuleListRequest,
   AddRuleRequest,
-  OnOffRequest
+  OnOffRequest,
+  ProvinceCityRequest
 } from './types/request'
-import type { RuleItemResponse } from './types/response'
+import type { RuleItemResponse, ProvinceCityResponse } from './types/response'
 const prefix = '/operations-management'
 
 export class RuleAPI {
@@ -63,6 +64,15 @@ export class RuleAPI {
   onOffRule(data: OnOffRequest): Response<boolean | null | undefined> {
     return this.request({
       url: `${prefix}/admin-api/mortgage/rule/modifyOnOrOffRule`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 获取省份及城市
+  getProvinceCity(data: ProvinceCityRequest): Response<ProvinceCityResponse> {
+    return this.request({
+      url: `${prefix}/admin-api/area/getProvinceCity`,
       method: 'post',
       data
     })

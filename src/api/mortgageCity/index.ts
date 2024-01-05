@@ -6,16 +6,14 @@ import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
 import type {
   MartgageCityListRequest,
-  AddMortgageCityRequest,
   EditMortgageCityRequest,
   CodeRequest
 } from './types/request'
 import type {
   MortgageCityListResponse,
   ProvinceResponse,
-  ProvinceDataResponse
+  CityExportResponse
 } from './types/response'
-import type { FileDownload } from '../common/types/response'
 const prefix = '/operations-management'
 
 export class MortgageCityAPI {
@@ -81,7 +79,9 @@ export class MortgageCityAPI {
   }
 
   // 抵解押城市配置信息下载
-  mortgageCityExport(data: MartgageCityListRequest): Promise<FileDownload> {
+  mortgageCityExport(
+    data: MartgageCityListRequest
+  ): Response<CityExportResponse> {
     return this.request({
       url: `${prefix}/admin-api/mortgage/cityConfiguration/importAsync`,
       method: 'post',
