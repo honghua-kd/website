@@ -23,14 +23,6 @@
             clearable
             style="width: 100%"
           />
-          <!-- <el-select v-model="editForm.sourceSystem2" style="width: 100%">
-            <el-option
-              v-for="i in systemSourceArr"
-              :key="i.value"
-              :label="i.label"
-              :value="i.value"
-            />
-          </el-select> -->
         </el-form-item>
         <el-form-item label="渠道商/办事处" prop="agencyName" required>
           <el-input

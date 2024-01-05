@@ -15,7 +15,7 @@ type TableColumnType = {
   columnKey: string
   width: string
   minWidth: string
-  fixed: boolean
+  fixed: boolean | string
   align: string
 }
 // export type RecordType<T = any> = Record<string, T>
@@ -35,7 +35,6 @@ export type OptionItemTypeString = {
 export type StateType = {
   formModel: {
     agencyName: string
-    // sourceSystem1: string
     sourceSystem12List: string[]
     pageNo: number
     pageSize: number
@@ -51,6 +50,7 @@ export type StateType = {
   editModelTitle: string
   selectIdsArr: string[]
   detailData: AgencyDetailResponse
+  importVisible: boolean
 }
 export type ModelStateType = {
   dialogVisible: boolean

@@ -110,7 +110,7 @@ export interface AgencyAddressListResponse {
   /**
    * 创建时间
    */
-  createdTime: string
+  createTime: string
   /**
    * 创建人
    */
@@ -154,7 +154,7 @@ export interface AgencyAddressListResponse {
   /**
    * 更新时间
    */
-  updatedTime?: null | string
+  updateTime?: null | string
   /**
    * 更新人
    */
@@ -174,19 +174,19 @@ export interface AgencyAddressDetailResponse {
   /**
    * 代理商/办事处编码
    */
-  agencyCode: string
+  agencyCode?: string
   /**
    * 代理商/办事处
    */
-  agencyName: string
+  agencyName?: string
   /**
    * 城市编码
    */
-  cityCode: string
+  cityCode?: string
   /**
    * 城市
    */
-  cityName: string
+  cityName?: string
   /**
    * 联系人
    */
@@ -194,12 +194,12 @@ export interface AgencyAddressDetailResponse {
   /**
    * 区编码
    */
-  districtCode: string
+  districtCode?: string
   /**
    * 区
    */
   districtName?: string
-  id: string
+  id?: string
   /**
    * 电话
    */
@@ -207,11 +207,11 @@ export interface AgencyAddressDetailResponse {
   /**
    * 省份编码
    */
-  provinceCode: string
+  provinceCode?: string
   /**
    * 省份
    */
-  provinceName: string
+  provinceName?: string
   /**
    * 来源系统1
    */
@@ -220,6 +220,7 @@ export interface AgencyAddressDetailResponse {
    * 来源系统2
    */
   sourceSystem2: string
+  systemSourceValue?: string[]
 }
 
 // 渠道商/办事处地址-导出
@@ -244,4 +245,56 @@ export interface downLoadTemplateResponse {
    * 0异步 1同步
    */
   sync?: number
+}
+
+// 获取所有省份
+export interface AllProvinceResponse {
+  /**
+   * 行政规划代码
+   */
+  code: number
+  /**
+   * 级别 1-省, 2-市, 3-区
+   */
+  level: number
+  /**
+   * 行政规划名称
+   */
+  name: string
+  /**
+   * 父级行政规划代码
+   */
+  parentCode: number
+  /**
+   * 顶级行政区划代码
+   */
+  topParentCode: number
+}
+
+// 获取子一层区域
+export interface AreaChildrenResponse {
+  /**
+   * 行政规划代码
+   */
+  code: number
+  /**
+   * 是否有子集 0-没有, 1-有
+   */
+  haveChildren: number
+  /**
+   * 级别 1-省, 2-市, 3-区
+   */
+  level: number
+  /**
+   * 行政规划名称
+   */
+  name: string
+  /**
+   * 父级行政规划代码
+   */
+  parentCode: number
+  /**
+   * 顶级行政区划代码
+   */
+  topParentCode: number
 }

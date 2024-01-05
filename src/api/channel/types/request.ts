@@ -7,11 +7,7 @@ export interface AgencyListRequest extends PageRequest {
    */
   agencyName?: string
   /**
-   * 系统来源1
-   */
-  sourceSystem1?: null | string
-  /**
-   * 系统来源2
+   * 系统来源
    */
   sourceSystem12List?: {
     label?: string | null | undefined
@@ -140,13 +136,16 @@ export interface AgencyAddressListRequest extends PageRequest {
    */
   provinceName?: string
   /**
-   * 来源系统1
+   * 系统来源
    */
-  sourceSystem1?: null | string
-  /**
-   * 来源系统2
-   */
-  sourceSystem2?: string
+  sourceSystem12List?: {
+    label?: string | null | undefined
+    value?: string | null | undefined
+    chiuldren?: {
+      label: string | null | undefined
+      value: string | null | undefined
+    }
+  }[]
 }
 
 // 渠道商/办事处地址-详情
@@ -270,7 +269,7 @@ export interface AgencyAddressDeleteRequest {
   /**
    * 主键id
    */
-  id: string[]
+  ids: string[]
 }
 
 // 渠道商/办事处地址-导出
@@ -304,4 +303,9 @@ export interface AgencyAddressExportRequest {
 // 下载导入模版
 export interface downLoadTemplateRequest {
   bizType?: string
+}
+
+// 获取子一层区域
+export interface AreaChildrenRequest {
+  code: number
 }

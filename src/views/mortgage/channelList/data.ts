@@ -97,7 +97,7 @@ export default {
       columnKey: '',
       width: '120',
       minWidth: '',
-      fixed: false,
+      fixed: 'right',
       align: 'center'
     }
   ],

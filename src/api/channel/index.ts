@@ -17,7 +17,7 @@ import type {
   AgencyAddressEditRequest,
   AgencyAddressDeleteRequest,
   AgencyAddressExportRequest,
-  downLoadTemplateRequest
+  AreaChildrenRequest
 } from './types/request'
 import type {
   AgencyListResponse,
@@ -26,7 +26,8 @@ import type {
   AgencyAddressListResponse,
   AgencyAddressDetailResponse,
   AgencyAddressExportResponse,
-  downLoadTemplateResponse
+  AllProvinceResponse,
+  AreaChildrenResponse
 } from './types/response'
 
 const prefix = '/operations-mortgage'
@@ -161,12 +162,18 @@ export class AgencyAPI {
     })
   }
 
-  // 根据地业务类型下载导入模版
-  getDownloadTemplate(
-    data: downLoadTemplateRequest
-  ): Response<downLoadTemplateResponse> {
+  // 获取所有省份
+  getAllProvince(): Response<AllProvinceResponse> {
     return this.request({
-      url: `/operations-management/admin-api/import/file/downloadTemplate`,
+      url: `/operations-management/admin-api/area/getAllProvinces`,
+      method: 'post'
+    })
+  }
+
+  // 获取子一级区域
+  getChildrenArea(data: AreaChildrenRequest): Response<AreaChildrenResponse> {
+    return this.request({
+      url: `/operations-management/admin-api/area/getChildren`,
       method: 'post',
       data
     })

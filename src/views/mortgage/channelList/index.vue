@@ -28,7 +28,11 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="代理商/办事处" style="width: 100%">
-              <el-input v-model="formModel.agencyName" :maxlength="50" />
+              <el-input
+                v-model="formModel.agencyName"
+                :maxlength="50"
+                clearable
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -153,6 +157,32 @@
       :sourceArr="sourceArr"
       @closeModel="closeModel"
     />
+    <!-- 导入 -->
+    <el-dialog
+      class="import-model"
+      v-model="importVisible"
+      title="批量导入"
+      width="550px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      destroy-on-close
+    >
+      <el-upload
+        ref="upload"
+        v-model:file-list="fileList"
+        class="upload-demo"
+        :limit="1"
+        :on-exceed="handleExceed"
+        :auto-upload="false"
+      >
+        <template #trigger>
+          <el-button>选择文件</el-button>
+        </template>
+      </el-upload>
+      <template #footer>
+        <el-button type="primary" @click="submitUpload">导入</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -173,10 +203,17 @@ import {
   Delete,
   Download
 } from '@element-plus/icons-vue'
-import { ElMessageBox, ElMessage } from 'element-plus'
+import { ElMessageBox, ElMessage, genFileId } from 'element-plus'
 import { px2rem, handleDownloadFile } from '@/utils'
 import { AgencyAPI, CommonAPI } from '@/api'
-import type { CascaderValue, CascaderOption } from 'element-plus'
+import type {
+  CascaderValue,
+  CascaderOption,
+  UploadInstance,
+  UploadProps,
+  UploadRawFile,
+  UploadUserFile
+} from 'element-plus'
 const API = new AgencyAPI()
 const COMMONAPI = new CommonAPI()
 
@@ -206,7 +243,8 @@ const state = reactive<StateType>({
   detailData: {
     sourceSystem1: '',
     sourceSystem2: ''
-  }
+  },
+  importVisible: false
 })
 const {
   formModel,
@@ -219,7 +257,8 @@ const {
   editModelVisible,
   editModelTitle,
   selectIdsArr,
-  detailData
+  detailData,
+  importVisible
 } = toRefs(state)
 
 // 表格最大高度
@@ -405,6 +444,7 @@ const deleteData = () => {
 
 const downloadData = async () => {
   console.log(selectIdsArr.value)
+  state.tableLoading = true
   let params = {}
   if (selectIdsArr.value.length === 0) {
     // ElMessage({
@@ -423,19 +463,66 @@ const downloadData = async () => {
   if (res && res.code === 200) {
     if (res.data?.sync === 1) {
       const params = { fileCode: res.data.fileCode as string }
-      COMMONAPI.downLoadFiles(params).then((res) => handleDownloadFile(res))
+      COMMONAPI.downLoadFiles(params).then((res) =>
+        handleDownloadFile(res, '渠道商/办事处名单.xlsx')
+      )
     }
   }
+  state.tableLoading = false
 }
 
 const downloadTemplate = () => {
-  // const params = {
-  //   bizType: 'AGENCY_CONFIG'
-  // }
-  // API.getDownloadTemplate(params).then((res) => handleDownloadFile(res))
+  state.tableLoading = true
+  const params = {
+    bizType: 'AGENCY_CONFIG'
+  }
+  COMMONAPI.getDownLoadTemplate(params).then((res) => {
+    console.log(res)
+    handleDownloadFile(res)
+    state.tableLoading = false
+  })
 }
 
-const batchImport = () => {}
+const fileList = ref<UploadUserFile[]>([])
+const upload = ref<UploadInstance>()
+const handleExceed: UploadProps['onExceed'] = (files) => {
+  upload.value!.clearFiles()
+  const file = files[0] as UploadRawFile
+  file.uid = genFileId()
+  upload.value!.handleStart(file)
+}
+const submitUpload = () => {
+  if (fileList.value.length === 0) {
+    ElMessage({
+      type: 'error',
+      message: '请先选择文件'
+    })
+    return
+  }
+  const formData = new FormData()
+  fileList.value.forEach((item) => {
+    formData.append('file', item.raw as File)
+  })
+  formData.append('bizType', 'AGENCY_CONFIG')
+  COMMONAPI.getAsyncImport(formData)
+    .then((res) => {
+      if (res && res.code === 200) {
+        ElMessage({
+          type: 'success',
+          message: '导入成功'
+        })
+      }
+      upload.value!.clearFiles()
+      getListData()
+      state.importVisible = false
+    })
+    .catch((err: Error) => {
+      throw err
+    })
+}
+const batchImport = () => {
+  state.importVisible = true
+}
 const closeModel = ({ visible, type }: { visible: boolean; type: string }) => {
   console.log(visible, type)
   state.editModelVisible = visible
@@ -518,6 +605,7 @@ const changeSwitch = async (
   }
   try {
     await API.getAgencyEdit(params)
+    getListData()
   } catch {
     getListData()
   }

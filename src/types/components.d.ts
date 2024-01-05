@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AreaCascader: typeof import('./../components/AreaCascader/index.vue')['default']
     Card: typeof import('./../components/Card/index.vue')['default']
     CityCascader: typeof import('./../components/CityCascader/index.vue')['default']
     DataPermissonForm: typeof import('./../components/PermiForm/DataPermissonForm.vue')['default']
