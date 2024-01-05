@@ -21,18 +21,7 @@ export interface DictItem {
   cssClass?: string
 }
 
-interface DictTypes {
-  ARCHIVE_STATUS: string
-  OCR_STATUS: string
-  EXPRESS_COMPANY: string
-  EXPRESS_TYPE: string
-  EXPRESS_CONTENT: string
-  EXPRESS_STATUS: string
-}
-
-type DictType = keyof DictTypes
-
-export type DictList = Record<DictType, DictItem[]>
+export type DictList = Record<string, DictItem[]>
 
 interface FileHeader extends RawAxiosRequestHeaders {
   'content-disposition'?: string
@@ -168,4 +157,52 @@ export interface ExpressDictItem {
   label?: string | number
   colorType?: string
   cssClass?: string
+}
+export interface AllProvincesResponse {
+  /**
+   * 行政规划代码
+   */
+  code: number
+  /**
+   * 级别 1-省, 2-市, 3-区
+   */
+  level: number
+  /**
+   * 行政规划名称
+   */
+  name: string
+  /**
+   * 父级行政规划代码
+   */
+  parentCode: number
+  /**
+   * 顶级行政区划代码
+   */
+  topParentCode: number
+}
+export interface ProvincesChildrenResponse {
+  /**
+   * 行政规划代码
+   */
+  code: number
+  /**
+   * 是否有子集 0-没有, 1-有
+   */
+  haveChildren: number
+  /**
+   * 级别 1-省, 2-市, 3-区
+   */
+  level: number
+  /**
+   * 行政规划名称
+   */
+  name: string
+  /**
+   * 父级行政规划代码
+   */
+  parentCode: number
+  /**
+   * 顶级行政区划代码
+   */
+  topParentCode: number
 }

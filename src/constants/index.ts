@@ -21,3 +21,19 @@ export const EXPRESS_TYPE = {
   RECEIVE: 1, // 接收
   SEND: 0 // 寄送
 }
+
+export const DICT_TYPES = [
+  'ARCHIVE_STATUS',
+  'OCR_STATUS',
+  'EXPRESS_STATUS',
+  'EXPRESS_CONTENT',
+  'EXPRESS_COMPANY',
+  'EXPRESS_TYPE',
+  'NOTICE_MESSGAE_TYPE',
+  'NOTICE_STATUS'
+]
+
+export const NOTICE_STATUS = {
+  UNREAD: 0,
+  READ: 1
+}

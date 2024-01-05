@@ -62,6 +62,13 @@ const fileList = ref<UploadUserFile[]>([])
 const tenantUser = ref<string>('')
 const emit = defineEmits(['otherfileinfo'])
 const importHandler = () => {
+  if (!fileList.value.length) {
+    ElMessage({
+      type: 'error',
+      message: '请选择文件'
+    })
+    return
+  }
   const userStore = useUserStore()
   tenantUser.value = userStore.userInfo?.staffCode as string
   const formData = new FormData()

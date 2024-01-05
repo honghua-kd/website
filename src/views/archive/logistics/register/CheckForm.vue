@@ -14,11 +14,7 @@
     >
       <el-row :gutter="20">
         <el-col :span="6">
-          <el-form-item
-            label="快递单号:"
-            prop="expressNo"
-            :rules="[{ required: true }]"
-          >
+          <el-form-item label="快递单号" prop="expressNo">
             <el-input
               v-model="basicInfoForm.expressNo"
               clearable
@@ -27,12 +23,11 @@
             />
           </el-form-item>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="7">
           <el-form-item
             class="express-com"
-            label="快递公司:"
+            label="快递公司"
             prop="expressCompany"
-            :rules="[{ required: true }]"
           >
             <el-select
               v-model="basicInfoForm.expressCompany"
@@ -58,7 +53,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="5">
-          <el-form-item label="寄送/接收:" prop="expressType">
+          <el-form-item label="寄送/接收" prop="expressType">
             <el-select
               v-model="basicInfoForm.expressType"
               style="width: 100%"
@@ -75,10 +70,10 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="5">
+        <el-col :span="6">
           <el-form-item
             v-if="expressStatusFlag"
-            label="收件日期:"
+            label="收件日期"
             prop="receiveTime"
           >
             <el-date-picker
@@ -90,7 +85,7 @@
               value-format="YYYY-MM-DD"
             />
           </el-form-item>
-          <el-form-item v-else label="寄件日期:" prop="sendTime">
+          <el-form-item v-else label="寄件日期" prop="sendTime">
             <el-date-picker
               v-model="basicInfoForm.sendTime"
               type="date"
@@ -113,7 +108,7 @@
           <el-col :span="20">
             <el-row :gutter="20">
               <el-col :span="8">
-                <el-form-item label="寄件人名称:" prop="sendUser">
+                <el-form-item label="寄件人名称" prop="sendUser">
                   <el-input
                     v-model="basicInfoForm.sendUser"
                     clearable
@@ -123,7 +118,7 @@
               </el-col>
               <el-col :span="8">
                 <el-form-item
-                  label="寄件人联系方式:"
+                  label="寄件人联系方式"
                   :label-width="px2rem('120px')"
                   prop="sendPhone"
                 >
@@ -137,7 +132,7 @@
             </el-row>
             <el-row :gutter="20">
               <el-col :span="18">
-                <el-form-item label="寄件人地址:" prop="sendAddress">
+                <el-form-item label="寄件人地址" prop="sendAddress">
                   <el-input
                     v-model="basicInfoForm.sendAddress"
                     clearable
@@ -158,7 +153,7 @@
           <el-col :span="20">
             <el-row :gutter="20">
               <el-col :span="8">
-                <el-form-item label="收件人名称:" prop="receiveUser">
+                <el-form-item label="收件人名称" prop="receiveUser">
                   <el-input
                     v-model="basicInfoForm.receiveUser"
                     clearable
@@ -168,7 +163,7 @@
               </el-col>
               <el-col :span="8">
                 <el-form-item
-                  label="收件人联系方式:"
+                  label="收件人联系方式"
                   :label-width="px2rem('120px')"
                   prop="receivePhone"
                 >
@@ -182,7 +177,7 @@
             </el-row>
             <el-row :gutter="20">
               <el-col :span="18">
-                <el-form-item label="收件人地址:" prop="receiveAddress">
+                <el-form-item label="收件人地址" prop="receiveAddress">
                   <el-input
                     v-model="basicInfoForm.receiveAddress"
                     clearable
@@ -197,11 +192,7 @@
 
       <el-row style="margin-top: 20px">
         <el-col :span="5">
-          <el-form-item
-            label="快递状态:"
-            prop="expressStatus"
-            :rules="[{ required: true }]"
-          >
+          <el-form-item label="快递状态" prop="expressStatus">
             <el-select
               v-model="basicInfoForm.expressStatus"
               style="width: 100%"
@@ -221,7 +212,7 @@
       </el-row>
       <el-row v-if="problemFlag">
         <el-col :span="15">
-          <el-form-item label="问题描述:" prop="expressStatusRemark">
+          <el-form-item label="问题描述" prop="expressStatusRemark">
             <el-input
               v-model="basicInfoForm.expressStatusRemark"
               clearable
@@ -240,7 +231,7 @@
 
       <el-row :gutter="20">
         <el-col>
-          <el-form-item label="快递内容:" prop="expressContentList">
+          <el-form-item label="快递内容" prop="expressContentList">
             <el-table
               :data="basicInfoForm.expressContentList"
               :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
@@ -279,7 +270,7 @@
       </el-row>
       <el-row>
         <el-col :span="15">
-          <el-form-item label="备注:" prop="postOrReceive">
+          <el-form-item label="备注" prop="postOrReceive">
             <el-input
               v-model="basicInfoForm.expressNo"
               clearable
@@ -294,7 +285,7 @@
       <div class="second-title">其他信息</div>
       <el-row :gutter="20">
         <el-col>
-          <el-form-item label="附件:" prop="otherInfoList">
+          <el-form-item label="附件" prop="otherInfoList">
             <div
               style="margin-bottom: 20px; cursor: pointer"
               @click="otherFileDownload"

@@ -8,3 +8,7 @@ export interface UploadFileRequest {
 export interface downParms {
   fileCode?: string
 }
+export interface errDownParms {
+  batchNo?: string
+  bizType?: string
+}

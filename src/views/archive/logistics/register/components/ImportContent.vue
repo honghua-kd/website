@@ -89,6 +89,13 @@ const fileList = ref([])
 const expressNo = ref('')
 const emit = defineEmits(['importcontent'])
 const importHandler = () => {
+  if (!fileList.value.length) {
+    ElMessage({
+      type: 'error',
+      message: '请选择文件'
+    })
+    return
+  }
   dialogVisible.value = false
   console.error(selectFile.value)
   const formData = new FormData()
@@ -104,6 +111,11 @@ const importHandler = () => {
         ElMessage({
           type: 'success',
           message: '上传成功'
+        })
+      } else {
+        ElMessage({
+          type: 'error',
+          message: res.msg
         })
       }
     })
