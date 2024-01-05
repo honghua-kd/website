@@ -7,7 +7,6 @@ export const searchConfig: ISearchUnit[] = [
       compType: 'el-select',
       colSpan: 12,
       label: '状态',
-      valueType: 'select',
       prop: 'status',
       placeholder: '请选择状态',
       options: 'NOTICE_STATUS'
@@ -16,7 +15,6 @@ export const searchConfig: ISearchUnit[] = [
       compType: 'el-select',
       colSpan: 12,
       label: '消息类型',
-      valueType: 'select',
       prop: 'type',
       placeholder: '请选择消息类型',
       options: 'NOTICE_MESSGAE_TYPE'

@@ -4,7 +4,6 @@ interface ISearchConfigBase {
   compType: string
   colSpan: number
   label: string
-  valueType: string
   placeholder?: string
   options?: string
   slotName?: string
