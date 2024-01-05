@@ -114,6 +114,11 @@ export const useNoticeCenter = () => {
     })
   })
 
+  // 标记已读
+  mitt.on('noticeMoreClick', () => {
+    router.push('/noticeCenter/index')
+  })
+
   getNoticeCount()
 
   return {
