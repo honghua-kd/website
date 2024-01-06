@@ -29,7 +29,7 @@ export type sourceListItem = {
 export type OptionItemTypeString = {
   label: string
   value: string
-  children?: OptionItemTypeString
+  children?: OptionItemTypeString[]
 }
 export type StateType = {
   formModel: {

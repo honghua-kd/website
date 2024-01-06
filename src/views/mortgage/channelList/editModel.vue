@@ -131,7 +131,7 @@ const rules = reactive<FormRules<typeof editForm>>({
   systemSourceValue: [
     {
       validator: (rule: any, value: any, callback: any) => {
-        console.log(value)
+        console.log('来源系统验证', value)
         callback(new Error('请选择来源系统'))
         // if (value.length === 0) {
         //   callback(new Error('请选择来源系统'))
@@ -175,7 +175,6 @@ const handleClose = () => {
   })
 }
 const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
-  console.log(editForm.value)
   if (!formEl) return
   await formEl.validate(async (valid, fields) => {
     if (valid) {

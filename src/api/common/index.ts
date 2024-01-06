@@ -167,7 +167,7 @@ export class CommonAPI {
   }
 
   // 查询树形字典数据
-  getDictTreeList(data: DictTreeRequest): Response<DictDataTreeResponse> {
+  getDictTreeList(data: DictTreeRequest): Response<DictDataTreeResponse[]> {
     return this.request({
       url: `${prefix}/admin-api/system/dict-data/tree`,
       method: 'post',

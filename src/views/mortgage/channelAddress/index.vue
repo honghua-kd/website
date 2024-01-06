@@ -178,10 +178,7 @@
 import { reactive, toRefs, ref, computed, onMounted } from 'vue'
 import BasicData from '@/views/mortgage/channelAddress/data'
 import EditModel from '@/views/mortgage/channelAddress/editModel.vue'
-import type {
-  StateType,
-  OptionItemTypeString
-} from '@/views/mortgage/channelAddress/type'
+import type { StateType } from '@/views/mortgage/channelAddress/type'
 import type {
   CascaderValue,
   CascaderOption,
@@ -273,14 +270,12 @@ const tableHeight = computed(() => {
 })
 
 const getDictLabel = (value1: string, value2: string) => {
-  const sourceArrClone = JSON.parse(JSON.stringify(sourceArr.value))
   let result = ''
-  sourceArrClone.forEach((i: OptionItemTypeString) => {
+  sourceArr.value.forEach((i: CascaderOption) => {
     if (i.value === value1) {
-      const childrenClone = JSON.parse(JSON.stringify(i.children))
-      childrenClone.forEach((j: OptionItemTypeString) => {
+      i.children?.forEach((j: CascaderOption) => {
         if (value2 === j.value) {
-          result = j.label
+          result = j.label as string
         }
       })
     }
@@ -297,13 +292,10 @@ const getDictsListData = async () => {
     dictType: 'SOURCE_SYSTEM'
   }
   const res = await COMMONAPI.getDictTreeList(params)
-  console.log(res)
   if (res && res.code === 200) {
-    // state.sourceArr = res?.data ? res.data : []
     if (res.data) {
       const result: CascaderOption[] = []
-      const dataClone = JSON.parse(JSON.stringify(res.data))
-      dataClone.forEach((i: DictDataTreeResponse) => {
+      res.data.forEach((i: DictDataTreeResponse) => {
         const obj: CascaderOption = {
           label: i.label as string,
           value: i.value as string,
@@ -317,7 +309,6 @@ const getDictsListData = async () => {
         })
         result.push(obj)
       })
-      console.log(result)
       state.sourceArr = result
     }
   }
@@ -334,7 +325,6 @@ const getListData = async () => {
   }
   const res = await API.getAgencyAddressList(params)
   state.tableLoading = false
-  console.log(res)
   if (res && res.code === 200) {
     state.tableData = res?.data?.list
     state.pageTotal = res?.data?.total
@@ -342,23 +332,20 @@ const getListData = async () => {
 }
 
 const selectSourceSystem = (value: CascaderValue) => {
-  console.log(value)
-  const valueClone = JSON.parse(JSON.stringify(value))
-  const sourceArrClone = JSON.parse(JSON.stringify(sourceArr.value))
   const soureSystem2Arr: string[] = []
   const result: SourceItem[] = []
+  const valueClone = value as string[][]
   valueClone.forEach((valueItem: string[]) => {
     soureSystem2Arr.push(valueItem[1])
   })
-  sourceArrClone.forEach((j: DictDataTreeResponse) => {
+  sourceArr.value.forEach((j: CascaderOption) => {
     const system1: SourceItem = {
-      label: j.label,
-      value: j.value,
+      label: j.label as string,
+      value: j.value as string,
       children: []
     }
     soureSystem2Arr.forEach((i) => {
       j.children?.forEach((k) => {
-        console.log('qqq', k.value, i)
         if (k.value === i) {
           system1.children?.push({ label: k.label, value: k.value })
         }
@@ -368,7 +355,6 @@ const selectSourceSystem = (value: CascaderValue) => {
       result.push(system1)
     }
   })
-  console.log(result)
   formModel.value.sourceSystem12ListParams = result
 }
 
@@ -385,6 +371,7 @@ const changeAreaData = ({
 }) => {
   console.log(provinceCode, provinceName, cityCode, cityName)
   formModel.value.provinceCode = provinceCode
+  // 多选状态下名称未处理
   // formModel.provinceName = provinceName
   formModel.value.cityCode = cityCode
   // formModel.cityName = cityName
@@ -430,7 +417,6 @@ const action = (val: string | number) => {
 }
 
 const deleteData = () => {
-  console.log(selectIdsArr.value)
   if (selectIdsArr.value.length === 0) {
     ElMessage({
       type: 'error',
@@ -462,7 +448,6 @@ const deleteData = () => {
 }
 
 const downloadData = async () => {
-  console.log(selectIdsArr.value)
   let params = {}
   if (selectIdsArr.value.length === 0) {
     // ElMessage({
@@ -470,8 +455,8 @@ const downloadData = async () => {
     //   message: '请选择要下载的数据'
     params = {
       agencyName: formModel.value.agencyName,
-      provinceCode: '',
-      cityCode: '',
+      provinceCode: formModel.value.provinceCode,
+      cityCode: formModel.value.cityCode,
       sourceSystem12List: formModel.value.sourceSystem12ListParams
     }
     // })
@@ -479,7 +464,6 @@ const downloadData = async () => {
     params = { ids: selectIdsArr.value }
   }
   const res = await API.getAgencyAddressExport(params)
-  console.log(res)
   if (res && res.code === 200) {
     if (res.data?.sync === 1) {
       const params = { fileCode: res.data.fileCode as string }
@@ -495,7 +479,6 @@ const downloadTemplate = () => {
     bizType: 'AGENCY_ADDRESS_INFO'
   }
   COMMONAPI.getDownLoadTemplate(params).then((res) => {
-    console.log(res)
     handleDownloadFile(res)
   })
 }
@@ -542,7 +525,6 @@ const batchImport = () => {
 }
 
 const closeModel = ({ visible, type }: { visible: boolean; type: string }) => {
-  console.log(visible, type)
   state.editModelVisible = visible
   if (type === 'update-close') {
     // 是否需要返回第一页
@@ -556,11 +538,9 @@ const selectData = (selection: AgencyAddressListResponse[]) => {
   const result: string[] = []
   if (selection.length !== 0) {
     selection.forEach((i: AgencyAddressListResponse) => {
-      console.log(i)
       result.push(`${i.id}`)
     })
   }
-  console.log(result)
   state.selectIdsArr = result
 }
 const actionTableItem = async (
@@ -570,7 +550,6 @@ const actionTableItem = async (
   const rowData = row.row
   if (value === 'edit') {
     const res = await API.getAgencyAddressDetail({ id: rowData.id })
-    console.log(res)
     if (res && res.code === 200) {
       if (res.data) {
         state.detailData = res.data

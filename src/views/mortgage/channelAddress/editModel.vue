@@ -205,12 +205,6 @@ const rules = reactive<FormRules<typeof editForm>>({
   areaCode: [
     {
       validator: (rule: any, value: any, callback: any) => {
-        console.log('validator地区', value.length)
-        // if (editParams.provinceCode === '' && editParams.cityCode === '') {
-        //   callback(new Error('请选择城市'))
-        // } else {
-        //   callback()
-        // }
         if (value.length === 0) {
           callback(new Error('请选择城市'))
         } else {
@@ -224,7 +218,6 @@ const rules = reactive<FormRules<typeof editForm>>({
     {
       validator: (rule: any, value: any, callback: any) => {
         var regExp = /^1[3456789]\d{9}$/
-        console.log(value)
         if (!value || (value !== '' && regExp.test(value))) {
           callback()
         } else {
@@ -257,12 +250,10 @@ const changeAreaData = ({
   cityCode: string
   cityName: string
 }) => {
-  console.log(provinceCode, provinceName, cityCode, cityName)
   editParams.provinceCode = provinceCode
   editParams.provinceName = provinceName
   editParams.cityCode = cityCode
   editParams.cityName = cityName
-  console.log(editForm.value, editParams)
   if (provinceCode === '' && cityCode === '') {
     editForm.value.areaCode = []
   } else {
@@ -278,7 +269,6 @@ const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
     })
     return
   }
-  console.log(editForm.value)
   if (!formEl) return
   await formEl.validate(async (valid, fields) => {
     if (valid) {
