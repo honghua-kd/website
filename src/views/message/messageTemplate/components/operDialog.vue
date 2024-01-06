@@ -83,7 +83,7 @@
           <el-col>
             <el-form-item label="来源系统" prop="sourceSystemWeb">
               <el-tree
-                ref="source"
+                ref="treeRef"
                 :data="sourceSystemOptions"
                 v-bind="{ ...treeConfig }"
                 :default-checked-keys="defaultCheckedkeys"
@@ -234,56 +234,69 @@
 
 <script setup lang="ts">
 import { reactive, ref, Ref } from 'vue'
-import { ElForm, ElMessage } from 'element-plus'
+import { ElForm, ElMessage, ElTree } from 'element-plus'
+import type { List } from '@/api/message/types/response.ts'
+import type { DictItem } from '@/api'
+import type { CascaderOption } from 'element-plus'
 import { MessageAPI } from '@/api'
-// CreateTemplateRequest
 // import overdueDialog from '@/views/message/messageTemplate/components/overdueDialog'
 // import showAfterDialog from '@/views/message/messageTemplate/components/showAfterDialog'
 // import contractDialog from '@/views/message/messageTemplate/components/contractDialog'
 
 // import { deepClone } from '@/utils/index.js'
 const API = new MessageAPI()
-
-defineProps({
-  smsBizType: {
-    type: Array,
-    default: () => []
-  },
-  smsTemplteType: {
-    type: Array,
-    default: () => []
-  },
-  smsContactorType: {
-    type: Array,
-    default: () => []
-  },
-  sourceSystemOptions: {
-    type: Array,
-    default: () => []
+const treeRef = ref<InstanceType<typeof ElTree>>()
+withDefaults(
+  defineProps<{
+    smsBizType: DictItem[]
+    smsTemplteType: DictItem[]
+    smsContactorType: DictItem[]
+    sourceSystemOptions: CascaderOption[]
+  }>(),
+  {
+    smsBizType: () => [],
+    smsTemplteType: () => [],
+    smsContactorType: () => [],
+    sourceSystemOptions: () => []
   }
-})
+)
 const emit = defineEmits(['getList'])
 const dialogTitle: Ref<string> = ref('')
 const dialogVisible: Ref<boolean> = ref(false)
 const formLoading: Ref<boolean> = ref(false)
 const currentType: Ref<string> = ref('')
 
+type children = {
+  value: string
+  label: string
+}
+type System12List = {
+  value: string
+  label: string
+  children: children[]
+}
 interface SubForm {
   bizType: string[]
   contactorType: string
   templateContent: string
   templateName: string
   templateType: string
-  sourceSystem12List: string[{
-    value: string
-    label: string
-    children: {
-      value: string
-      label: string
-    }
-  }]
-  sourceSystemWeb: string[]
-  id?: string
+  sourceSystem12List: System12List[]
+  sourceSystemWeb?: string[] | undefined
+  id: string
+}
+
+export interface PageChildren {
+  label: string
+  value: string
+}
+/**
+ * 系统来源
+ */
+export interface PageList {
+  children: PageChildren[]
+  label: string
+  value: string
 }
 const formParams = reactive<SubForm>({
   bizType: [],
@@ -292,7 +305,8 @@ const formParams = reactive<SubForm>({
   templateName: '',
   templateType: '',
   sourceSystem12List: [],
-  sourceSystemWeb: []
+  sourceSystemWeb: [],
+  id: ''
 })
 // // // 打开逾期天数弹框
 // const overdueRef = ref()
@@ -356,17 +370,10 @@ const treeConfig = {
   'empty-text': '暂无数据',
   'default-expand-all': true,
   'show-checkbox': true,
-  'default-expanded-keys': [],
-  // 'default-checked-keys': [], // 默认勾选的节点的 key 的数组
   nodeKey: 'labelValue',
   indent: 15
-  // props: {
-  //   children: 'children',
-  //   label: 'name',
-  //   value: 'code'
-  // }
 }
-const defaultCheckedkeys = ref<object>([])
+const defaultCheckedkeys = ref<string[]>([])
 const handleNodeClick = (currentKeys, currentNode) => {
   console.log(currentNode)
   if (currentNode.checkedKeys.length === 0) {
@@ -374,11 +381,11 @@ const handleNodeClick = (currentKeys, currentNode) => {
     return
   }
 
-  const sysList = []
-  const srotLs = currentNode.checkedKeys.sort((a, b) => {
+  const sysList: System12List[] = []
+  const srotLs = currentNode.checkedKeys.sort((a: string, b: string) => {
     return a.length - b.length
   })
-  srotLs.forEach((e) => {
+  srotLs.forEach((e: string) => {
     const eStr = e.split('+')
     if (eStr.length === 2) {
       const len = sysList.filter((cur) => {
@@ -420,81 +427,78 @@ const handleNodeClick = (currentKeys, currentNode) => {
       }
     }
   })
-  console.log(sysList)
-  formParams.sourceSystemWeb = sysList
+  formParams.sourceSystemWeb = currentNode.checkedKeys
+  formParams.sourceSystem12List = sysList || []
 }
 const submitForm = async () => {
   if (!formRef.value) return
   const valid = await formRef.value.validate()
   if (!valid) return
   const parm = { ...formParams, bizType: formParams.bizType.join(',') }
-  parm.sourceSystem12List = parm.sourceSystemWeb
+  // parm.sourceSystem12List = parm.sourceSystemWeb
   delete parm.sourceSystemWeb
-  API.createSmsTemplate(parm)
-    .then((res) => {
-      if (res && res.code === 200) {
-        ElMessage({
-          type: 'success',
-          message: '操作成功'
-        })
-        dialogVisible.value = false
-        emit('getList')
-      }
-    })
-    .catch((err: Error) => {
-      throw err
-    })
+  if (currentType.value === 'add') {
+    API.createSmsTemplate(parm)
+      .then((res) => {
+        if (res && res.code === 200) {
+          ElMessage({
+            type: 'success',
+            message: '操作成功'
+          })
+          dialogVisible.value = false
+          emit('getList')
+        }
+      })
+      .catch((err: Error) => {
+        throw err
+      })
+  } else {
+    API.updateSmsTemplate(parm)
+      .then((res) => {
+        if (res && res.code === 200) {
+          ElMessage({
+            type: 'success',
+            message: '操作成功'
+          })
+          dialogVisible.value = false
+          emit('getList')
+        }
+      })
+      .catch((err: Error) => {
+        throw err
+      })
+  }
 }
-interface TableItem {
-  id: number
-  downloadPerson: string
-  downloadTime: string
-  status: string
-  isDiYa: boolean
-  isJieYa: boolean
-}
-const open = (type: string, row: TableItem) => {
+const open = (type: string, row: List) => {
   dialogVisible.value = true
   currentType.value = type
   dialogTitle.value = type === 'add' ? '新增' : '编辑'
   if (type === 'edit') {
-    console.log('秀嘎')
-    console.log('object', row)
-    const str = [
-      ({
-        label: '恒信',
-        value: 'HENG_XIN',
-        children: [{ label: '统一平台', value: 'DATA_SRC_TYPT' }]
-      },
-      {
-        label: '恒运',
-        value: 'HENG_YUN',
-        children: [
-          { label: '乘用车转让系统', value: 'DATA_SRC_CY_ZR' },
-          { label: '商用车转让系统', value: 'DATA_SRC_SY_ZR' }
-        ]
+    const defList: string[] = []
+    if (row?.sourceSystem12List && row?.sourceSystem12List.length > 0) {
+      row.sourceSystem12List.forEach((el) => {
+        el.children.forEach((ch) => {
+          defList.push(
+            ch.label + '+' + ch.value + '+' + el.label + '+' + el.value
+          )
+        })
       })
-    ]
-    const defList = []
-    str.forEach((el) => {
-      el.children.forEach((ch) => {
-        defList.push(
-          ch.label + '+' + ch.value + '+' + el.label + '+' + el.value
-        )
-      })
-    })
+    }
+    treeRef.value?.setCheckedKeys(defList, true)
+    // treeRef.value?.setCheckedKeys(defList, true)
     defaultCheckedkeys.value = defList
     formParams.id = row?.id
-    formParams.bizType = row?.bizType.split(',')
+    formParams.bizType = row?.bizType ? row?.bizType?.split(',') : []
     formParams.contactorType = row?.contactorType
     formParams.templateContent = row?.templateContent
     formParams.templateName = row?.templateName
-    formParams.templateType = row?.templateType
+    formParams.templateType = row?.templateType ? row?.templateType : ''
     formParams.sourceSystem12List = []
-    formParams.sourceSystemWeb = row?.sourceSystemWeb
+    // formParams.sourceSystemWeb = row?.sourceSystemWeb
   } else {
+    treeRef.value?.setCheckedKeys([], true)
     formParams.id = ''
-    formParams.bizType = ''
+    formParams.bizType = []
     formParams.contactorType = ''
     formParams.templateContent = ''
     formParams.templateName = ''

@@ -80,7 +80,7 @@ const addTag = async () => {
     state.formP.overdueValue = ''
   }
 }
-const deleteOverdue = (tag) => {
+const deleteOverdue = (tag: string) => {
   state.overdueListChren.splice(state.overdueListChren.indexOf(tag), 1)
 }
 const addOverdue = () => {

@@ -9,17 +9,14 @@ import type {
   SmsTemplateRequest,
   DictTreeRequest,
   CreateTemplateRequest,
-  RequestGetInfo,
   UpdateTemplateRequest,
   StatusRequest,
   DeleteRequest
 } from './types/request'
 import type {
-  MessageResponse,
   Data,
   DictDataTreeRespVO,
   CreateResponse,
-  DataGetInfo,
   UpdateResponse
 } from './types/response'
 
@@ -35,9 +32,7 @@ export class MessageAPI {
   }
 
   // 查询树形字典数据 来源系统
-  getSystemDictTree(
-    data: DictTreeRequest
-  ): Response<MessageResponse<DictDataTreeRespVO>> {
+  getSystemDictTree(data: DictTreeRequest): Response<DictDataTreeRespVO[]> {
     return this.request({
       url: `${prefix}/system/dict-data/tree`,
       method: 'post',
@@ -46,9 +41,7 @@ export class MessageAPI {
   }
 
   // 获得短信模板分页
-  getSmsTemplatePage(
-    data: SmsTemplateRequest
-  ): Response<MessageResponse<Data>> {
+  getSmsTemplatePage(data: SmsTemplateRequest): Response<Data> {
     return this.request({
       url: `${prefix}/system/sms-template/page`,
       method: 'post',
@@ -87,17 +80,6 @@ export class MessageAPI {
   deleteSmsTemplate(data: DeleteRequest): Response<UpdateResponse> {
     return this.request({
       url: `${prefix}/system/sms-template/delete`,
-      method: 'post',
-      data
-    })
-  }
-
-  // 获得短信模板详情
-  getSmsTemplateGetInfo(
-    data: RequestGetInfo
-  ): Response<MessageResponse<DataGetInfo>> {
-    return this.request({
-      url: `${prefix}/system/sms-template/getInfo`,
       method: 'post',
       data
     })

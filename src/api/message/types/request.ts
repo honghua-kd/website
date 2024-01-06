@@ -18,7 +18,7 @@ export interface SourceSystem12List {
   /**
    * 二级系统来源
    */
-  children: Children
+  children: Children[]
   /**
    * 一级来源名称
    */
@@ -44,7 +44,7 @@ export interface SmsTemplateRequest {
   /**
    * 系统来源
    */
-  sourceSystem12List: SourceSystem12List
+  sourceSystem12List: SourceSystem12List[]
   /**
    * 模板编码
    */
@@ -73,7 +73,7 @@ export interface CreateTemplateRequest {
   /**
    * 系统来源
    */
-  sourceSystem12List?: SourceSystem12List
+  sourceSystem12List?: SourceSystem12List[]
   /**
    * 模板内容
    */
@@ -97,7 +97,7 @@ export interface UpdateTemplateRequest extends CreateTemplateRequest {
   /**
    * 编号
    */
-  id: number
+  id: string
 }
 export interface StatusRequest {
   /**
