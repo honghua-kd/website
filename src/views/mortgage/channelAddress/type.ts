@@ -3,19 +3,10 @@ import type {
   AgencyAddressListResponse,
   AgencyAddressDetailResponse
 } from '@/api/channel/types/response'
+import type { ITableConfigProps } from '@/components/Table/type'
 type OptionItemType = {
   label: string
   value: string | number
-}
-type TableColumnType = {
-  type: string
-  label: string
-  prop: string
-  columnKey: string
-  width: string
-  minWidth: string
-  fixed: boolean | string
-  align: string
 }
 export type RecordType<T = any> = Record<string, T>
 export type sourceListItem = {
@@ -54,7 +45,7 @@ export type StateType = {
   }
   sourceArr: CascaderOption[]
   tableLoading: boolean
-  tableColumn: TableColumnType[]
+  tableColumn: ITableConfigProps[]
   tableData: AgencyAddressListResponse[] | undefined
   tableActionList: OptionItemType[]
   pageTotal: number | undefined

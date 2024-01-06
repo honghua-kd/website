@@ -16,7 +16,7 @@
         label-position="top"
         :rules="rules"
       >
-        <el-form-item label="来源系统" props="systemSourceValue" required>
+        <el-form-item label="来源系统" prop="systemSourceValue" required>
           <el-cascader
             v-model="editForm.systemSourceValue"
             :options="systemSourceArr"
@@ -29,6 +29,7 @@
             v-model="editForm.agencyName"
             :maxlength="50"
             placeholder="请输入"
+            clearable
           />
         </el-form-item>
         <el-form-item
@@ -131,13 +132,11 @@ const rules = reactive<FormRules<typeof editForm>>({
   systemSourceValue: [
     {
       validator: (rule: any, value: any, callback: any) => {
-        console.log('来源系统验证', value)
-        callback(new Error('请选择来源系统'))
-        // if (value.length === 0) {
-        //   callback(new Error('请选择来源系统'))
-        // } else {
-        //   callback()
-        // }
+        if (!value || value.length === 0) {
+          callback(new Error('请选择来源系统'))
+        } else {
+          callback()
+        }
       },
       trigger: 'change'
     }
@@ -175,6 +174,13 @@ const handleClose = () => {
   })
 }
 const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
+  if (type === 'click-close') {
+    emit('closeModel', {
+      visible: false,
+      type
+    })
+    return
+  }
   if (!formEl) return
   await formEl.validate(async (valid, fields) => {
     if (valid) {

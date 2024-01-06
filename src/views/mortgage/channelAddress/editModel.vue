@@ -16,7 +16,7 @@
         :model="editForm"
         label-position="top"
       >
-        <el-form-item label="来源系统" props="systemSourceValue" required>
+        <el-form-item label="来源系统" prop="systemSourceValue" required>
           <el-cascader
             v-model="editForm.systemSourceValue"
             :options="systemSourceArr"
@@ -29,6 +29,7 @@
             v-model="editForm.agencyName"
             :maxlength="50"
             placeholder="请输入"
+            clearable
           />
         </el-form-item>
         <el-form-item label="城市" prop="areaCode" required>
@@ -42,6 +43,7 @@
             v-model="editForm.address"
             placeholder="请输入"
             :maxlength="100"
+            clearable
           />
         </el-form-item>
         <el-row>
@@ -51,6 +53,7 @@
                 v-model="editForm.contact"
                 :maxlength="50"
                 placeholder="请输入"
+                clearable
               /> </el-form-item
           ></el-col>
           <el-col :span="2"></el-col>
@@ -59,6 +62,7 @@
               <el-input
                 v-model="editForm.phone"
                 placeholder="请输入"
+                clearable
               /> </el-form-item
           ></el-col>
         </el-row>
@@ -179,21 +183,14 @@ const rules = reactive<FormRules<typeof editForm>>({
   systemSourceValue: [
     {
       validator: (rule: any, value: any, callback: any) => {
-        console.log('validator来源系统', value)
-        callback(new Error('请选择来源系统'))
-        // if (value.length === 0) {
-        //   callback(new Error('请选择来源系统'))
-        // } else {
-        //   callback()
-        // }
+        if (!value || value.length === 0) {
+          callback(new Error('请选择来源系统'))
+        } else {
+          callback()
+        }
       },
       trigger: 'change'
     }
-    // {
-    //   required: true,
-    //   message: '请选择来源系统',
-    //   trigger: 'change'
-    // }
   ],
   agencyName: [
     {

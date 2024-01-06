@@ -1,102 +1,66 @@
 export default {
   tableColumn: [
     {
-      type: 'selection',
-      label: '',
-      prop: '',
-      columnKey: '',
-      width: '40',
-      minWidth: '',
-      fixed: true,
-      align: 'center'
-    },
-    {
-      type: '',
       label: '来源系统',
       prop: 'sourceSystem2',
-      columnKey: 'sourceSystem2',
-      width: '',
-      minWidth: '100',
+      minWidth: 120,
       fixed: false,
       align: 'center'
     },
     {
-      type: '',
       label: '渠道商/办事处',
       prop: 'agencyName',
-      columnKey: 'agencyName',
-      width: '',
-      minWidth: '120',
+      minWidth: 120,
       fixed: false,
       align: 'left'
     },
     {
-      type: '',
       label: '是否生成代收款项清单',
       prop: 'createGatherFlag',
-      columnKey: 'createGatherFlag',
-      width: '',
-      minWidth: '170',
+      minWidth: 170,
       fixed: false,
       align: 'center'
     },
     {
-      type: '',
       label: '未收费办理是否需审批',
       prop: 'unpaidNeedApproveFlag',
-      columnKey: 'unpaidNeedApproveFlag',
-      width: '',
-      minWidth: '170',
+      minWidth: 170,
       fixed: false,
       align: 'center'
     },
     {
-      type: '',
       label: '创建人',
       prop: 'creatorName',
-      columnKey: 'creatorName',
-      width: '',
-      minWidth: '100',
+      minWidth: 100,
       fixed: false,
       align: 'left'
     },
     {
-      type: '',
       label: '创建时间',
       prop: 'createTime',
-      columnKey: 'createTime',
-      width: '100',
-      minWidth: '',
+      width: 130,
       fixed: false,
       align: 'center'
     },
     {
-      type: '',
       label: '最后更新人',
       prop: 'updaterName',
-      columnKey: 'updaterName',
-      width: '',
-      minWidth: '100',
+      minWidth: 100,
       fixed: false,
       align: 'left'
     },
     {
-      type: '',
       label: '更新时间',
       prop: 'updateTime',
-      columnKey: 'updateTime',
-      width: '',
-      minWidth: '100',
+      minWidth: 130,
       fixed: false,
       align: 'center'
     },
     {
-      type: '',
+      type: 'action',
       label: '操作',
       prop: 'action',
-      columnKey: '',
-      width: '120',
-      minWidth: '',
+      width: 120,
       fixed: 'right',
       align: 'center'
     }

@@ -38,7 +38,7 @@ export default {
       prop: 'sourceSystem2',
       columnKey: 'sourceSystem2',
       width: '',
-      minWidth: '100',
+      minWidth: '120',
       fixed: false,
       align: 'center'
     },
@@ -127,7 +127,7 @@ export default {
       label: '创建时间',
       prop: 'createTime',
       columnKey: 'createTime',
-      width: '100',
+      width: '130',
       minWidth: '',
       fixed: false,
       align: 'center'
@@ -148,7 +148,7 @@ export default {
       prop: 'updateTime',
       columnKey: 'updateTime',
       width: '',
-      minWidth: '100',
+      minWidth: '130',
       fixed: false,
       align: 'center'
     },

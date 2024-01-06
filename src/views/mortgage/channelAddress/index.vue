@@ -57,31 +57,82 @@
     </div>
     <el-divider border-style="dashed" />
     <!-- action -->
-    <div class="action">
-      <el-button :icon="Plus" type="primary" @click="action('BatchImport')"
-        >批量导入</el-button
-      >
-      <el-button
-        :icon="Download"
-        type="primary"
-        @click="action('DownloadTemplate')"
-        >下载导入模版</el-button
-      >
-      <el-button :icon="Plus" type="primary" @click="action('Add')"
-        >新增</el-button
-      >
-      <el-button :icon="Download" type="primary" @click="action('Download')"
-        >下载</el-button
-      >
-      <el-tooltip content="需勾选要，方可操作" placement="top-start"
-        ><el-button :icon="Delete" type="primary" @click="action('Delete')"
-          >删除</el-button
-        >
-      </el-tooltip>
-    </div>
+
     <!-- list -->
     <div class="list">
-      <el-table
+      <Table
+        :loading="tableLoading"
+        :data="tableData"
+        :columnConfig="tableColumn"
+        :height="tableHeight"
+        row-key="id"
+        :tree-props="{ children: 'target' }"
+        :page-total="pageTotal"
+        v-model:pageSize="formModel.pageSize"
+        v-model:pageNo="formModel.pageNo"
+        @selection-change="selectData"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      >
+        <template #btnsBox>
+          <div class="action">
+            <el-button
+              :icon="Plus"
+              type="primary"
+              @click="action('BatchImport')"
+              >批量导入</el-button
+            >
+            <el-button
+              :icon="Download"
+              type="primary"
+              @click="action('DownloadTemplate')"
+              >下载导入模版</el-button
+            >
+            <el-button :icon="Plus" type="primary" @click="action('Add')"
+              >新增</el-button
+            >
+            <el-button
+              :icon="Download"
+              type="primary"
+              @click="action('Download')"
+              >下载</el-button
+            >
+            <el-tooltip content="需勾选要，方可操作" placement="top-start"
+              ><el-button
+                :icon="Delete"
+                type="primary"
+                @click="action('Delete')"
+                >删除</el-button
+              >
+            </el-tooltip>
+          </div>
+        </template>
+        <template #selection>
+          <el-table-column
+            type="selection"
+            :width="px2rem('40px')"
+            :selectable="() => true"
+            :fixed="true"
+            align="center"
+          />
+        </template>
+        <template #default="{ row, prop }">
+          <span v-if="prop === 'sourceSystem2'">{{
+            getDictLabel(row.sourceSystem1, row.sourceSystem2)
+          }}</span></template
+        >
+        <template #action="scope">
+          <el-button
+            v-for="item in tableActionList"
+            :key="item.value"
+            link
+            :type="item.value === 'delete' ? 'danger' : 'primary'"
+            @click="actionTableItem(scope, item.value)"
+            >{{ item.label }}</el-button
+          >
+        </template>
+      </Table>
+      <!-- <el-table
         :data="tableData"
         :border="true"
         :header-cell-style="{
@@ -124,9 +175,9 @@
             </template>
           </template>
         </el-table-column>
-      </el-table>
+      </el-table> -->
     </div>
-    <div class="page">
+    <!-- <div class="page">
       <el-pagination
         background
         layout="total,sizes,prev, pager, next"
@@ -136,7 +187,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
-    </div>
+    </div> -->
     <!--  -->
     <EditModel
       :visible="editModelVisible"
@@ -200,6 +251,7 @@ import type { AgencyAddressListResponse } from '@/api/channel/types/response'
 import AreaCasder from '@/components/AreaCascader/index.vue'
 import { px2rem, handleDownloadFile } from '@/utils'
 import { AgencyAPI, CommonAPI } from '@/api'
+import Table from '@/components/Table/index.vue'
 const API = new AgencyAPI()
 const COMMONAPI = new CommonAPI()
 
@@ -225,7 +277,105 @@ const state = reactive<StateType>({
   },
   sourceArr: [],
   tableLoading: false,
-  tableColumn: BasicData.tableColumn,
+  tableColumn: [
+    {
+      label: '来源系统',
+      prop: 'sourceSystem2',
+      width: '',
+      minWidth: '120',
+      fixed: false,
+      align: 'center'
+    },
+    {
+      label: '渠道商/办事处',
+      prop: 'agencyName',
+      width: '',
+      minWidth: '120',
+      fixed: false,
+      align: 'left'
+    },
+    {
+      label: '省',
+      prop: 'provinceName',
+      width: '',
+      minWidth: '100',
+      fixed: false,
+      align: 'center'
+    },
+    {
+      label: '市',
+      prop: 'cityName',
+      width: '',
+      minWidth: '100',
+      fixed: false,
+      align: 'center'
+    },
+    {
+      label: '详细地址',
+      prop: 'address',
+      width: '',
+      minWidth: '170',
+      fixed: false,
+      align: 'left'
+    },
+    {
+      label: '联系人',
+      prop: 'contact',
+      width: '100',
+      minWidth: '',
+      fixed: false,
+      align: 'left'
+    },
+    {
+      label: '联系电话',
+      prop: 'phone',
+      width: '100',
+      minWidth: '',
+      fixed: false,
+      align: 'center'
+    },
+    {
+      label: '创建人',
+      prop: 'creatorName',
+      width: '',
+      minWidth: '100',
+      fixed: false,
+      align: 'left'
+    },
+    {
+      label: '创建时间',
+      prop: 'createTime',
+      width: '130',
+      minWidth: '',
+      fixed: false,
+      align: 'center'
+    },
+    {
+      label: '最后更新人',
+      prop: 'updaterName',
+      width: '',
+      minWidth: '100',
+      fixed: false,
+      align: 'left'
+    },
+    {
+      label: '更新时间',
+      prop: 'updateTime',
+      width: '',
+      minWidth: '130',
+      fixed: false,
+      align: 'center'
+    },
+    {
+      type: 'action',
+      label: '操作',
+      prop: 'action',
+      width: '120',
+      minWidth: '',
+      fixed: 'right',
+      align: 'center'
+    }
+  ],
   tableData: [],
   tableActionList: BasicData.tableActionList,
   pageTotal: 100,
