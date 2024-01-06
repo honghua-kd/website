@@ -53,8 +53,7 @@ const areaOption = ref<OptionsItem[]>([])
 const initOptions = async () => {
   const resParent = await API.getAllProvince()
   if (resParent && resParent?.data) {
-    const dataClone = JSON.parse(JSON.stringify(resParent.data))
-    dataClone.map(async (item: AllProvinceResponse) => {
+    resParent.data.map(async (item: AllProvinceResponse) => {
       const children: OptionsItem[] = []
       if (item.code === Number(state.provinceCode)) {
         const params = {
@@ -62,8 +61,7 @@ const initOptions = async () => {
         }
         const res = await API.getChildrenArea(params)
         if (res && res.data) {
-          const childrenDataClone = JSON.parse(JSON.stringify(res.data))
-          childrenDataClone.map((item: AreaChildrenResponse) => {
+          res.data.map((item: AreaChildrenResponse) => {
             const area = {
               value: String(item.code),
               label: item.name,
@@ -95,10 +93,9 @@ const areaProps: CascaderProps = {
     if (level === 0) {
       const resParent = await API.getAllProvince()
       if (resParent && resParent?.data) {
-        const dataClone = JSON.parse(JSON.stringify(resParent.data))
-        dataClone.map((item: AllProvinceResponse) => {
+        resParent.data.map((item: AllProvinceResponse) => {
           const area = {
-            value: item.code,
+            value: String(item.code),
             label: item.name,
             leaf: level >= 1
           }
@@ -111,10 +108,9 @@ const areaProps: CascaderProps = {
       }
       const res = await API.getChildrenArea(params)
       if (res && res.data) {
-        const childrenDataClone = JSON.parse(JSON.stringify(res.data))
-        childrenDataClone.map((item: AreaChildrenResponse) => {
+        res.data.map((item: AreaChildrenResponse) => {
           const area = {
-            value: item.code,
+            value: String(item.code),
             label: item.name,
             leaf: level >= 1
           }
@@ -143,27 +139,21 @@ const emit = defineEmits<{
 }>()
 watch(
   () => props.value,
-  (newValue, oldValue) => {
-    console.log(newValue, oldValue)
+  (newValue) => {
     state.value = newValue
     state.provinceCode = newValue[0]
     state.cityCode = newValue[1]
-    if (newValue.length > 0) {
-      // initOptions()
-    }
   },
   {
     immediate: true
   }
 )
 const changeArea = (value: CascaderValue) => {
-  console.log(value)
-  console.log(state.value)
   if (props.multiple) {
-    const provinceCode: number[] = []
-    const cityCode: number[] = []
-    const valueClone = JSON.parse(JSON.stringify(value))
-    valueClone.forEach((i: number[]) => {
+    const provinceCode: string[] = []
+    const cityCode: string[] = []
+    const valueClone = value as string[][]
+    valueClone.forEach((i: string[]) => {
       provinceCode.push(i[0])
       cityCode.push(i[1])
     })

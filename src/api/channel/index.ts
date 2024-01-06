@@ -163,7 +163,7 @@ export class AgencyAPI {
   }
 
   // 获取所有省份
-  getAllProvince(): Response<AllProvinceResponse> {
+  getAllProvince(): Response<AllProvinceResponse[]> {
     return this.request({
       url: `/operations-management/admin-api/area/getAllProvinces`,
       method: 'post'
@@ -171,7 +171,7 @@ export class AgencyAPI {
   }
 
   // 获取子一级区域
-  getChildrenArea(data: AreaChildrenRequest): Response<AreaChildrenResponse> {
+  getChildrenArea(data: AreaChildrenRequest): Response<AreaChildrenResponse[]> {
     return this.request({
       url: `/operations-management/admin-api/area/getChildren`,
       method: 'post',

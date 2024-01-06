@@ -389,8 +389,8 @@ const getListData = async () => {
   const res = await API.getAgencyList(params)
   state.tableLoading = false
   if (res && res.code === 200) {
-    state.tableData = res?.data?.list
-    state.pageTotal = res?.data?.total
+    state.tableData = res.data ? res.data.list : []
+    state.pageTotal = res.data && res.data.total ? res.data.total : 0
   }
 }
 const selectSourceSystem = (value: CascaderValue) => {
@@ -673,10 +673,6 @@ const changeSwitch = async (row: AgencyListResponse, type: string) => {
   }
   .list {
     margin-bottom: 20px;
-  }
-  .page {
-    display: flex;
-    justify-content: flex-end;
   }
 }
 </style>

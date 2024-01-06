@@ -132,62 +132,7 @@
           >
         </template>
       </Table>
-      <!-- <el-table
-        :data="tableData"
-        :border="true"
-        :header-cell-style="{
-          background: '#eef1f6',
-          color: '#606266',
-          textAlign: 'center'
-        }"
-        v-loading="tableLoading"
-        row-key="id"
-        :tree-props="{ children: 'target' }"
-        :max-height="tableHeight"
-        :cell-style="{ borderRight: '1px solid #fff' }"
-        style="width: 100%"
-        @selection-change="selectData"
-      >
-        <el-table-column
-          v-for="i in tableColumn"
-          :key="i.label"
-          :type="i.type"
-          :prop="i.prop"
-          :label="i.label"
-          :width="i.width"
-          :min-width="i.minWidth"
-          :fixed="i.fixed"
-          :align="i.align"
-        >
-          <template #default="scope">
-            <span v-if="i.prop === 'sourceSystem2'">{{
-              getDictLabel(scope.row.sourceSystem1, scope.row.sourceSystem2)
-            }}</span>
-            <template v-if="i.prop === 'action'">
-              <el-button
-                v-for="item in tableActionList"
-                :key="item.value"
-                link
-                :type="item.value === 'delete' ? 'danger' : 'primary'"
-                @click="actionTableItem(scope, item.value)"
-                >{{ item.label }}</el-button
-              >
-            </template>
-          </template>
-        </el-table-column>
-      </el-table> -->
     </div>
-    <!-- <div class="page">
-      <el-pagination
-        background
-        layout="total,sizes,prev, pager, next"
-        :page-sizes="[10, 20, 50, 100]"
-        :total="pageTotal"
-        class="table-page"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
-    </div> -->
     <!--  -->
     <EditModel
       :visible="editModelVisible"
@@ -292,7 +237,8 @@ const state = reactive<StateType>({
       width: '',
       minWidth: '120',
       fixed: false,
-      align: 'left'
+      align: 'left',
+      forbiddenEdit: true
     },
     {
       label: '省',
@@ -383,8 +329,14 @@ const state = reactive<StateType>({
   editModelTitle: '',
   selectIdsArr: [],
   detailData: {
+    id: '',
+    agencyName: '',
     sourceSystem1: '',
-    sourceSystem2: ''
+    sourceSystem2: '',
+    cityName: '',
+    cityCode: '',
+    provinceCode: '',
+    provinceName: ''
   },
   importVisible: false
 })
@@ -476,8 +428,8 @@ const getListData = async () => {
   const res = await API.getAgencyAddressList(params)
   state.tableLoading = false
   if (res && res.code === 200) {
-    state.tableData = res?.data?.list
-    state.pageTotal = res?.data?.total
+    state.tableData = res.data ? res.data.list : []
+    state.pageTotal = res.data && res.data.total ? res.data.total : 0
   }
 }
 
@@ -681,7 +633,16 @@ const closeModel = ({ visible, type }: { visible: boolean; type: string }) => {
     // formModel.value.pageNo = 1
     getListData()
   }
-  state.detailData = { sourceSystem1: '', sourceSystem2: '' }
+  state.detailData = {
+    id: '',
+    agencyName: '',
+    sourceSystem1: '',
+    sourceSystem2: '',
+    provinceName: '',
+    provinceCode: '',
+    cityName: '',
+    cityCode: ''
+  }
 }
 
 const selectData = (selection: AgencyAddressListResponse[]) => {
@@ -740,6 +701,7 @@ const actionTableItem = async (
     width: 100%;
   }
   .filter-form {
+    padding: 6px 10px;
     width: 90%;
     .el-form-item {
       align-items: center;
@@ -754,10 +716,6 @@ const actionTableItem = async (
   }
   .list {
     margin-bottom: 20px;
-  }
-  .page {
-    display: flex;
-    justify-content: flex-end;
   }
 }
 </style>

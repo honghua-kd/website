@@ -178,15 +178,15 @@ export interface AgencyAddressDetailResponse {
   /**
    * 代理商/办事处
    */
-  agencyName?: string
+  agencyName: string
   /**
    * 城市编码
    */
-  cityCode?: string
+  cityCode: string
   /**
    * 城市
    */
-  cityName?: string
+  cityName: string
   /**
    * 联系人
    */
@@ -199,7 +199,7 @@ export interface AgencyAddressDetailResponse {
    * 区
    */
   districtName?: string
-  id?: string
+  id: string
   /**
    * 电话
    */
@@ -207,11 +207,11 @@ export interface AgencyAddressDetailResponse {
   /**
    * 省份编码
    */
-  provinceCode?: string
+  provinceCode: string
   /**
    * 省份
    */
-  provinceName?: string
+  provinceName: string
   /**
    * 来源系统1
    */
@@ -221,6 +221,7 @@ export interface AgencyAddressDetailResponse {
    */
   sourceSystem2: string
   systemSourceValue?: string[]
+  areaCode?: string[]
 }
 
 // 渠道商/办事处地址-导出

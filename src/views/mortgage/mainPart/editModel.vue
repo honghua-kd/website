@@ -2,7 +2,7 @@
   <el-dialog
     class="main-part-model"
     v-model="dialogVisible"
-    title="新增"
+    :title="dialogTitle"
     width="700px"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -47,19 +47,11 @@
           <el-input />
         </el-form-item>
         <span>联系地址</span>
-        <!-- <el-form-item label="省份">
-          <el-select> </el-select>
-        </el-form-item>
-        <el-form-item label="城市">
-          <el-select> </el-select>
-        </el-form-item> -->
         <el-form-item label="省/市">
-          <el-cascader
-            placeholder="请选择"
-            style="width: 100%"
-            :options="BasicData.cityList"
-            clearable
-          />
+          <!-- <AreaCasder
+            :value="editForm.areaCode"
+            @changeAreaData="changeAreaData"
+          /> -->
         </el-form-item>
         <el-form-item label="详细地址">
           <el-input />
@@ -88,28 +80,32 @@
 <script lang="ts" setup>
 import { watch, toRefs, reactive } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
-import type { RecordType, ModelStateType } from '@/views/mortgage/mainPart/type'
-import BasicData from '@/views/mortgage/mainPart/data'
+import type { ModelStateType } from '@/views/mortgage/mainPart/type'
+// import AreaCasder from '@/components/AreaCascader/index.vue'
 
 type ModelPropsType = {
   visible: boolean
-  formValue: RecordType
+  formValue: object
+  title: string
 }
 const props = withDefaults(defineProps<ModelPropsType>(), {
   visible: false,
-  formValue: () => ({})
+  formValue: () => ({}),
+  title: ''
 })
 
 const state = reactive<ModelStateType>({
   dialogVisible: false,
-  editForm: {}
+  editForm: {},
+  dialogTitle: ''
 })
-const { dialogVisible, editForm } = toRefs(state)
+const { dialogVisible, editForm, dialogTitle } = toRefs(state)
 watch(
-  [() => props.visible, () => props.formValue],
-  ([newVisible, newValue]) => {
+  [() => props.visible, () => props.formValue, () => props.title],
+  ([newVisible, newValue, newTitle]) => {
     state.dialogVisible = newVisible
     state.editForm = newValue
+    state.dialogTitle = newTitle
   },
   {
     immediate: true

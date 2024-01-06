@@ -1,31 +1,30 @@
+import type { ITableConfigProps } from '@/components/Table/type'
+import type { MortgageSubjectListResponse } from '@/api/mainPart/types/response'
 type OptionItemType = {
   label: string
   value: string | number
 }
-type TableColumnType = {
-  type: string
-  label: string
-  prop: string
-  columnKey: string
-  width: string
-  minWidth: string
-  fixed: boolean
-  align: string
-}
-export type RecordType<T = any> = Record<string, T>
 export type StateType = {
   formModel: {
-    name: string
-    source: string
+    contactAddressCityCode?: string
+    contactAddressProvinceCode?: string
+    mortgageSubjectName?: string
+    pageNo: number
+    pageSize: number
   }
-  sourceArr: OptionItemType[]
   tableLoading: boolean
-  tableColumn: TableColumnType[]
-  tableData: RecordType[]
+  tableColumn: ITableConfigProps[]
+  tableData: MortgageSubjectListResponse[]
+  tableActionList: OptionItemType[]
   pageTotal: number
   editModelVisible: boolean
+  editModelTitle: string
+  selectIdsArr: string[]
+  detailData: object
+  areaCode: string[]
 }
 export type ModelStateType = {
   dialogVisible: boolean
-  editForm: RecordType
+  editForm: object
+  dialogTitle: string
 }

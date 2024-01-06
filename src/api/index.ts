@@ -8,6 +8,7 @@ export { SupplierAPI } from './supplier'
 export { AgencyAPI } from './channel'
 export { RecordAPI } from './downUpload'
 export { NoticeCenterAPI } from './noticeCenter'
+export { MainPartAPI } from './mainPart'
 
 export type * from './types/request'
 export type * from './types/response'
@@ -35,3 +36,6 @@ export type * from './channel/types/response'
 
 export type * from './noticeCenter/types/request'
 export type * from './noticeCenter/types/response'
+
+export type * from './mainPart/types/request'
+export type * from './mainPart/types/response'

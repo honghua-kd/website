@@ -10,19 +10,19 @@
       >
         <el-row :gutter="20">
           <el-col :span="6"
-            ><el-form-item label="代理商/办事处" style="width: 100%">
-              <el-input v-model="formModel.name" /> </el-form-item
+            ><el-form-item label="抵押主体名称" style="width: 100%">
+              <el-input
+                v-model="formModel.mortgageSubjectName"
+              /> </el-form-item
           ></el-col>
-          <el-col :span="6"
-            ><el-form-item label="来源系统" style="width: 100%">
-              <el-select v-model="formModel.source" style="width: 100%">
-                <el-option
-                  v-for="item in sourceArr"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select> </el-form-item
+          <el-col :span="6">
+            <el-form-item label="城市" style="width: 100%">
+              <AreaCasder
+                style="width: 100%"
+                :multiple="true"
+                :value="areaCode"
+                @changeAreaData="changeAreaData"
+              /> </el-form-item
           ></el-col>
         </el-row>
         <el-row justify="end">
@@ -38,81 +38,80 @@
       </el-form>
     </div>
     <el-divider border-style="dashed" />
-    <!-- action -->
-    <div class="action">
-      <el-button :icon="Plus" type="primary" @click="action('Add')"
-        >新增</el-button
-      >
-      <el-button :icon="Download" type="primary" @click="action('Download')"
-        >下载</el-button
-      >
-      <el-tooltip content="需勾选要，方可操作" placement="top-start"
-        ><el-button :icon="Delete" type="primary" @click="action('Delete')"
-          >删除</el-button
-        >
-      </el-tooltip>
-    </div>
     <!-- list -->
     <div class="list">
-      <el-table
+      <Table
+        :loading="tableLoading"
         :data="tableData"
-        :border="true"
-        :header-cell-style="{
-          background: '#eef1f6',
-          color: '#606266',
-          textAlign: 'center'
-        }"
-        v-loading="tableLoading"
+        :columnConfig="tableColumn"
+        :height="tableHeight"
         row-key="id"
         :tree-props="{ children: 'target' }"
-        :max-height="tableHeight"
-        :cell-style="{ borderRight: '1px solid #fff' }"
-        style="width: 100%"
-        @select="selectData"
-        @select-all="selectAllData"
-      >
-        <el-table-column
-          v-for="i in tableColumn"
-          :key="i.label"
-          :type="i.type"
-          :prop="i.prop"
-          :label="i.label"
-          :width="i.width"
-          :fixed="i.fixed"
-          :align="i.align"
-        >
-          <template v-if="i.label === '操作'">
-            <el-button link type="primary">编辑</el-button>
-            <el-button link type="danger">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-    <div class="page">
-      <el-pagination
-        background
-        layout="total,sizes,prev, pager, next"
-        :page-sizes="[10, 20, 50, 100]"
-        :total="pageTotal"
-        class="table-page"
+        :page-total="pageTotal"
+        v-model:pageSize="formModel.pageSize"
+        v-model:pageNo="formModel.pageNo"
+        @selection-change="selectData"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-      />
+      >
+        <template #btnsBox>
+          <div class="action">
+            <el-button :icon="Plus" type="primary" @click="action('Add')"
+              >新增</el-button
+            >
+            <el-button
+              :icon="Download"
+              type="primary"
+              @click="action('Download')"
+              >下载</el-button
+            >
+            <el-tooltip content="需勾选要，方可操作" placement="top-start"
+              ><el-button
+                :icon="Delete"
+                type="primary"
+                @click="action('Delete')"
+                >删除</el-button
+              >
+            </el-tooltip>
+          </div>
+        </template>
+        <template #selection>
+          <el-table-column
+            type="selection"
+            :width="px2rem('40px')"
+            :selectable="() => true"
+            :fixed="true"
+            align="center"
+          />
+        </template>
+        <template #action="scope">
+          <el-button
+            v-for="item in tableActionList"
+            :key="item.value"
+            link
+            :type="item.value === 'delete' ? 'danger' : 'primary'"
+            @click="actionTableItem(scope, item.value)"
+            >{{ item.label }}</el-button
+          >
+        </template></Table
+      >
     </div>
     <!--  -->
     <EditModel
       :visible="editModelVisible"
-      :formValue="{}"
+      :formValue="detailData"
+      :title="editModelTitle"
       @closeModel="closeModel"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, toRefs, ref, computed } from 'vue'
+import { reactive, toRefs, ref, computed, onMounted } from 'vue'
 import BasicData from '@/views/mortgage/mainPart/data'
 import EditModel from '@/views/mortgage/mainPart/editModel.vue'
-import type { StateType, RecordType } from '@/views/mortgage/mainPart/type'
+import type { StateType } from '@/views/mortgage/mainPart/type'
+import type { MortgageSubjectListResponse } from '@/api/mainPart/types/response'
 import {
   Refresh,
   Search,
@@ -121,78 +120,131 @@ import {
   Download
 } from '@element-plus/icons-vue'
 import { px2rem } from '@/utils'
+import Table from '@/components/Table/index.vue'
+import { MainPartAPI } from '@/api'
+import AreaCasder from '@/components/AreaCascader/index.vue'
+
+const API = new MainPartAPI()
 const state = reactive<StateType>({
   formModel: {
-    name: '',
-    source: ''
+    mortgageSubjectName: '',
+    contactAddressProvinceCode: '',
+    contactAddressCityCode: '',
+    pageNo: 1,
+    pageSize: 10
   },
-  sourceArr: [
-    {
-      label: '全部',
-      value: '全部'
-    },
-    {
-      label: '乘用车',
-      value: '乘用车'
-    },
-    {
-      label: '商用车',
-      value: '商用车'
-    },
-    {
-      label: '乘用车资产转让',
-      value: '乘用车资产转让'
-    },
-    {
-      label: '商用车资产转让',
-      value: '商用车资产转让'
-    }
-  ],
   tableLoading: false,
-  tableColumn: BasicData.tableColumn,
-  tableData: [
+  tableColumn: [
     {
-      name: 'string',
-      fullName: 'string',
-      organCode: 'string',
-      city: 'string',
-      area: 'string',
-      registerAddress: 'string',
-      address: 'string',
-      person: 'string',
-      phone: 'string',
-      creator: 'string',
-      createTime: 'string',
-      lastUpdatePerson: 'string',
-      updateTime: 'string'
+      label: '抵押主体名称',
+      prop: '',
+      minWidth: 120,
+      align: 'left',
+      forbiddenEdit: true
     },
     {
-      name: 'string',
-      fullName: 'string',
-      organCode: 'string',
-      city: 'string',
-      area: 'string',
-      registerAddress: 'string',
-      address: 'string',
-      person: 'string',
-      phone: 'string',
-      creator: 'string',
-      createTime: 'string',
-      lastUpdatePerson: 'string',
-      updateTime: 'string'
+      label: '全称',
+      prop: '',
+      minWidth: 120,
+      align: 'left'
+    },
+    {
+      label: '组织机构代码',
+      prop: '',
+      width: 120,
+      align: 'center'
+    },
+    {
+      label: '省',
+      prop: '',
+      width: 120,
+      align: 'left'
+    },
+    {
+      label: '市',
+      prop: '',
+      width: 120,
+      align: 'left'
+    },
+    {
+      label: '详细地址',
+      prop: '',
+      minWidth: 120,
+      align: 'left'
+    },
+    {
+      label: '注册地址',
+      prop: '',
+      minWidth: 120,
+      align: 'left'
+    },
+    {
+      label: '联系人',
+      prop: '',
+      minWidth: 120,
+      align: 'left'
+    },
+    {
+      label: '联系电话',
+      prop: '',
+      width: 100,
+      align: 'center'
+    },
+    {
+      label: '创建人',
+      prop: '',
+      minWidth: 100,
+      fixed: false,
+      align: 'left'
+    },
+    {
+      label: '创建时间',
+      prop: '',
+      minWidth: 130,
+      align: 'center'
+    },
+    {
+      label: '最后更新人',
+      prop: '',
+      minWidth: 100,
+      align: 'left'
+    },
+    {
+      label: '更新时间',
+      prop: '',
+      minWidth: 130,
+      align: 'center'
+    },
+    {
+      type: 'action',
+      label: '操作',
+      prop: '',
+      width: 120,
+      fixed: 'right',
+      align: 'center'
     }
   ],
+  tableData: [],
+  tableActionList: BasicData.tableActionList,
   pageTotal: 100,
-  editModelVisible: false
+  editModelVisible: false,
+  editModelTitle: '',
+  selectIdsArr: [],
+  detailData: {},
+  areaCode: []
 })
 const {
   formModel,
-  sourceArr,
   tableLoading,
   tableColumn,
   tableData,
+  tableActionList,
   pageTotal,
-  editModelVisible
+  editModelVisible,
+  editModelTitle,
+  selectIdsArr,
+  detailData,
+  areaCode
 } = toRefs(state)
 
 // 表格最大高度
@@ -211,26 +263,155 @@ const tableHeight = computed(() => {
   }
 })
 
-const search = () => {}
-const refresh = () => {}
-const handleSizeChange = () => {}
-const handleCurrentChange = () => {}
+onMounted(() => {
+  getListData()
+})
+
+const getListData = async () => {
+  state.tableLoading = true
+  const res = await API.getMortgageSubjectList(formModel.value)
+  state.tableLoading = false
+  if (res && res.code === 200) {
+    state.tableData = res.data ? res.data.list : []
+    state.pageTotal = res.data && res.data.total ? res.data.total : 0
+  }
+}
+
+const search = () => {
+  formModel.value.pageNo = 1
+  getListData()
+}
+const refresh = () => {
+  state.areaCode = []
+  formModel.value.mortgageSubjectName = ''
+  formModel.value.contactAddressProvinceCode = ''
+  formModel.value.contactAddressCityCode = ''
+  formModel.value.pageNo = 1
+  getListData()
+}
+const handleSizeChange = (size: number) => {
+  formModel.value.pageSize = size
+  formModel.value.pageNo = 1
+  getListData()
+}
+const handleCurrentChange = (page: number) => {
+  formModel.value.pageNo = page
+  getListData()
+}
 
 const action = (val: string | number) => {
   if (val === 'Add') {
+    state.editModelTitle = '新增'
     state.editModelVisible = true
+  } else if (val === 'Delete') {
+    deleteData()
+  } else if (val === 'Download') {
+    downloadData()
   }
+}
+const deleteData = () => {
+  if (selectIdsArr.value.length === 0) {
+    ElMessage({
+      type: 'error',
+      message: '请选择要删除的内容'
+    })
+    return
+  }
+  // 二次确认
+  ElMessageBox.confirm('确认要删除吗？', '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(() => {
+      // 调用删除接口
+      console.log(selectIdsArr.value)
+    })
+    .catch((err: Error) => {
+      throw err
+    })
+}
+const downloadData = async () => {
+  state.tableLoading = true
+  const params = {}
+  // if (selectIdsArr.value.length === 0) {
+  // } else {
+  // }
+  // 调用下载接口
+  console.log(params)
+  state.tableLoading = false
 }
 const closeModel = ({ visible, type }: { visible: boolean; type: string }) => {
   console.log(visible, type)
   state.editModelVisible = visible
 }
 
-const selectAllData = (selection: RecordType[]) => {
-  console.log(selection)
+const selectData = (selection: MortgageSubjectListResponse[]) => {
+  const result: string[] = []
+  if (selection.length !== 0) {
+    selection.forEach((i: MortgageSubjectListResponse) => {
+      result.push(`${i.mortgageSubjectCode}`)
+    })
+  }
+  state.selectIdsArr = result
 }
-const selectData = (selection: RecordType[], row: RecordType) => {
-  console.log(selection, row)
+
+const actionTableItem = async (
+  row: { row: MortgageSubjectListResponse },
+  value: string | number
+) => {
+  const rowData = row.row
+  // if (value === 'edit') {
+  //   const res = await API.getAgencyDetail({ id: rowData.id })
+  //   if (res && res.code === 200) {
+  //     if (res.data) {
+  //       state.detailData = res.data
+  //     }
+  //     state.editModelTitle = '编辑'
+  //     state.editModelVisible = true
+  //   }
+  // }
+  if (value === 'delete') {
+    // 二次确认
+    ElMessageBox.confirm('确认要删除吗？', '警告', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+      .then(() => {
+        // 调用删除接口
+        API.getMortgageSubjectDelete({
+          mortgageSubjectCode: rowData.mortgageSubjectCode
+        }).then((res) => {
+          if (res && res.code === 200) {
+            ElMessage({
+              type: 'success',
+              message: '删除成功'
+            })
+            getListData()
+          }
+        })
+      })
+      .catch((err: Error) => {
+        throw err
+      })
+  }
+}
+
+const changeAreaData = ({
+  provinceCode,
+  provinceName,
+  cityCode,
+  cityName
+}: {
+  provinceCode: string
+  provinceName: string
+  cityCode: string
+  cityName: string
+}) => {
+  console.log(provinceCode, provinceName, cityCode, cityName)
+  formModel.value.contactAddressProvinceCode = provinceCode
+  formModel.value.contactAddressCityCode = cityCode
 }
 </script>
 
@@ -255,10 +436,6 @@ const selectData = (selection: RecordType[], row: RecordType) => {
   }
   .list {
     margin-bottom: 20px;
-  }
-  .page {
-    display: flex;
-    justify-content: flex-end;
   }
 }
 </style>

@@ -8,7 +8,6 @@ type OptionItemType = {
   label: string
   value: string | number
 }
-export type RecordType<T = any> = Record<string, T>
 export type sourceListItem = {
   label?: string | null | undefined
   value?: string | null | undefined
@@ -46,9 +45,9 @@ export type StateType = {
   sourceArr: CascaderOption[]
   tableLoading: boolean
   tableColumn: ITableConfigProps[]
-  tableData: AgencyAddressListResponse[] | undefined
+  tableData: AgencyAddressListResponse[]
   tableActionList: OptionItemType[]
-  pageTotal: number | undefined
+  pageTotal: number
   editModelVisible: boolean
   editModelTitle: string
   selectIdsArr: string[]
@@ -57,7 +56,7 @@ export type StateType = {
 }
 export type ModelStateType = {
   dialogVisible: boolean
-  editForm: RecordType
+  editForm: AgencyAddressDetailResponse
   dialogTitle: string
   systemSourceArr: CascaderOption[]
 }

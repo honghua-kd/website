@@ -84,10 +84,8 @@
 </template>
 <script lang="ts" setup>
 import { watch, toRefs, reactive, ref } from 'vue'
-import type {
-  RecordType,
-  ModelStateType
-} from '@/views/mortgage/channelAddress/type'
+import type { ModelStateType } from '@/views/mortgage/channelAddress/type'
+import type { AgencyAddressDetailResponse } from '@/api/channel/types/response'
 import type { FormInstance, FormRules, CascaderOption } from 'element-plus'
 import AreaCasder from '@/components/AreaCascader/index.vue'
 import { AgencyAPI } from '@/api'
@@ -95,19 +93,38 @@ const API = new AgencyAPI()
 
 type ModelPropsType = {
   visible: boolean
-  formValue: RecordType
+  formValue: AgencyAddressDetailResponse
   title: string
   sourceArr: CascaderOption[]
 }
 const props = withDefaults(defineProps<ModelPropsType>(), {
   visible: false,
-  formValue: () => ({}),
+  formValue: () => ({
+    id: '',
+    agencyName: '',
+    sourceSystem1: '',
+    sourceSystem2: '',
+    provinceName: '',
+    provinceCode: '',
+    cityName: '',
+    cityCode: ''
+  }),
   title: ''
 })
 
 const state = reactive<ModelStateType>({
   dialogVisible: false,
-  editForm: { sourceSystem1: '', sourceSystem2: '', systemSourceValue: [] },
+  editForm: {
+    id: '',
+    agencyName: '',
+    sourceSystem1: '',
+    sourceSystem2: '',
+    provinceName: '',
+    provinceCode: '',
+    cityName: '',
+    cityCode: '',
+    systemSourceValue: []
+  },
   dialogTitle: '',
   systemSourceArr: []
 })
