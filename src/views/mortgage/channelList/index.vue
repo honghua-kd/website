@@ -115,19 +115,17 @@
 
           <span v-if="prop === 'createGatherFlag'"
             ><el-switch
-              v-model="row.createGatherFlag"
+              :value="row.createGatherFlag"
               :active-value="1"
               :inactive-value="0"
-              @change="(value) => changeSwitch(value, row, 'createGatherFlag')"
+              @click="changeSwitch(row, 'createGatherFlag')"
           /></span>
           <span v-if="prop === 'unpaidNeedApproveFlag'"
             ><el-switch
-              v-model="row.unpaidNeedApproveFlag"
+              :value="row.unpaidNeedApproveFlag"
               :active-value="1"
               :inactive-value="0"
-              @change="
-                (value) => changeSwitch(value, row, 'unpaidNeedApproveFlag')
-              "
+              @click="changeSwitch(row, 'unpaidNeedApproveFlag')"
           /></span>
         </template>
         <template #action="scope">
@@ -238,23 +236,22 @@ const state = reactive<StateType>({
       prop: 'agencyName',
       minWidth: 120,
       fixed: false,
-      align: 'left'
+      align: 'left',
+      forbiddenEdit: true
     },
     {
       label: '是否生成代收款项清单',
       prop: 'createGatherFlag',
       minWidth: 170,
       fixed: false,
-      align: 'center',
-      forbiddenEdit: true
+      align: 'center'
     },
     {
       label: '未收费办理是否需审批',
       prop: 'unpaidNeedApproveFlag',
       minWidth: 170,
       fixed: false,
-      align: 'center',
-      forbiddenEdit: true
+      align: 'center'
     },
     {
       label: '创建人',
@@ -627,19 +624,24 @@ const actionTableItem = async (
   }
 }
 
-const changeSwitch = async (
-  val: boolean | string | number,
-  row: AgencyListResponse,
-  type: string
-) => {
+const changeSwitch = async (row: AgencyListResponse, type: string) => {
   const params = {
     id: row.id,
     sourceSystem1: row.sourceSystem1,
     sourceSystem2: row.sourceSystem2,
     agencyName: row.agencyName,
-    createGatherFlag: type === 'createGatherFlag' ? val : row.createGatherFlag,
+    createGatherFlag:
+      type === 'createGatherFlag'
+        ? row.createGatherFlag === 0
+          ? 1
+          : 0
+        : row.createGatherFlag,
     unpaidNeedApproveFlag:
-      type === 'unpaidNeedApproveFlag' ? val : row.unpaidNeedApproveFlag
+      type === 'unpaidNeedApproveFlag'
+        ? row.unpaidNeedApproveFlag === 0
+          ? 1
+          : 0
+        : row.unpaidNeedApproveFlag
   }
   try {
     await API.getAgencyEdit(params)
