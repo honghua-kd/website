@@ -11,16 +11,19 @@ import type {
   CreateTemplateRequest,
   UpdateTemplateRequest,
   StatusRequest,
-  DeleteRequest
+  DeleteRequest,
+  SendMessageRequest,
+  ExportSendRequest
 } from './types/request'
 import type {
   Data,
   DictDataTreeRespVO,
   CreateResponse,
-  UpdateResponse
+  UpdateResponse,
+  SendData
 } from './types/response'
 
-// import type { FileDownload } from '../common/types/response'
+import type { FileDownload } from '../common/types/response'
 
 const prefix = '/operations-management/admin-api'
 
@@ -81,6 +84,24 @@ export class MessageAPI {
     return this.request({
       url: `${prefix}/system/sms-template/delete`,
       method: 'post',
+      data
+    })
+  }
+
+  // 发送记录查询页
+  getSendPageRecord(data: SendMessageRequest): Response<SendData> {
+    return this.request({
+      url: `${prefix}/system/sms-send/pageRecord`,
+      method: 'post',
+      data
+    })
+  }
+
+  exportExcelSendMessage(data: ExportSendRequest): Promise<FileDownload> {
+    return this.request({
+      url: `${prefix}/system/sms-send/exportExcel`,
+      method: 'post',
+      responseType: 'blob',
       data
     })
   }

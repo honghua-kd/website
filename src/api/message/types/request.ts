@@ -115,3 +115,79 @@ export interface DeleteRequest {
    */
   id: string
 }
+export interface SendMessageRequest {
+  /**
+   * 关联业务编号
+   */
+  bizRelation: string
+  /**
+   * 关联合同号
+   */
+  contractRelation: string
+  /**
+   * 页码，从1开始
+   */
+  pageNo: number
+  /**
+   * 每页条数
+   */
+  pageSize: number
+  /**
+   * 短信接收方
+   */
+  receiveName: string
+  /**
+   * 发送状态
+   */
+  sendStatus: string
+  /**
+   * 发送时间结束
+   */
+  sendTimeEnd: string
+  /**
+   * 发送时间开始
+   */
+  sendTimeStart: string
+  /**
+   * 模板编码
+   */
+  templateCode: string
+  /**
+   * 模板名字
+   */
+  templateName: string
+  /**
+   * 手机号码
+   */
+  userNumber: string
+}
+export interface ExportSendRequest {
+  /**
+   * 关联业务编号
+   */
+  bizRelation: string
+  /**
+   * 业务类型
+   */
+  bizType: string
+  /**
+   * 关联合同号
+   */
+  contractRelation: string
+  /**
+   * 发送时间结束
+   */
+  sendTimeEnd: string
+  /**
+   * 发送时间开始
+   */
+  sendTimeStart: string
+  /**
+   * 模板编码
+   */
+  templateCode: string
+  /**
+   * 模板名字
+   */
+  templateName: string
+}
