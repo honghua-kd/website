@@ -1,6 +1,6 @@
 # Table 组件
 
-## Table属性说明
+## Table 属性说明
 
 ```js
 interface IProps {
@@ -18,12 +18,11 @@ interface IProps {
 
 ```js
 const emit = defineEmits([
-  'selection-change',  // 选中表格回调
-  'size-change',       // 分页-切换pageSize
-  'current-change',    // 分页-切换页数
-  'header-click'       // 表头点击回调
+  'selection-change', // 选中表格回调
+  'size-change', // 分页-切换pageSize
+  'current-change', // 分页-切换页数
+  'header-click' // 表头点击回调
 ])
-
 ```
 
 ## 配置表格列属性配置
@@ -47,7 +46,7 @@ interface ITableConfigProps {
 }
 ```
 
-## column 配置demo
+## column 配置 demo
 
 ```js
 export const tableConfig = [
