@@ -125,7 +125,7 @@ export default [
     ],
     elements: [],
     menuType: 5,
-    sort: 3,
+    sort: 101,
     menu: 'system'
   },
   {
@@ -161,17 +161,221 @@ export default [
     ],
     elements: [],
     menuType: 5,
-    sort: 2,
+    sort: 100,
     menu: 'downloadCenter'
   },
   {
     children: [
       {
-        children: [],
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'mortgageRules',
+            sort: 1
+          }
+        ],
         elements: [],
-        menuType: 3,
-        sort: 0,
-        menu: 'recordUploadIndex'
+        menuType: 5,
+        menu: 'mortgageRulesdMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'cityManage',
+            sort: 2
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'cityManageMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'channelList',
+            sort: 3
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'channelListMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'channelAddress',
+            sort: 4
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'channelAddressMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'mainPart',
+            sort: 5
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'mainPartMenu'
+      }
+    ],
+    elements: [],
+    menuType: 5,
+    sort: 2,
+    menu: 'mortgage'
+  },
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'supplierManage',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'supplierManageMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'settleAccounts',
+            sort: 2
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'settleAccountsMenu'
+      }
+    ],
+    elements: [],
+    menuType: 5,
+    sort: 3,
+    menu: 'supplier'
+  },
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'docCheck',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'docCheckMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'checked',
+            sort: 2
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'checkedMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'templateConfig',
+            sort: 3
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'templateConfigMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'specialConfig',
+            sort: 4
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'specialConfigMenu'
+      }
+    ],
+    elements: [],
+    menuType: 5,
+    sort: 4,
+    menu: 'docManage'
+  },
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'messageTemplate',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'messageManage'
+      }
+    ]
+  },
+
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'recordUploadIndex',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'recordUploadMenu'
       }
     ],
     elements: [],
