@@ -243,7 +243,8 @@ const getList = async () => {
   MortgageCityApi.getMortgageCityList(queryParams)
     .then((res) => {
       if (res && res.code === 200) {
-        tableData.value = res?.data?.list || []
+        tableData.splice(0, tableData.length)
+        tableData.push(...(res?.data?.list || []))
         pageTotal.value = res?.data?.total || 0
       }
     })
@@ -253,7 +254,7 @@ const getList = async () => {
 }
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
 const tableLoading: Ref<boolean> = ref(false)
-const tableData: Ref<MortgageCityListResponse[]> = ref([])
+const tableData = reactive<MortgageCityListResponse[]>([])
 // // 分页
 // const handleCurrentChange = (val: number) => {
 //   queryParams.pageNo = val
