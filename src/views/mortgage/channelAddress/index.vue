@@ -238,7 +238,8 @@ const state = reactive<StateType>({
       minWidth: '120',
       fixed: false,
       align: 'left',
-      forbiddenEdit: true
+      forbiddenEdit: true,
+      showOverflowTooltip: true
     },
     {
       label: '省',
@@ -262,7 +263,8 @@ const state = reactive<StateType>({
       width: '',
       minWidth: '170',
       fixed: false,
-      align: 'left'
+      align: 'left',
+      showOverflowTooltip: true
     },
     {
       label: '联系人',
@@ -270,7 +272,8 @@ const state = reactive<StateType>({
       width: '100',
       minWidth: '',
       fixed: false,
-      align: 'left'
+      align: 'left',
+      showOverflowTooltip: true
     },
     {
       label: '联系电话',

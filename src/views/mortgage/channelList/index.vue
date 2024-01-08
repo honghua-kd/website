@@ -237,7 +237,8 @@ const state = reactive<StateType>({
       minWidth: 120,
       fixed: false,
       align: 'left',
-      forbiddenEdit: true
+      forbiddenEdit: true,
+      showOverflowTooltip: true
     },
     {
       label: '是否生成代收款项清单',

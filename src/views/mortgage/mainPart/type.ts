@@ -20,11 +20,14 @@ export type StateType = {
   editModelVisible: boolean
   editModelTitle: string
   selectIdsArr: string[]
-  detailData: object
+  // 等详情接口出来需要修改
+  detailData: MortgageSubjectListResponse
   areaCode: string[]
 }
 export type ModelStateType = {
   dialogVisible: boolean
-  editForm: object
+  // 等详情接口出来需要修改
+  editForm: MortgageSubjectListResponse
   dialogTitle: string
+  condition: string
 }

@@ -45,7 +45,7 @@
         :data="tableData"
         :columnConfig="tableColumn"
         :height="tableHeight"
-        row-key="id"
+        row-key="mortgageSubjectCode"
         :tree-props="{ children: 'target' }"
         :page-total="pageTotal"
         v-model:pageSize="formModel.pageSize"
@@ -230,7 +230,84 @@ const state = reactive<StateType>({
   editModelVisible: false,
   editModelTitle: '',
   selectIdsArr: [],
-  detailData: {},
+  detailData: {
+    /**
+     * 资方信息
+     */
+    capitalInfo: '',
+    /**
+     * 联系地址-城市code
+     */
+    contactAddressCityCode: '',
+    /**
+     * 联系地址-城市名称
+     */
+    contactAddressCityName: '',
+    /**
+     * 联系地址-详细地址
+     */
+    contactAddressDetail: '',
+    /**
+     * 联系地址-省份code
+     */
+    contactAddressProvinceCode: '',
+    /**
+     * 联系地址-省份名称
+     */
+    contactAddressProvinceName: '',
+    /**
+     * 联系人
+     */
+    contactName: '',
+    /**
+     * 联系电话
+     */
+    contactPhone: '',
+    /**
+     * 合同主体
+     */
+    contractSubject: '',
+    /**
+     * 创建时间
+     */
+    createTime: '',
+    /**
+     * 创建者
+     */
+    creatorName: '',
+    /**
+     * 抵押主体全称
+     */
+    mortgageSubjectAllName: '',
+    /**
+     * 抵押主体唯一Code
+     */
+    mortgageSubjectCode: '',
+    /**
+     * 抵押主体名称
+     */
+    mortgageSubjectName: '',
+    /**
+     * 抵押主体类型
+     */
+    mortgageSubjectType: '',
+    /**
+     * 组织机构代码
+     */
+    organizationCode: '',
+    /**
+     * 注册地址
+     */
+    registeredAddress: '',
+    /**
+     * 更新者
+     */
+    updaterName: '',
+    /**
+     * 更新时间
+     */
+    updateTime: ''
+  },
   areaCode: []
 })
 const {
