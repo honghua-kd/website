@@ -28,9 +28,7 @@ module.exports = {
     'vue/no-v-html': 'off',
     'import/first': 'off',
     '@typescript-eslint/no-this-alias': 'off',
-    'prettier/prettier': ['error', { endOfLine: 'auto' }],
-    'no-undef': 0,
-    '@typescript-eslint/no-explicit-any': 'off'
+    'prettier/prettier': ['error', { endOfLine: 'auto' }]
   },
   overrides: [
     {

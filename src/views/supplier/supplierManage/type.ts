@@ -12,7 +12,7 @@ type TableColumnType = {
   fixed: boolean
   tooltip: boolean
 }
-export type RecordType<T = any> = Record<string, T>
+export type RecordType<T = unknown> = Record<string, T>
 export type StateType = {
   formModel: {
     supplierName: string
