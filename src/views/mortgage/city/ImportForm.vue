@@ -40,8 +40,8 @@ import type {
   UploadProps,
   UploadRawFile
 } from 'element-plus'
-import { MortgageCityAPI } from '@/api'
-const MortgageCityApi = new MortgageCityAPI()
+import { CommonAPI } from '@/api'
+const CommonApi = new CommonAPI()
 const dialogTitle = ref<string>('导入')
 const dialogVisible = ref<boolean>(false)
 const upload = ref<UploadInstance>()
@@ -67,8 +67,8 @@ const importHandler = () => {
   dialogVisible.value = false
   const formData = new FormData()
   formData.append('file', fileList.value[0].raw as File)
-  // formData.append('bizType', 'EXPRESS_INFO')
-  MortgageCityApi.mortgageCityBatchImport(formData)
+  formData.append('bizType', 'CITY_CONFIG')
+  CommonApi.getAsyncImport(formData)
     .then((res) => {
       if (res && res.code === 200) {
         ElMessage({

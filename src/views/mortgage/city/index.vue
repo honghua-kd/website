@@ -28,32 +28,7 @@
         </el-row>
       </el-form>
     </el-card>
-    <el-row :gutter="8" style="margin: 10px 0">
-      <el-col :span="1.5">
-        <el-button type="primary" @click="importHandler"> 导入 </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="primary" @click="downloadTemplate">
-          下载导入模版
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="primary" @click="addHandler"> 新增 </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="primary" @click="exportHandler"> 下载 </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="primary" @click="delHandler(selectIds)">
-          删除
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="primary" @click="importResultHandler">
-          导入结果查询
-        </el-button>
-      </el-col>
-    </el-row>
+
     <!-- table 组件引入 -->
     <Table
       :data="tableData"
@@ -62,15 +37,41 @@
       :isSelected="true"
       :page-total="pageTotal"
       :setColumnEnable="true"
-      row-key="id"
-      :tree-props="{ children: 'target' }"
       :height="tableHeight"
+      :actionWidth="px2rem('100px')"
+      v-model:pageSize="queryParams.pageSize"
+      v-model:pageNo="queryParams.pageNo"
       @selection-change="selectionChangeHandler"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
+      @size-change="getList"
+      @current-change="getList"
     >
-      <template #selection>
-        <el-table-column type="selection" width="40" align="center" />
+      <template #btnsBox>
+        <el-row :gutter="8" style="margin: 10px 0">
+          <el-col :span="1.5">
+            <el-button type="primary" @click="importHandler"> 导入 </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="primary" @click="downloadTemplate">
+              下载导入模版
+            </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="primary" @click="addHandler"> 新增 </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="primary" @click="exportHandler"> 下载 </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="primary" @click="delHandler(selectIds)">
+              删除
+            </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="primary" @click="importResultHandler">
+              导入结果查询
+            </el-button>
+          </el-col>
+        </el-row>
       </template>
       <template #default="{ row, prop }">
         <span v-if="prop === 'applyMortgage'">
@@ -81,7 +82,7 @@
             @click="changeStatus(row)"
           />
         </span>
-        <span v-else-if="prop === 'applyDischarge'">
+        <span v-if="prop === 'applyDischarge'">
           <el-switch
             v-model="row[prop]"
             :active-value="0"
@@ -91,14 +92,12 @@
         </span>
       </template>
       <template #action="scope">
-        <template v-if="scope.row.id">
-          <el-button link type="primary" @click="editHandler(scope.row)">
-            编辑
-          </el-button>
-          <el-button link type="danger" @click="delHandler([scope.row.id])">
-            删除
-          </el-button>
-        </template>
+        <el-button link type="primary" @click="editHandler(scope.row)">
+          编辑
+        </el-button>
+        <el-button link type="danger" @click="delHandler([scope.row.id])">
+          删除
+        </el-button>
       </template>
     </Table>
     <OperDialog ref="operRef" />
@@ -108,13 +107,15 @@
 
 <script setup lang="ts">
 import { reactive, ref, Ref, onMounted, computed } from 'vue'
-import { tableConfig } from '@/views/mortgage/city/data'
+import { tableConfig } from './data'
 import OperDialog from '@/views/mortgage/city/components/operDialog.vue'
 import ImportForm from './ImportForm.vue'
 import { CommonAPI, MortgageCityAPI } from '@/api'
-import { handleDownloadFile } from '@/utils'
+import { handleDownloadFile, px2rem } from '@/utils'
 import Table from '@/components/Table/index.vue'
 import { useRouter } from '@toystory/lotso'
+
+// import { useDictStore } from '@/store/dict'
 const { router } = useRouter()
 import type {
   PageRequest,
@@ -376,6 +377,8 @@ const downloadTemplate = () => {
 
 onMounted(() => {
   getList()
+  // const dictStore = useDictStore()
+  // console.error(dictStore);
 })
 </script>
 

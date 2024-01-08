@@ -1,83 +1,75 @@
-export const tableConfig = [
+import type { ITableConfigProps } from '@/components/Table/type'
+
+export const tableConfig: ITableConfigProps[] = [
   {
     label: '省份',
     prop: 'provinceName',
-    valueType: '',
     align: 'center',
-    width: 200,
-    showOverflowTooltip: true,
-    show: true
+    width: 120,
+    showOverflowTooltip: true
   },
   {
     label: '城市',
     prop: 'cityName',
-    valueType: '',
-    width: 200,
+    width: 120,
     align: 'center',
-    showOverflowTooltip: true,
-    show: true
+    showOverflowTooltip: true
   },
   {
     label: '车牌代码',
     prop: 'licensePlateCode',
-    valueType: '',
-    width: 200,
+    width: 120,
     align: 'center',
-    showOverflowTooltip: true,
-    show: true
+    showOverflowTooltip: true
   },
   {
     label: '是否可以办理抵押',
     prop: 'applyMortgage',
-    width: 200,
-    valueType: '',
+    width: 120,
     align: 'center',
-    showOverflowTooltip: true,
-    show: true
+    showOverflowTooltip: true
   },
   {
     label: '是否可以办理解押',
     prop: 'applyDischarge',
-    width: 200,
-    valueType: '',
+    width: 120,
     align: 'center',
-    showOverflowTooltip: true,
-    show: true
+    showOverflowTooltip: true
   },
   {
     label: '创建人',
     prop: 'creator',
-    valueType: '',
-    width: 200,
+    width: 120,
     align: 'center',
-    showOverflowTooltip: true,
-    show: true
+    showOverflowTooltip: true
   },
   {
     label: '创建时间',
     prop: 'createTime',
-    valueType: '',
-    width: 200,
+    width: 120,
     align: 'center',
-    showOverflowTooltip: true,
-    show: true
+    showOverflowTooltip: true
   },
   {
     label: '最后更新人',
     prop: 'updater',
-    valueType: '',
-    width: 200,
+    width: 120,
     align: 'center',
-    showOverflowTooltip: true,
-    show: true
+    showOverflowTooltip: true
   },
   {
     label: '更新时间',
     prop: 'updateTime',
-    valueType: '',
-    width: 200,
+    width: 120,
     align: 'center',
-    showOverflowTooltip: true,
-    show: true
+    showOverflowTooltip: true
+  },
+  {
+    label: '操作',
+    prop: 'action',
+    type: 'action',
+    width: 120,
+    align: 'center',
+    fixed: 'right'
   }
 ]

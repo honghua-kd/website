@@ -58,8 +58,8 @@ const userViteConfig: ViteConfig = {
     // }
   },
   // 是否使用mock数据
-  useMock: true,
-  // useMock: false,
+  // useMock: true,
+  useMock: false,
   // 是否使用图片压缩
   useImageMin: false,
   // 是否使用px2rem

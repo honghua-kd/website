@@ -1,7 +1,7 @@
 const VITE_API = '/api/operations-management'
 export const mortgageCity = [
   {
-    url: `${VITE_API}/admin-api/mortgage/cityConfiguration/list1`,
+    url: `${VITE_API}/admin-api/mortgage/cityConfiguration/list`,
     method: 'post',
     response: () => {
       return {
@@ -25,7 +25,7 @@ export const mortgageCity = [
               creator: '张三',
               createTime: '2022-12-10',
               updater: '张三',
-              updateTime: '2022-12-10'
+              updateTime: '2022-12-10',
             }
           ]
         }
