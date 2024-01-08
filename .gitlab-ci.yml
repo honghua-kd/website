@@ -31,6 +31,7 @@ build-dev:
 build-test:
   extends: .build
   script:
+    - npm run check
     - $BUILD_TEST
   rules:
     - if: $CI_COMMIT_TAG =~ $RELEASE_TAG
@@ -38,6 +39,7 @@ build-test:
 build-prod:
   extends: .build
   script:
+    - npm run check
     - $BUILD_PROD
   rules:
     - if: $CI_COMMIT_TAG =~ $RELEASE_TAG
