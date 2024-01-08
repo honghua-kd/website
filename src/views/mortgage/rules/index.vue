@@ -6,7 +6,7 @@
           <el-col :span="6">
             <el-form-item label="规则名称:" prop="chepai">
               <el-input
-                v-model="queryParams.chepai"
+                v-model="queryParams.isUsed"
                 placeholder="请输入"
                 clearable
               />
@@ -15,7 +15,7 @@
           <el-col :span="6">
             <el-form-item label="适用业务类型:" prop="city">
               <el-select
-                v-model="queryParams.city"
+                v-model="queryParams.isUsed"
                 clearable
                 placeholder="请选择"
               >
@@ -31,7 +31,7 @@
           <el-col :span="6">
             <el-form-item label="规则状态:" prop="chepai">
               <el-select
-                v-model="queryParams.city"
+                v-model="queryParams.isUsed"
                 clearable
                 placeholder="请选择"
               >
@@ -98,19 +98,13 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, Ref } from 'vue'
-import { Search } from '@element-plus/icons-vue'
+import { reactive, ref } from 'vue'
 import OperDialog from './components/operDialog.vue'
 import { RuleAPI, CommonAPI } from '@/api'
+import { handleDownloadFile } from '@/utils'
 const CommonApi = new CommonAPI()
 const RuleApi = new RuleAPI()
-import type {
-  RuleListRequest,
-  MartgageCityListRequest,
-  MortgageCityListResponse,
-  EditMortgageCityRequest
-} from '@/api'
-import Table from '@/components/Table.vue'
+import type { RuleListRequest } from '@/api'
 const statusOpts = reactive([
   {
     dictLabel: '城',
@@ -137,57 +131,20 @@ const getList = async () => {
   RuleApi.getRuleList(queryParams)
     .then((res) => {
       console.error(res)
-      if (res && res.code === 200) {
-        tableData.value = res?.data?.list || []
-        pageTotal.value = res?.data?.total || 0
-      }
     })
     .catch((err: Error) => {
       throw err
     })
 }
-const pageTotal: Ref<number> = ref(100) // 列表的总页数
-const tableLoading: Ref<boolean> = ref(false)
-const handleDelect = (row: TableItem) => {
-  console.log(row)
-}
-// 分页
-const handleCurrentChange = (val: number) => {
-  console.log('value>>>>>handleCurrentChange', val)
-  queryParams.pageNo = val
-  getList()
-}
-
-// 页面条数改变
-const handleSizeChange = (val: number) => {
-  console.log('value>>>>>handleSizeChange', val)
-  queryParams.pageSize = val
-  getList()
-}
-
-// 选中条数
-const selectionChangeHandler = (val: TableItem) => {
-  console.log('value', val)
-}
-
-// 点击表头回调
-const headerClickHandler = (column: TableItem) => {
-  console.log('column-value', column)
-}
-
 const operRef = ref()
 const addHandler = () => {
   operRef.value.open('add')
 }
-const editHandler = (row: TableItem) => {
-  console.log('edit_row', row)
-  operRef.value.open('edit', row)
-}
-
+const importHandler = () => {}
 // 下载模板
 const downloadTemplate = () => {
   const params = {
-    bizType: 'CITY_CONFIG'
+    bizType: ''
   }
   CommonApi.getDownLoadTemplate(params)
     .then((res) => {

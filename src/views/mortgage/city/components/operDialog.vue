@@ -46,7 +46,7 @@
                   v-for="item in mortgageOpts"
                   :key="item.value"
                   :label="item.label"
-                  :value="item.value"
+                  :value="item.label"
                 />
               </el-select>
             </el-form-item>
@@ -63,7 +63,7 @@
                   v-for="item in releaseOpts"
                   :key="item.value"
                   :label="item.label"
-                  :value="item.value"
+                  :value="item.label"
                 />
               </el-select>
             </el-form-item>
@@ -71,33 +71,53 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="车牌代码" prop="market">
-              <el-select
-                v-model="formParams.carProvince"
-                clearable
-                style="width: 40%"
-              >
-                <el-option
-                  v-for="item in carProOpts"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-              <el-select
-                v-model="formParams.carCode"
-                clearable
-                style="width: 60%"
-                multiple
-              >
-                <el-option
-                  v-for="item in carNoOpts"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item>
+            <el-row>
+              <el-col :span="12">
+                <el-form-item
+                  label="车牌代码"
+                  prop="carProvince"
+                  :rules="[
+                    { required: true, message: '不能为空', trigger: 'change' }
+                  ]"
+                >
+                  <el-select
+                    v-model="formParams.carProvince"
+                    clearable
+                    style="width: 100%"
+                  >
+                    <el-option
+                      v-for="item in carProOpts"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item
+                  prop="carCode"
+                  label-width="5px"
+                  :rules="[
+                    { required: true, message: '不能为空', trigger: 'change' }
+                  ]"
+                >
+                  <el-select
+                    v-model="formParams.carCode"
+                    clearable
+                    style="width: 100%"
+                    multiple
+                  >
+                    <el-option
+                      v-for="item in carNoOpts"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </el-col>
         </el-row>
       </el-form>
@@ -120,6 +140,7 @@ import type {
   EditMortgageCityRequest,
   DictItem
 } from '@/api'
+import { useDictStore } from '@/store/dict'
 import { CommonAPI, MortgageCityAPI } from '@/api'
 import type { CascaderProps, CascaderOption } from 'element-plus'
 const MortgageCityApi = new MortgageCityAPI()
@@ -140,7 +161,7 @@ const props: CascaderProps = {
     const nodes: CascaderOption[] = [] // 动态节点
     const { level } = node
     if (level === 0) {
-      const resParent = await MortgageCityApi.getAllProvince()
+      const resParent = await CommonApi.getAllProvince()
       if (resParent && resParent?.data) {
         resParent?.data.map((item) => {
           const area = {
@@ -155,7 +176,7 @@ const props: CascaderProps = {
       const params = {
         code: node.value as number
       }
-      const res = await MortgageCityApi.getProvinceChildren(params)
+      const res = await CommonApi.getProvinceChildren(params)
       if (res && res.data) {
         res?.data.map((item) => {
           const area = {
@@ -173,7 +194,7 @@ const props: CascaderProps = {
 
 const initOptions = async () => {
   casOption.value = []
-  const resParent = await MortgageCityApi.getAllProvince()
+  const resParent = await CommonApi.getAllProvince()
   if (resParent && resParent?.data) {
     resParent?.data.map(async (item) => {
       const children: OptionsItem[] = []
@@ -181,7 +202,7 @@ const initOptions = async () => {
         const params = {
           code: Number(formParams.provinceCode)
         }
-        const res = await MortgageCityApi.getProvinceChildren(params)
+        const res = await CommonApi.getProvinceChildren(params)
         if (res && res.data) {
           res?.data.map((item) => {
             const area = {
@@ -227,6 +248,7 @@ const formParams = reactive<EditMortgageCityRequest & ExtendParams>({
 })
 const formRef = ref<InstanceType<typeof ElForm>>()
 
+const emit = defineEmits(['success'])
 const submitForm = async () => {
   if (!formRef.value) return
   const valid = await formRef.value.validate()
@@ -262,6 +284,7 @@ const submitForm = async () => {
             message: '新增成功'
           })
           dialogVisible.value = false
+          emit('success')
         }
       })
       .catch((err: Error) => {
@@ -276,6 +299,7 @@ const submitForm = async () => {
             message: '修改成功'
           })
           dialogVisible.value = false
+          emit('success')
         }
       })
       .catch((err: Error) => {
@@ -288,24 +312,12 @@ const carProOpts: Ref<DictItem[]> = ref([])
 const carNoOpts: Ref<DictItem[]> = ref([])
 const mortgageOpts: Ref<DictItem[]> = ref([])
 const releaseOpts: Ref<DictItem[]> = ref([])
+const dictStore = useDictStore()
 const getDicts = () => {
-  const dictTypes = ['YESNO', 'MORTGAGE_CITYCONFIG', 'MORTGAGE_CITYCONFIG_NO']
-  const params = {
-    dictTypes
-  }
-  CommonApi.getDictsList(params)
-    .then((res) => {
-      if (res && res.code === 200) {
-        console.error(res)
-        carProOpts.value = res?.data?.MORTGAGE_CITYCONFIG as DictItem[]
-        carNoOpts.value = res?.data?.MORTGAGE_CITYCONFIG_NO as DictItem[]
-        mortgageOpts.value = res?.data?.YESNO as DictItem[]
-        releaseOpts.value = res?.data?.YESNO as DictItem[]
-      }
-    })
-    .catch((err: Error) => {
-      throw err
-    })
+  carProOpts.value = dictStore.dicts.MORTGAGE_CITYCONFIG
+  carNoOpts.value = dictStore.dicts.MORTGAGE_CITYCONFIG_NO
+  mortgageOpts.value = dictStore.dicts.YESNO
+  releaseOpts.value = dictStore.dicts.YESNO
 }
 const open = async (
   type: string,

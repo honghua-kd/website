@@ -179,8 +179,6 @@
 import { reactive, ref, Ref } from 'vue'
 import { px2rem } from '@/utils'
 import { ElForm } from 'element-plus'
-import { RuleAPI } from '@/api'
-const RuleApi = new RuleAPI()
 const dialogTitle: Ref<string> = ref('新增')
 const dialogVisible: Ref<boolean> = ref(false)
 const formLoading: Ref<boolean> = ref(false)
@@ -245,34 +243,7 @@ const open = (type: string, row: TableItem) => {
   }
   initOptions()
 }
-const initOptions = async () => {
-  const params = {
-    provinceName: '',
-    cityName: '蚌埠'
-  }
-  const resParent = await RuleApi.getProvinceCity(params)
-  console.error(resParent)
-  resParent.data.forEach((item) => {
-    const children = []
-    if (item.haveChildren) {
-      item.children.forEach((value) => {
-        const area = {
-          value: value.code,
-          label: value.name,
-          leaf: true
-        }
-        children.push(area)
-      })
-    }
-    const resArea = {
-      value: item.code,
-      label: item.name,
-      children: children,
-      leaf: false
-    }
-    casOption.value.push(resArea)
-  })
-}
+const initOptions = async () => {}
 defineExpose({ open })
 </script>
 

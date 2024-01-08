@@ -62,9 +62,14 @@
             <el-button type="primary" @click="exportHandler"> 下载 </el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="primary" @click="delHandler(selectIds)">
-              删除
-            </el-button>
+            <el-tooltip
+              content="需勾选下方条目，方可操作"
+              placement="top-start"
+            >
+              <el-button type="primary" @click="delHandler(selectIds)">
+                删除
+              </el-button>
+            </el-tooltip>
           </el-col>
           <el-col :span="1.5">
             <el-button type="primary" @click="importResultHandler">
@@ -100,7 +105,7 @@
         </el-button>
       </template>
     </Table>
-    <OperDialog ref="operRef" />
+    <OperDialog ref="operRef" @success="getList" />
     <ImportForm ref="importFormRef" />
   </div>
 </template>
@@ -114,8 +119,7 @@ import { CommonAPI, MortgageCityAPI } from '@/api'
 import { handleDownloadFile, px2rem } from '@/utils'
 import Table from '@/components/Table/index.vue'
 import { useRouter } from '@toystory/lotso'
-
-// import { useDictStore } from '@/store/dict'
+import dayjs from 'dayjs'
 const { router } = useRouter()
 import type {
   PageRequest,
@@ -138,7 +142,7 @@ const props: CascaderProps = {
     const nodes: CascaderOption[] = [] // 动态节点
     const { level } = node
     if (level === 0) {
-      const resParent = await MortgageCityApi.getAllProvince()
+      const resParent = await CommonApi.getAllProvince()
       if (resParent && resParent?.data) {
         resParent?.data.map((item) => {
           const area = {
@@ -153,7 +157,7 @@ const props: CascaderProps = {
       const params = {
         code: node.value as number
       }
-      const res = await MortgageCityApi.getProvinceChildren(params)
+      const res = await CommonApi.getProvinceChildren(params)
       if (res && res.data) {
         res?.data.map((item) => {
           const area = {
@@ -169,7 +173,7 @@ const props: CascaderProps = {
   }
 }
 const exportHandler = () => {
-  console.error(selectIds.value)
+  // console.error(selectIds.value)
   let params
   const ids = selectIds.value.map((item) => String(item))
   if (selectIds.value.length) {
@@ -196,7 +200,10 @@ const exportHandler = () => {
         }
         CommonApi.downLoadFiles(params)
           .then((res) => {
-            handleDownloadFile(res)
+            handleDownloadFile(
+              res,
+              `抵解押城市信息${dayjs().format('YYYYMMDD')}.xlsx`
+            )
             ElMessage({
               type: 'success',
               message: '操作成功'
@@ -234,7 +241,6 @@ const getList = async () => {
   }
   MortgageCityApi.getMortgageCityList(queryParams)
     .then((res) => {
-      console.error(res)
       if (res && res.code === 200) {
         tableData.value = res?.data?.list || []
         pageTotal.value = res?.data?.total || 0
@@ -247,12 +253,16 @@ const getList = async () => {
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
 const tableLoading: Ref<boolean> = ref(false)
 const tableData: Ref<MortgageCityListResponse[]> = ref([])
-// 分页
-const handleCurrentChange = (val: number) => {
-  console.log('value>>>>>', val)
-  queryParams.pageNo = val
-  getList()
-}
+// // 分页
+// const handleCurrentChange = (val: number) => {
+//   queryParams.pageNo = val
+//   getList()
+// }
+// // 页面条数改变
+// const handleSizeChange = (val: number) => {
+//   queryParams.pageSize = val
+//   getList()
+// }
 // 表格最大高度
 const searchBoxRef = ref()
 const tableHeight = computed(() => {
@@ -268,11 +278,7 @@ const tableHeight = computed(() => {
     return height
   }
 })
-// 页面条数改变
-const handleSizeChange = (val: number) => {
-  queryParams.pageSize = val
-  getList()
-}
+
 const selectData: Ref<MortgageCityListResponse[]> = ref([])
 // 选择的数据
 const selectionChangeHandler = (item: MortgageCityListResponse[]) => {
@@ -303,7 +309,10 @@ const delHandler = (ids: string[]) => {
   })
     .then(() => {
       // 调用删除接口
-      MortgageCityApi.delMortgageCity(queryParams).then((res) => {
+      const params = {
+        ids: selectIds.value
+      }
+      MortgageCityApi.delMortgageCity(params).then((res) => {
         console.error(res)
         if (res && res.code === 200) {
           ElMessage({
@@ -377,8 +386,6 @@ const downloadTemplate = () => {
 
 onMounted(() => {
   getList()
-  // const dictStore = useDictStore()
-  // console.error(dictStore);
 })
 </script>
 

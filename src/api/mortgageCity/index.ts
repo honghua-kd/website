@@ -7,14 +7,13 @@ import type { AxiosInstance } from 'axios'
 import type {
   MartgageCityListRequest,
   EditMortgageCityRequest,
-  CodeRequest
+  DelMartgageCityRequest
 } from './types/request'
 import type {
   MortgageCityListResponse,
-  ProvinceResponse,
   CityExportResponse
 } from './types/response'
-const prefix = '/operations-management'
+const prefix = '/operations-mortgage'
 
 export class MortgageCityAPI {
   private request: AxiosInstance
@@ -58,7 +57,7 @@ export class MortgageCityAPI {
 
   // 删除抵解押城市配置
   delMortgageCity(
-    data: MartgageCityListRequest
+    data: DelMartgageCityRequest
   ): Response<boolean | null | undefined> {
     return this.request({
       url: `${prefix}/admin-api/mortgage/cityConfiguration/delete`,
@@ -83,24 +82,7 @@ export class MortgageCityAPI {
     data: MartgageCityListRequest
   ): Response<CityExportResponse> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage/cityConfiguration/importAsync`,
-      method: 'post',
-      data
-    })
-  }
-
-  // 获取所有省份信息
-  getAllProvince(): Response<Omit<ProvinceResponse, 'haveChildren'>[]> {
-    return this.request({
-      url: `${prefix}/admin-api/area/getAllProvinces`,
-      method: 'post'
-    })
-  }
-
-  // 获取所有省份子节点信息
-  getProvinceChildren(data: CodeRequest): Response<ProvinceResponse[]> {
-    return this.request({
-      url: `${prefix}/admin-api/area/getChildren`,
+      url: `${prefix}/admin-api/mortgage/cityConfiguration/export`,
       method: 'post',
       data
     })
