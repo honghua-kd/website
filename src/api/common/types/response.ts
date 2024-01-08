@@ -158,3 +158,18 @@ export interface ExpressDictItem {
   colorType?: string
   cssClass?: string
 }
+
+// 查询树形字典数据
+export interface DictDataTreeResponse {
+  children?: DictDataTreeResponse[] | null
+  colorType?: null | string
+  cssClass?: null | string
+  dataLevel?: number | null
+  dictType?: null | string
+  label?: null | string
+  parentValue?: null | string
+  remark?: null | string
+  sort?: number | null
+  status?: number | null
+  value?: null | string
+}

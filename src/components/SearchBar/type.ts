@@ -24,7 +24,7 @@ type ISearchProps = ISearchConfigCommon | ISearchConfigTimer
 
 type ISearchUnit = ISearchProps[]
 
-type queryState = Record<string, any>
+type queryState = Record<string, unknown>
 type dictState = Record<string, DictItem[]>
 
 interface IProps {

@@ -70,3 +70,12 @@ export interface BatchExportRequest {
    */
   makeExcel: boolean
 }
+
+/**
+ * DictDataTreeReqVO
+ */
+export interface DictTreeRequest {
+  dictType?: null | string
+  label?: null | string
+  status?: number | null
+}
