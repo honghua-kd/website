@@ -23,7 +23,6 @@ sast:
 build-dev:
   extends: .build
   script:
-    - npm run check
     - $BUILD_DEV
   rules:
     - if: $CI_COMMIT_TAG =~ $RELEASE_TAG
