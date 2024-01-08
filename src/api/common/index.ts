@@ -6,7 +6,8 @@ import type {
   ExportAssetStageResultRequest,
   RecordRequest,
   RelationListRequest,
-  BatchExportRequest
+  BatchExportRequest,
+  DictTreeRequest
 } from './types/request'
 import type {
   UploadFile,
@@ -14,7 +15,8 @@ import type {
   DictList,
   RecordList,
   FileDownload,
-  RelationListItem
+  RelationListItem,
+  DictDataTreeResponse
 } from './types/response'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
@@ -160,6 +162,15 @@ export class CommonAPI {
       url: `${prefix}/admin-api/file/attachment/batchExport`,
       method: 'post',
       responseType: 'blob',
+      data
+    })
+  }
+
+  // 查询树形字典数据
+  getDictTreeList(data: DictTreeRequest): Response<DictDataTreeResponse[]> {
+    return this.request({
+      url: `${prefix}/admin-api/system/dict-data/tree`,
+      method: 'post',
       data
     })
   }
