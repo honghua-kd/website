@@ -261,6 +261,7 @@
         :page-sizes="[10, 20, 50, 100]"
         :total="pageTotal"
         class="table-page"
+        v-model:current-page="queryParams.pageNo"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
@@ -275,6 +276,7 @@
 <script lang="ts" setup>
 import { ref, reactive, Ref, computed, onMounted, toRefs } from 'vue'
 import { useRouter, useRoute } from '@toystory/lotso'
+import dayjs from 'dayjs'
 import {
   ElMessageBox,
   ElMessage,
@@ -295,7 +297,6 @@ import EditForm from './EditForm.vue'
 import LogisticsInfoForm from './LogisticsInfoForm.vue'
 import CheckForm from './CheckForm.vue'
 import ImportForm from './ImportForm.vue'
-import { EXPRESS_STATUS, EXPRESS_TYPE } from '@/constants'
 import type {
   PageRequest,
   ExpressInfoCardListRequest,
@@ -425,16 +426,16 @@ const getCheckConfig = () => {
 
 const getContentList = (value: ExpressContentList[]) => {
   let list = ''
-  // value.forEach((item, index) => {
-  //   if (index === value.length - 1) {
-  //     list += item.contentType ? item.contentType : ''
-  //   } else {
-  //     list += item.contentType ? item.contentType + '、' : ''
-  //   }
-  // })
-  value.forEach((item) => {
-    list += item.contentType ? item.contentType + ' ' : ''
+  value.forEach((item, index) => {
+    if (index === value.length - 1) {
+      list += item.contentType ? item.contentType : ''
+    } else {
+      list += item.contentType ? item.contentType + '、' : ''
+    }
   })
+  // value.forEach((item) => {
+  //   list += item.contentType ? item.contentType + ' ' : ''
+  // })
   return list
 }
 
@@ -536,10 +537,6 @@ const batchReceiveHandler = () => {
         })
     })
     .catch((err: Error) => {
-      ElMessage({
-        type: 'error',
-        message: '操作失败'
-      })
       throw err
     })
 }
@@ -548,46 +545,55 @@ const importHandler = () => {
   importFormRef.value.open()
 }
 const exportHandler = () => {
-  const params = {
-    expressNo: queryParams.expressNo,
-    expressCompany: queryParams.expressCompany,
-    create_time: queryParams.createTime,
-    expressType: queryParams.expressType,
-    expressContent: queryParams.expressContent,
-    expressContentRemark: queryParams.expressContentRemark
-  }
-  API.exportExpressContentInfo(params)
-    .then((res) => {
-      if (res && res.code === 200) {
-        if (res?.data?.sync === 1) {
-          const params = {
-            fileCode: res?.data?.fileCode
-          }
-          CommonApi.downLoadFiles(params)
-            .then((res) => {
-              const fileStream = res?.data
-              const fileName = '邮寄信息.xlsx'
-              fileDownload(fileStream, fileName)
-              ElMessage({
-                type: 'success',
-                message: '操作成功'
+  if (!tableData.value.length) {
+    ElMessage({
+      type: 'error',
+      message: '列表无数据无需导出'
+    })
+  } else {
+    const params = {
+      expressNo: queryParams.expressNo,
+      expressCompany: queryParams.expressCompany,
+      create_time: queryParams.createTime,
+      expressType: queryParams.expressType,
+      expressContent: queryParams.expressContent,
+      expressContentRemark: queryParams.expressContentRemark
+    }
+    API.exportExpressContentInfo(params)
+      .then((res) => {
+        if (res && res.code === 200) {
+          if (res?.data?.sync === 1) {
+            const params = {
+              fileCode: res?.data?.fileCode
+            }
+            CommonApi.downLoadFiles(params)
+              .then((res) => {
+                const fileStream = res?.data
+                const fileName = `邮寄信息登记${dayjs().format(
+                  'YYYYMMDD'
+                )}.xlsx`
+                fileDownload(fileStream, fileName)
+                ElMessage({
+                  type: 'success',
+                  message: '操作成功'
+                })
               })
+              .catch((err: Error) => {
+                tableLoading.value = false
+                throw err
+              })
+          } else if (res?.data?.sync === 0) {
+            ElMessage({
+              type: 'success',
+              message: '导出任务已经产生，前面有任务待处理，请至我的下载中查看'
             })
-            .catch((err: Error) => {
-              tableLoading.value = false
-              throw err
-            })
-        } else if (res?.data?.sync === 0) {
-          ElMessage({
-            type: 'success',
-            message: '等待导出结果'
-          })
+          }
         }
-      }
-    })
-    .catch((err: Error) => {
-      throw err
-    })
+      })
+      .catch((err: Error) => {
+        throw err
+      })
+  }
 }
 
 // 删除
@@ -621,10 +627,6 @@ const delHandler = (ids: string[]) => {
       })
     })
     .catch((err: Error) => {
-      ElMessage({
-        type: 'error',
-        message: '删除失败'
-      })
       throw err
     })
 }
@@ -697,11 +699,11 @@ const getDicts = () => {
 // 快递状态处理
 const getExpressStatus = (status: number) => {
   let topic = ''
-  if (status === EXPRESS_STATUS.REJECT) {
+  if (status === 0) {
     topic = '未接收'
-  } else if (status === EXPRESS_STATUS.RECEIVE) {
+  } else if (status === 1) {
     topic = '已接收'
-  } else if (status === EXPRESS_STATUS.PROBLEM) {
+  } else if (status === 2) {
     topic = '问题件'
   }
   return topic
@@ -710,9 +712,9 @@ const getExpressStatus = (status: number) => {
 // 寄送接收状态
 const getExpressType = (status: number) => {
   let topic = ''
-  if (status === EXPRESS_TYPE.RECEIVE) {
+  if (status === 1) {
     topic = '接收'
-  } else if (status === EXPRESS_TYPE.SEND) {
+  } else if (status === 0) {
     topic = '寄送'
   }
   return topic
