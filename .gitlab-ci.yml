@@ -22,7 +22,7 @@ sast:
     - RANCHER
 
 code-check:
-  stage: build
+  stage: code-check
   before_script:
     - npm config set registry ${NPM_REGISTRY}
   script:
