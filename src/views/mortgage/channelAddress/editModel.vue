@@ -87,6 +87,7 @@ import { watch, toRefs, reactive, ref } from 'vue'
 import type { ModelStateType } from '@/views/mortgage/channelAddress/type'
 import type { AgencyAddressDetailResponse } from '@/api/channel/types/response'
 import type { FormInstance, FormRules, CascaderOption } from 'element-plus'
+import type { InternalRuleItem } from 'async-validator'
 import AreaCasder from '@/components/AreaCascader/index.vue'
 import { AgencyAPI } from '@/api'
 const API = new AgencyAPI()
@@ -199,7 +200,11 @@ const ruleFormRef = ref<FormInstance>()
 const rules = reactive<FormRules<typeof editForm>>({
   systemSourceValue: [
     {
-      validator: (rule: any, value: any, callback: any) => {
+      validator: (
+        rule: InternalRuleItem,
+        value: string[] | undefined,
+        callback: (error?: string | Error | undefined) => void
+      ) => {
         if (!value || value.length === 0) {
           callback(new Error('请选择来源系统'))
         } else {
@@ -218,8 +223,12 @@ const rules = reactive<FormRules<typeof editForm>>({
   ],
   areaCode: [
     {
-      validator: (rule: any, value: any, callback: any) => {
-        if (value.length === 0) {
+      validator: (
+        rule: InternalRuleItem,
+        value: string[] | undefined,
+        callback: (error?: string | Error | undefined) => void
+      ) => {
+        if (value?.length === 0) {
           callback(new Error('请选择城市'))
         } else {
           callback()
@@ -230,7 +239,11 @@ const rules = reactive<FormRules<typeof editForm>>({
   ],
   phone: [
     {
-      validator: (rule: any, value: any, callback: any) => {
+      validator: (
+        rule: InternalRuleItem,
+        value: string | undefined,
+        callback: (error?: string | Error | undefined) => void
+      ) => {
         var regExp = /^1[3456789]\d{9}$/
         if (!value || (value !== '' && regExp.test(value))) {
           callback()
