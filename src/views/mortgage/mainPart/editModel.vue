@@ -2,7 +2,7 @@
   <el-dialog
     class="main-part-model"
     v-model="dialogVisible"
-    title="新增"
+    :title="dialogTitle"
     width="700px"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -15,7 +15,7 @@
           <el-input />
         </el-form-item>
         <el-form-item label="条件">
-          <el-upload
+          <!-- <el-upload
             class="avatar-uploader"
             action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
             :show-file-list="false"
@@ -35,8 +35,38 @@
             :show-file-list="false"
           >
             <el-icon class="avatar-uploader-icon"><Plus /></el-icon>
-          </el-upload>
+          </el-upload> -->
+          <el-radio-group v-model="condition" class="ml-4">
+            <el-radio label="contractSubject" size="large">合同主体</el-radio>
+            <el-radio label="capitalInfo" size="large">资方信息</el-radio>
+            <el-radio label="高薪小贷" size="large">高薪小贷</el-radio>
+          </el-radio-group>
         </el-form-item>
+        <el-form-item v-if="condition === 'contractSubject'" label="合同主体">
+          <el-select
+            v-model="editForm.contractSubject"
+            multiple
+            collapse-tags
+            collapse-tags-tooltip
+            placeholder="Select"
+            style="width: 240px"
+          >
+            <!-- <el-option
+              v-for="item in contractSubjectOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            /> -->
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          v-if="condition === 'capitalInfo'"
+          label="资方信息"
+        ></el-form-item>
+        <el-form-item
+          v-if="condition === '高薪小贷'"
+          label="高薪小贷"
+        ></el-form-item>
         <el-form-item label="组织机构代码">
           <el-input />
         </el-form-item>
@@ -47,19 +77,11 @@
           <el-input />
         </el-form-item>
         <span>联系地址</span>
-        <!-- <el-form-item label="省份">
-          <el-select> </el-select>
-        </el-form-item>
-        <el-form-item label="城市">
-          <el-select> </el-select>
-        </el-form-item> -->
         <el-form-item label="省/市">
-          <el-cascader
-            placeholder="请选择"
-            style="width: 100%"
-            :options="BasicData.cityList"
-            clearable
-          />
+          <!-- <AreaCasder
+            :value="editForm.areaCode"
+            @changeAreaData="changeAreaData"
+          /> -->
         </el-form-item>
         <el-form-item label="详细地址">
           <el-input />
@@ -87,29 +109,189 @@
 </template>
 <script lang="ts" setup>
 import { watch, toRefs, reactive } from 'vue'
-import { Plus } from '@element-plus/icons-vue'
-import type { RecordType, ModelStateType } from '@/views/mortgage/mainPart/type'
-import BasicData from '@/views/mortgage/mainPart/data'
+// import { Plus } from '@element-plus/icons-vue'
+import type { ModelStateType } from '@/views/mortgage/mainPart/type'
+import type { MortgageSubjectListResponse } from '@/api/mainPart/types/response'
+// import AreaCasder from '@/components/AreaCascader/index.vue'
 
 type ModelPropsType = {
   visible: boolean
-  formValue: RecordType
+  formValue: MortgageSubjectListResponse
+  title: string
 }
 const props = withDefaults(defineProps<ModelPropsType>(), {
   visible: false,
-  formValue: () => ({})
+  formValue: () => ({
+    /**
+     * 资方信息
+     */
+    capitalInfo: '',
+    /**
+     * 联系地址-城市code
+     */
+    contactAddressCityCode: '',
+    /**
+     * 联系地址-城市名称
+     */
+    contactAddressCityName: '',
+    /**
+     * 联系地址-详细地址
+     */
+    contactAddressDetail: '',
+    /**
+     * 联系地址-省份code
+     */
+    contactAddressProvinceCode: '',
+    /**
+     * 联系地址-省份名称
+     */
+    contactAddressProvinceName: '',
+    /**
+     * 联系人
+     */
+    contactName: '',
+    /**
+     * 联系电话
+     */
+    contactPhone: '',
+    /**
+     * 合同主体
+     */
+    contractSubject: '',
+    /**
+     * 创建时间
+     */
+    createTime: '',
+    /**
+     * 创建者
+     */
+    creatorName: '',
+    /**
+     * 抵押主体全称
+     */
+    mortgageSubjectAllName: '',
+    /**
+     * 抵押主体唯一Code
+     */
+    mortgageSubjectCode: '',
+    /**
+     * 抵押主体名称
+     */
+    mortgageSubjectName: '',
+    /**
+     * 抵押主体类型
+     */
+    mortgageSubjectType: '',
+    /**
+     * 组织机构代码
+     */
+    organizationCode: '',
+    /**
+     * 注册地址
+     */
+    registeredAddress: '',
+    /**
+     * 更新者
+     */
+    updaterName: '',
+    /**
+     * 更新时间
+     */
+    updateTime: ''
+  }),
+  title: ''
 })
 
 const state = reactive<ModelStateType>({
   dialogVisible: false,
-  editForm: {}
+  editForm: {
+    /**
+     * 资方信息
+     */
+    capitalInfo: '',
+    /**
+     * 联系地址-城市code
+     */
+    contactAddressCityCode: '',
+    /**
+     * 联系地址-城市名称
+     */
+    contactAddressCityName: '',
+    /**
+     * 联系地址-详细地址
+     */
+    contactAddressDetail: '',
+    /**
+     * 联系地址-省份code
+     */
+    contactAddressProvinceCode: '',
+    /**
+     * 联系地址-省份名称
+     */
+    contactAddressProvinceName: '',
+    /**
+     * 联系人
+     */
+    contactName: '',
+    /**
+     * 联系电话
+     */
+    contactPhone: '',
+    /**
+     * 合同主体
+     */
+    contractSubject: '',
+    /**
+     * 创建时间
+     */
+    createTime: '',
+    /**
+     * 创建者
+     */
+    creatorName: '',
+    /**
+     * 抵押主体全称
+     */
+    mortgageSubjectAllName: '',
+    /**
+     * 抵押主体唯一Code
+     */
+    mortgageSubjectCode: '',
+    /**
+     * 抵押主体名称
+     */
+    mortgageSubjectName: '',
+    /**
+     * 抵押主体类型
+     */
+    mortgageSubjectType: '',
+    /**
+     * 组织机构代码
+     */
+    organizationCode: '',
+    /**
+     * 注册地址
+     */
+    registeredAddress: '',
+    /**
+     * 更新者
+     */
+    updaterName: '',
+    /**
+     * 更新时间
+     */
+    updateTime: ''
+  },
+  dialogTitle: '',
+  condition: ''
 })
-const { dialogVisible, editForm } = toRefs(state)
+const { dialogVisible, editForm, dialogTitle, condition } = toRefs(state)
 watch(
-  [() => props.visible, () => props.formValue],
-  ([newVisible, newValue]) => {
+  [() => props.visible, () => props.formValue, () => props.title],
+  ([newVisible, newValue, newTitle]) => {
     state.dialogVisible = newVisible
     state.editForm = newValue
+    state.dialogTitle = newTitle
   },
   {
     immediate: true

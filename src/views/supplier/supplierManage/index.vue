@@ -171,6 +171,7 @@ import type {
 } from '@/views/supplier/supplierManage/type.ts'
 import { SupplierAPI } from '@/api'
 const API = new SupplierAPI()
+import type { CascaderValue } from 'element-plus'
 
 const queryFormList = ref<queryForm>({
   name: '',
@@ -347,16 +348,16 @@ const selectData = (selection: RecordType[], row: RecordType) => {
 const propsObj = reactive({
   multiple: false
 })
-const changeCity = (value: any) => {
+const changeCity = (value: CascaderValue) => {
   console.log(value)
   console.log(formModel.value)
   if (propsObj.multiple) {
     // 多选
   } else {
     // 单选
-    value.forEach((i: number) => {
-      console.log(i)
-    })
+    // value.forEach((i: number) => {
+    //   console.log(i)
+    // })
   }
 }
 </script>

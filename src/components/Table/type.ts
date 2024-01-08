@@ -1,4 +1,4 @@
-type TableRecord = Record<string, any>
+type TableRecord = Record<string, unknown>
 type CustomStyleType = Record<string, string>
 
 interface ITableConfigProps {

@@ -350,6 +350,25 @@ export default [
             children: [],
             elements: [],
             menuType: 3,
+            menu: 'messageTemplate',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'messageManage'
+      }
+    ]
+  },
+
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
             menu: 'recordUploadIndex',
             sort: 1
           }

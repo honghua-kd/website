@@ -11,12 +11,12 @@
         <template v-for="(unit, index) in searchConfig" :key="index">
           <el-row :gutter="20" v-if="index > 1 ? expandFlag : true">
             <template v-for="item in unit" :key="item.prop">
-              <slot :name="item.slotName ? item.slotName : 'default'">
-                <el-col :span="item.colSpan">
-                  <el-form-item
-                    :label="item.label"
-                    :prop="[(item as ISearchConfigCommon).prop]"
-                  >
+              <el-col :span="item.colSpan">
+                <el-form-item
+                  :label="item.label"
+                  :prop="[(item as ISearchConfigCommon).prop]"
+                >
+                  <slot :name="item.slotName ? item.slotName : 'default'">
                     <!-- el-date-picker -->
                     <template v-if="item.compType === 'el-date-picker'">
                       <el-date-picker
@@ -56,9 +56,9 @@
                         />
                       </el-select>
                     </template>
-                  </el-form-item>
-                </el-col>
-              </slot>
+                  </slot>
+                </el-form-item>
+              </el-col>
             </template>
           </el-row>
         </template>

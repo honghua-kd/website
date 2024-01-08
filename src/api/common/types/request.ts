@@ -77,3 +77,11 @@ export interface CodeRequest {
    */
   code: number
 }
+/**
+ * DictDataTreeReqVO
+ */
+export interface DictTreeRequest {
+  dictType?: null | string
+  label?: null | string
+  status?: number | null
+}
