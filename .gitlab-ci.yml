@@ -10,6 +10,7 @@ include:
 stages:
   - test
   - xcheck
+  - code-check
   - scan
   - build
   - deploy  
@@ -17,6 +18,16 @@ stages:
 
 sast:
   stage: test
+  tags:
+    - RANCHER
+
+code-check:
+  stage: build
+  before_script:
+    - npm config set registry ${NPM_REGISTRY}
+  script:
+    - npm install --legacy-peer-deps
+    - npm run check
   tags:
     - RANCHER
 
