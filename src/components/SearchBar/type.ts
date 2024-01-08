@@ -32,6 +32,7 @@ interface IProps {
   modelValue: queryState
   dictArray?: string[]
   showExpand?: boolean
+  labelWidth?: string
 }
 
 export {

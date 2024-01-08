@@ -5,7 +5,7 @@ export { ExpressAPI } from './expressManagement'
 export { CommonAPI } from './common'
 export { RecordAPI } from './downUpload'
 export { NoticeCenterAPI } from './noticeCenter'
-
+export { SpecialConfigAPI } from './specialConfig'
 export type * from './types/request'
 export type * from './types/response'
 
@@ -29,3 +29,6 @@ export type * from './supplier/types/response'
 
 export type * from './noticeCenter/types/request'
 export type * from './noticeCenter/types/response'
+
+export type * from './specialConfig/types/request'
+export type * from './specialConfig/types/response'
