@@ -47,7 +47,7 @@ export const searchConfig: ISearchUnit[] = [
 export const tableColumn: ITableConfigProps[] = [
   {
     label: '文书编号',
-    prop: '',
+    prop: 'documentNo',
     minWidth: 120,
     fixed: false,
     align: 'center',
@@ -55,10 +55,100 @@ export const tableColumn: ITableConfigProps[] = [
   },
   {
     label: '文书名称',
-    prop: '',
+    prop: 'documentName',
     minWidth: 120,
     fixed: false,
     align: 'center',
     forbiddenEdit: true
+  },
+  {
+    label: '文件类型',
+    prop: 'documentType',
+    minWidth: 120,
+    fixed: false,
+    align: 'center'
+  },
+  {
+    label: '文件版本',
+    prop: 'documentVersion',
+    minWidth: 120,
+    fixed: false,
+    align: 'center'
+  },
+  {
+    label: '适用部门',
+    prop: 'sourceSystem1',
+    minWidth: 120,
+    fixed: false,
+    align: 'center'
+  },
+  {
+    label: '用印类型',
+    prop: 'sealType',
+    minWidth: 120,
+    fixed: false,
+    align: 'center'
+  },
+  {
+    label: '文书文件',
+    prop: 'fileCode',
+    minWidth: 120,
+    fixed: false,
+    align: 'center'
+  },
+  {
+    label: '审核状态',
+    prop: 'approvalStatus',
+    minWidth: 120,
+    fixed: false,
+    align: 'center'
+  },
+  {
+    label: '备注',
+    prop: 'remark',
+    minWidth: 120,
+    fixed: false,
+    align: 'center'
+  },
+  {
+    label: '创建人',
+    prop: 'creatorName',
+    width: '',
+    minWidth: '100',
+    fixed: false,
+    align: 'left'
+  },
+  {
+    label: '创建时间',
+    prop: 'createTime',
+    width: '130',
+    minWidth: '',
+    fixed: false,
+    align: 'center'
+  },
+  {
+    label: '最后更新人',
+    prop: 'updaterName',
+    width: '',
+    minWidth: '100',
+    fixed: false,
+    align: 'left'
+  },
+  {
+    label: '更新时间',
+    prop: 'updateTime',
+    width: '',
+    minWidth: '130',
+    fixed: false,
+    align: 'center'
+  },
+  {
+    type: 'action',
+    label: '操作',
+    prop: 'action',
+    width: '120',
+    minWidth: '',
+    fixed: 'right',
+    align: 'center'
   }
 ]

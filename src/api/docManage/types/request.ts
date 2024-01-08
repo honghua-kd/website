@@ -1,4 +1,5 @@
 import { PageRequest } from '@/api/types/request'
+// 分页查询文书信息
 export interface DocumentPageRequest extends PageRequest {
   /**
    * 审核状态
@@ -40,4 +41,40 @@ export interface DocumentPageRequest extends PageRequest {
    * 文书状态 0-停用 1-启用
    */
   status?: number | null
+}
+
+// 保存或编辑文书信息
+export interface SaveOrUpdateDocRequest {
+  /**
+   * 文书名称
+   */
+  documentName: string
+  /**
+   * 文书编号 更新时传递
+   */
+  documentNo?: string
+  /**
+   * 文书类型 字典表SYSTEM_DOCUMENT_TYPE
+   */
+  documentType: string
+  /**
+   * 文书版本
+   */
+  documentVersion: string
+  /**
+   * 文件code 附件上传接口返回
+   */
+  fileCode: string
+  /**
+   * 主键ID 更新时传递
+   */
+  id?: number
+  /**
+   * 用印类型 字典表 SEAL_TYPE
+   */
+  sealType: string
+  /**
+   * 适用部门
+   */
+  sourceSystem1: string[]
 }

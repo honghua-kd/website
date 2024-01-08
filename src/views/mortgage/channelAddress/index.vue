@@ -608,7 +608,7 @@ const submitUpload = () => {
   fileList.value.forEach((item) => {
     formData.append('file', item.raw as File)
   })
-  formData.append('bizType', 'AGENCY_CONFIG')
+  formData.append('bizType', 'AGENCY_ADDRESS_INFO')
   COMMONAPI.getAsyncImport(formData)
     .then((res) => {
       if (res && res.code === 200) {
