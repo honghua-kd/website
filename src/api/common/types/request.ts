@@ -71,6 +71,12 @@ export interface BatchExportRequest {
   makeExcel: boolean
 }
 
+export interface CodeRequest {
+  /**
+   * 行政规划代码
+   */
+  code: number
+}
 /**
  * DictDataTreeReqVO
  */

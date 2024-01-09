@@ -2,25 +2,43 @@ import { PageRequest } from '@/api/types/request'
 // 供应商管理列表
 export interface SupplierListRequest extends PageRequest {
   // 归属公司
-  belongCompany?: string | null | undefined
-  // 城市行政规划代码
-  cityCode?: number | null | undefined
-  // 区/县行政规划代码
-  countyCode?: number | null | undefined
-  // 到期时间-结束时间 (时间格式:yyyy-MM-dd)
-  expireDateEnd?: string | null | undefined
-  // 到期时间-开始时间 (时间格式:yyyy-MM-dd)
-  expireDateStart?: string | null | undefined
-  // 内部对接人工号
-  innerInterfaceStaffCode?: string | null | undefined
-  // 省份行政规划代码
-  provinceCode?: number | null | undefined
-  // 状态,0=已过期;1=合作中;2=已停用; 状态,0=停用;1=启用
-  status?: number | null | undefined
-  // 供应商公司名称
-  supplierName?: string | null | undefined
-  // 供应商类型 1-律所；2-委外机构；3-仓库；4-运输公司；5-收车公司；6-评估机构；7-设备处置平台机构
-  supplierType?: number | null | undefined
+  belongCompany?: string
+  /**
+   * 城市行政规划代码
+   */
+  cityCode?: number | ''
+  /**
+   * 区/县行政规划代码
+   */
+  countyCode?: number | ''
+  /**
+   * 到期时间-结束时间 (时间格式:yyyy-MM-dd)
+   */
+  expireDateEnd?: string
+  /**
+   * 到期时间-开始时间 (时间格式:yyyy-MM-dd)
+   */
+  expireDateStart?: string
+  /**
+   * 内部对接人工号
+   */
+  innerInterfaceStaffCode?: string
+  /**
+   * 供应商公司名称
+   */
+  name?: string
+  /**
+   * 省份行政规划代码
+   */
+  provinceCode?: number | ''
+  /**
+   * 状态,0=已过期;1=合作中;2=已停用
+   */
+  status?: number | ''
+  /**
+   * 类型    1-律所；2-委外机构；3-仓库；4-运输公司；5-收车公司；6-评估机构；7-设备处置平台机构
+   */
+  type?: number | ''
 }
 
 // 新增/编辑 供应商
