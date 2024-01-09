@@ -20,7 +20,7 @@
                     <!-- el-date-picker -->
                     <template v-if="item.compType === 'el-date-picker'">
                       <el-date-picker
-                        v-model="modelValue[(item as ISearchConfigTimer).propStart]"
+                        v-model="modelValue[(item as ISearchConfigTimer).propStart ] "
                         type="datetime"
                         :placeholder="(item as ISearchConfigTimer).placeholderStart"
                         style="margin-right: 4%; width: 48%"

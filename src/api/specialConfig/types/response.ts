@@ -28,7 +28,7 @@ interface ListCell {
   /**
    * 批次号
    */
-  batchNo?: null | string
+  batchNo?: string
   /**
    * 合同状态 已拼接好
    */

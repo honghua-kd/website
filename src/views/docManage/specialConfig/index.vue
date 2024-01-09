@@ -35,7 +35,12 @@
         </el-button>
       </template>
       <template #column-switch="{ row, prop }">
-        <el-switch v-model="row[prop]" @click="switchHandler(row[prop])" />
+        <el-switch
+          v-model="row[prop]"
+          @click="switchHandler(row.batchNo, row[prop])"
+          :active-value="1"
+          :inactive-value="0"
+        />
       </template>
 
       <template #action="scope">
@@ -56,7 +61,7 @@ import SearchBar from '@/components/SearchBar/index.vue'
 import { searchConfig, tableConfig } from './data'
 import { px2rem } from '@/utils'
 import { Plus } from '@element-plus/icons-vue'
-
+import { ElMessageBox, ElMessage } from 'element-plus'
 import { SpecialConfigAPI } from '@/api'
 import type { SpecialListItem, SpecialListRequest } from '@/api'
 
@@ -126,13 +131,46 @@ const editHandler = (id: string) => {
   console.log('id', id)
 }
 // 删除
-const delHandler = (id: string) => {
-  console.log('id', id)
+const delHandler = (batchNo: string) => {
+  // 二次确认
+  ElMessageBox.confirm('确认要删除吗？', '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(() => {
+      // 调用删除接口
+      const params = {
+        batchNo
+      }
+
+      API.delDocConfig(params).then((res) => {
+        if (res && res.code === 200) {
+          ElMessage({
+            type: 'success',
+            message: '删除成功'
+          })
+          getList()
+        }
+      })
+    })
+    .catch((err: Error) => {
+      throw err
+    })
 }
 
 // 状态开关
-const switchHandler = (status: string) => {
-  console.log('id', status)
+const switchHandler = (batchNo: string, status: number) => {
+  const params = {
+    batchNo,
+    status
+  }
+
+  API.changeStatus(params).then((res) => {
+    if (res && res.code === 200) {
+      getList()
+    }
+  })
 }
 
 // 新增

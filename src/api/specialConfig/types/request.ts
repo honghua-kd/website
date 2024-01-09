@@ -6,3 +6,8 @@ export interface SpecialBasicRequest {
 }
 
 export type SpecialListRequest = SpecialBasicRequest & PageRequest
+
+export interface ChangeStatusRequest {
+  batchNo?: string | null
+  status?: number | null
+}
