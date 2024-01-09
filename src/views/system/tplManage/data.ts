@@ -4,28 +4,36 @@ import type { ITableConfigProps } from '@/components/Table/type'
 export const searchConfig: ISearchUnit[] = [
   [
     {
-      compType: 'el-select',
-      colSpan: 12,
-      label: '状态',
-      prop: 'status',
-      placeholder: '请选择状态',
+      compType: 'el-input',
+      colSpan: 6,
+      label: '模板名称',
+      prop: 'fileName',
+      placeholder: '请输入模板名称',
       options: 'NOTICE_STATUS'
     },
     {
-      compType: 'el-select',
+      compType: 'el-input',
+      colSpan: 6,
+      label: '附件代码',
+      prop: 'fileCode',
+      placeholder: '请输入附件代码'
+    },
+    {
+      compType: 'el-cascader',
       colSpan: 12,
-      label: '消息类型',
-      prop: 'type',
-      placeholder: '请选择消息类型',
-      options: 'NOTICE_MESSGAE_TYPE'
+      label: '业务大类',
+      prop: 'businessCategory',
+      placeholder: '请选择业务大类',
+      slotName: 'businessCategory'
+      // BUSINESS_TEMPLATE_TYPE
     }
   ]
 ]
 
 export const tableConfig: ITableConfigProps[] = [
   {
-    label: '标题',
-    prop: 'title',
+    label: '模板名称',
+    prop: 'fileName',
     minWidth: 120,
     align: 'left',
     showOverflowTooltip: true,
@@ -33,54 +41,60 @@ export const tableConfig: ITableConfigProps[] = [
     slotName: 'title'
   },
   {
-    label: '内容',
-    prop: 'content',
-    minWidth: 240,
+    label: '业务大类',
+    prop: 'businessCategory',
+    minWidth: 120,
+    align: 'center',
+    showOverflowTooltip: true
+  },
+  {
+    label: '业务小类',
+    prop: 'businessSubcategory',
+    minWidth: 120,
+    align: 'center',
+    showOverflowTooltip: true
+  },
+  {
+    label: '附件代码',
+    prop: 'fileCode',
+    minWidth: 120,
     align: 'left',
-    showOverflowTooltip: true,
-    forbiddenEdit: true
+    showOverflowTooltip: true
   },
   {
-    label: '消息类型',
-    prop: 'type',
-    width: 120,
-    align: 'center',
-    showOverflowTooltip: true,
-    forbiddenEdit: false,
-    slotName: 'noticeType'
-  },
-  {
-    label: '消息状态',
-    prop: 'status',
-    width: 120,
-    align: 'center',
-    showOverflowTooltip: true,
-    forbiddenEdit: false,
-    slotName: 'noticeStatus'
-  },
-  {
-    label: '发送人',
-    prop: 'senderName',
+    label: '上传人',
+    prop: 'creatorName',
     width: 100,
     align: 'center',
-    showOverflowTooltip: true,
-    forbiddenEdit: false
+    showOverflowTooltip: true
   },
   {
-    label: '发送人工号',
-    prop: 'sender',
+    label: '上传时间',
+    prop: 'createTime',
     width: 120,
     align: 'center',
-    showOverflowTooltip: true,
-    forbiddenEdit: false
+    showOverflowTooltip: true
   },
   {
-    label: '发送时间',
-    prop: 'createTime',
-    width: 180,
+    label: '更新人',
+    prop: 'updaterName',
+    width: 120,
     align: 'center',
-    showOverflowTooltip: true,
-    forbiddenEdit: false
+    showOverflowTooltip: true
+  },
+  {
+    label: '更新时间',
+    prop: 'updateTime',
+    width: 120,
+    align: 'center',
+    showOverflowTooltip: true
+  },
+  {
+    label: '备注',
+    prop: 'remark',
+    width: 180,
+    align: 'left',
+    showOverflowTooltip: true
   },
   {
     label: '操作',

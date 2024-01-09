@@ -112,9 +112,7 @@ const filterDictLabel = (dictCode: string, value: string | number) => {
 
 const queryParams = reactive({
   pageNo: 1,
-  pageSize: 10,
-  status: null,
-  type: null
+  pageSize: 10
 })
 
 // 重置
