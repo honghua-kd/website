@@ -14,7 +14,7 @@
         <el-cascader
           placeholder="请选择城市"
           style="width: 100%"
-          :options="BasicData.cityList"
+          :options="CityList"
           :props="cascaderProps"
           collapse-tags
           collapse-tags-tooltip
@@ -41,7 +41,7 @@
 
 <script setup lang="ts">
 import { reactive, toRefs, watch } from 'vue'
-import BasicData from '@/views/supplier/supplierManage/data'
+import { CityList } from '@/views/supplier/supplierManage/data'
 import type {
   RecordType,
   PersonModelStateType

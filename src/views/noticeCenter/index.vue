@@ -214,13 +214,4 @@ const clickTitle = (row: NoticeListItem) => {
 getList()
 </script>
 
-<style lang="scss" scoped>
-.table-btn-box {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-// .page-notice-center {
-// }
-</style>
+<style lang="scss" scoped></style>

@@ -10,11 +10,29 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="归属公司">
-              <el-input v-model="formModel.belongCompany" />
+              <el-select
+                v-model="formModel.belongCompany"
+                style="width: 100%"
+                placeholder=""
+              >
+                <el-option
+                  v-for="item in belongCompanyStatus"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="区域"> </el-form-item>
+            <el-form-item label="区域">
+              <el-cascader
+                v-model="selCity"
+                clearable
+                :props="props"
+                style="width: 100%"
+              />
+            </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="状态">
@@ -77,12 +95,12 @@
 
     <div class="action">
       <el-tooltip content="新建" placement="top-start">
-        <el-button type="primary" :icon="Plus" @click="handleOpen">
+        <el-button type="primary" :icon="Plus" @click="addHandler">
           新建
         </el-button>
       </el-tooltip>
       <el-tooltip content="导入" placement="top-start">
-        <el-button type="primary" :icon="Setting" @click="handleOpen">
+        <el-button type="primary" :icon="Setting" @click="importHandler">
           导入
         </el-button>
       </el-tooltip>
@@ -92,49 +110,42 @@
         </el-button>
       </el-tooltip>
     </div>
-    <!-- list -->
-    <div class="list">
-      <el-table
-        :data="tableData"
-        border
-        style="width: 100%"
-        @select="selectData"
-        @select-all="selectAllData"
-      >
-        <el-table-column
-          v-for="i in tableColumn"
-          :key="i.label"
-          :type="i.type"
-          :prop="i.prop"
-          :label="i.label"
-          :width="i.width"
-          :fixed="i.fixed"
-          :show-overflow-tooltip="i.tooltip"
-        >
-          <template v-if="i.label === '操作'">
-            <el-button link type="primary">查看</el-button>
-            <el-button link type="primary">修改</el-button>
-            <el-button link type="primary">停用</el-button>
-            <el-button link type="danger">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-    <div class="page">
-      <el-pagination
-        background
-        layout="total,sizes,prev, pager, next"
-        :page-sizes="[10, 20, 50, 100]"
-        :total="pageTotal"
-        class="table-page"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
-    </div>
+    <Table
+      :data="tableData"
+      :loading="tableLoading"
+      :columnConfig="tableConfig"
+      :isSelected="true"
+      :page-total="pageTotal"
+      :setColumnEnable="true"
+      :height="tableHeight"
+      :actionWidth="px2rem('100px')"
+      v-model:pageSize="formModel.pageSize"
+      v-model:pageNo="formModel.pageNo"
+      @size-change="getList"
+      @current-change="getList"
+    >
+      <template #action="scope">
+        <template v-if="scope.row.id">
+          <el-button link type="primary" @click="checkHandler(scope.row.id)"
+            >查看</el-button
+          >
+          <el-button link type="primary" @click="editHandler(scope.row)"
+            >修改</el-button
+          >
+          <el-button link type="primary" @click="stopHandler(scope.row.id)"
+            >停用</el-button
+          >
+          <el-button link type="danger" @click="delHandler(scope.row.id)"
+            >删除</el-button
+          >
+        </template>
+      </template>
+    </Table>
+    <ImportForm ref="importFormRef" :biztype="bizType" />
     <!-- 供应商弹窗 -->
     <EditModel
       :visible="editModelVisible"
-      :formValue="{}"
+      :formValue="formValue"
       @closeModel="closeModel"
     />
   </div>
@@ -148,19 +159,63 @@ import {
   Refresh,
   Search
 } from '@element-plus/icons-vue'
-import { reactive, toRefs, ref, onMounted, Ref } from 'vue'
-import BasicData from '@/views/supplier/supplierManage/data'
+import { px2rem } from '@/utils'
+import { reactive, toRefs, ref, onMounted, Ref, computed } from 'vue'
+import { tableConfig } from './data'
 import EditModel from '@/views/supplier/supplierManage/editModel.vue'
+import ImportForm from './ImportForm.vue'
 import type {
   StateType,
   RecordType,
   queryForm
 } from '@/views/supplier/supplierManage/type.ts'
+import Table from '@/components/Table/index.vue'
 import type { DictItem } from '@/api'
 import { SupplierAPI, CommonAPI } from '@/api'
 const API = new SupplierAPI()
 const CommonApi = new CommonAPI()
-
+import { useDictStore } from '@/store/dict'
+import type { CascaderProps, CascaderValue, CascaderOption } from 'element-plus'
+// import { SupplierAPI } from '@/api'
+// const API = new SupplierAPI()
+const selCity = ref([])
+const props: CascaderProps = {
+  lazy: true,
+  async lazyLoad(node, resolve) {
+    const nodes: CascaderOption[] = [] // 动态节点
+    const { level } = node
+    if (level === 0) {
+      const resParent = await CommonApi.getAllProvinces()
+      if (resParent && resParent?.data) {
+        resParent?.data.map((item) => {
+          const area = {
+            value: item.code,
+            label: item.name,
+            leaf: level >= 2
+          }
+          nodes.push(area)
+        })
+      }
+    } else {
+      const params = {
+        code: node.value as number
+      }
+      const res = await CommonApi.getProvincesChildren(params)
+      if (res && res.data) {
+        res?.data.map((item) => {
+          const area = {
+            value: item.code,
+            label: item.name,
+            leaf: level >= 2
+          }
+          nodes.push(area)
+        })
+      }
+    }
+    resolve(nodes) // 回调
+  }
+}
+const tableLoading = ref<boolean>(false)
 const queryFormList = ref<queryForm>({
   name: '',
   belongCompany: '',
@@ -194,7 +249,7 @@ const state = reactive<StateType>({
     pageSize: 10
   },
   // 表列
-  tableColumn: BasicData.tableColumn,
+  tableColumn: tableConfig,
   // 表格数据
   tableData: [],
   pageTotal: 100,
@@ -203,30 +258,49 @@ const state = reactive<StateType>({
 })
 const { formModel, tableColumn, tableData, pageTotal, editModelVisible } =
   toRefs(state)
-
+// 表格最大高度
+const searchBoxRef = ref()
+const tableHeight = computed(() => {
+  if (searchBoxRef.value?.clientHeight) {
+    const height = Number(
+      document.documentElement.clientHeight -
+        200 -
+        searchBoxRef.value?.clientHeight
+    )
+    return height
+  } else {
+    const height = Number(document.documentElement.clientHeight - 200)
+    return height
+  }
+})
 onMounted(() => {
   getDicts()
   getList()
 })
 const supplierDetailStatus: Ref<DictItem[]> = ref([])
 const supplierDetailType: Ref<DictItem[]> = ref([])
-
+const dictStore = useDictStore()
+const belongCompanyStatus = ref([])
 const getDicts = () => {
-  const dictTypes = ['SUPPLIER_DETAIL_STATUS', 'SUPPLIER_DETAIL_TYPE']
   const params = {
-    dictTypes
+    dictType: 'SOURCE_SYSTEM'
   }
-  CommonApi.getDictsList(params)
+  CommonApi.getDictTreeList(params)
     .then((res) => {
       if (res && res.code === 200) {
-        supplierDetailStatus.value = res?.data
-          ?.SUPPLIER_DETAIL_STATUS as DictItem[]
-        supplierDetailType.value = res?.data?.SUPPLIER_DETAIL_TYPE as DictItem[]
+        belongCompanyStatus.value = res.data?.map((item) => {
+          return {
+            label: item.label,
+            value: item.value
+          }
+        })
       }
     })
-    .catch((err: Error) => {
-      throw err
+    .catch((err) => {
+      console.log(err)
     })
+  supplierDetailStatus.value = dictStore.dicts.SUPPLIER_DETAIL_STATUS
+  supplierDetailType.value = dictStore.dicts.SUPPLIER_DETAIL_TYPE
 }
 // 获取列表数据
 const getList = async () => {
@@ -234,7 +308,12 @@ const getList = async () => {
   await API.getSupplierList(queryFormList.value)
     .then((res) => {
       search()
-      console.log(res)
+      console.error(res)
+      if (res && res.code === 200) {
+        tableData.value.splice(0, tableData.length)
+        tableData.value.push(...(res?.data?.list || []))
+        pageTotal.value = res?.data?.total || 0
+      }
     })
     .catch((err) => {
       console.log(err)
@@ -251,24 +330,21 @@ const search = () => {
 }
 // 重置
 const reset = () => {}
-// 表格size变化
-const handleSizeChange = (size: number) => {
-  formModel.value.pageSize = size
-  formModel.value.pageNo = 1
-  getList()
-}
-// 表格分页
-const handleCurrentChange = (page: number) => {
-  formModel.value.pageNo = page
-  getList()
-}
 const handleOpen = () => {
   state.editModelVisible = true
 }
 
 // 监听供应商弹窗关闭
-const closeModel = ({ visible, type }: { visible: boolean; type: string }) => {
-  console.log(visible, type)
+const closeModel = ({
+  visible,
+  type,
+  data
+}: {
+  visible: boolean
+  type: string
+  data: Object
+}) => {
+  console.error(visible, type, data)
   state.editModelVisible = visible
 }
 
@@ -278,6 +354,26 @@ const selectAllData = (selection: RecordType[]) => {
 }
 const selectData = (selection: RecordType[], row: RecordType) => {
   console.log(selection, row)
+}
+
+let formValue = reactive({})
+const addHandler = () => {
+  formValue = {}
+  editModelVisible.value = true
+}
+const checkHandler = (val: string) => {}
+const editHandler = (val: string) => {
+  formValue = val
+  editModelVisible.value = true
+}
+const stopHandler = (val: string) => {}
+const delHandler = (val: string) => {}
+
+const importFormRef = ref()
+const bizType = ref('')
+const importHandler = () => {
+  bizType.value = 'SUPPLIER_DETAIL'
+  importFormRef.value.open()
 }
 </script>
 

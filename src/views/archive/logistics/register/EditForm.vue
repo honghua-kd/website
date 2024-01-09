@@ -117,6 +117,11 @@
                     {
                       required: expressStatusFlag,
                       message: '寄件人名称不能为空'
+                    },
+                    {
+                      max: 200,
+                      message: '内容超长',
+                      trigger: 'change'
                     }
                   ]"
                 >
@@ -134,19 +139,40 @@
                 <el-form-item
                   label="寄件人联系电话"
                   :label-width="px2rem('120px')"
-                  prop="postPhone"
+                  prop="sendPhone"
+                  :rules="[
+                    {
+                      message: '请输入正确的联系电话',
+                      type: 'string',
+                      pattern: /^1[3456789]\d{9}$/,
+                      trigger: 'blur'
+                    }
+                  ]"
                 >
-                  <el-input
+                  <el-autocomplete
                     v-model="basicInfoForm.sendPhone"
+                    :fetch-suggestions="queryContractsSearchByPhone"
+                    :trigger-on-focus="false"
                     clearable
                     placeholder="请输入寄件人联系电话"
+                    @select="handleSelect"
                   />
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row :gutter="20">
               <el-col :span="18">
-                <el-form-item label="寄件人地址" prop="senderAddress">
+                <el-form-item
+                  label="寄件人地址"
+                  prop="sendAddress"
+                  :rules="[
+                    {
+                      max: 200,
+                      message: '内容超长',
+                      trigger: 'change'
+                    }
+                  ]"
+                >
                   <el-input
                     v-model="basicInfoForm.sendAddress"
                     clearable
@@ -187,6 +213,11 @@
                     {
                       required: !expressStatusFlag,
                       message: '收件人名称不能为空'
+                    },
+                    {
+                      max: 200,
+                      message: '内容超长',
+                      trigger: 'change'
                     }
                   ]"
                 >
@@ -205,18 +236,39 @@
                   label="收件人联系电话"
                   :label-width="px2rem('120px')"
                   prop="receivePhone"
+                  :rules="[
+                    {
+                      message: '请输入正确的联系电话',
+                      type: 'string',
+                      pattern: /^1[3456789]\d{9}$/,
+                      trigger: 'blur'
+                    }
+                  ]"
                 >
-                  <el-input
+                  <el-autocomplete
                     v-model="basicInfoForm.receivePhone"
+                    :fetch-suggestions="queryContractsSearchByPhone"
+                    :trigger-on-focus="false"
                     clearable
                     placeholder="请输入收件人联系电话"
+                    @select="handleSelectRe"
                   />
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row :gutter="20">
               <el-col :span="18">
-                <el-form-item label="收件人地址" prop="receiveAddress">
+                <el-form-item
+                  label="收件人地址"
+                  prop="receiveAddress"
+                  :rules="[
+                    {
+                      max: 200,
+                      message: '内容超长',
+                      trigger: 'change'
+                    }
+                  ]"
+                >
                   <el-input
                     v-model="basicInfoForm.receiveAddress"
                     clearable
@@ -320,6 +372,7 @@
                 label="类型对应编号"
                 prop="contentTypeNumber"
                 align="center"
+                show-overflow-tooltip
               />
               <el-table-column
                 label="关联合同号"
@@ -351,7 +404,17 @@
       </el-row>
       <el-row>
         <el-col :span="15">
-          <el-form-item label="备注" prop="expressContentRemark">
+          <el-form-item
+            label="备注"
+            prop="expressContentRemark"
+            :rules="[
+              {
+                max: 200,
+                message: '内容超长',
+                trigger: 'change'
+              }
+            ]"
+          >
             <el-input
               v-model="basicInfoForm.expressContentRemark"
               clearable
@@ -385,7 +448,11 @@
                 type="index"
               />
               <el-table-column label="文件名" prop="fileName" align="center" />
-              <el-table-column label="上传用户" prop="creator" align="center" />
+              <el-table-column
+                label="上传用户"
+                prop="creatorName"
+                align="center"
+              />
               <el-table-column
                 label="上传时间"
                 prop="createTime"
@@ -397,6 +464,7 @@
                     v-model="scope.row.fileRemark"
                     clearable
                     placeholder="请输入备注"
+                    @input="limitWords"
                   />
                 </template>
               </el-table-column>
@@ -498,6 +566,33 @@ const queryContractsSearch = (
 ) => {
   const params = {
     userName: queryString
+  }
+  API.getUsualAddressList(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        commonContracts.value = res?.data?.list || []
+        commonContracts.value.forEach((item) => {
+          item.value = '常用联系-' + item.userName + '-' + item.userPhone
+        })
+        const results = queryString
+          ? commonContracts.value.filter(createFilter(queryString))
+          : commonContracts.value
+        clearTimeout(timeout)
+        timeout = setTimeout(() => {
+          cb(results)
+        }, 2000 * Math.random())
+      }
+    })
+    .catch((err: Error) => {
+      console.log(err)
+    })
+}
+const queryContractsSearchByPhone = (
+  queryString: string,
+  cb: AutocompleteFetchSuggestionsCallback
+) => {
+  const params = {
+    userPhone: queryString
   }
   API.getUsualAddressList(params)
     .then((res) => {
@@ -633,7 +728,7 @@ const getOtherContentList = () => {
             fileCode: item.attachmentId,
             fileName: item.fileName,
             fileRemark: item.remark,
-            creator: item.creator,
+            creatorName: item.creatorName,
             createTime: item.createTime
           })
         })
@@ -648,6 +743,14 @@ const open = async (row?: ExpressListItem) => {
   dialogVisible.value = true
   getDicts()
   init(row)
+}
+const limitWords = (val: string) => {
+  if (val.length > 200) {
+    ElMessage({
+      type: 'error',
+      message: '内容超长'
+    })
+  }
 }
 const init = (row?: ExpressListItem) => {
   if (row) {
@@ -817,7 +920,7 @@ const imContent = (params: ExpressContentList[]) => {
 // 导入上传附件数据回显
 const getFileInfo = (params: OtherFileList[]) => {
   const userStore = useUserStore()
-  const user = userStore.userInfo?.staffCode as string
+  const user = userStore.userInfo?.staffName as string
   console.error(params)
   if (params && params.length) {
     params.forEach((item) => {
@@ -825,7 +928,7 @@ const getFileInfo = (params: OtherFileList[]) => {
         fileCode: item.fileCode,
         fileName: item.fileName,
         fileRemark: '',
-        creator: user
+        creatorName: user
       })
     })
   }

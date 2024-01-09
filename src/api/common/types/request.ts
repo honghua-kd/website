@@ -77,4 +77,13 @@ export interface BaseProvincesList<I> {
 }
 export interface ProvincesChildrenRequest {
   code: number
+
+  /**
+   * DictDataTreeReqVO
+   */
+}
+export interface DictTreeRequest {
+  dictType?: null | string
+  label?: null | string
+  status?: number | null
 }

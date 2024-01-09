@@ -7,6 +7,9 @@ export { SupplierAPI } from './supplier'
 export { RecordAPI } from './downUpload'
 export { NoticeCenterAPI } from './noticeCenter'
 export { MessageAPI } from './message'
+export { AgencyAPI } from './channel'
+export { SpecialConfigAPI } from './specialConfig'
+export { MainPartAPI } from './mainPart'
 
 export type * from './types/request'
 export type * from './types/response'
@@ -29,5 +32,13 @@ export type * from './common/types/response'
 export type * from './supplier/types/request'
 export type * from './supplier/types/response'
 
+export type * from './channel/types/request'
+export type * from './channel/types/response'
+
 export type * from './noticeCenter/types/request'
 export type * from './noticeCenter/types/response'
+
+export type * from './specialConfig/types/request'
+export type * from './specialConfig/types/response'
+export type * from './mainPart/types/request'
+export type * from './mainPart/types/response'

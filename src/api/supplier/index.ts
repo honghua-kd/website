@@ -35,7 +35,7 @@ export class SupplierAPI {
     data: SupplierListRequest
   ): Response<PageList<SupplierListResponse>> {
     return this.request({
-      url: `${prefix}/admin-api/supplier/list`,
+      url: `${prefix}/admin-api/mortgage/supplier/list`,
       method: 'post',
       data
     })
@@ -121,7 +121,7 @@ export class SupplierAPI {
     data: CityContactsListRequest
   ): Response<PageList<CityContactsListResponse>> {
     return this.request({
-      url: `${prefix}/admin-api/supplier/cityContacts/list`,
+      url: `${prefix}/admin-api/mortgage/supplier/cityContacts/list`,
       method: 'post',
       data
     })
@@ -155,6 +155,50 @@ export class SupplierAPI {
   ): Response<boolean | null | undefined> {
     return this.request({
       url: `${prefix}/admin-api/supplier/cityContacts/delete`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 结算列表
+  getSettleList(
+    data: CityContactsListRequest
+  ): Response<PageList<CityContactsListResponse>> {
+    return this.request({
+      url: `${prefix}/admin-api/mortgage/supplier/settlementWay/list`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 新增结算
+  addSettleContacts(
+    data: AddCityContactsRequest
+  ): Response<boolean | null | undefined> {
+    return this.request({
+      url: `${prefix}/admin-api/mortgage/supplier/settlementWay/add`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 编辑结算
+  editSettleContacts(
+    data: EditCityContactsRequest
+  ): Response<boolean | null | undefined> {
+    return this.request({
+      url: `${prefix}/admin-api/mortgage/supplier/settlementWay/edit`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 删除结算
+  deleteSettleContacts(
+    data: DeleteCityContactsRequest
+  ): Response<boolean | null | undefined> {
+    return this.request({
+      url: `${prefix}/admin-api/mortgage/supplier/settlementWay/delete`,
       method: 'post',
       data
     })

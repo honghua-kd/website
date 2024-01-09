@@ -12,7 +12,6 @@ type TableColumnType = {
   fixed: boolean
   tooltip: boolean
 }
-export type RecordType<T = any> = Record<string, T>
 export type queryForm = {
   name: string
   belongCompany: string
@@ -28,6 +27,7 @@ export type queryForm = {
   pageNo: number
   pageSize: number
 }
+export type RecordType<T = unknown> = Record<string, T>
 export type StateType = {
   formModel: {
     name: string

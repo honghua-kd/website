@@ -3,7 +3,6 @@
     class="edit-supplier-dialog"
     v-model="dialogVisible"
     title=""
-    width="750px"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     destroy-on-close
@@ -12,7 +11,10 @@
     <div class="dialog-header flex-between-center">
       <div class="title flex-between-center">
         <span>新增供应商</span>
-        <el-button v-show="step !== 1" type="primary">导入</el-button>
+        <el-button v-show="step !== 1" type="primary" @click="importHandler"
+          >导入</el-button
+        >
+        <ImportForm ref="importFormRef" :biztype="bizType" />
       </div>
       <el-steps
         :active="step"
@@ -68,7 +70,14 @@
               v-model="editForm.registerType"
               style="width: 100%"
               placeholder="请选择登记注册号类型"
-            ></el-select>
+            >
+              <el-option
+                v-for="item in registerTypeStatus"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -87,14 +96,21 @@
       <el-row style="width: 100%">
         <el-col :span="12">
           <el-form-item
-            label="合作商类型"
+            label="供应商类型"
             :rules="[{ required: true, message: 'required' }]"
           >
             <el-select
               v-model="editForm.supplierTypes"
               style="width: 100%"
-              placeholder="请选择合作商类型"
-            ></el-select>
+              placeholder="请选择供应商类型"
+            >
+              <el-option
+                v-for="item in supplierDetailType"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -121,7 +137,14 @@
               v-model="editForm.belongCompanyList"
               style="width: 100%"
               placeholder="请选择归属公司"
-            ></el-select>
+            >
+              <el-option
+                v-for="item in belongCompanyStatus"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -286,7 +309,7 @@
               v-model="editForm.openBankArea"
               placeholder="请选择"
               style="width: 100%"
-              :options="BasicData.cityList"
+              :options="CityList"
               clearable
             />
           </el-form-item>
@@ -307,7 +330,14 @@
       <!-- 可选 fileCodes -->
       <el-row style="width: 100%">
         <el-form-item>
-          <el-upload>
+          <el-upload
+            ref="upload"
+            :show-file-list="true"
+            :auto-upload="false"
+            action="#"
+            multiple
+            v-model:file-list="fileList"
+          >
             <el-button type="primary">选取文件</el-button>
             <template #tip>
               <div class="el-upload__tip">
@@ -332,38 +362,39 @@
           @click="addPerson"
           ><CirclePlusFilled
         /></el-icon>
+        <el-cascader
+          v-model="selCity"
+          clearable
+          :props="propsCity"
+          style="margin: 0 10px; width: 40%"
+        />
+        <el-button type="primary" @click="searchPersonList()">查询</el-button>
       </h3>
-      <el-table :data="personTableData" border style="width: 100%">
-        <el-table-column
-          v-for="i in personColumn"
-          :key="i.label"
-          :type="i.type"
-          :prop="i.prop"
-          :label="i.label"
-          :width="i.width"
-          :fixed="i.fixed"
-        >
-          <template v-if="i.label === '操作'" #default="scope">
-            <el-button link type="primary" @click="editPerson(scope)"
+
+      <Table
+        :data="personTableData"
+        :columnConfig="personColumn"
+        :isSelected="false"
+        :page-total="personTotal"
+        :setColumnEnable="false"
+        :height="tableHeight"
+        :actionWidth="px2rem('100px')"
+        v-model:pageSize="queryPerson.pageSize"
+        v-model:pageNo="queryPerson.pageNo"
+        @size-change="getCityList"
+        @current-change="getCityList"
+      >
+        <template #action="scope">
+          <template v-if="scope.row.id">
+            <el-button link type="primary" @click="editPerson(scope.row)"
               >编辑</el-button
             >
-            <el-button link type="danger" @click="removePerson(scope)"
+            <el-button link type="danger" @click="removePerson(scope.row.id)"
               >删除</el-button
             >
           </template>
-        </el-table-column>
-      </el-table>
-      <div class="page">
-        <el-pagination
-          background
-          layout="total,sizes,prev, pager, next"
-          :page-sizes="[10, 20, 50, 100]"
-          :total="personTotal"
-          class="table-page"
-          @size-change="personSizeChange"
-          @current-change="personCurrentChange"
-        />
-      </div>
+        </template>
+      </Table>
     </div>
     <!--  -->
     <div v-show="step === 3" class="settlement-type">
@@ -375,38 +406,39 @@
           @click="addSettlement"
           ><CirclePlusFilled
         /></el-icon>
+        <el-cascader
+          v-model="selSettle"
+          clearable
+          :props="propsCity"
+          style="margin: 0 10px; width: 40%"
+        />
+        <el-button type="primary" @click="searchSettleList()">查询</el-button>
       </h3>
-      <el-table :data="settlementTableData" border style="width: 100%">
-        <el-table-column
-          v-for="i in settlementColumn"
-          :key="i.label"
-          :type="i.type"
-          :prop="i.prop"
-          :label="i.label"
-          :width="i.width"
-          :fixed="i.fixed"
-        >
-          <template v-if="i.label === '操作'" #default="scope">
-            <el-button link type="primary" @click="editSettlement(scope)"
+
+      <Table
+        :data="settlementTableData"
+        :columnConfig="settlementColumn"
+        :isSelected="false"
+        :page-total="settlementTotal"
+        :setColumnEnable="false"
+        :height="tableHeight"
+        :actionWidth="px2rem('100px')"
+        v-model:pageSize="querySettle.pageNo"
+        v-model:pageNo="querySettle.pageSize"
+        @size-change="getSettlementList"
+        @current-change="getSettlementList"
+      >
+        <template #action="scope">
+          <template v-if="scope.row.id">
+            <el-button link type="primary" @click="editSettlement(scope.row)"
               >编辑</el-button
             >
-            <el-button link type="danger" @click="removeSettlement(scope)"
+            <el-button link type="danger" @click="removeSettlement(scope.row.id)"
               >删除</el-button
             >
           </template>
-        </el-table-column>
-      </el-table>
-      <div class="page">
-        <el-pagination
-          background
-          layout="total,sizes,prev, pager, next"
-          :page-sizes="[10, 20, 50, 100]"
-          :total="settlementTotal"
-          class="table-page"
-          @size-change="settlementSizeChange"
-          @current-change="settlementCurrentChange"
-        />
-      </div>
+        </template>
+      </Table>
     </div>
     <!--  -->
     <template #footer>
@@ -434,16 +466,28 @@
   />
 </template>
 <script lang="ts" setup>
-import { watch, toRefs, reactive } from 'vue'
+import { watch, toRefs, reactive, ref, Ref, computed } from 'vue'
+import { px2rem } from '@/utils'
 import type {
   RecordType,
   ModelStateType
 } from '@/views/supplier/supplierManage/type'
 import { CirclePlusFilled } from '@element-plus/icons-vue'
-import BasicData from '@/views/supplier/supplierManage/data'
+import ImportForm from './ImportForm.vue'
+import {
+  PersonColumn,
+  CityList,
+  SettlementColumn
+} from '@/views/supplier/supplierManage/data'
+import Table from '@/components/Table/index.vue'
 import PersonModel from '@/views/supplier/supplierManage/personModel.vue'
 import SettlementModel from '@/views/supplier/supplierManage/settlementModel.vue'
-
+import type { DictItem } from '@/api'
+import { SupplierAPI, CommonAPI } from '@/api'
+import { useUserStore } from '@toystory/lotso'
+const CommonApi = new CommonAPI()
+const SupplierApi = new SupplierAPI()
+import { useDictStore } from '@/store/dict'
 type ModelPropsType = {
   visible: boolean
   formValue: RecordType
@@ -458,14 +502,18 @@ const state = reactive<ModelStateType>({
   step: 1, // 步骤
   cancelButtonText: '取消', // 取消按钮文案
   okButtonText: '下一步', // 确认按钮文案
-  personColumn: BasicData.personColumn, // 城市联系人表列
+  personColumn: PersonColumn, // 城市联系人表列
   personTableData: [], // 城市联系人数据
   personModelVisible: false, // 城市联系人弹窗
-  personTotal: 100, // 城市联系人数据总数
-  settlementColumn: BasicData.settlementColumn, // 结算方式表列
+  personTotal: 0, // 城市联系人数据总数
+  pagePersonSize: 10,
+  pagePersonNo: 1,
+  settlementColumn: SettlementColumn, // 结算方式表列
   settlementTableData: [], // 结算方式数据
   settlementModelVisible: false, // 结算方式弹窗
-  settlementTotal: 100 // 结算方式数据总数
+  settlementTotal: 0, // 结算方式数据总数
+  pageSettleSize: 10,
+  pageSettlenNo: 1
 })
 const {
   dialogVisible,
@@ -482,12 +530,148 @@ const {
   settlementModelVisible,
   settlementTotal
 } = toRefs(state)
+// 表格最大高度
+const searchBoxRef = ref()
+const tableHeight = computed(() => {
+  if (searchBoxRef.value?.clientHeight) {
+    const height = Number(
+      document.documentElement.clientHeight -
+        200 -
+        searchBoxRef.value?.clientHeight
+    )
+    return height
+  } else {
+    const height = Number(document.documentElement.clientHeight - 200)
+    return height
+  }
+})
+const selCity = ref([])
+const propsCity: CascaderProps = {
+  lazy: true,
+  async lazyLoad(node, resolve) {
+    const nodes: CascaderOption[] = [] // 动态节点
+    const { level } = node
+    if (level === 0) {
+      const resParent = await CommonApi.getAllProvinces()
+      if (resParent && resParent?.data) {
+        resParent?.data.map((item) => {
+          const area = {
+            value: item.code,
+            label: item.name,
+            leaf: level >= 1
+          }
+          nodes.push(area)
+        })
+      }
+    } else {
+      const params = {
+        code: node.value as number
+      }
+      const res = await CommonApi.getProvincesChildren(params)
+      if (res && res.data) {
+        res?.data.map((item) => {
+          const area = {
+            value: item.code,
+            label: item.name,
+            leaf: level >= 1
+          }
+          nodes.push(area)
+        })
+      }
+    }
+    resolve(nodes) // 回调
+  }
+}
+const registerTypeStatus: Ref<DictItem[]> = ref([])
+const dictStore = useDictStore()
+const belongCompanyStatus = ref([])
+const supplierDetailType: Ref<DictItem[]> = ref([])
+const getDicts = () => {
+  const params = {
+    dictType: 'SOURCE_SYSTEM'
+  }
+  CommonApi.getDictTreeList(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        belongCompanyStatus.value = res.data?.map((item) => {
+          return {
+            label: item.label,
+            value: item.value
+          }
+        })
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+  registerTypeStatus.value = dictStore.dicts.SUPPLIER_REGISTER_TYPE
+  supplierDetailType.value = dictStore.dicts.SUPPLIER_DETAIL_TYPE
+}
+const queryPerson = reactive({
+  supplierId: state.editForm.id,
+  provinceName: '',
+  cityName: '',
+  pageNo: 1,
+  pageSize: 10
+})
+const querySettle = reactive({
+  supplierId: state.editForm.id,
+  provinceName: '',
+  cityName: '',
+  pageNo: 1,
+  pageSize: 10
+})
+const getCityList = async () => {
+  const params = {
+    supplierId: state.editForm.id,
+    provinceName: '',
+    cityName: '',
+    pageNo: queryPerson.pageNo,
+    pageSize: queryPerson.pageSize
+  }
+  await SupplierApi.getCityContactsList(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        personTableData.value.splice(0, personTableData.length)
+        personTableData.value.push(...(res?.data?.list || []))
+        personTotal.value = res?.data?.total || 0
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+const getSettlementList = async () => {
+  const params = {
+    supplierId: state.editForm.id,
+    provinceName: '',
+    cityName: '',
+    pageNo: querySettle.pageNo,
+    pageSize: querySettle.pageSize
+  }
+  await SupplierApi.getSettleList(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        settlementTableData.value.splice(0, settlementTableData.length)
+        settlementTableData.value.push(...(res?.data?.list || []))
+        settlementTotal.value = res?.data?.total || 0
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
 watch(
   [() => props.visible, () => props.formValue],
   ([newVisible, newValue]) => {
     state.step = 1
     state.dialogVisible = newVisible
     state.editForm = newValue
+    if (Object.keys(newValue).length) {
+      getCityList()
+      getSettlementList()
+    }
+    getDicts()
   },
   {
     immediate: true
@@ -512,10 +696,6 @@ const editPerson = (item: RecordType) => {
 const removePerson = (item: RecordType) => {
   console.log(item)
 }
-// 表格size改变
-const personSizeChange = () => {}
-// 表格翻页
-const personCurrentChange = () => {}
 // 监听城市联系人弹窗关闭
 const closePersonModel = ({
   visible,
@@ -578,7 +758,47 @@ const clickButton = (value: string) => {
       visible: false,
       type: value === '确认' ? 'update-close' : 'click-close'
     })
+    if (value === '确认') {
+      submitForm()
+    }
   }
+}
+const fileList = ref<UploadUserFile[]>([])
+const submitForm = () => {
+  const userStore = useUserStore()
+  tenantUser.value = userStore.userInfo?.staffCode as string
+  const formData = new FormData()
+  fileList.value.forEach((item) => {
+    formData.append('file', item.raw as File)
+  })
+  formData.append('tenantUser', tenantUser.value)
+  formData.append('prefixPath', 'express')
+  formData.append('expireDays', '-1')
+  CommonApi.uploadFilesBatch(formData)
+    .then((res) => {
+      if (res && res.code === 200) {
+        const fileCodes = res.data?.fileCodes || []
+      }
+    })
+    .catch((err: Error) => {
+      throw err
+    })
+}
+const importFormRef = ref()
+const bizType = ref('')
+const importHandler = () => {
+  if (state.step === 2) {
+    bizType.value = 'SUPPLIER_CITY_CONTACTS'
+  } else if (state.step === 3) {
+    bizType.value = 'SUPPLIER_SETTLEMENT_WAY'
+  }
+  importFormRef.value.open()
+}
+const searchPersonList = () => {
+
+}
+const searchSettleList = () => {
+  
 }
 </script>
 <style lang="scss" scoped>

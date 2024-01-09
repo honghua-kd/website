@@ -8,7 +8,8 @@ import type {
   RelationListRequest,
   BatchExportRequest,
   BaseProvincesList,
-  ProvincesChildrenRequest
+  ProvincesChildrenRequest,
+  DictTreeRequest
 } from './types/request'
 import type {
   UploadFile,
@@ -18,7 +19,8 @@ import type {
   FileDownload,
   RelationListItem,
   AllProvincesResponse,
-  ProvincesChildrenResponse
+  ProvincesChildrenResponse,
+  DictDataTreeResponse
 } from './types/response'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
@@ -182,6 +184,15 @@ export class CommonAPI {
   ): Response<BaseProvincesList<ProvincesChildrenResponse>> {
     return this.request({
       url: `${prefix}/admin-api/area/getChildren`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 查询树形字典数据
+  getDictTreeList(data: DictTreeRequest): Response<DictDataTreeResponse[]> {
+    return this.request({
+      url: `${prefix}/admin-api/system/dict-data/tree`,
       method: 'post',
       data
     })
