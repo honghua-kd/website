@@ -25,7 +25,7 @@ export const mortgageCity = [
               creator: '张三',
               createTime: '2022-12-10',
               updater: '张三',
-              updateTime: '2022-12-10',
+              updateTime: '2022-12-10'
             }
           ]
         }

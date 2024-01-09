@@ -37,62 +37,53 @@
         </el-row>
       </el-form>
     </div>
-    <div>
-      <el-row class="table-btn">
-        <el-button type="primary" :icon="Plus" @click="addHandler">
-          新增联系人
-        </el-button>
-      </el-row>
-      <el-table
-        :data="tableData"
-        :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
-        border
-        v-loading="tableLoading"
-        row-key="id"
-        :tree-props="{ children: 'target' }"
-      >
-        <el-table-column label="联系人名称" prop="userName" align="center" />
-        <el-table-column label="联系电话" prop="userPhone" align="center" />
-        <el-table-column label="地址" prop="userAddress" align="center" />
-        <el-table-column label="邮箱" prop="userMail" align="center" />
 
-        <el-table-column label="操作" fixed="right" width="240" align="center">
-          <template #default="scope">
-            <template v-if="scope.row.id">
-              <el-button link type="primary" @click="editHandler(scope.row)">
-                编辑
-              </el-button>
-              <el-button link type="danger" @click="delHandler(scope.row.id)">
-                删除
-              </el-button>
-            </template>
-          </template>
-        </el-table-column>
-      </el-table>
-      <!-- 分页 -->
-      <el-pagination
-        v-if="pageTotal"
-        background
-        layout="total,sizes,prev, pager, next"
-        :page-sizes="[10, 20, 50, 100]"
-        :total="pageTotal"
-        class="table-page"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
-    </div>
+    <Table
+      :data="tableData"
+      :loading="tableLoading"
+      :columnConfig="tableConfig"
+      :isSelected="false"
+      :page-total="pageTotal"
+      :setColumnEnable="true"
+      :height="tableHeight"
+      :actionWidth="px2rem('100px')"
+      v-model:pageSize="queryParams.pageSize"
+      v-model:pageNo="queryParams.pageNo"
+      @size-change="getList"
+      @current-change="getList"
+    >
+      <template #btnsBox>
+        <el-row class="table-btn">
+          <el-button type="primary" :icon="Plus" @click="addHandler">
+            新增联系人
+          </el-button>
+        </el-row>
+      </template>
+      <template #action="scope">
+        <template v-if="scope.row.id">
+          <el-button link type="primary" @click="editHandler(scope.row)">
+            编辑
+          </el-button>
+          <el-button link type="danger" @click="delHandler(scope.row.id)">
+            删除
+          </el-button>
+        </template>
+      </template>
+    </Table>
     <EditForm ref="editFormRef" :title="dialogTitle" @success="getList()" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, Ref } from 'vue'
+import { ref, reactive, Ref, computed } from 'vue'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import type { UsualAddressListItem } from '@/api'
 import { ExpressAPI } from '@/api'
 import { px2rem } from '@/utils'
 const API = new ExpressAPI()
+import Table from '@/components/Table/index.vue'
+import { tableConfig } from './data'
 import EditForm from './EditForm.vue'
 const tableLoading = ref<boolean>(false)
 const dialogTitle = ref<string>('')
@@ -104,7 +95,22 @@ const queryParams = reactive({
   userName: '',
   userPhone: ''
 })
-const tableData: Ref<UsualAddressListItem[]> = ref([])
+const tableData = reactive<UsualAddressListItem[]>([])
+// 表格最大高度
+const searchBoxRef = ref()
+const tableHeight = computed(() => {
+  if (searchBoxRef.value?.clientHeight) {
+    const height = Number(
+      document.documentElement.clientHeight -
+        200 -
+        searchBoxRef.value?.clientHeight
+    )
+    return height
+  } else {
+    const height = Number(document.documentElement.clientHeight - 200)
+    return height
+  }
+})
 const reset = () => {
   queryParams.pageNo = 1
   queryParams.pageSize = 10
@@ -152,10 +158,6 @@ const addHandler = () => {
   editFormRef.value.open()
 }
 
-// 分页
-const handleCurrentChange = (val: number) => {
-  queryParams.pageNo = val
-}
 // 获取列表
 const getList = () => {
   tableLoading.value = true
@@ -167,7 +169,8 @@ const getList = () => {
     .then((res) => {
       tableLoading.value = false
       if (res && res.code === 200) {
-        tableData.value = res?.data?.list || []
+        tableData.splice(0, tableData.length)
+        tableData.push(...(res?.data?.list || []))
         pageTotal.value = res?.data?.total || 0
       }
     })
@@ -175,10 +178,6 @@ const getList = () => {
       tableLoading.value = false
       console.log(err)
     })
-}
-// 页面条数改变
-const handleSizeChange = (val: number) => {
-  queryParams.pageSize = val
 }
 
 // 查询

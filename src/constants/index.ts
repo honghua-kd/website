@@ -11,17 +11,6 @@ export const VERIFY_RESULTS = {
   FAIL: 'OCR_STATUS_NO' // 未通过
 }
 
-export const EXPRESS_STATUS = {
-  RECEIVE: 1, // 已接收
-  REJECT: 0, // 未接收
-  PROBLEM: 2 // 问题件
-}
-
-export const EXPRESS_TYPE = {
-  RECEIVE: 1, // 接收
-  SEND: 0 // 寄送
-}
-
 export const DICT_TYPES = [
   'ARCHIVE_STATUS',
   'OCR_STATUS',
@@ -31,6 +20,7 @@ export const DICT_TYPES = [
   'EXPRESS_TYPE',
   'NOTICE_MESSGAE_TYPE',
   'NOTICE_STATUS',
+  'SYSTEM_DOCUMENT_TYPE',
   'YESNO',
   'MORTGAGE_CITYCONFIG',
   'MORTGAGE_CITYCONFIG_NO'

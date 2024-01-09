@@ -79,7 +79,7 @@ export interface ProvinceChild {
   /**
    * 子集
    */
-  children: { [key: string]: any }[]
+  children: []
   /**
    * 行政规划代码
    */

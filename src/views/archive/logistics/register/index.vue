@@ -103,48 +103,6 @@
       </el-form>
     </div>
     <div>
-      <div class="table-btn-box">
-        <div>
-          <el-button type="primary" :icon="Plus" @click="addHandler">
-            添加
-          </el-button>
-          <el-tooltip
-            content="需勾选要接收的条目，方可操作"
-            placement="top-start"
-          >
-            <el-button
-              type="primary"
-              :icon="Check"
-              @click="batchReceiveHandler"
-            >
-              批量接收
-            </el-button>
-          </el-tooltip>
-
-          <el-button type="primary" :icon="Upload" @click="importHandler">
-            导入
-          </el-button>
-          <el-button type="primary" :icon="Download" @click="exportHandler">
-            导出
-          </el-button>
-          <el-tooltip
-            content="需勾选要删除的条目，方可操作"
-            placement="top-start"
-          >
-            <el-button
-              type="primary"
-              :icon="Delete"
-              @click="delHandler(selectIds)"
-            >
-              删除
-            </el-button>
-          </el-tooltip>
-
-          <el-button type="primary" :icon="Search" @click="importResultHandler">
-            导入结果查询
-          </el-button>
-        </div>
-      </div>
       <Table
         :data="tableData"
         :loading="tableLoading"
@@ -160,6 +118,54 @@
         @size-change="getList"
         @current-change="getList"
       >
+        <template #btnsBox>
+          <div class="table-btn-box">
+            <div>
+              <el-button type="primary" :icon="Plus" @click="addHandler">
+                添加
+              </el-button>
+              <el-tooltip
+                content="需勾选要接收的条目，方可操作"
+                placement="top-start"
+              >
+                <el-button
+                  type="primary"
+                  :icon="Check"
+                  @click="batchReceiveHandler"
+                >
+                  批量接收
+                </el-button>
+              </el-tooltip>
+
+              <el-button type="primary" :icon="Upload" @click="importHandler">
+                导入
+              </el-button>
+              <el-button type="primary" :icon="Download" @click="exportHandler">
+                导出
+              </el-button>
+              <el-tooltip
+                content="需勾选要删除的条目，方可操作"
+                placement="top-start"
+              >
+                <el-button
+                  type="primary"
+                  :icon="Delete"
+                  @click="delHandler(selectIds)"
+                >
+                  删除
+                </el-button>
+              </el-tooltip>
+
+              <el-button
+                type="primary"
+                :icon="Search"
+                @click="importResultHandler"
+              >
+                导入结果查询
+              </el-button>
+            </div>
+          </div>
+        </template>
         <template #default="{ row, prop }">
           <!-- 快递状态 -->
           <span v-if="prop === 'expressStatus'">

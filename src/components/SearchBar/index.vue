@@ -5,7 +5,7 @@
       ref="queryFormRef"
       class="scan-form"
       :model="modelValue"
-      :label-width="px2rem('90px')"
+      :label-width="px2rem(labelWidth)"
     >
       <div class="scan-search-bar">
         <template v-for="(unit, index) in searchConfig" :key="index">
@@ -107,14 +107,15 @@ import type {
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
 
 const props = withDefaults(defineProps<IProps>(), {
-  showExpand: false
+  showExpand: false,
+  labelWidth: '90px'
 })
 
 const emit = defineEmits(['search', 'reset', 'update:modelValue'])
 const dictObj = reactive<dictState>({})
 
+const dictStore = useDictStore()
 const generateOptions = () => {
-  const dictStore = useDictStore()
   const dictMap = dictStore.dicts
   if (props.dictArray) {
     props.dictArray.forEach((item) => {
@@ -150,7 +151,17 @@ watch(
     deep: true
   }
 )
-generateOptions()
+
+watch(
+  () => dictStore.dicts,
+  () => {
+    generateOptions()
+  },
+  {
+    immediate: true,
+    deep: true
+  }
+)
 
 const searchwidth = computed(() => {
   let width = 'calc(100% - 216px)'

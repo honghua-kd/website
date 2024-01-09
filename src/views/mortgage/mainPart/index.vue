@@ -110,8 +110,6 @@
 import { reactive, toRefs, ref, computed, onMounted } from 'vue'
 import BasicData from '@/views/mortgage/mainPart/data'
 import EditModel from '@/views/mortgage/mainPart/editModel.vue'
-import type { StateType } from '@/views/mortgage/mainPart/type'
-import type { MortgageSubjectListResponse } from '@/api/mainPart/types/response'
 import {
   Refresh,
   Search,
@@ -123,6 +121,9 @@ import { px2rem } from '@/utils'
 import Table from '@/components/Table/index.vue'
 import { MainPartAPI } from '@/api'
 import AreaCasder from '@/components/AreaCascader/index.vue'
+import { ElMessageBox, ElMessage } from 'element-plus'
+import type { StateType } from '@/views/mortgage/mainPart/type'
+import type { MortgageSubjectListResponse } from '@/api/mainPart/types/response'
 
 const API = new MainPartAPI()
 const state = reactive<StateType>({

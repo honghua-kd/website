@@ -187,7 +187,8 @@ const API = new MortageAPI()
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
 
 const tableLoading = ref<boolean>(false)
-const tableData: Ref<CardListItem[]> = ref([])
+
+const tableData = reactive<CardListItem[]>([])
 type QueryParams = VehiRegisterCardListRequest &
   PageRequest &
   SortParamsRequest & { [index: string]: string | number | null | undefined }
@@ -538,7 +539,8 @@ const getList = () => {
     .then((res) => {
       tableLoading.value = false
       if (res && res.code === 200) {
-        tableData.value = res?.data?.list || []
+        tableData.splice(0, tableData.length)
+        tableData.push(...(res?.data?.list || []))
         pageTotal.value = res?.data?.total || 0
       }
     })
