@@ -46,7 +46,6 @@
       :page-total="pageTotal"
       :setColumnEnable="true"
       :height="tableHeight"
-      :actionWidth="px2rem('100px')"
       v-model:pageSize="queryParams.pageSize"
       v-model:pageNo="queryParams.pageNo"
       @size-change="getList"

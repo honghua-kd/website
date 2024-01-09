@@ -111,7 +111,6 @@
         :page-total="pageTotal"
         :setColumnEnable="true"
         :height="tableHeight"
-        :actionWidth="px2rem('100px')"
         v-model:pageSize="queryParams.pageSize"
         v-model:pageNo="queryParams.pageNo"
         @selection-change="selectionChangeHandler"
@@ -236,7 +235,7 @@ import { useRouter } from '@toystory/lotso'
 import dayjs from 'dayjs'
 import Table from '@/components/Table/index.vue'
 import { tableConfig } from './data'
-import { px2rem } from '@/utils'
+// import { px2rem } from '@/utils'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import { CommonAPI, ExpressAPI } from '@/api'
 import {
