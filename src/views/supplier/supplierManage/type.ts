@@ -1,7 +1,7 @@
-type OptionItemType = {
-  label: string
-  value: number | string
-}
+// type OptionItemType = {
+//   label: string
+//   value: number | string
+// }
 type TableColumnType = {
   type: string
   label: string
@@ -13,7 +13,7 @@ type TableColumnType = {
   tooltip: boolean
 }
 export type RecordType<T = any> = Record<string, T>
-export interface queryForm {
+export type queryForm = {
   name: string
   belongCompany: string
   provinceCode: number | ''
@@ -44,9 +44,6 @@ export type StateType = {
     pageNo: number
     pageSize: number
   }
-  statusArr: OptionItemType[]
-  typeArr: OptionItemType[]
-  actionList: OptionItemType[]
   tableColumn: TableColumnType[]
   tableData: RecordType[]
   pageTotal: number

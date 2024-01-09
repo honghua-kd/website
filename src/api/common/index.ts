@@ -6,7 +6,9 @@ import type {
   ExportAssetStageResultRequest,
   RecordRequest,
   RelationListRequest,
-  BatchExportRequest
+  BatchExportRequest,
+  BaseProvincesList,
+  ProvincesChildrenRequest
 } from './types/request'
 import type {
   UploadFile,
@@ -14,7 +16,9 @@ import type {
   DictList,
   RecordList,
   FileDownload,
-  RelationListItem
+  RelationListItem,
+  AllProvincesResponse,
+  ProvincesChildrenResponse
 } from './types/response'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
@@ -160,6 +164,25 @@ export class CommonAPI {
       url: `${prefix}/admin-api/file/attachment/batchExport`,
       method: 'post',
       responseType: 'blob',
+      data
+    })
+  }
+
+  // 获取所有的省份信息
+  getAllProvinces(): Response<BaseProvincesList<AllProvincesResponse>> {
+    return this.request({
+      url: `${prefix}/admin-api/area/getAllProvinces`,
+      method: 'post'
+    })
+  }
+
+  // 获取所有的省份信息
+  getProvincesChildren(
+    data: ProvincesChildrenRequest
+  ): Response<BaseProvincesList<ProvincesChildrenResponse>> {
+    return this.request({
+      url: `${prefix}/admin-api/area/getChildren`,
+      method: 'post',
       data
     })
   }

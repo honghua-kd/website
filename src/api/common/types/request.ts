@@ -70,3 +70,11 @@ export interface BatchExportRequest {
    */
   makeExcel: boolean
 }
+export interface BaseProvincesList<I> {
+  data?: I[]
+  msg?: string
+  code: number
+}
+export interface ProvincesChildrenRequest {
+  code: number
+}

@@ -7,20 +7,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { ref, watch } from 'vue'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
-import { CoreAPI, SystemAPI } from '@/api'
-import { useRouter, mitt, useRoutesStore, store } from '@toystory/lotso'
-import { useDictStore } from '@/store/dict'
+import { CoreAPI } from '@/api'
+import { useRouter, mitt } from '@toystory/lotso'
+import { useNoticeCenter, useDicts } from '@/hooks'
+import { DICT_TYPES } from '@/constants'
 import type { ElScrollbar } from 'element-plus'
-import { px2rem } from '@/utils'
 
 const localLanguage = ref(zhCn)
 
 const scrollbarRef = ref<InstanceType<typeof ElScrollbar>>()
 
 const { router } = useRouter()
-const dictStore = useDictStore()
+
+// 获取字典
+useDicts(DICT_TYPES)
+
+// 启用消息中心
+useNoticeCenter()
+
 watch(
   () => router.currentRoute.value,
   () => {
@@ -29,8 +35,6 @@ watch(
 )
 
 const coreAPI = new CoreAPI()
-const systemAPI = new SystemAPI()
-
 // 监听脚手架广播出来的登出
 mitt.on('logout', () => {
   coreAPI
@@ -45,55 +49,6 @@ mitt.on('logout', () => {
       console.error(err)
     })
 })
-
-// 获取字典信息
-const getDictInfo = () => {
-  const dictCache = JSON.parse(sessionStorage.getItem('DICTMAP') || 'null')
-  if (dictCache) {
-    dictStore.setDictMap(dictCache)
-    return
-  }
-  systemAPI
-    .getAllDictType()
-    .then((res) => {
-      if (res && res.code === 200) {
-        sessionStorage.setItem('DICTMAP', JSON.stringify(res.data))
-        const dictMap = res.data || []
-        dictStore.setDictMap(dictMap)
-      }
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-}
-
-const routesStore = useRoutesStore()
-const isAsyncRoute = computed(() => {
-  const asyncRoutes = routesStore.asyncRoutes
-  return (
-    asyncRoutes.findIndex(
-      (item) => item.path === router.currentRoute.value.path
-    ) > -1
-  )
-})
-
-const posi = ref('')
-
-watch(
-  [() => isAsyncRoute.value, () => store.state.value.setting.collapse],
-  ([newVal, collapse]) => {
-    if (newVal === true) getDictInfo()
-
-    if (!collapse) {
-      posi.value = px2rem('240px')
-    } else {
-      posi.value = px2rem('65px')
-    }
-  },
-  {
-    immediate: true
-  }
-)
 </script>
 
 <style lang="scss">
@@ -104,22 +59,4 @@ watch(
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-// .admin-container {
-//   .main {
-//     top: 116px !important;
-//   }
-//   .header {
-//     position: fixed;
-//     top: 0;
-//     left: v-bind(posi) !important;
-//     z-index: 100;
-//     width: calc(100% - v-bind(posi));
-//     height: auto;
-//     background: #f5f7f9;
-//   }
-// }
-// .footer-copyright {
-//   padding: 10px 0 !important;
-//   min-height: 40px !important;
-// }
 </style>
