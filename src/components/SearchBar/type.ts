@@ -24,7 +24,8 @@ type ISearchProps = ISearchConfigCommon | ISearchConfigTimer
 
 type ISearchUnit = ISearchProps[]
 
-type queryState = Record<string, unknown>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type queryState = Record<string, any>
 type dictState = Record<string, DictItem[]>
 
 interface IProps {

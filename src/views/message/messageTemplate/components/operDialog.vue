@@ -64,13 +64,13 @@
         <el-row>
           <el-col>
             <el-form-item label="来源系统" prop="market">
-              <el-tree
+              <!-- <el-tree
                 ref="source"
                 :data="systemOptions"
                 v-bind="{ ...treeConfig }"
                 :default-checked-keys="defaultCheckedkeys"
                 @check="handleNodeClick"
-              />
+              /> -->
             </el-form-item>
           </el-col>
         </el-row>
@@ -92,7 +92,7 @@
               <div class="divfont-red">
                 (注:在模板内容中,可在{}符号中插入左侧参数对应的配置模板参数名,添加后系统将会自动映射)
               </div>
-              <el-table border size="mini">
+              <!-- <el-table border size="mini">
                 <el-table-column
                   label="一级来源"
                   prop="sourceSystem1"
@@ -126,7 +126,7 @@
                   width="120"
                   show-overflow-tooltip
                 />
-              </el-table>
+              </el-table> -->
             </el-form-item>
           </el-col>
         </el-row>
@@ -173,22 +173,22 @@ const formRules = reactive({
 })
 const formRef = ref<InstanceType<typeof ElForm>>()
 
-const treeConfig = {
-  'empty-text': '暂无数据',
-  'default-expand-all': true,
-  'show-checkbox': true,
-  'default-expanded-keys': [],
-  // 'default-checked-keys': [], // 默认勾选的节点的 key 的数组
-  nodeKey: 'id',
-  indent: 15,
-  props: {
-    children: 'children',
-    label: 'name',
-    value: 'code'
-  }
-}
-const defaultCheckedkeys = ref<object>([])
-const handleNodeClick = () => {}
+// const treeConfig = {
+//   'empty-text': '暂无数据',
+//   'default-expand-all': true,
+//   'show-checkbox': true,
+//   'default-expanded-keys': [],
+//   // 'default-checked-keys': [], // 默认勾选的节点的 key 的数组
+//   nodeKey: 'id',
+//   indent: 15,
+//   props: {
+//     children: 'children',
+//     label: 'name',
+//     value: 'code'
+//   }
+// }
+// const defaultCheckedkeys = ref<object>([])
+// const handleNodeClick = () => {}
 
 const submitForm = async () => {
   if (!formRef.value) return

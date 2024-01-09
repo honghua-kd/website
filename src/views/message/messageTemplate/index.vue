@@ -105,9 +105,9 @@
           <el-button link type="primary" @click="editHandler(scope.row)">
             启用
           </el-button>
-          <el-button link type="primary" @click="handleDelect(scope.row)">
+          <!-- <el-button link type="primary" @click="handleDelect(scope.row)">
             停用
-          </el-button>
+          </el-button> -->
         </template>
       </el-table-column>
     </el-table>
