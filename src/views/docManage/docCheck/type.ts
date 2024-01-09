@@ -27,4 +27,5 @@ export type ModelStateType = {
   dialogVisible: boolean
   docInfoForm: EditDocInfo
   saveListInfo: SaveOrUpdateDocRequest[]
+  listDialogvisible: boolean
 }

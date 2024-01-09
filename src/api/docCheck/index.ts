@@ -11,7 +11,7 @@ import type {
 import type { DocumentPageResponse } from './types/response'
 
 const prefix = '/operations-mortgage'
-export class DocumentAPI {
+export class DocCheckAPI {
   private request: AxiosInstance
   constructor(readonly options?: RequestConfig) {
     const requestOptions = Object.assign({}, requestConfig, options)

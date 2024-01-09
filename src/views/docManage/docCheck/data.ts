@@ -152,3 +152,49 @@ export const tableColumn: ITableConfigProps[] = [
     align: 'center'
   }
 ]
+export const saveListColumn: ITableConfigProps[] = [
+  {
+    label: '排序',
+    prop: 'index',
+    width: '40',
+    align: 'canter'
+  },
+  {
+    label: '文书名称',
+    prop: 'documentName',
+    width: '',
+    minWidth: '130',
+    fixed: false,
+    align: 'left',
+    showOverflowTooltip: true
+  },
+  {
+    label: '文书类型',
+    prop: 'documentType',
+    width: '',
+    minWidth: '100',
+    align: 'center'
+  },
+  {
+    label: '文书版本',
+    prop: 'documentVersion',
+    width: '',
+    minWidth: '100',
+    align: 'center'
+  },
+  {
+    label: '附件信息',
+    prop: 'fileCode',
+    width: '',
+    minWidth: '130',
+    align: 'left',
+    showOverflowTooltip: true
+  },
+  {
+    type: 'action',
+    label: '操作',
+    prop: 'action',
+    width: '100',
+    align: 'canter'
+  }
+]

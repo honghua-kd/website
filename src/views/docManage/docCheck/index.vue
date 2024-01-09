@@ -74,7 +74,8 @@ import type { StateType } from './type'
 import type { DocumentPageResponse } from '@/api/docCheck/types/response'
 import { Plus, Download } from '@element-plus/icons-vue'
 import { px2rem } from '@/utils'
-import { CommonAPI } from '@/api'
+import { CommonAPI, DocCheckAPI } from '@/api'
+const API = new DocCheckAPI()
 const COMMONAPI = new CommonAPI()
 
 const state = reactive<StateType>({
@@ -185,6 +186,7 @@ const getDictTreeListData = async () => {
 }
 
 onMounted(() => {
+  API.getDocumentList(queryParams.value)
   getDicList()
   getDictTreeListData()
 })

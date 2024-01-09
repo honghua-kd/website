@@ -1,7 +1,6 @@
 <template>
   <div>
     <el-dialog
-      class="main-part-model"
       v-model="dialogVisible"
       :title="title"
       width="550px"
@@ -70,6 +69,21 @@
         </span>
       </template>
     </el-dialog>
+    <el-dialog v-model="listDialogvisible" title="文书版本" width="900px">
+      <Table
+        :data="saveListInfo"
+        :columnConfig="saveListColumn"
+        :setColumnEnable="false"
+      >
+        <template #defalut="{ prop }">
+          <span v-if="prop === 'index'">111</span>
+        </template>
+        <template #action>
+          <el-button link type="danger">删除</el-button>
+          <el-button link type="primary">上传</el-button></template
+        >
+      </Table>
+    </el-dialog>
   </div>
 </template>
 <script setup lang="ts">
@@ -78,6 +92,8 @@ import type { ModelStateType } from './type'
 import type { FormInstance, FormRules } from 'element-plus'
 import type { InternalRuleItem } from 'async-validator'
 import type { DictListItem } from '@/api'
+import Table from '@/components/Table/index.vue'
+import { saveListColumn } from './data'
 
 type Iprops = {
   visible: boolean
@@ -101,9 +117,11 @@ const state = reactive<ModelStateType>({
     sourceSystem1: [],
     sealType: ''
   },
-  saveListInfo: []
+  saveListInfo: [],
+  listDialogvisible: false
 })
-const { dialogVisible, docInfoForm } = toRefs(state)
+const { dialogVisible, docInfoForm, saveListInfo, listDialogvisible } =
+  toRefs(state)
 
 watch([() => props.visible, () => props.title], ([newVisible]) => {
   state.dialogVisible = newVisible
@@ -161,9 +179,19 @@ const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       if (type === 'update-close') {
-        emit('closeModel', {
-          type: 'click-close'
-        })
+        console.log(docInfoForm)
+        state.dialogVisible = false
+        state.listDialogvisible = true
+        state.saveListInfo = [
+          {
+            documentName: docInfoForm.value.documentName,
+            documentType: docInfoForm.value.documentType,
+            sourceSystem1: docInfoForm.value.sourceSystem1,
+            documentVersion: '',
+            sealType: docInfoForm.value.sealType,
+            fileCode: ''
+          }
+        ]
       }
     } else {
       console.log('error submit!', fields)
