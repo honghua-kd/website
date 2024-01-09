@@ -97,6 +97,7 @@ export interface RelationListItem {
    * 使用 String 类型的原因是，未来可能会存在非数值的情况，留好拓展性。
    */
   creator?: null | string
+  creatorName?: null | string
   /**
    * 是否删除
    */
@@ -159,6 +160,33 @@ export interface ExpressDictItem {
   cssClass?: string
 }
 
+export interface ProvinceResponse {
+  /**
+   * 行政规划代码
+   */
+  code: number
+  /**
+   * 级别 1-省, 2-市, 3-区
+   */
+  level: number
+  /**
+   * 行政规划名称
+   */
+  name: string
+  /**
+   * 父级行政规划代码
+   */
+  parentCode: number
+  /**
+   * 顶级行政区划代码
+   */
+  topParentCode: number
+  /**
+   * 是否有子集 0-没有, 1-有
+   */
+  haveChildren: number
+}
+
 // 查询树形字典数据
 export interface DictDataTreeResponse {
   children?: DictDataTreeResponse[] | null
@@ -172,4 +200,16 @@ export interface DictDataTreeResponse {
   sort?: number | null
   status?: number | null
   value?: null | string
+}
+
+// 通用导出
+export interface ExportBySelectResponse {
+  /**
+   * 附件code
+   */
+  fileCode?: string
+  /**
+   * 0异步 1同步
+   */
+  sync?: number
 }

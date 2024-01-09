@@ -71,6 +71,12 @@ export interface BatchExportRequest {
   makeExcel: boolean
 }
 
+export interface CodeRequest {
+  /**
+   * 行政规划代码
+   */
+  code: number
+}
 /**
  * DictDataTreeReqVO
  */
@@ -78,4 +84,18 @@ export interface DictTreeRequest {
   dictType?: null | string
   label?: null | string
   status?: number | null
+}
+
+/**
+ * 通用导出
+ */
+export interface ExportBySelectRequest {
+  /**
+   * 业务类型
+   */
+  bizType: string
+  /**
+   * 查询条件(json格式)
+   */
+  selectParams: string
 }

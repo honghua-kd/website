@@ -18,9 +18,7 @@
                 collapse-tags
                 collapse-tags-tooltip
                 clearable
-                :placeholder="
-                  formModel.sourceSystem12List.length === 0 ? '全部' : '请选择'
-                "
+                placeholder="请选择"
                 style="width: 100%"
                 @change="selectSourceSystem"
               />
@@ -29,6 +27,7 @@
           <el-col :span="6">
             <el-form-item label="代理商/办事处" style="width: 100%">
               <el-input
+                placeholder="请输入"
                 v-model="formModel.agencyName"
                 :maxlength="50"
                 clearable
@@ -102,7 +101,7 @@
         <template #selection>
           <el-table-column
             type="selection"
-            :width="px2rem('40px')"
+            :width="40"
             :selectable="() => true"
             :fixed="true"
             align="center"
@@ -491,18 +490,17 @@ const downloadData = async () => {
   state.tableLoading = true
   let params = {}
   if (selectIdsArr.value.length === 0) {
-    // ElMessage({
-    //   type: 'error',
-    //   message: '请选择要下载的数据'
     params = {
       agencyName: formModel.value.agencyName,
       sourceSystem12List: formModel.value.sourceSystem12ListParams
     }
-    // })
   } else {
     params = { ids: selectIdsArr.value }
   }
-  const res = await API.getAgencyExport(params)
+  const res = await COMMONAPI.exportBySelect({
+    bizType: 'AGENCY_CONFIG_EXPORT',
+    selectParams: JSON.stringify(params)
+  })
   if (res && res.code === 200) {
     if (res.data?.sync === 1) {
       const params = { fileCode: res.data.fileCode as string }

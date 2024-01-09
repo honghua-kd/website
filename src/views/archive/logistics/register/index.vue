@@ -103,167 +103,124 @@
       </el-form>
     </div>
     <div>
-      <div class="table-btn-box">
-        <div>
-          <el-button type="primary" :icon="Plus" @click="addHandler">
-            添加
-          </el-button>
-          <el-tooltip
-            content="需勾选要接收的条目，方可操作"
-            placement="top-start"
-          >
-            <el-button
-              type="primary"
-              :icon="Check"
-              @click="batchReceiveHandler"
-            >
-              批量接收
-            </el-button>
-          </el-tooltip>
+      <Table
+        :data="tableData"
+        :loading="tableLoading"
+        :columnConfig="tableConfig"
+        :isSelected="true"
+        :page-total="pageTotal"
+        :setColumnEnable="true"
+        :height="tableHeight"
+        v-model:pageSize="queryParams.pageSize"
+        v-model:pageNo="queryParams.pageNo"
+        @selection-change="selectionChangeHandler"
+        @size-change="getList"
+        @current-change="getList"
+      >
+        <template #btnsBox>
+          <div class="table-btn-box">
+            <div>
+              <el-button type="primary" :icon="Plus" @click="addHandler">
+                添加
+              </el-button>
+              <el-tooltip
+                content="需勾选要接收的条目，方可操作"
+                placement="top-start"
+              >
+                <el-button
+                  type="primary"
+                  :icon="Check"
+                  @click="batchReceiveHandler"
+                >
+                  批量接收
+                </el-button>
+              </el-tooltip>
 
-          <el-button type="primary" :icon="Upload" @click="importHandler">
-            导入
-          </el-button>
-          <el-button type="primary" :icon="Download" @click="exportHandler">
-            导出
-          </el-button>
-          <el-tooltip
-            content="需勾选要删除的条目，方可操作"
-            placement="top-start"
-          >
+              <el-button type="primary" :icon="Upload" @click="importHandler">
+                导入
+              </el-button>
+              <el-button type="primary" :icon="Download" @click="exportHandler">
+                导出
+              </el-button>
+              <el-tooltip
+                content="需勾选要删除的条目，方可操作"
+                placement="top-start"
+              >
+                <el-button
+                  type="primary"
+                  :icon="Delete"
+                  @click="delHandler(selectIds)"
+                >
+                  删除
+                </el-button>
+              </el-tooltip>
+
+              <el-button
+                type="primary"
+                :icon="Search"
+                @click="importResultHandler"
+              >
+                导入结果查询
+              </el-button>
+            </div>
+          </div>
+        </template>
+        <template #default="{ row, prop }">
+          <!-- 快递状态 -->
+          <span v-if="prop === 'expressStatus'">
+            {{ getExpressStatus(row.expressStatus) }}
+          </span>
+          <!-- 寄送/接收 -->
+          <span v-else-if="prop === 'expressType'">
+            {{ getExpressType(row.expressType) }}
+          </span>
+          <!-- 寄送日期/接收日期 -->
+          <span v-else-if="prop === 'sendTime'">
+            {{ getRealTime(row.expressType, row.sendTime, row.receiveTime) }}
+          </span>
+          <!-- 快递主要内容 -->
+          <span v-else-if="prop === 'expressContentList'">
+            {{ getContentList(row.expressContentList) }}
+          </span>
+          <!-- 登记时间 -->
+          <span v-else-if="prop === 'createTime'">
+            {{ getDate(row.createTime) }}
+          </span>
+          <!-- 更新时间 -->
+          <span v-else-if="prop === 'updateTime'">
+            {{ getDate(row.updateTime) }}
+          </span>
+        </template>
+        <template #action="scope">
+          <template v-if="scope.row.id">
             <el-button
+              v-if="scope.row.expressType == 0"
+              link
               type="primary"
-              :icon="Delete"
-              @click="delHandler(selectIds)"
+              @click="logisticsInfo(scope.row.expressNo)"
+            >
+              物流信息
+            </el-button>
+            <el-button
+              link
+              type="primary"
+              @click="checkHandler(scope.row.expressNo)"
+            >
+              查看
+            </el-button>
+            <el-button link type="primary" @click="editHandler(scope.row)">
+              编辑
+            </el-button>
+            <el-button
+              link
+              type="danger"
+              @click="delHandler([scope.row.expressNo])"
             >
               删除
             </el-button>
-          </el-tooltip>
-
-          <el-button type="primary" :icon="Search" @click="importResultHandler">
-            导入结果查询
-          </el-button>
-        </div>
-        <el-dropdown
-          trigger="click"
-          placement="top-end"
-          :hide-on-click="false"
-          max-height="300px"
-        >
-          <div class="dropdown-column">
-            <el-icon :size="15" class="icon"><Setting /></el-icon>
-            设置表格列
-          </div>
-          <template #dropdown>
-            <el-dropdown-menu class="custom-drop-menu">
-              <el-dropdown-item>
-                <el-checkbox v-model="checkAll" @change="handleCheckAllChange">
-                  全选
-                </el-checkbox>
-              </el-dropdown-item>
-              <el-checkbox-group
-                v-model="checkedConfig"
-                @change="handleCheckedConfig"
-              >
-                <el-dropdown-item
-                  v-for="cfg in checkboxTableConfig"
-                  :key="cfg.prop"
-                >
-                  <el-checkbox :label="cfg.prop" :disabled="cfg.forbiddenEdit">
-                    {{ cfg.label }}
-                  </el-checkbox>
-                </el-dropdown-item>
-              </el-checkbox-group>
-            </el-dropdown-menu>
           </template>
-        </el-dropdown>
-      </div>
-      <el-table
-        :data="tableData"
-        :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
-        border
-        v-loading="tableLoading"
-        @selection-change="selectionChangeHandler"
-        :max-height="tableHeight"
-      >
-        <el-table-column type="selection" width="40" align="center" fixed />
-        <template v-for="item in tableConfig" :key="item.prop">
-          <el-table-column v-if="!!item.show" v-bind="item">
-            <template #default="{ row }">
-              <!-- 快递状态 -->
-              <span v-if="item.prop === 'expressStatus'">
-                {{ getExpressStatus(row.expressStatus) }}
-              </span>
-              <!-- 寄送/接收 -->
-              <span v-else-if="item.prop === 'expressType'">
-                {{ getExpressType(row.expressType) }}
-              </span>
-              <!-- 寄送日期/接收日期 -->
-              <span v-else-if="item.prop === 'sendTime'">
-                {{
-                  getRealTime(row.expressType, row.sendTime, row.receiveTime)
-                }}
-              </span>
-              <!-- 快递主要内容 -->
-              <span v-else-if="item.prop === 'expressContentList'">
-                {{ getContentList(row.expressContentList) }}
-              </span>
-              <!-- 登记时间 -->
-              <span v-else-if="item.prop === 'createTime'">
-                {{ getDate(row.createTime) }}
-              </span>
-              <!-- 更新时间 -->
-              <span v-else-if="item.prop === 'updateTime'">
-                {{ getDate(row.updateTime) }}
-              </span>
-              <!-- other -->
-              <span v-else>{{ row[item.prop] }}</span>
-            </template>
-          </el-table-column>
         </template>
-        <el-table-column label="操作" fixed="right" width="240" align="center">
-          <template #default="scope">
-            <template v-if="scope.row.id">
-              <el-button
-                v-if="scope.row.expressType == 0"
-                link
-                type="primary"
-                @click="logisticsInfo(scope.row.expressNo)"
-              >
-                物流信息
-              </el-button>
-              <el-button
-                link
-                type="primary"
-                @click="checkHandler(scope.row.expressNo)"
-              >
-                查看
-              </el-button>
-              <el-button link type="primary" @click="editHandler(scope.row)">
-                编辑
-              </el-button>
-              <el-button
-                link
-                type="danger"
-                @click="delHandler([scope.row.expressNo])"
-              >
-                删除
-              </el-button>
-            </template>
-          </template>
-        </el-table-column>
-      </el-table>
-      <!-- 分页 -->
-      <el-pagination
-        v-if="pageTotal"
-        background
-        layout="total,sizes,prev, pager, next"
-        :page-sizes="[10, 20, 50, 100]"
-        :total="pageTotal"
-        class="table-page"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+      </Table>
     </div>
     <ImportForm ref="importFormRef" />
     <CheckForm ref="checkFormRef" />
@@ -273,14 +230,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, Ref, computed, onMounted, toRefs } from 'vue'
-import { useRouter, useRoute } from '@toystory/lotso'
-import {
-  ElMessageBox,
-  ElMessage,
-  ElForm,
-  CheckboxValueType
-} from 'element-plus'
+import { ref, reactive, Ref, computed, onMounted } from 'vue'
+import { useRouter } from '@toystory/lotso'
+import dayjs from 'dayjs'
+import Table from '@/components/Table/index.vue'
+import { tableConfig } from './data'
+// import { px2rem } from '@/utils'
+import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import { CommonAPI, ExpressAPI } from '@/api'
 import {
   Plus,
@@ -288,14 +244,12 @@ import {
   Upload,
   Download,
   Check,
-  Search,
-  Setting
+  Search
 } from '@element-plus/icons-vue'
 import EditForm from './EditForm.vue'
 import LogisticsInfoForm from './LogisticsInfoForm.vue'
 import CheckForm from './CheckForm.vue'
 import ImportForm from './ImportForm.vue'
-import { EXPRESS_STATUS, EXPRESS_TYPE } from '@/constants'
 import type {
   PageRequest,
   ExpressInfoCardListRequest,
@@ -303,10 +257,7 @@ import type {
   ExpressListItem,
   ExpressContentList
 } from '@/api'
-import BasicData from '@/views/archive/logistics/register/data'
 const { router } = useRouter()
-const route = useRoute()
-const pathName = 'Table:' + (route?.value.name as string)
 import fileDownload from 'js-file-download'
 type QueryParams = ExpressInfoCardListRequest & PageRequest
 const API = new ExpressAPI()
@@ -325,7 +276,7 @@ const queryParams = reactive<QueryParams>({
   expressContent: '',
   expressContentRemark: ''
 })
-const tableData: Ref<ExpressListItem[]> = ref([])
+const tableData = reactive<ExpressListItem[]>([])
 const selectData: Ref<ExpressListItem[]> = ref([])
 
 // 表格最大高度
@@ -344,97 +295,18 @@ const tableHeight = computed(() => {
   }
 })
 
-type ITableConfigObj = {
-  label: string
-  prop: string
-  valueType: string
-  minWidth?: number | string
-  width?: number | string
-  align: string
-  showOverflowTooltip?: boolean
-  fixed?: boolean
-  show: boolean
-  forbiddenEdit?: boolean
-}
-
-type IState = {
-  tableConfig: ITableConfigObj[]
-  checkAll: boolean
-  checkedConfig: string[]
-  checkboxTableConfig: ITableConfigObj[]
-  isIndeterminate: boolean
-}
-
-const state = reactive<IState>({
-  tableConfig: BasicData.tableConfig,
-  checkAll: true,
-  checkedConfig: [],
-  checkboxTableConfig: BasicData.tableConfig,
-  isIndeterminate: true
-})
-
-const { tableConfig, checkAll, checkedConfig, checkboxTableConfig } =
-  toRefs(state)
-
-// 自定义表格列
-const handleCheckedConfig = (value: CheckboxValueType[]) => {
-  const checkedCount = value.length
-  state.checkAll = checkedCount === state.checkboxTableConfig.length
-  state.checkedConfig = value as string[]
-  localStorage.setItem(pathName, JSON.stringify(value))
-
-  state.tableConfig.forEach((item) => {
-    if (!item.forbiddenEdit) {
-      item.show = state.checkedConfig.includes(item.prop)
-    }
-  })
-}
-// 自定义表格列-全选
-const handleCheckAllChange = (val: string | number | boolean) => {
-  const arr = state.checkboxTableConfig.map((item) => item.prop)
-  const arrRequired = state.checkboxTableConfig.filter(
-    (item) => item.forbiddenEdit
-  )
-
-  const _val = val as boolean
-
-  state.checkedConfig = _val ? arr : arrRequired.map((item) => item.prop)
-  state.isIndeterminate = !_val
-
-  localStorage.setItem(pathName, JSON.stringify(state.checkedConfig))
-
-  state.tableConfig.forEach((item) => {
-    if (!item.forbiddenEdit) {
-      item.show = !!_val
-    }
-  })
-}
-// 获取表格设置表头内容
-const getCheckConfig = () => {
-  state.checkedConfig = localStorage.getItem(pathName)
-    ? JSON.parse(localStorage.getItem(pathName) || '')
-    : state.checkboxTableConfig.map((item) => item.prop)
-
-  state.tableConfig.forEach((item) => {
-    if (!item.forbiddenEdit) {
-      item.show = state.checkedConfig.includes(item.prop)
-    }
-  })
-  state.checkAll = !(state.checkedConfig.length < BasicData.tableConfig.length)
-}
-
 const getContentList = (value: ExpressContentList[]) => {
   let list = ''
-  // value.forEach((item, index) => {
-  //   if (index === value.length - 1) {
-  //     list += item.contentType ? item.contentType : ''
-  //   } else {
-  //     list += item.contentType ? item.contentType + '、' : ''
-  //   }
-  // })
-  value.forEach((item) => {
-    list += item.contentType ? item.contentType + ' ' : ''
+  value.forEach((item, index) => {
+    if (index === value.length - 1) {
+      list += item.contentType ? item.contentType : ''
+    } else {
+      list += item.contentType ? item.contentType + '、' : ''
+    }
   })
+  // value.forEach((item) => {
+  //   list += item.contentType ? item.contentType + ' ' : ''
+  // })
   return list
 }
 
@@ -461,7 +333,8 @@ const getList = () => {
     .then((res) => {
       tableLoading.value = false
       if (res && res.code === 200) {
-        tableData.value = res?.data?.list || []
+        tableData.splice(0, tableData.length)
+        tableData.push(...(res?.data?.list || []))
         pageTotal.value = res?.data?.total || 0
       }
     })
@@ -536,10 +409,6 @@ const batchReceiveHandler = () => {
         })
     })
     .catch((err: Error) => {
-      ElMessage({
-        type: 'error',
-        message: '操作失败'
-      })
       throw err
     })
 }
@@ -548,46 +417,55 @@ const importHandler = () => {
   importFormRef.value.open()
 }
 const exportHandler = () => {
-  const params = {
-    expressNo: queryParams.expressNo,
-    expressCompany: queryParams.expressCompany,
-    create_time: queryParams.createTime,
-    expressType: queryParams.expressType,
-    expressContent: queryParams.expressContent,
-    expressContentRemark: queryParams.expressContentRemark
-  }
-  API.exportExpressContentInfo(params)
-    .then((res) => {
-      if (res && res.code === 200) {
-        if (res?.data?.sync === 1) {
-          const params = {
-            fileCode: res?.data?.fileCode
-          }
-          CommonApi.downLoadFiles(params)
-            .then((res) => {
-              const fileStream = res?.data
-              const fileName = '邮寄信息.xlsx'
-              fileDownload(fileStream, fileName)
-              ElMessage({
-                type: 'success',
-                message: '操作成功'
+  if (!tableData.length) {
+    ElMessage({
+      type: 'error',
+      message: '列表无数据无需导出'
+    })
+  } else {
+    const params = {
+      expressNo: queryParams.expressNo,
+      expressCompany: queryParams.expressCompany,
+      create_time: queryParams.createTime,
+      expressType: queryParams.expressType,
+      expressContent: queryParams.expressContent,
+      expressContentRemark: queryParams.expressContentRemark
+    }
+    API.exportExpressContentInfo(params)
+      .then((res) => {
+        if (res && res.code === 200) {
+          if (res?.data?.sync === 1) {
+            const params = {
+              fileCode: res?.data?.fileCode
+            }
+            CommonApi.downLoadFiles(params)
+              .then((res) => {
+                const fileStream = res?.data
+                const fileName = `邮寄信息登记${dayjs().format(
+                  'YYYYMMDD'
+                )}.xlsx`
+                fileDownload(fileStream, fileName)
+                ElMessage({
+                  type: 'success',
+                  message: '操作成功'
+                })
               })
+              .catch((err: Error) => {
+                tableLoading.value = false
+                throw err
+              })
+          } else if (res?.data?.sync === 0) {
+            ElMessage({
+              type: 'success',
+              message: '导出任务已经产生，前面有任务待处理，请至我的下载中查看'
             })
-            .catch((err: Error) => {
-              tableLoading.value = false
-              throw err
-            })
-        } else if (res?.data?.sync === 0) {
-          ElMessage({
-            type: 'success',
-            message: '等待导出结果'
-          })
+          }
         }
-      }
-    })
-    .catch((err: Error) => {
-      throw err
-    })
+      })
+      .catch((err: Error) => {
+        throw err
+      })
+  }
 }
 
 // 删除
@@ -621,10 +499,6 @@ const delHandler = (ids: string[]) => {
       })
     })
     .catch((err: Error) => {
-      ElMessage({
-        type: 'error',
-        message: '删除失败'
-      })
       throw err
     })
 }
@@ -637,18 +511,6 @@ const importResultHandler = () => {
       tab: 'upload'
     }
   })
-}
-
-// 分页
-const handleCurrentChange = (val: number) => {
-  queryParams.pageNo = val
-  getList()
-}
-
-// 页面条数改变
-const handleSizeChange = (val: number) => {
-  queryParams.pageSize = val
-  getList()
 }
 
 // 批量获取数据字典
@@ -697,11 +559,11 @@ const getDicts = () => {
 // 快递状态处理
 const getExpressStatus = (status: number) => {
   let topic = ''
-  if (status === EXPRESS_STATUS.REJECT) {
+  if (status === 0) {
     topic = '未接收'
-  } else if (status === EXPRESS_STATUS.RECEIVE) {
+  } else if (status === 1) {
     topic = '已接收'
-  } else if (status === EXPRESS_STATUS.PROBLEM) {
+  } else if (status === 2) {
     topic = '问题件'
   }
   return topic
@@ -710,9 +572,9 @@ const getExpressStatus = (status: number) => {
 // 寄送接收状态
 const getExpressType = (status: number) => {
   let topic = ''
-  if (status === EXPRESS_TYPE.RECEIVE) {
+  if (status === 1) {
     topic = '接收'
-  } else if (status === EXPRESS_TYPE.SEND) {
+  } else if (status === 0) {
     topic = '寄送'
   }
   return topic
@@ -736,7 +598,6 @@ const init = () => {
 }
 onMounted(() => {
   init()
-  getCheckConfig()
 })
 </script>
 
