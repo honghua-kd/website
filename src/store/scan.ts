@@ -9,7 +9,10 @@ export const useScanStore = defineStore('scan', () => {
     EXPRESS_COMPANY: [],
     EXPRESS_TYPE: [],
     EXPRESS_CONTENT: [],
-    EXPRESS_STATUS: []
+    EXPRESS_STATUS: [],
+    MORTGAGE_CITYCONFIG: [],
+    MORTGAGE_CITYCONFIG_NO: [],
+    YESNO: []
   })
 
   const getScanDict = computed(() => {

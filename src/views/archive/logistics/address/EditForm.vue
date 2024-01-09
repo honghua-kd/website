@@ -17,7 +17,14 @@
             <el-form-item
               label="联系人名称:"
               prop="userName"
-              :rules="[{ required: true, message: '联系人名称不能为空' }]"
+              :rules="[
+                { required: true, message: '联系人名称不能为空' },
+                {
+                  max: 200,
+                  message: '内容超长',
+                  trigger: 'change'
+                }
+              ]"
             >
               <el-input
                 v-model="basicInfoForm.userName"
@@ -27,7 +34,18 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="联系人电话:" prop="userPhone">
+            <el-form-item
+              label="联系人电话:"
+              prop="userPhone"
+              :rules="[
+                {
+                  message: '请输入正确的电话号码',
+                  type: 'string',
+                  pattern: /^1[3456789]\d{9}$/,
+                  trigger: 'change'
+                }
+              ]"
+            >
               <el-input
                 v-model="basicInfoForm.userPhone"
                 clearable
@@ -36,18 +54,38 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="邮箱:" prop="userMail">
+            <el-form-item
+              label="邮箱:"
+              prop="userMail"
+              :rules="[
+                {
+                  type: 'email',
+                  message: '请输入正确的邮箱地址',
+                  trigger: ['blur', 'change']
+                }
+              ]"
+            >
               <el-input
                 v-model="basicInfoForm.userMail"
                 clearable
-                placeholder="请输入联系人名称"
+                placeholder="请输入联系人邮箱"
               />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="18">
-            <el-form-item label="地址:" prop="userAddress">
+            <el-form-item
+              label="地址:"
+              prop="userAddress"
+              :rules="[
+                {
+                  max: 200,
+                  message: '内容超长',
+                  trigger: 'change'
+                }
+              ]"
+            >
               <el-input
                 v-model="basicInfoForm.userAddress"
                 clearable

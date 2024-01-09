@@ -33,7 +33,7 @@ export interface OtherFileList {
   /**
    * 上传用户
    */
-  creator?: string | null
+  creatorName?: string | null
   /**
    * 上传时间
    */

@@ -36,7 +36,7 @@ export default [
             ],
             elements: [],
             menuType: 3,
-            menu: 'logistics',
+            menu: 'mailInformationRegister',
             sort: 2
           }
         ],
@@ -240,7 +240,7 @@ export default [
     elements: [],
     menuType: 5,
     sort: 2,
-    menu: 'mortgage'
+    menu: 'mortgageMange'
   },
   {
     children: [
@@ -382,5 +382,23 @@ export default [
     menuType: 5,
     sort: 5,
     menu: 'recordUpload'
+  },
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'messageTemplate',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'messageManage'
+      }
+    ]
   }
 ]
