@@ -15,6 +15,7 @@ export const searchConfig: ISearchUnit[] = [
       colSpan: 6,
       label: '文书类型',
       prop: 'documentType',
+      options: 'SYSTEM_DOCUMENT_TYPE',
       placeholder: '请选择'
     },
     {
@@ -153,12 +154,6 @@ export const tableColumn: ITableConfigProps[] = [
   }
 ]
 export const saveListColumn: ITableConfigProps[] = [
-  {
-    label: '排序',
-    prop: 'index',
-    width: '40',
-    align: 'canter'
-  },
   {
     label: '文书名称',
     prop: 'documentName',
