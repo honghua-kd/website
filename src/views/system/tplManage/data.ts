@@ -5,7 +5,7 @@ export const searchConfig: ISearchUnit[] = [
   [
     {
       compType: 'el-input',
-      colSpan: 6,
+      colSpan: 8,
       label: '模板名称',
       prop: 'fileName',
       placeholder: '请输入模板名称',
@@ -13,17 +13,17 @@ export const searchConfig: ISearchUnit[] = [
     },
     {
       compType: 'el-input',
-      colSpan: 6,
+      colSpan: 8,
       label: '附件代码',
       prop: 'fileCode',
       placeholder: '请输入附件代码'
     },
     {
       compType: 'el-cascader',
-      colSpan: 12,
-      label: '业务大类',
+      colSpan: 8,
+      label: '业务类型',
       prop: 'businessCategory',
-      placeholder: '请选择业务大类',
+      placeholder: '请选择业务类型',
       slotName: 'businessCategory'
       // BUSINESS_TEMPLATE_TYPE
     }

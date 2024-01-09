@@ -9,7 +9,16 @@
         :showExpand="false"
         @reset="reset"
         @search="getList"
-      />
+      >
+        <template #businessCategory>
+          <el-cascader
+            v-model="businessCascader"
+            style="width: 100%"
+            :props="cascaderProps"
+            clearable
+          />
+        </template>
+      </SearchBar>
     </div>
     <el-divider border-style="dashed" />
 
@@ -30,15 +39,9 @@
     >
       <!-- 批量操作 -->
       <template #btnsBox>
-        <el-tooltip content="需勾选下方条目，方可操作" placement="top-start">
-          <el-button
-            type="primary"
-            :icon="Finished"
-            @click="markHandler(selectIds)"
-          >
-            标记已读
-          </el-button>
-        </el-tooltip>
+        <el-button type="primary" :icon="Plus" @click="addTemplate">
+          新增
+        </el-button>
         <el-tooltip content="需勾选下方条目，方可操作" placement="top-start">
           <el-button
             type="primary"
@@ -49,53 +52,118 @@
           </el-button>
         </el-tooltip>
       </template>
-      <!-- 表格插槽 -->
-      <template #title="{ row }">
-        <el-link @click="clickTitle(row)">{{ row.title }}</el-link>
-      </template>
-      <template #noticeType="{ row }">
-        {{ filterDictLabel('NOTICE_MESSGAE_TYPE', row.type) }}
-      </template>
-      <template #noticeStatus="{ row }">
-        <el-tag
-          class="ml-2"
-          :type="+row.status === NOTICE_STATUS.UNREAD ? 'danger' : 'info'"
-          >{{ filterDictLabel('NOTICE_STATUS', row.status) }}</el-tag
-        >
-      </template>
       <template #action="scope">
-        <el-button
-          v-if="scope.row.status === NOTICE_STATUS.UNREAD"
-          link
-          type="primary"
-          @click="markHandler([scope.row.id])"
-        >
-          标记已读
+        <el-button link type="primary" @click="editHandler(scope.row)">
+          编辑
         </el-button>
         <el-button link type="danger" @click="delHandler([scope.row.id])">
           删除
         </el-button>
       </template>
     </Table>
+    <el-dialog
+      :title="dialogTitle"
+      v-model="dialogVisible"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      width="40%"
+    >
+      <el-form
+        ref="formRef"
+        :model="formParams"
+        v-loading="formLoading"
+        :rules="formRules"
+        :label-width="px2rem('130px')"
+      >
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="业务类型" prop="fileName">
+              <el-cascader
+                v-model="businessFormCascader"
+                placeholder="请选择业务类型"
+                style="width: 100%"
+                :props="cascaderProps"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="备注" prop="remark">
+              <el-input
+                v-model="formParams.remark"
+                placeholder="请输入备注"
+                class="width-full"
+                clearable
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item>
+              <el-upload
+                ref="uploadRef"
+                :before-upload="beforeUploadHandler"
+                :http-request="uploadHandler"
+                :on-exceed="handleExceed"
+                :limit="1"
+                action="#"
+              >
+                <el-button
+                  :icon="UploadFilled"
+                  :loading="upLoading"
+                  type="primary"
+                  :disabled="!formParams.businessCategory"
+                  >选取文件</el-button
+                >
+                <template #tip>
+                  <div class="el-upload__tip">
+                    请上传大小不超过 <span class="t-red">20MB</span>的文件
+                  </div>
+                </template>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <template #footer>
+        <el-button :disabled="formLoading" type="primary" @click="submitForm">
+          保 存
+        </el-button>
+        <el-button @click="dialogVisible = false"> 关 闭 </el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { searchConfig, tableConfig } from './data'
-import { reactive, ref, computed } from 'vue'
-import { NOTICE_STATUS } from '@/constants'
-import { NoticeCenterAPI } from '@/api'
-import { NoticeListItem } from '@/api/noticeCenter/types/response'
-import { Finished, Delete } from '@element-plus/icons-vue'
-import { useDictStore } from '@/store/dict'
+import { reactive, ref, computed, watch } from 'vue'
+import { SystemAPI, CommonAPI } from '@/api'
+import { TemplateListItem } from '@/api/system/types/response'
+import { Plus, Delete, UploadFilled } from '@element-plus/icons-vue'
+// import { useDictStore } from '@/store/dict'
 import { px2rem } from '@/utils'
-import { useRouter } from '@toystory/lotso'
-import { ElMessageBox, ElMessage } from 'element-plus'
+import { ElMessageBox, ElMessage, genFileId } from 'element-plus'
+import type {
+  UploadRawFile,
+  UploadRequestOptions,
+  UploadProps,
+  UploadInstance,
+  CascaderProps,
+  CascaderOption
+} from 'element-plus'
+import { useUserStore } from '@toystory/lotso'
 
 const dictTypes = ['NOTICE_MESSGAE_TYPE', 'NOTICE_STATUS']
 
-const API = new NoticeCenterAPI()
-const dictStore = useDictStore()
+const API = new SystemAPI()
+const commonAPI = new CommonAPI()
+
+const dialogTitle = ref('')
+const dialogVisible = ref(false)
+// const dictStore = useDictStore()
 
 // const typesDict = computed(() => {
 //   return dictStore.dicts.NOTICE_MESSGAE_TYPE
@@ -105,24 +173,168 @@ const dictStore = useDictStore()
 //   return dictStore.dicts.NOTICE_STATUS
 // })
 
-const filterDictLabel = (dictCode: string, value: string | number) => {
-  return dictStore.dicts[dictCode].find((item) => item.value === String(value))
-    ?.label
-}
+// const filterDictLabel = (dictCode: string, value: string | number) => {
+//   return dictStore.dicts[dictCode].find((item) => item.value === String(value))
+//     ?.label
+// }
 
 const queryParams = reactive({
   pageNo: 1,
-  pageSize: 10
+  pageSize: 10,
+  fileName: '',
+  fileCode: '',
+  businessCategory: '',
+  businessSubcategory: ''
 })
+const businessCascader = ref<string[]>([])
+
+watch(
+  () => businessCascader.value,
+  (newVal) => {
+    queryParams.businessCategory = newVal[0]
+    queryParams.businessSubcategory = newVal[0]
+  }
+)
+
+// 上传前校验
+const beforeUploadHandler = (file: UploadRawFile) => {
+  // 校验文件大小
+  if (file.size / 1024 / 1024 > 20) {
+    ElMessage.error('文件请不要超过20M！')
+    return false
+  }
+  return true
+}
+
+const upLoading = ref(false)
+const userStore = useUserStore()
+const tenantUser = computed(() => userStore.userInfo?.staffCode as string)
+const uploadHandler = async (options: UploadRequestOptions) => {
+  upLoading.value = true
+
+  const file = options.file
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('bizCode', '')
+  formData.append('tenantUser', tenantUser.value)
+  formData.append('prefixPath', formParams.businessCategory)
+  formData.append('expireDays', '-1')
+
+  commonAPI
+    .uploadFiles(formData)
+    .then(async (res) => {
+      upLoading.value = false
+      if (res && res.code === 200) {
+        formParams.fileCode = res.data?.fileCode || ''
+        formParams.fileName = file.name
+      }
+    })
+    .catch((err: Error) => {
+      upLoading.value = false
+      throw err
+    })
+}
+const uploadRef = ref<UploadInstance>()
+const handleExceed: UploadProps['onExceed'] = (files) => {
+  uploadRef.value!.clearFiles()
+  const file = files[0] as UploadRawFile
+  file.uid = genFileId()
+  uploadRef.value!.handleStart(file)
+}
+
+const formParams = reactive({
+  fileName: '',
+  fileCode: '',
+  businessCategory: '',
+  businessSubcategory: '',
+  remark: ''
+})
+
+const formRules = reactive({
+  fileName: [{ required: true, message: '文件名称不能为空', trigger: 'blur' }],
+  fileCode: [{ required: true, message: '附件代码不能为空', trigger: 'blur' }],
+  parentValue: [{ required: true, message: '父级不能为空', trigger: 'blur' }],
+  dataLevel: [{ required: true, message: '层级不能为空', trigger: 'blur' }],
+  sort: [{ required: true, message: '排序不能为空', trigger: 'blur' }],
+  status: [{ required: true, message: '状态不能为空', trigger: 'change' }]
+})
+const formLoading = ref(false)
+const businessFormCascader = ref<string[]>([])
+
+watch(
+  () => businessFormCascader.value,
+  (newVal) => {
+    formParams.businessCategory = newVal[0]
+    formParams.businessSubcategory = newVal[0]
+  }
+)
+
+const submitForm = () => {
+  if (isEdit.value) {
+    API.updateTemplate({
+      id: currentId.value,
+      ...formParams
+    }).then((res) => {
+      if (res.code === 200) {
+        ElMessage.success('保存成功')
+        dialogVisible.value = false
+        getList()
+      }
+    })
+  } else {
+    API.addTemplate(formParams).then((res) => {
+      if (res.code === 200) {
+        ElMessage.success('新增成功')
+        dialogVisible.value = false
+        getList()
+      }
+    })
+  }
+}
+
+const cascaderProps: CascaderProps = {
+  lazy: true,
+  lazyLoad(node, resolve) {
+    let nodes = null
+    const level = node.level || 0
+    let value = 'BUSINESS_TEMPLATE_TYPE'
+    if (level > 0) {
+      value = node.value as string
+    }
+    commonAPI
+      .getDictsList({
+        dictTypes: [String(value)]
+      })
+      .then((res) => {
+        if (res.data && res.code === 200) {
+          nodes = res.data[value].map((item) => {
+            return {
+              leaf: level >= 1,
+              ...item
+            }
+          })
+          resolve(nodes as CascaderOption[])
+        } else {
+          ElMessageBox.alert('获取字典表失败，请联系管理员', '提示', {
+            confirmButtonText: '确定',
+            type: 'warning'
+          })
+        }
+      })
+  }
+}
 
 // 重置
 const reset = () => {
-  queryParams.status = null
-  queryParams.type = null
+  queryParams.fileName = ''
+  queryParams.fileCode = ''
+  queryParams.businessCategory = ''
+  queryParams.businessSubcategory = ''
+  businessCascader.value = []
 }
 
 const tableLoading = ref(false)
-const tableData = reactive<NoticeListItem[]>([])
+const tableData = reactive<TemplateListItem[]>([])
 const pageTotal = ref(0)
 
 // 表格最大高度
@@ -142,20 +354,20 @@ const tableHeight = computed(() => {
 })
 
 // 选择的数据
-const selectData = reactive<NoticeListItem[]>([])
-const selectionChangeHandler = (item: NoticeListItem[]) => {
+const selectData = reactive<TemplateListItem[]>([])
+const selectionChangeHandler = (item: TemplateListItem[]) => {
   selectData.splice(0, selectData.length)
   selectData.push(...item)
 }
 
 const selectIds = computed(() => {
   return selectData.map((item) => {
-    return item.id
+    return String(item.id)
   })
 })
 
 const getList = () => {
-  API.getNoticeList(queryParams).then((res) => {
+  API.getTemplateList(queryParams).then((res) => {
     if (res.data) {
       tableData.splice(0, tableData.length)
       tableData.push(...(res.data.list || []))
@@ -164,23 +376,9 @@ const getList = () => {
   })
 }
 
-// 标记已读
-const markHandler = (ids: string[]) => {
-  if (!ids.length) {
-    ElMessage.error('请选择需要标记的信息')
-    return
-  }
-  API.changeNoticeStatus({
-    ids,
-    status: NOTICE_STATUS.READ
-  }).then(() => {
-    getList()
-  })
-}
-
 // 删除
-const delHandler = (ids: string[]) => {
-  if (!ids.length) {
+const delHandler = (idList: string[]) => {
+  if (!idList.length) {
     ElMessage.error('请选择需要删除的信息')
     return
   }
@@ -190,26 +388,62 @@ const delHandler = (ids: string[]) => {
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
-    API.deleteNotice({
-      ids
+    API.delTemplate({
+      idList
     }).then(() => {
       getList()
     })
   })
 }
 
-// 跳转
-const { router } = useRouter()
-const clickTitle = (row: NoticeListItem) => {
-  if (row.router) {
-    router.push({
-      path: row.router,
-      query: row.routerParam
-    })
-  }
+const isEdit = ref(false)
+// 新增
+const addTemplate = () => {
+  isEdit.value = false
+  dialogTitle.value = '新增模板'
+  formParams.fileName = ''
+  formParams.fileCode = ''
+  formParams.businessCategory = ''
+  formParams.businessSubcategory = ''
+  formParams.remark = ''
+  businessFormCascader.value = []
+  dialogVisible.value = true
+}
+
+// 编辑
+const currentId = ref(-1)
+const editHandler = (row: TemplateListItem) => {
+  isEdit.value = true
+  dialogTitle.value = '编辑模板'
+  const {
+    id,
+    fileName,
+    fileCode,
+    businessCategory,
+    businessSubcategory,
+    remark
+  } = row
+  currentId.value = id
+  formParams.fileName = fileName || ''
+  formParams.fileCode = fileCode || ''
+  formParams.businessCategory = businessCategory || ''
+  formParams.businessSubcategory = businessSubcategory || ''
+  formParams.remark = remark || ''
+  businessFormCascader.value = [
+    businessCategory || '',
+    businessSubcategory || ''
+  ]
+  dialogVisible.value = true
 }
 
 getList()
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.width-full {
+  width: 100%;
+}
+.t-red {
+  color: $base-color-red;
+}
+</style>
