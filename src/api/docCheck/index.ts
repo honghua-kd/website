@@ -31,7 +31,7 @@ export class DocumentAPI {
 
   // 保存或编辑文书信息
   saveOrUpdateDocument(
-    data: SaveOrUpdateDocRequest
+    data: SaveOrUpdateDocRequest[]
   ): Response<boolean | null | undefined> {
     return this.request({
       url: `${prefix}/admin-api/system-document/saveOrUpdate`,

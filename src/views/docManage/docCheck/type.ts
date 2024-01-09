@@ -1,5 +1,8 @@
-import type { DocumentPageRequest } from '@/api/docManage/types/request'
-import type { DocumentPageResponse } from '@/api/docManage/types/response'
+import type {
+  DocumentPageRequest,
+  SaveOrUpdateDocRequest
+} from '@/api/docCheck/types/request'
+import type { DocumentPageResponse } from '@/api/docCheck/types/response'
 import type { DictListItem } from '@/api'
 export type StateType = {
   queryParams: DocumentPageRequest
@@ -23,4 +26,5 @@ export type EditDocInfo = {
 export type ModelStateType = {
   dialogVisible: boolean
   docInfoForm: EditDocInfo
+  saveListInfo: SaveOrUpdateDocRequest[]
 }

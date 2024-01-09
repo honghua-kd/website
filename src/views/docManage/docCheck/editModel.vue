@@ -78,6 +78,7 @@ import type { ModelStateType } from './type'
 import type { FormInstance, FormRules } from 'element-plus'
 import type { InternalRuleItem } from 'async-validator'
 import type { DictListItem } from '@/api'
+
 type Iprops = {
   visible: boolean
   title: string
@@ -99,7 +100,8 @@ const state = reactive<ModelStateType>({
     documentType: '',
     sourceSystem1: [],
     sealType: ''
-  }
+  },
+  saveListInfo: []
 })
 const { dialogVisible, docInfoForm } = toRefs(state)
 
