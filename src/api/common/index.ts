@@ -7,6 +7,7 @@ import type {
   RecordRequest,
   RelationListRequest,
   BatchExportRequest,
+  ExportBySelectRequest,
   CodeRequest,
   DictTreeRequest
 } from './types/request'
@@ -17,6 +18,7 @@ import type {
   RecordList,
   FileDownload,
   RelationListItem,
+  ExportBySelectResponse,
   ProvinceResponse,
   DictDataTreeResponse
 } from './types/response'
@@ -189,6 +191,17 @@ export class CommonAPI {
   getDictTreeList(data: DictTreeRequest): Response<DictDataTreeResponse[]> {
     return this.request({
       url: `${prefix}/admin-api/system/dict-data/tree`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 通用导出
+  exportBySelect(
+    data: ExportBySelectRequest
+  ): Response<ExportBySelectResponse> {
+    return this.request({
+      url: `${prefix}/admin-api/export/file/record/exportBySelect`,
       method: 'post',
       data
     })

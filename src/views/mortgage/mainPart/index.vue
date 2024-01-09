@@ -117,11 +117,11 @@ import {
   Delete,
   Download
 } from '@element-plus/icons-vue'
+import { ElMessageBox, ElMessage } from 'element-plus'
 import { px2rem } from '@/utils'
 import Table from '@/components/Table/index.vue'
 import { MainPartAPI } from '@/api'
 import AreaCasder from '@/components/AreaCascader/index.vue'
-import { ElMessageBox, ElMessage } from 'element-plus'
 import type { StateType } from '@/views/mortgage/mainPart/type'
 import type { MortgageSubjectListResponse } from '@/api/mainPart/types/response'
 
