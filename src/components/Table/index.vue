@@ -62,7 +62,7 @@
       <el-table-column
         v-if="isSelected"
         type="selection"
-        width="40"
+        :width="px2rem('40px')"
         align="center"
       />
     </slot>
@@ -73,7 +73,11 @@
         v-bind="item"
         :align="item.align"
         :showOverflowTooltip="item.showOverflowTooltip"
-        :width="item.width"
+        :width="
+          item.width
+            ? px2rem(String(item.width).split('px')[0] + 'px')
+            : undefined
+        "
         :fixed="item.fixed || false"
       >
         <template #header>
