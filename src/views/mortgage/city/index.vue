@@ -231,6 +231,7 @@ const searchHandler = () => {
   getList()
 }
 const getList = async () => {
+  tableLoading.value = true
   queryParams.provinceCityCodes = []
   if (selCity.value.length) {
     selCity.value.forEach((item: string[]) => {
@@ -243,6 +244,7 @@ const getList = async () => {
   MortgageCityApi.getMortgageCityList(queryParams)
     .then((res) => {
       if (res && res.code === 200) {
+        tableLoading.value = false
         tableData.splice(0, tableData.length)
         tableData.push(...(res?.data?.list || []))
         pageTotal.value = res?.data?.total || 0
@@ -330,8 +332,6 @@ const delHandler = (ids: string[]) => {
     })
 }
 const changeStatus = (val?: EditMortgageCityRequest) => {
-  console.error(val)
-
   if (val) {
     MortgageCityApi.editMortgageCity(val)
       .then((res) => {
