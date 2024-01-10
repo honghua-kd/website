@@ -311,7 +311,7 @@ const getDicts = () => {
       throw err
     })
 }
-const tableData: Ref<List[]> = ref([])
+const tableData = reactive<List[]>([])
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
 
 type children = {
@@ -403,7 +403,9 @@ const getList = async () => {
   parm.sourceSystem12List = sysList
   API.getSmsTemplatePage(parm).then((res) => {
     if (res.code === 200 && res.data) {
-      tableData.value = res.data.list
+      tableData.splice(0, tableData.length)
+      tableData.push(...(res?.data?.list || []))
+      // tableData.value = res.data.list
       pageTotal.value = res.data.total
     }
   })

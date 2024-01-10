@@ -63,7 +63,7 @@ const dictTypes = ['ARCHIVE_STATUS', 'OCR_STATUS']
 onMounted(() => {
   searchHandler()
 })
-const tableData: Ref<SendMessageList[]> = ref([])
+const tableData = reactive<SendMessageList[]>([])
 const tableLoading: Ref<boolean> = ref(false)
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
 const queryParams = reactive<SendMessageRequest>({
@@ -91,7 +91,9 @@ const exportParams = reactive<ExportSendRequest>({
 const searchHandler = async () => {
   API.getSendPageRecord(queryParams).then((res) => {
     if (res.code === 200 && res.data) {
-      tableData.value = res?.data?.list
+      tableData.splice(0, tableData.length)
+      tableData.push(...(res?.data?.list || []))
+      // tableData.value = res?.data?.list
       pageTotal.value = res?.data?.total
     }
   })
