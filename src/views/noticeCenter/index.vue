@@ -21,7 +21,6 @@
       :page-total="pageTotal"
       :setColumnEnable="true"
       :height="tableHeight"
-      :actionWidth="px2rem('100px')"
       v-model:pageSize="queryParams.pageSize"
       v-model:pageNo="queryParams.pageNo"
       @selection-change="selectionChangeHandler"
@@ -88,7 +87,7 @@ import { NoticeCenterAPI } from '@/api'
 import { NoticeListItem } from '@/api/noticeCenter/types/response'
 import { Finished, Delete } from '@element-plus/icons-vue'
 import { useDictStore } from '@/store/dict'
-import { px2rem } from '@/utils'
+// import { px2rem } from '@/utils'
 import { useRouter } from '@toystory/lotso'
 import { ElMessageBox, ElMessage } from 'element-plus'
 
@@ -214,13 +213,4 @@ const clickTitle = (row: NoticeListItem) => {
 getList()
 </script>
 
-<style lang="scss" scoped>
-.table-btn-box {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-// .page-notice-center {
-// }
-</style>
+<style lang="scss" scoped></style>

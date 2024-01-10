@@ -160,7 +160,7 @@ import {
   Setting,
   ArrowDown
 } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
+import { ElMessageBox, ElMessage } from 'element-plus'
 import type { CascaderOption } from 'element-plus'
 import OperDialog from '@/views/message/messageTemplate/components/operDialog.vue'
 import { reactive, ref, Ref, onMounted } from 'vue'

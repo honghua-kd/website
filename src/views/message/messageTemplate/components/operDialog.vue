@@ -104,120 +104,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <!-- 自动发送条件 // 目前后端无此功能 -->
-        <!-- <el-row>
-          <el-col :span="24">
-            <el-form-item label="自动发送条件" prop="sendConditionJson">
-              <el-col :span="24">
-                <el-button type="primary" plain @click="showOverdueVisible()"
-                  >逾期天数
-                </el-button>
-                <el-button type="primary" plain @click="showAfterVisible()"
-                  >After TA DQ days</el-button
-                >
-                <el-button type="primary" plain @click="showContractVisible()"
-                  >合同状态</el-button
-                >
-              </el-col>
-              <el-col :span="24">
-                <div class="flex-c">
-                  <div v-if="ovlist && ovlist.length > 0">
-                    <div class="ruleTitle">逾期天数</div>
-                    <el-tag
-                      v-for="(tag, index) in ovlist"
-                      :key="index"
-                      class="tags-overdue"
-                      closable
-                      type=""
-                      @close="handleCancelOverdus(tag)"
-                    >
-                      {{ tag }}
-                    </el-tag>
-                  </div>
-                </div>
-              </el-col>
-              <el-col :span="24">
-                <div class="flex-c">
-                  <div v-if="afterlist && afterlist.length > 0">
-                    <div class="ruleTitle">After TA DQ days</div>
-                    <el-tag
-                      v-for="(tag, index) in afterlist"
-                      :key="index"
-                      class="tags-overdue"
-                      closable
-                      type=""
-                      @close="handleCancelAfter(tag)"
-                    >
-                      {{ tag }}
-                    </el-tag>
-                  </div>
-                </div>
-              </el-col>
-              <el-col :span="24">
-                <div class="flex-c">
-                  <div v-if="contractlist && contractlist.length > 0">
-                    <div class="ruleTitle">合同状态</div>
-                    <el-tag
-                      v-for="(tag, index) in contractlist"
-                      :key="index"
-                      class="tags-overdue"
-                      closable
-                      type=""
-                      @close="handleCancelContract(tag)"
-                    >
-                      {{ tag }}
-                    </el-tag>
-                  </div>
-                </div>
-              </el-col>
-            </el-form-item>
-          </el-col>
-        </el-row> -->
-        <!-- 模板内容 // 目前后端无此功能 -->
-        <!-- <el-row>
-          <el-col>
-            <el-form-item label="模板内容" prop="market">
-              <div class="divfont-red">
-                (注:在模板内容中,可在{}符号中插入左侧参数对应的配置模板参数名,添加后系统将会自动映射)
-              </div>
-              <el-table border>
-                <el-table-column
-                  label="一级来源"
-                  prop="sourceSystem1"
-                  width="120"
-                  show-overflow-tooltip
-                >
-                </el-table-column>
-                <el-table-column
-                  label="二级来源"
-                  prop="sourceSystem2"
-                  width="120"
-                  show-overflow-tooltip
-                >
-                </el-table-column>
-                <el-table-column
-                  label="业务类型"
-                  prop="bizType"
-                  width="120"
-                  show-overflow-tooltip
-                >
-                </el-table-column>
-                <el-table-column
-                  label="名称"
-                  prop="paramName"
-                  width="120"
-                  show-overflow-tooltip
-                />
-                <el-table-column
-                  label="模板变量名"
-                  prop="paramCode"
-                  width="120"
-                  show-overflow-tooltip
-                />
-              </el-table>
-            </el-form-item>
-          </el-col>
-        </el-row> -->
       </el-form>
       <template #footer>
         <el-button @click="dialogVisible = false">取 消</el-button>
@@ -380,6 +266,22 @@ const handleNodeClick = (currentKeys, currentNode) => {
     formParams.sourceSystemWeb = []
     return
   }
+  // const treeConfig = {
+  //   'empty-text': '暂无数据',
+  //   'default-expand-all': true,
+  //   'show-checkbox': true,
+  //   'default-expanded-keys': [],
+  //   // 'default-checked-keys': [], // 默认勾选的节点的 key 的数组
+  //   nodeKey: 'id',
+  //   indent: 15,
+  //   props: {
+  //     children: 'children',
+  //     label: 'name',
+  //     value: 'code'
+  //   }
+  // }
+  // const defaultCheckedkeys = ref<object>([])
+  // const handleNodeClick = () => {}
 
   const sysList: System12List[] = []
   const srotLs = currentNode.checkedKeys.sort((a: string, b: string) => {

@@ -160,6 +160,7 @@ import type { DictItem } from '@/api'
 import { SupplierAPI, CommonAPI } from '@/api'
 const API = new SupplierAPI()
 const CommonApi = new CommonAPI()
+// import type { CascaderValue } from 'element-plus'
 
 const queryFormList = ref<queryForm>({
   name: '',
@@ -279,6 +280,23 @@ const selectAllData = (selection: RecordType[]) => {
 const selectData = (selection: RecordType[], row: RecordType) => {
   console.log(selection, row)
 }
+
+// // 级联选择器属性
+// const propsObj = reactive({
+//   multiple: false
+// })
+// const changeCity = (value: CascaderValue) => {
+//   console.log(value)
+//   console.log(formModel.value)
+//   if (propsObj.multiple) {
+//     // 多选
+//   } else {
+//     // 单选
+//     // value.forEach((i: number) => {
+//     //   console.log(i)
+//     // })
+//   }
+// }
 </script>
 
 <style lang="scss" scoped>

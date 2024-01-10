@@ -16,7 +16,8 @@ import type {
   DictTypeAllItem,
   OrgStructure,
   StaffList,
-  ExpDetail
+  ExpDetail,
+  TemplateListItem
 } from './types/response'
 
 import type {
@@ -43,7 +44,11 @@ import type {
   GetExpDetailRequest,
   DelExpRequest,
   CreateExpRequest,
-  StaffInfoRequest
+  StaffInfoRequest,
+  TemplateListRequest,
+  TemplateDelRequest,
+  TemplateEditRequest,
+  TemplateAddRequest
 } from './types/request'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
@@ -294,4 +299,51 @@ export class SystemAPI {
       data
     })
   }
+
+  // 【模板配置】列表查询
+  getTemplateList(
+    data: TemplateListRequest
+  ): Response<PageList<TemplateListItem>> {
+    return this.request({
+      url: `${prefix}/admin-api/file/template/list`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 【模板配置】删除
+  delTemplate(data: TemplateDelRequest): Response<boolean | null> {
+    return this.request({
+      url: `${prefix}/admin-api/file/template/delete`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 【模板配置】修改
+  updateTemplate(data: TemplateEditRequest): Response<boolean | null> {
+    return this.request({
+      url: `${prefix}/admin-api/file/template/update`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 【模板配置】新增
+  addTemplate(data: TemplateAddRequest): Response<boolean | null> {
+    return this.request({
+      url: `${prefix}/admin-api/file/template/add`,
+      method: 'post',
+      data
+    })
+  }
+
+  // // 【通用模板下载】根据业务大类+业务小类 下载
+  // templateImportResult(data: TemplateAddRequest): Response<boolean | null> {
+  //   return this.request({
+  //     url: `${prefix}/file/template/importResult`,
+  //     method: 'post',
+  //     data
+  //   })
+  // }
 }

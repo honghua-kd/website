@@ -97,6 +97,7 @@ export class MessageAPI {
     })
   }
 
+  // 消息记录页导出
   exportExcelSendMessage(data: ExportSendRequest): Promise<FileDownload> {
     return this.request({
       url: `${prefix}/system/sms-send/exportExcel`,

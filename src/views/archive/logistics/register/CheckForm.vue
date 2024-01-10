@@ -118,7 +118,7 @@
               </el-col>
               <el-col :span="8">
                 <el-form-item
-                  label="寄件人联系方式"
+                  label="寄件人联系电话"
                   :label-width="px2rem('120px')"
                   prop="sendPhone"
                 >
@@ -163,7 +163,7 @@
               </el-col>
               <el-col :span="8">
                 <el-form-item
-                  label="收件人联系方式"
+                  label="收件人联系电话"
                   :label-width="px2rem('120px')"
                   prop="receivePhone"
                 >
@@ -270,9 +270,9 @@
       </el-row>
       <el-row>
         <el-col :span="15">
-          <el-form-item label="备注" prop="postOrReceive">
+          <el-form-item label="备注" prop="expressContentRemark">
             <el-input
-              v-model="basicInfoForm.expressNo"
+              v-model="basicInfoForm.expressContentRemark"
               clearable
               disabled
               :rows="3"
@@ -307,7 +307,11 @@
                 type="selection"
               />
               <el-table-column label="文件名" prop="fileName" align="center" />
-              <el-table-column label="上传用户" prop="creator" align="center" />
+              <el-table-column
+                label="上传用户"
+                prop="creatorName"
+                align="center"
+              />
               <el-table-column
                 label="上传时间"
                 prop="createTime"
@@ -455,7 +459,7 @@ const getOtherContentList = (id: string) => {
             fileCode: item.attachmentId,
             fileName: item.fileName,
             fileRemark: item.remark,
-            creator: item.creator,
+            creatorName: item.creatorName,
             createTime: item.createTime
           })
         })

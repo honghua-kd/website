@@ -1,16 +1,83 @@
-import { useNoticeStore, mitt, useRouter } from '@toystory/lotso'
+import { useNoticeStore, useUserStore, mitt, useRouter } from '@toystory/lotso'
 import { NoticeCenterAPI } from '@/api'
 import type { NoticeListItem } from '@/api'
 import { useDictStore } from '@/store/dict'
 import { computed } from 'vue'
+import { ElNotification } from 'element-plus'
 import { NOTICE_STATUS } from '@/constants'
+import { useWebsocket } from './useWebsocket'
 
 const { UNREAD, READ } = NOTICE_STATUS
+
+const MESSAGE_TYPE = {
+  SERVER_PERMISSION_VERIFICATION: 'SERVER_PERMISSION_VERIFICATION',
+  CLIENT_HEARTBEAT: 'CLIENT_HEARTBEAT',
+  SERVER_MESSAGE_PUSH: 'SERVER_MESSAGE_PUSH',
+  SERVER_HEARTBEAT: 'SERVER_HEARTBEAT'
+}
 
 export const useNoticeCenter = () => {
   const noticeStore = useNoticeStore()
   const API = new NoticeCenterAPI()
 
+  // websocket 即时通知
+  const userStore = useUserStore()
+  const token = computed(() => {
+    return userStore.token
+  })
+
+  if (!import.meta.env.VITE_APP_WEBSOCKET_URL) {
+    console.error('缺少websocket URL配置')
+  } else {
+    let heartBeatTimer: NodeJS.Timeout | null
+    const { socket, send } = useWebsocket(
+      import.meta.env.VITE_APP_WEBSOCKET_URL + token.value,
+      {
+        onMessage(data) {
+          if (data) {
+            try {
+              const message = JSON.parse(data as string)
+              const { code, msgType, msg } = message
+              if (code !== 200) {
+                console.error('WebSocket Error:', message)
+                heartBeatTimer && clearTimeout(heartBeatTimer)
+                heartBeatTimer = null
+                return
+              }
+              if (
+                msgType === MESSAGE_TYPE.SERVER_PERMISSION_VERIFICATION &&
+                !heartBeatTimer
+              ) {
+                heartBeatTimer = socketHeartBeat()
+              }
+              if (msgType === MESSAGE_TYPE.SERVER_MESSAGE_PUSH) {
+                // 消息推送
+                ElNotification({
+                  title: '通知',
+                  message: msg
+                })
+                getNoticeCount()
+              }
+            } catch (error) {
+              console.error('WebSocket Error:', error)
+            }
+          }
+        }
+      }
+    )
+
+    const socketHeartBeat = () => {
+      return setTimeout(() => {
+        const msg = { msgType: MESSAGE_TYPE.CLIENT_HEARTBEAT }
+        if (socket.readyState === 1) {
+          send(JSON.stringify(msg))
+        }
+        socketHeartBeat()
+      }, 30000)
+    }
+  }
+
+  // 获取未读消息数量
   const getNoticeCount = () => {
     API.getNoticeCount({
       status: UNREAD
@@ -24,6 +91,7 @@ export const useNoticeCenter = () => {
     })
   }
 
+  // 获取未读消息列表
   const getUnreadNotice = () => {
     const dictStore = useDictStore()
     noticeStore.setLoading(true)
@@ -85,10 +153,12 @@ export const useNoticeCenter = () => {
     API.changeNoticeStatus({
       ids: [(item as NoticeListItem).id],
       status: READ
-    })
-    router.push({
-      path: (item as NoticeListItem).router,
-      query: (item as NoticeListItem).routerParam
+    }).then(() => {
+      getNoticeCount()
+      router.push({
+        path: (item as NoticeListItem).router,
+        query: (item as NoticeListItem).routerParam
+      })
     })
   })
 

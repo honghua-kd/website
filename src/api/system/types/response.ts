@@ -576,3 +576,58 @@ export interface ExpDetail {
    */
   url: null | string
 }
+
+export interface TemplateListItem {
+  /**
+   * 业务大类
+   */
+  businessCategory?: null | string
+  /**
+   * 业务小类
+   */
+  businessSubcategory?: null | string
+  /**
+   * 创建时间
+   */
+  createTime?: null | string
+  /**
+   * 创建人
+   */
+  creator?: null | string
+  /**
+   * 创建人姓名
+   */
+  creatorName?: null | string
+  /**
+   * 删除标识
+   */
+  deleted?: boolean | null
+  /**
+   * 文件code
+   */
+  fileCode?: null | string
+  /**
+   * 文件名称（前端下载后展示名称）
+   */
+  fileName?: null | string
+  /**
+   * 主键
+   */
+  id: number
+  /**
+   * 备注
+   */
+  remark?: null | string
+  /**
+   * 更新人
+   */
+  updater?: null | string
+  /**
+   * 更新人姓名
+   */
+  updaterName?: null | string
+  /**
+   * 更新时间
+   */
+  updateTime?: null | string
+}

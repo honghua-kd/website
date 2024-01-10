@@ -62,7 +62,7 @@
       <el-table-column
         v-if="isSelected"
         type="selection"
-        width="40"
+        width="40px"
         align="center"
       />
     </slot>
@@ -71,9 +71,6 @@
       <el-table-column
         v-if="!item.hide"
         v-bind="item"
-        :align="item.align"
-        :showOverflowTooltip="item.showOverflowTooltip"
-        :width="item.width"
         :fixed="item.fixed || false"
       >
         <template #header>

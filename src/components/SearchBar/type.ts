@@ -24,6 +24,7 @@ type ISearchProps = ISearchConfigCommon | ISearchConfigTimer
 
 type ISearchUnit = ISearchProps[]
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type queryState = Record<string, any>
 type dictState = Record<string, DictItem[]>
 
@@ -32,6 +33,7 @@ interface IProps {
   modelValue: queryState
   dictArray?: string[]
   showExpand?: boolean
+  labelWidth?: string
 }
 
 export {

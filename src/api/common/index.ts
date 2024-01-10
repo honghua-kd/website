@@ -7,8 +7,9 @@ import type {
   RecordRequest,
   RelationListRequest,
   BatchExportRequest,
-  BaseProvincesList,
-  ProvincesChildrenRequest
+  ExportBySelectRequest,
+  CodeRequest,
+  DictTreeRequest
 } from './types/request'
 import type {
   UploadFile,
@@ -17,8 +18,9 @@ import type {
   RecordList,
   FileDownload,
   RelationListItem,
-  AllProvincesResponse,
-  ProvincesChildrenResponse
+  ExportBySelectResponse,
+  ProvinceResponse,
+  DictDataTreeResponse
 } from './types/response'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
@@ -168,20 +170,38 @@ export class CommonAPI {
     })
   }
 
-  // 获取所有的省份信息
-  getAllProvinces(): Response<BaseProvincesList<AllProvincesResponse>> {
+  // 获取所有省份信息
+  getAllProvince(): Response<Omit<ProvinceResponse, 'haveChildren'>[]> {
     return this.request({
       url: `${prefix}/admin-api/area/getAllProvinces`,
       method: 'post'
     })
   }
 
-  // 获取所有的省份信息
-  getProvincesChildren(
-    data: ProvincesChildrenRequest
-  ): Response<BaseProvincesList<ProvincesChildrenResponse>> {
+  // 获取所有省份子节点信息
+  getProvinceChildren(data: CodeRequest): Response<ProvinceResponse[]> {
     return this.request({
       url: `${prefix}/admin-api/area/getChildren`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 查询树形字典数据
+  getDictTreeList(data: DictTreeRequest): Response<DictDataTreeResponse[]> {
+    return this.request({
+      url: `${prefix}/admin-api/system/dict-data/tree`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 通用导出
+  exportBySelect(
+    data: ExportBySelectRequest
+  ): Response<ExportBySelectResponse> {
+    return this.request({
+      url: `${prefix}/admin-api/export/file/record/exportBySelect`,
       method: 'post',
       data
     })

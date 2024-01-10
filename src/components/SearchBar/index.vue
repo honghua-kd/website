@@ -5,20 +5,20 @@
       ref="queryFormRef"
       class="scan-form"
       :model="modelValue"
-      :label-width="px2rem('90px')"
+      :label-width="px2rem(labelWidth)"
     >
       <div class="scan-search-bar">
         <template v-for="(unit, index) in searchConfig" :key="index">
           <el-row :gutter="20" v-if="index > 1 ? expandFlag : true">
             <template v-for="item in unit" :key="item.prop">
-              <slot :name="item.slotName ? item.slotName : 'default'">
-                <el-col :span="item.colSpan">
-                  <el-form-item
-                    :label="item.label"
-                    :prop="[(item as ISearchConfigCommon).prop]"
-                  >
+              <el-col :span="item.colSpan">
+                <el-form-item
+                  :label="item.label"
+                  :prop="[(item as ISearchConfigCommon).prop]"
+                >
+                  <slot :name="item.slotName ? item.slotName : 'default'">
                     <!-- el-date-picker -->
-                    <template v-if="item.compType === 'el-date-picker'">
+                    <template v-if="item.compType === 'date-range-picker'">
                       <el-date-picker
                         v-model="modelValue[(item as ISearchConfigTimer).propStart]"
                         type="datetime"
@@ -26,7 +26,7 @@
                         style="margin-right: 4%; width: 48%"
                       />
                       <el-date-picker
-                        v-model="modelValue[(item as ISearchConfigTimer).propEnd ]"
+                        v-model="modelValue[(item as ISearchConfigTimer).propEnd]"
                         type="datetime"
                         :placeholder="(item as ISearchConfigTimer).placeholderEnd"
                         style="width: 48%"
@@ -56,9 +56,9 @@
                         />
                       </el-select>
                     </template>
-                  </el-form-item>
-                </el-col>
-              </slot>
+                  </slot>
+                </el-form-item>
+              </el-col>
             </template>
           </el-row>
         </template>
@@ -107,14 +107,15 @@ import type {
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
 
 const props = withDefaults(defineProps<IProps>(), {
-  showExpand: false
+  showExpand: false,
+  labelWidth: '90px'
 })
 
 const emit = defineEmits(['search', 'reset', 'update:modelValue'])
 const dictObj = reactive<dictState>({})
 
+const dictStore = useDictStore()
 const generateOptions = () => {
-  const dictStore = useDictStore()
   const dictMap = dictStore.dicts
   if (props.dictArray) {
     props.dictArray.forEach((item) => {
@@ -150,7 +151,17 @@ watch(
     deep: true
   }
 )
-generateOptions()
+
+watch(
+  () => dictStore.dicts,
+  () => {
+    generateOptions()
+  },
+  {
+    immediate: true,
+    deep: true
+  }
+)
 
 const searchwidth = computed(() => {
   let width = 'calc(100% - 216px)'
