@@ -64,5 +64,6 @@ const userViteConfig: ViteConfig = {
   useImageMin: false,
   // 是否使用px2rem
   usePx2Rem: process.env.NODE_ENV !== 'development'
+  // usePx2Rem: true
 }
 export default userViteConfig

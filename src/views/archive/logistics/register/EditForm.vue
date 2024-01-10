@@ -440,6 +440,7 @@
               :data="basicInfoForm.otherFileList"
               :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
               border
+              :max-height="px2rem('320px')"
             >
               <el-table-column
                 label="序号"
@@ -447,7 +448,12 @@
                 align="center"
                 type="index"
               />
-              <el-table-column label="文件名" prop="fileName" align="center" />
+              <el-table-column
+                label="文件名"
+                prop="fileName"
+                align="center"
+                show-overflow-tooltip
+              />
               <el-table-column
                 label="上传用户"
                 prop="creatorName"
@@ -486,9 +492,9 @@
       </el-row>
     </el-form>
     <template #footer>
-      <el-button type="primary" @click="updateHandler"> 保 存 </el-button>
+      <el-button type="primary" @click="updateHandler"> 确 定 </el-button>
       <el-button type="primary" @click="dialogVisible = false">
-        关 闭
+        取 消
       </el-button>
     </template>
     <EditExpressForm
@@ -516,7 +522,7 @@ import type {
   ExpressInfoCardListRequest
 } from '@/api'
 import { px2rem } from '@/utils'
-import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
+import { ElMessageBox, ElMessage, ElForm, dayjs } from 'element-plus'
 import type { AutocompleteFetchSuggestionsCallback } from 'element-plus'
 import { ref, reactive, Ref, watch } from 'vue'
 import { CommonAPI, ExpressAPI } from '@/api'
@@ -928,7 +934,8 @@ const getFileInfo = (params: OtherFileList[]) => {
         fileCode: item.fileCode,
         fileName: item.fileName,
         fileRemark: '',
-        creatorName: user
+        creatorName: user,
+        createTime: dayjs().format('YYYY-MM-DD HH:mm:ss')
       })
     })
   }
