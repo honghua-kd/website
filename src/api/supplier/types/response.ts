@@ -275,4 +275,40 @@ export interface CityContactsListResponse {
   updater?: string
 }
 
-//
+export interface AccountResponse {
+  /**
+   * 省份行政规划名称
+   * 账号名称
+   */
+  accountName?: string
+  /**
+   * 账号
+   * 账号
+   */
+  accountNo?: string
+  /**
+   * 电子邮箱
+   * 电子邮箱
+   */
+  email?: string
+  /**
+   * 主键id
+   * 主键id
+   */
+  id?: string
+  /**
+   * 联系电话
+   * 联系电话
+   */
+  phone?: string
+  /**
+   * 状态,0=停用；1=启用
+   * 状态,0=停用；1=启用
+   */
+  status?: number
+  /**
+   * 供应商id
+   * 供应商id
+   */
+  supplierId?: string
+}

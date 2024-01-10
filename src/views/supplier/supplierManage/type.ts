@@ -22,7 +22,6 @@ export type queryForm = {
   expireDateStart: string
   expireDateEnd: string
   innerInterfaceStaffCode: string
-  areaCode: number[]
   type: number | ''
   pageNo: number
   pageSize: number

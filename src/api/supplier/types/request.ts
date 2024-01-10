@@ -212,3 +212,127 @@ export interface EditCityContactsRequest {
 export interface DeleteCityContactsRequest {
   id: string
 }
+
+export interface AddSettleRequest {
+  /**
+   * 结算金额
+   */
+  amount: number | string
+  /**
+   * 城市行政规划代码
+   */
+  cityCode: number
+  /**
+   * 城市行政规划名称
+   */
+  cityName: string
+  /**
+   * 省份行政规划代码
+   */
+  provinceCode: number
+  /**
+   * 省份行政规划名称
+   */
+  provinceName: string
+  /**
+   * 结算方式,SUPPLIER_SETTLEMENT_WAY_1=手动汇款;SUPPLIER_SETTLEMENT_WAY_2=自动扣款
+   */
+  settlementWay: string
+  /**
+   * 供应商id
+   */
+  supplierId: string
+}
+
+/**
+ * SettlementWayEditReq
+ */
+export interface EditSettleRequest {
+  /**
+   * 结算金额
+   */
+  amount: number
+  /**
+   * 城市行政规划代码
+   */
+  cityCode: number
+  /**
+   * 城市行政规划名称
+   */
+  cityName: string
+  /**
+   * 结算方式id
+   */
+  id: string
+  /**
+   * 省份行政规划代码
+   */
+  provinceCode: number
+  /**
+   * 省份行政规划名称
+   */
+  provinceName: string
+  /**
+   * 结算方式,SUPPLIER_SETTLEMENT_WAY_1=手动汇款;SUPPLIER_SETTLEMENT_WAY_2=自动扣款
+   */
+  settlementWay: string
+}
+
+export interface AccountRequest {
+  /**
+   * 供应商id
+   * 供应商id
+   */
+  supplierId: string
+}
+export interface AddAccountRequest {
+  /**
+   * 省份行政规划名称
+   * 账号名称
+   */
+  accountName: string
+  /**
+   * 电子邮箱
+   * 电子邮箱
+   */
+  email: string
+  /**
+   * 联系电话
+   * 联系电话
+   */
+  phone: string
+  /**
+   * 供应商id
+   * 供应商id
+   */
+  supplierId: string
+}
+export interface EditAccountRequest {
+  /**
+   * 账号名称
+   * 账号名称
+   */
+  accountName: string
+  /**
+   * 电子邮箱
+   * 电子邮箱
+   */
+  email: string
+  /**
+   * 供应商账号id
+   * 供应商账号id
+   */
+  id: string
+  /**
+   * 联系电话
+   * 联系电话
+   */
+  phone: string
+}
+export interface DelAccountRequest {
+  /**
+   * 供应商账号id
+   * 供应商账号id
+   */
+  id: string
+}

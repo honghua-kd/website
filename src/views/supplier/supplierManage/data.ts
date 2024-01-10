@@ -136,49 +136,56 @@ export const PersonColumn: ITableConfigProps[] = [
     fixed: 'right'
   }
 ]
-export const CityList = [
+export const AccountColumn: ITableConfigProps[] = [
   {
-    value: 1,
-    label: 'Asia',
-    children: [
-      {
-        value: 2,
-        label: 'China',
-        children: [
-          { value: 3, label: 'Beijing' },
-          { value: 4, label: 'Shanghai' },
-          { value: 5, label: 'Hangzhou' }
-        ]
-      },
-      {
-        value: 6,
-        label: 'Japan',
-        children: [
-          { value: 7, label: 'Tokyo' },
-          { value: 8, label: 'Osaka' },
-          { value: 9, label: 'Kyoto' }
-        ]
-      }
-    ]
+    label: '序号',
+    prop: '',
+    width: '60',
+    minWidth: '',
+    fixed: true
   },
   {
-    value: 14,
-    label: 'Europe',
-    children: [
-      {
-        value: 15,
-        label: 'France'
-      },
-      {
-        value: 19,
-        label: 'UK',
-        children: [
-          { value: 20, label: 'London' },
-          { value: 21, label: 'Birmingham' },
-          { value: 22, label: 'Manchester' }
-        ]
-      }
-    ]
+    label: '账号',
+    prop: 'accountNo',
+    width: '',
+    minWidth: '',
+    fixed: false
+  },
+  {
+    label: '账号名称',
+    prop: 'accountName',
+    width: '',
+    minWidth: '',
+    fixed: false
+  },
+  {
+    label: '电子邮箱',
+    prop: 'email',
+    width: '',
+    minWidth: '',
+    fixed: false
+  },
+  {
+    label: '联系电话',
+    prop: 'phone',
+    width: '',
+    minWidth: '',
+    fixed: false
+  },
+  {
+    label: '状态',
+    prop: 'status',
+    width: '',
+    minWidth: '',
+    fixed: false
+  },
+  {
+    label: '操作',
+    prop: 'action',
+    type: 'action',
+    width: 120,
+    align: 'center',
+    fixed: 'right'
   }
 ]
 export const SettlementColumn: ITableConfigProps[] = [

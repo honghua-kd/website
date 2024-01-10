@@ -87,3 +87,14 @@ export interface DictTreeRequest {
   label?: null | string
   status?: number | null
 }
+
+export interface ExportBySelectRequest {
+  /**
+   * 业务类型
+   */
+  bizType: string
+  /**
+   * 查询条件(json格式)
+   */
+  selectParams: string
+}

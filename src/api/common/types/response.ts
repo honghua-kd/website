@@ -221,3 +221,14 @@ export interface DictDataTreeResponse {
   status?: number | null
   value?: null | string
 }
+
+export interface ExportBySelectResponse {
+  /**
+   * 附件code
+   */
+  fileCode?: string
+  /**
+   * 0异步 1同步
+   */
+  sync?: number
+}

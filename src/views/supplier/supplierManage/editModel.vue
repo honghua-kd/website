@@ -2,11 +2,12 @@
   <el-dialog
     class="edit-supplier-dialog"
     v-model="dialogVisible"
-    title=""
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     destroy-on-close
+    top="5vh"
     :before-close="handleClose"
+    style="overflow-y: scroll; max-height: 90vh"
   >
     <div class="dialog-header flex-between-center">
       <div class="title flex-between-center">
@@ -103,6 +104,7 @@
               v-model="editForm.supplierTypes"
               style="width: 100%"
               placeholder="请选择供应商类型"
+              multiple
             >
               <el-option
                 v-for="item in supplierDetailType"
@@ -137,6 +139,7 @@
               v-model="editForm.belongCompanyList"
               style="width: 100%"
               placeholder="请选择归属公司"
+              multiple
             >
               <el-option
                 v-for="item in belongCompanyStatus"
@@ -157,6 +160,8 @@
               style="width: 100%"
               type="datetime"
               placeholder="选择日期时间"
+              format="YYYY-MM-DD"
+              value-format="YYYY-MM-DD"
             />
           </el-form-item>
         </el-col>
@@ -172,6 +177,8 @@
               style="width: 100%"
               type="datetime"
               placeholder="选择日期时间"
+              format="YYYY-MM-DD"
+              value-format="YYYY-MM-DD"
             />
           </el-form-item>
         </el-col>
@@ -184,8 +191,14 @@
             :rules="[{ required: true, message: 'required' }]"
           >
             <el-input
+              v-model="editForm.innerInterfaceStaffCode"
+              placeholder="请输入内部对接人名称"
+              style="width: 50%"
+            ></el-input>
+            <el-input
               v-model="editForm.innerInterfaceStaffName"
-              placeholder="请输入内部对接人"
+              placeholder="请输入内部对接人工号"
+              style="width: 50%"
             ></el-input>
           </el-form-item>
         </el-col>
@@ -306,11 +319,11 @@
             :rules="[{ required: true, message: 'required' }]"
           >
             <el-cascader
-              v-model="editForm.openBankArea"
-              placeholder="请选择"
-              style="width: 100%"
-              :options="CityList"
+              v-model="selArea"
               clearable
+              ref="cascaderArea"
+              :props="propsArea"
+              style="width: 100%"
             />
           </el-form-item>
         </el-col>
@@ -365,6 +378,7 @@
         <el-cascader
           v-model="selCity"
           clearable
+          ref="cascaderCity"
           :props="propsCity"
           style="margin: 0 10px; width: 40%"
         />
@@ -410,6 +424,7 @@
           v-model="selSettle"
           clearable
           :props="propsCity"
+          ref="cascaderSettle"
           style="margin: 0 10px; width: 40%"
         />
         <el-button type="primary" @click="searchSettleList()">查询</el-button>
@@ -423,17 +438,25 @@
         :setColumnEnable="false"
         :height="tableHeight"
         :actionWidth="px2rem('100px')"
-        v-model:pageSize="querySettle.pageNo"
-        v-model:pageNo="querySettle.pageSize"
+        v-model:pageSize="querySettle.pageSize"
+        v-model:pageNo="querySettle.pageNo"
         @size-change="getSettlementList"
         @current-change="getSettlementList"
       >
+        <template #default="{ row, prop }">
+          <span v-if="prop === 'settlementWay'">
+            {{ getWay(row.settlementWay) }}
+          </span>
+        </template>
         <template #action="scope">
           <template v-if="scope.row.id">
             <el-button link type="primary" @click="editSettlement(scope.row)"
               >编辑</el-button
             >
-            <el-button link type="danger" @click="removeSettlement(scope.row.id)"
+            <el-button
+              link
+              type="danger"
+              @click="removeSettlement(scope.row.id)"
               >删除</el-button
             >
           </template>
@@ -452,18 +475,9 @@
       </span>
     </template>
   </el-dialog>
-  <!-- 城市联系人 -->
-  <PersonModel
-    :visible="personModelVisible"
-    :formValue="{}"
-    @closeModel="closePersonModel"
-  />
-  <!-- 结算方式 -->
-  <SettlementModel
-    :visible="settlementModelVisible"
-    :formValue="{}"
-    @closeModel="closeSettlementModel"
-  />
+
+  <PersonForm ref="personFormRef" @success="getCityList" />
+  <SettlementForm ref="settlementFormRef" @success="getSettlementList" />
 </template>
 <script lang="ts" setup>
 import { watch, toRefs, reactive, ref, Ref, computed } from 'vue'
@@ -480,9 +494,10 @@ import {
   SettlementColumn
 } from '@/views/supplier/supplierManage/data'
 import Table from '@/components/Table/index.vue'
-import PersonModel from '@/views/supplier/supplierManage/personModel.vue'
-import SettlementModel from '@/views/supplier/supplierManage/settlementModel.vue'
+import PersonForm from './personForm.vue'
+import SettlementForm from './settlementForm.vue'
 import type { DictItem } from '@/api'
+import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import { SupplierAPI, CommonAPI } from '@/api'
 import { useUserStore } from '@toystory/lotso'
 const CommonApi = new CommonAPI()
@@ -546,6 +561,7 @@ const tableHeight = computed(() => {
   }
 })
 const selCity = ref([])
+const selSettle = ref([])
 const propsCity: CascaderProps = {
   lazy: true,
   async lazyLoad(node, resolve) {
@@ -582,6 +598,43 @@ const propsCity: CascaderProps = {
     resolve(nodes) // 回调
   }
 }
+const selArea = ref([])
+const propsArea: CascaderProps = {
+  lazy: true,
+  async lazyLoad(node, resolve) {
+    const nodes: CascaderOption[] = [] // 动态节点
+    const { level } = node
+    if (level === 0) {
+      const resParent = await CommonApi.getAllProvinces()
+      if (resParent && resParent?.data) {
+        resParent?.data.map((item) => {
+          const area = {
+            value: item.code,
+            label: item.name,
+            leaf: level >= 2
+          }
+          nodes.push(area)
+        })
+      }
+    } else {
+      const params = {
+        code: node.value as number
+      }
+      const res = await CommonApi.getProvincesChildren(params)
+      if (res && res.data) {
+        res?.data.map((item) => {
+          const area = {
+            value: item.code,
+            label: item.name,
+            leaf: level >= 2
+          }
+          nodes.push(area)
+        })
+      }
+    }
+    resolve(nodes) // 回调
+  }
+}
 const registerTypeStatus: Ref<DictItem[]> = ref([])
 const dictStore = useDictStore()
 const belongCompanyStatus = ref([])
@@ -608,31 +661,34 @@ const getDicts = () => {
   supplierDetailType.value = dictStore.dicts.SUPPLIER_DETAIL_TYPE
 }
 const queryPerson = reactive({
-  supplierId: state.editForm.id,
+  supplierId: state.editForm.supplierId,
   provinceName: '',
   cityName: '',
   pageNo: 1,
   pageSize: 10
 })
 const querySettle = reactive({
-  supplierId: state.editForm.id,
+  supplierId: state.editForm.supplierId,
   provinceName: '',
   cityName: '',
   pageNo: 1,
   pageSize: 10
 })
+const cascaderCity = ref()
+const cascaderSettle = ref()
 const getCityList = async () => {
   const params = {
-    supplierId: state.editForm.id,
-    provinceName: '',
-    cityName: '',
+    // supplierId: state.editForm.supplierId || '',
+    supplierId: '1744999920903254018',
+    provinceName: cascaderCity.value.getCheckedNodes()[0]?.pathLabels[0] || '',
+    cityName: cascaderCity.value.getCheckedNodes()[0]?.pathLabels[1] || '',
     pageNo: queryPerson.pageNo,
     pageSize: queryPerson.pageSize
   }
   await SupplierApi.getCityContactsList(params)
     .then((res) => {
       if (res && res.code === 200) {
-        personTableData.value.splice(0, personTableData.length)
+        personTableData.value.splice(0, personTableData.value.length)
         personTableData.value.push(...(res?.data?.list || []))
         personTotal.value = res?.data?.total || 0
       }
@@ -643,16 +699,18 @@ const getCityList = async () => {
 }
 const getSettlementList = async () => {
   const params = {
-    supplierId: state.editForm.id,
-    provinceName: '',
-    cityName: '',
+    // supplierId: state.editForm.supplierId || '',
+    supplierId: '1744999920903254018',
+    provinceName:
+      cascaderSettle.value.getCheckedNodes()[0]?.pathLabels[0] || '',
+    cityName: cascaderSettle.value.getCheckedNodes()[0]?.pathLabels[1] || '',
     pageNo: querySettle.pageNo,
     pageSize: querySettle.pageSize
   }
   await SupplierApi.getSettleList(params)
     .then((res) => {
       if (res && res.code === 200) {
-        settlementTableData.value.splice(0, settlementTableData.length)
+        settlementTableData.value.splice(0, settlementTableData.value.length)
         settlementTableData.value.push(...(res?.data?.list || []))
         settlementTotal.value = res?.data?.total || 0
       }
@@ -667,10 +725,6 @@ watch(
     state.step = 1
     state.dialogVisible = newVisible
     state.editForm = newValue
-    if (Object.keys(newValue).length) {
-      getCityList()
-      getSettlementList()
-    }
     getDicts()
   },
   {
@@ -685,56 +739,88 @@ watch(step, (newValue) => {
 
 // step 2 城市联系人
 // 新增
+const personFormRef = ref()
 const addPerson = () => {
-  state.personModelVisible = true
+  // personFormRef.value.open(state.editForm.supplierId, 'sid')
+  personFormRef.value.open('1744999920903254018', 'sid')
 }
 // 编辑
 const editPerson = (item: RecordType) => {
-  console.log(item)
+  item.proandcity = [item.provinceCode as string, item.cityCode as string]
+  personFormRef.value.open(item)
 }
 // 删除
-const removePerson = (item: RecordType) => {
-  console.log(item)
-}
-// 监听城市联系人弹窗关闭
-const closePersonModel = ({
-  visible,
-  type
-}: {
-  visible: boolean
-  type: string
-}) => {
-  console.log(visible, type)
-  state.personModelVisible = visible
+const removePerson = (id: string) => {
+  ElMessageBox.confirm('确认要删除吗？', '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(() => {
+      // 调用删除接口
+      const params = {
+        id: id
+      }
+      SupplierApi.deleteCityContacts(params)
+        .then((res) => {
+          if (res && res.code === 200) {
+            ElMessage({
+              type: 'success',
+              message: '删除成功'
+            })
+            getCityList()
+          }
+        })
+        .catch((err: Error) => {
+          throw err
+        })
+    })
+    .catch((err: Error) => {
+      throw err
+    })
 }
 
 // step 3 结算方式
 // 新增
+const settlementFormRef = ref()
 const addSettlement = () => {
-  state.settlementModelVisible = true
+  // settlementFormRef.value.open(state.editForm.supplierId, 'sid')
+  settlementFormRef.value.open('1744999920903254018', 'sid')
 }
 // 编辑
 const editSettlement = (item: RecordType) => {
-  console.log(item)
+  item.proandcity = [item.provinceCode as string, item.cityCode as string]
+  settlementFormRef.value.open(item)
 }
 // 删除
-const removeSettlement = (item: RecordType) => {
-  console.log(item)
-}
-// 表格size改变
-const settlementSizeChange = () => {}
-// 表格翻页
-const settlementCurrentChange = () => {}
-// 监听结算方式弹窗关闭
-const closeSettlementModel = ({
-  visible,
-  type
-}: {
-  visible: boolean
-  type: string
-}) => {
-  console.log(visible, type)
-  state.settlementModelVisible = visible
+const removeSettlement = (id: string) => {
+  ElMessageBox.confirm('确认要删除吗？', '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(() => {
+      // 调用删除接口
+      const params = {
+        id: id
+      }
+      SupplierApi.deleteSettleContacts(params)
+        .then((res) => {
+          if (res && res.code === 200) {
+            ElMessage({
+              type: 'success',
+              message: '删除成功'
+            })
+            getSettlementList()
+          }
+        })
+        .catch((err: Error) => {
+          throw err
+        })
+    })
+    .catch((err: Error) => {
+      throw err
+    })
 }
 
 const emit = defineEmits<{
@@ -748,7 +834,12 @@ const handleClose = () => {
   })
 }
 // 供应商弹窗底部按钮交互
-const clickButton = (value: string) => {
+const clickButton = async (value: string) => {
+  if (value === '下一步' && state.step === 1) {
+    // await submitForm()
+    await getCityList()
+    await getSettlementList()
+  }
   if (value === '下一步') {
     state.step++
   } else if (value === '上一步') {
@@ -758,26 +849,62 @@ const clickButton = (value: string) => {
       visible: false,
       type: value === '确认' ? 'update-close' : 'click-close'
     })
-    if (value === '确认') {
-      submitForm()
-    }
   }
 }
 const fileList = ref<UploadUserFile[]>([])
-const submitForm = () => {
-  const userStore = useUserStore()
-  tenantUser.value = userStore.userInfo?.staffCode as string
-  const formData = new FormData()
-  fileList.value.forEach((item) => {
-    formData.append('file', item.raw as File)
-  })
-  formData.append('tenantUser', tenantUser.value)
-  formData.append('prefixPath', 'express')
-  formData.append('expireDays', '-1')
-  CommonApi.uploadFilesBatch(formData)
+const userStore = useUserStore()
+const tenantUser = ref<string>('')
+const cascaderArea = ref()
+const submitForm = async () => {
+  let fileCodes: string[] = []
+  if (fileList.value.length) {
+    tenantUser.value = userStore.userInfo?.staffCode as string
+    const formData = new FormData()
+    fileList.value.forEach((item) => {
+      formData.append('file', item.raw as File)
+    })
+    formData.append('tenantUser', tenantUser.value)
+    formData.append('prefixPath', 'supplier')
+    formData.append('expireDays', '-1')
+    const firstRes = await CommonApi.uploadFilesBatch(formData)
+    if (firstRes && firstRes.code === 200) {
+      fileCodes = firstRes.data?.fileCodes || []
+    }
+  }
+  const sparams = {
+    supplierName: state.editForm.supplierName,
+    organCode: state.editForm.organCode,
+    supplierTypes: state.editForm.supplierTypes,
+    registerCode: state.editForm.registerCode,
+    registerType: state.editForm.registerType,
+    companyScale: state.editForm.companyScale,
+    expireDate: state.editForm.expireDate,
+    signDate: state.editForm.signDate,
+    belongCompanyList: state.editForm.belongCompanyList,
+    innerInterfaceStaffCode: state.editForm.innerInterfaceStaffCode,
+    innerInterfaceStaffName: state.editForm.innerInterfaceStaffName,
+    contactName: state.editForm.contactName,
+    phone: state.editForm.phone,
+    address: state.editForm.address,
+    email: state.editForm.email,
+    postcode: state.editForm.postcode,
+    accountName: state.editForm.accountName,
+    bankAccount: state.editForm.bankAccount,
+    openBank: state.editForm.openBank,
+    subBank: state.editForm.subBank,
+    openBankCode: state.editForm.openBankCode,
+    openBankProCode: selArea.value[0],
+    openBankProName: cascaderArea.value.getCheckedNodes()[0].pathLabels[0],
+    openBankCityCode: selArea.value[1],
+    openBankCityName: cascaderArea.value.getCheckedNodes()[0].pathLabels[1],
+    openBankCountyCode: selArea.value[2],
+    openBankCountyName: cascaderArea.value.getCheckedNodes()[0].pathLabels[2],
+    fileCodes: fileCodes
+  }
+  SupplierApi.addSupplier(sparams)
     .then((res) => {
       if (res && res.code === 200) {
-        const fileCodes = res.data?.fileCodes || []
+        state.editForm.supplierId = res.data
       }
     })
     .catch((err: Error) => {
@@ -795,10 +922,21 @@ const importHandler = () => {
   importFormRef.value.open()
 }
 const searchPersonList = () => {
-
+  queryPerson.pageNo = 1
+  getCityList()
 }
 const searchSettleList = () => {
-  
+  querySettle.pageNo = 1
+  getSettlementList()
+}
+const getWay = (val: string) => {
+  let label = ''
+  dictStore.dicts.SUPPLIER_SETTLEMENT_WAY.forEach((item) => {
+    if (item.value === val) {
+      label = item.label
+    }
+  })
+  return label
 }
 </script>
 <style lang="scss" scoped>

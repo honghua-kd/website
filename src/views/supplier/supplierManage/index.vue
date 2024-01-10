@@ -5,13 +5,13 @@
         <el-row :gutter="25">
           <el-col :span="6">
             <el-form-item label="公司名称">
-              <el-input v-model="formModel.name" />
+              <el-input v-model="queryFormList.name" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="归属公司">
               <el-select
-                v-model="formModel.belongCompany"
+                v-model="queryFormList.belongCompany"
                 style="width: 100%"
                 placeholder=""
               >
@@ -36,7 +36,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="状态">
-              <el-select v-model="formModel.status">
+              <el-select v-model="queryFormList.status">
                 <el-option
                   v-for="item in supplierDetailStatus"
                   :key="item.value"
@@ -50,7 +50,7 @@
         <el-row :gutter="25">
           <el-col :span="6">
             <el-form-item label="类型">
-              <el-select v-model="formModel.type">
+              <el-select v-model="queryFormList.type">
                 <el-option
                   v-for="item in supplierDetailType"
                   :key="item.value"
@@ -63,30 +63,32 @@
           <el-col :span="12">
             <el-form-item label="开始时间">
               <el-date-picker
-                v-model="formModel.expireDateStart"
+                v-model="queryFormList.expireDateStart"
                 type="date"
                 placeholder="开始时间"
                 format="YYYY-MM-DD"
+                value-format="YYYY-MM-DD"
                 style="margin-right: 4%; width: 48%"
               />
               <el-date-picker
-                v-model="formModel.expireDateEnd"
+                v-model="queryFormList.expireDateEnd"
                 type="date"
                 placeholder="结束时间"
                 format="YYYY-MM-DD"
+                value-format="YYYY-MM-DD"
                 style="width: 48%"
               />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="内部对接人">
-              <el-input v-model="formModel.innerInterfaceStaffCode" />
+              <el-input v-model="queryFormList.innerInterfaceStaffCode" />
             </el-form-item>
           </el-col>
         </el-row>
       </div>
       <div class="search-btn">
-        <el-button type="primary" :icon="Search" @click="getList"
+        <el-button type="primary" :icon="Search" @click="searchHandler"
           >查询</el-button
         >
         <el-button :icon="Refresh" @click="reset">重置</el-button>
@@ -105,7 +107,11 @@
         </el-button>
       </el-tooltip>
       <el-tooltip content="下载" placement="top-start">
-        <el-button type="primary" :icon="ArrowDownBold" @click="handleOpen">
+        <el-button
+          type="primary"
+          :icon="ArrowDownBold"
+          @click="downloadHandler"
+        >
           下载
         </el-button>
       </el-tooltip>
@@ -121,9 +127,15 @@
       :actionWidth="px2rem('100px')"
       v-model:pageSize="formModel.pageSize"
       v-model:pageNo="formModel.pageNo"
+      @selection-change="selectionChangeHandler"
       @size-change="getList"
       @current-change="getList"
     >
+      <template #default="{ row, prop }">
+        <span v-if="prop === 'status'">
+          {{ getStatus(row.status) }}
+        </span>
+      </template>
       <template #action="scope">
         <template v-if="scope.row.id">
           <el-button link type="primary" @click="checkHandler(scope.row.id)"
@@ -132,8 +144,19 @@
           <el-button link type="primary" @click="editHandler(scope.row)"
             >修改</el-button
           >
-          <el-button link type="primary" @click="stopHandler(scope.row.id)"
+          <el-button
+            v-if="scope.row.status === 'SUPPLIER_DETAIL_STATUS_1'"
+            link
+            type="primary"
+            @click="stopHandler(scope.row.id)"
             >停用</el-button
+          >
+          <el-button
+            v-if="scope.row.status === 'SUPPLIER_DETAIL_STATUS_2'"
+            link
+            type="primary"
+            @click="startHandler(scope.row.id)"
+            >启用</el-button
           >
           <el-button link type="danger" @click="delHandler(scope.row.id)"
             >删除</el-button
@@ -148,6 +171,11 @@
       :formValue="formValue"
       @closeModel="closeModel"
     />
+    <CheckModel
+      :visible="editCheckModelVisible"
+      :formValue="formCheckValue"
+      @closeModel="closeCheckModel"
+    />
   </div>
 </template>
 
@@ -159,10 +187,12 @@ import {
   Refresh,
   Search
 } from '@element-plus/icons-vue'
+import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import { px2rem } from '@/utils'
 import { reactive, toRefs, ref, onMounted, Ref, computed } from 'vue'
 import { tableConfig } from './data'
 import EditModel from '@/views/supplier/supplierManage/editModel.vue'
+import CheckModel from '@/views/supplier/supplierManage/checkModel.vue'
 import ImportForm from './ImportForm.vue'
 import type {
   StateType,
@@ -174,8 +204,10 @@ import type { DictItem } from '@/api'
 import { SupplierAPI, CommonAPI } from '@/api'
 const API = new SupplierAPI()
 const CommonApi = new CommonAPI()
+import fileDownload from 'js-file-download'
 import { useDictStore } from '@/store/dict'
 import type { CascaderProps, CascaderValue, CascaderOption } from 'element-plus'
+import dayjs from 'dayjs'
 // import { SupplierAPI } from '@/api'
 // const API = new SupplierAPI()
 const selCity = ref([])
@@ -226,7 +258,6 @@ const queryFormList = ref<queryForm>({
   expireDateStart: '',
   expireDateEnd: '',
   innerInterfaceStaffCode: '',
-  areaCode: [], // 地区
   type: '',
   pageNo: 1,
   pageSize: 10
@@ -304,13 +335,14 @@ const getDicts = () => {
 }
 // 获取列表数据
 const getList = async () => {
-  console.log(queryFormList.value)
+  queryFormList.value.provinceCode = selCity.value ? selCity.value[0] : ''
+  queryFormList.value.cityCode = selCity.value ? selCity.value[1] : ''
+  queryFormList.value.countyCode = selCity.value ? selCity.value[2] : ''
   await API.getSupplierList(queryFormList.value)
     .then((res) => {
-      search()
-      console.error(res)
+      // search()
       if (res && res.code === 200) {
-        tableData.value.splice(0, tableData.length)
+        tableData.value.splice(0, tableData.value.length)
         tableData.value.push(...(res?.data?.list || []))
         pageTotal.value = res?.data?.total || 0
       }
@@ -320,40 +352,42 @@ const getList = async () => {
     })
 }
 // 查询
-const search = () => {
-  const { areaCode } = formModel.value
-  formModel.value.provinceCode = areaCode[0] || ''
-  formModel.value.cityCode = areaCode[1] || ''
-  formModel.value.countyCode = areaCode[2] || ''
-  formModel.value.pageNo = 1
-  console.log(formModel.value)
+const searchHandler = () => {
+  queryFormList.value.pageNo = 1
+  getList()
 }
 // 重置
-const reset = () => {}
-const handleOpen = () => {
-  state.editModelVisible = true
+const reset = () => {
+  queryFormList.value.name = ''
+  queryFormList.value.belongCompany = ''
+  queryFormList.value.provinceCode = ''
+  queryFormList.value.cityCode = ''
+  queryFormList.value.countyCode = ''
+  queryFormList.value.status = ''
+  queryFormList.value.expireDateStart = ''
+  queryFormList.value.expireDateEnd = ''
+  queryFormList.value.innerInterfaceStaffCode = ''
+  queryFormList.value.type = ''
+  queryFormList.value.pageNo = 1
+  queryFormList.value.pageSize = 10
+  getList()
 }
 
 // 监听供应商弹窗关闭
-const closeModel = ({
+const closeModel = ({ visible, type }: { visible: boolean; type: string }) => {
+  console.error(visible, type)
+  state.editModelVisible = visible
+}
+// 监听查看详情供应商弹窗关闭
+const closeCheckModel = ({
   visible,
-  type,
-  data
+  type
 }: {
   visible: boolean
   type: string
-  data: Object
 }) => {
-  console.error(visible, type, data)
-  state.editModelVisible = visible
-}
-
-// 勾选列表数据
-const selectAllData = (selection: RecordType[]) => {
-  console.log(selection)
-}
-const selectData = (selection: RecordType[], row: RecordType) => {
-  console.log(selection, row)
+  console.error(visible, type)
+  editCheckModelVisible.value = visible
 }
 
 let formValue = reactive({})
@@ -361,19 +395,160 @@ const addHandler = () => {
   formValue = {}
   editModelVisible.value = true
 }
-const checkHandler = (val: string) => {}
+const editCheckModelVisible = ref<boolean>(false)
+let formCheckValue = reactive({})
+const checkHandler = (val: string) => {
+  const params = {
+    id: val
+  }
+  API.supplierDetail(params).then((res) => {
+    console.error(res)
+    if (res && res.code === 200) {
+      formCheckValue = res.data
+      editCheckModelVisible.value = true
+    }
+  })
+}
 const editHandler = (val: string) => {
   formValue = val
   editModelVisible.value = true
 }
-const stopHandler = (val: string) => {}
-const delHandler = (val: string) => {}
+const stopHandler = (val: string) => {
+  const params = {
+    id: val
+  }
+  API.supplierDisable(params).then((res) => {
+    console.error(res)
+    if (res && res.code === 200) {
+      ElMessage({
+        type: 'success',
+        message: '更新成功'
+      })
+      getList()
+    }
+  })
+}
+const startHandler = (val: string) => {
+  const params = {
+    id: val
+  }
+  API.supplierEnable(params).then((res) => {
+    console.error(res)
+    if (res && res.code === 200) {
+      ElMessage({
+        type: 'success',
+        message: '更新成功'
+      })
+      getList()
+    }
+  })
+}
+
+const delHandler = (id: string) => {
+  // 二次确认
+  ElMessageBox.confirm('确认要删除吗？', '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(() => {
+      // 调用删除接口
+      const params = {
+        id: id
+      }
+      API.supplierDelete(params).then((res) => {
+        if (res && res.code === 200) {
+          ElMessage({
+            type: 'success',
+            message: '删除成功'
+          })
+          getList()
+        }
+      })
+    })
+    .catch((err: Error) => {
+      throw err
+    })
+}
 
 const importFormRef = ref()
 const bizType = ref('')
 const importHandler = () => {
   bizType.value = 'SUPPLIER_DETAIL'
   importFormRef.value.open()
+}
+const getStatus = (val: string) => {
+  let label = ''
+  supplierDetailStatus.value.forEach((item) => {
+    if (item.value === val) {
+      label = item.label
+    }
+  })
+  return label
+}
+const selectData = ref([])
+// 选择的数据
+const selectionChangeHandler = (item) => {
+  selectData.value.splice(0, selectData.value.length)
+  selectData.value.push(...item)
+}
+const selectIds = computed(() => {
+  const ids: string[] = []
+  selectData.value.forEach((item) => {
+    ids.push(item.id as string)
+  })
+  return ids
+})
+const downloadHandler = () => {
+  const ids = selectIds.value.map((item) => String(item))
+  let param
+  if (selectIds.value.length) {
+    param = JSON.stringify({
+      ids: ids,
+      ...queryFormList.value
+    })
+  } else {
+    param = JSON.stringify({
+      ...queryFormList.value
+    })
+  }
+  const params = {
+    selectParams: param,
+    bizType: 'SUPPLIER_INFO_EXPORT'
+  }
+
+  CommonApi.exportBySelect(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        if (res?.data?.sync === 1) {
+          const params = {
+            fileCode: res?.data?.fileCode as string
+          }
+          CommonApi.downLoadFiles(params)
+            .then((res) => {
+              const fileStream = res?.data
+              const fileName = `供应商信息${dayjs().format('YYYYMMDD')}.xlsx`
+              fileDownload(fileStream, fileName)
+              ElMessage({
+                type: 'success',
+                message: '操作成功'
+              })
+            })
+            .catch((err: Error) => {
+              tableLoading.value = false
+              throw err
+            })
+        } else if (res?.data?.sync === 0) {
+          ElMessage({
+            type: 'success',
+            message: '导出任务已经产生，前面有任务待处理，请至我的下载中查看'
+          })
+        }
+      }
+    })
+    .catch((err: Error) => {
+      throw err
+    })
 }
 </script>
 

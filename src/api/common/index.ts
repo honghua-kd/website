@@ -9,7 +9,8 @@ import type {
   BatchExportRequest,
   BaseProvincesList,
   ProvincesChildrenRequest,
-  DictTreeRequest
+  DictTreeRequest,
+  ExportBySelectRequest
 } from './types/request'
 import type {
   UploadFile,
@@ -20,7 +21,8 @@ import type {
   RelationListItem,
   AllProvincesResponse,
   ProvincesChildrenResponse,
-  DictDataTreeResponse
+  DictDataTreeResponse,
+  ExportBySelectResponse
 } from './types/response'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
@@ -193,6 +195,17 @@ export class CommonAPI {
   getDictTreeList(data: DictTreeRequest): Response<DictDataTreeResponse[]> {
     return this.request({
       url: `${prefix}/admin-api/system/dict-data/tree`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 通用导出
+  exportBySelect(
+    data: ExportBySelectRequest
+  ): Response<ExportBySelectResponse> {
+    return this.request({
+      url: `${prefix}/admin-api/export/file/record/exportBySelect`,
       method: 'post',
       data
     })
