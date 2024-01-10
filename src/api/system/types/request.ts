@@ -239,3 +239,78 @@ export interface CreateExpRequest {
    */
   url?: string | undefined
 }
+
+export interface TemplateImportResultRequest {
+  /**
+   * 大类
+   */
+  businessCategory: string
+  /**
+   * 小类
+   */
+  businessSubcategory: string
+}
+
+export interface TemplateListRequest {
+  /**
+   * 业务大类
+   */
+  businessCategory?: null | string
+  /**
+   * 业务小类
+   */
+  businessSubcategory?: null | string
+  /**
+   * 文件code
+   */
+  fileCode?: null | string
+  /**
+   * 文件名称（前端下载后展示名称）
+   */
+  fileName?: null | string
+  /**
+   * 主键
+   */
+  id?: number | null
+}
+
+export interface TemplateDelRequest {
+  /**
+   * 主键
+   */
+  id?: string | null
+  /**
+   * 主键list
+   */
+  idList?: string[] | null
+}
+
+export interface TemplateAddRequest {
+  /**
+   * 业务大类
+   */
+  businessCategory?: null | string
+  /**
+   * 业务小类
+   */
+  businessSubcategory?: null | string
+  /**
+   * 文件code
+   */
+  fileCode?: null | string
+  /**
+   * 文件名称（前端下载后展示名称）
+   */
+  fileName?: null | string
+  /**
+   * 备注
+   */
+  remark?: null | string
+}
+
+export interface TemplateEditRequest extends TemplateAddRequest {
+  /**
+   * 主键
+   */
+  id: number | null
+}

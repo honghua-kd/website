@@ -439,7 +439,7 @@
             <el-table
               :data="basicInfoForm.otherFileList"
               :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
-              borderc
+              border
               :max-height="px2rem('320px')"
             >
               <el-table-column
