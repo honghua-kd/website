@@ -47,6 +47,7 @@ import { Download } from '@element-plus/icons-vue'
 import Table from '@/components/Table/index.vue'
 import type { ITableConfigProps } from '@/components/Table/type'
 import type { ISearchUnit } from '@/components/SearchBar/type'
+import { ElMessage } from 'element-plus'
 import { reactive, ref, Ref, onMounted } from 'vue'
 import type { SendMessageList } from '@/api/message/types/response.ts'
 import type {
@@ -62,7 +63,7 @@ const dictTypes = ['ARCHIVE_STATUS', 'OCR_STATUS']
 onMounted(() => {
   searchHandler()
 })
-const tableData: Ref<SendMessageList[]> = ref([])
+const tableData = reactive<SendMessageList[]>([])
 const tableLoading: Ref<boolean> = ref(false)
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
 const queryParams = reactive<SendMessageRequest>({
@@ -90,7 +91,9 @@ const exportParams = reactive<ExportSendRequest>({
 const searchHandler = async () => {
   API.getSendPageRecord(queryParams).then((res) => {
     if (res.code === 200 && res.data) {
-      tableData.value = res?.data?.list
+      tableData.splice(0, tableData.length)
+      tableData.push(...(res?.data?.list || []))
+      // tableData.value = res?.data?.list
       pageTotal.value = res?.data?.total
     }
   })
@@ -107,8 +110,8 @@ const handleSizeChange = (val: number) => {
   searchHandler()
 }
 const reset = () => {
-  queryParams.pageNo = 0
-  queryParams.pageSize = 0
+  queryParams.pageNo = 1
+  queryParams.pageSize = 20
   queryParams.templateName = ''
   queryParams.templateCode = ''
   queryParams.sendTimeStart = ''
@@ -136,65 +139,71 @@ const handleSendExport = () => {
   })
 }
 const searchConfig: ISearchUnit[] = [
-  {
-    compType: 'el-input',
-    colSpan: 6,
-    label: '短信接收方',
-    prop: 'receiveName',
-    placeholder: '请输入短信接收方'
-  },
-  {
-    compType: 'el-input',
-    colSpan: 6,
-    label: '短信接收号码',
-    prop: 'userNumber',
-    placeholder: '请输入短信接收号码'
-  },
-  {
-    compType: 'el-input',
-    colSpan: 6,
-    label: '关联业务编号',
-    prop: 'bizRelation',
-    placeholder: '请输入关联业务编号'
-  },
-  // {
-  //   compType: 'el-select',
-  //   colSpan: 6,
-  //   label: '发送状态',
-  //   prop: 'sendStatus',
-  //   placeholder: '请选择发送状态',
-  //   options: 'OCR_STATUS'
-  // },
-  {
-    compType: 'el-input',
-    colSpan: 6,
-    label: '模板名字',
-    prop: 'templateName',
-    placeholder: '请输入模板名字'
-  },
-  {
-    compType: 'el-input',
-    colSpan: 6,
-    label: '合同号',
-    prop: 'contractRelation',
-    placeholder: '请输入合同号'
-  },
-  {
-    compType: 'el-input',
-    colSpan: 6,
-    label: '模板编号',
-    prop: 'templateCode',
-    placeholder: '请输入模板编号'
-  },
-  {
-    compType: 'el-date-picker',
-    colSpan: 12,
-    label: '短信发送时间',
-    propStart: 'sendTimeStart',
-    propEnd: 'sendTimeEnd',
-    placeholderStart: '开始时间',
-    placeholderEnd: '结束时间'
-  }
+  [
+    {
+      compType: 'el-input',
+      colSpan: 6,
+      label: '短信接收方',
+      prop: 'receiveName',
+      placeholder: '请输入短信接收方'
+    },
+    {
+      compType: 'el-input',
+      colSpan: 6,
+      label: '短信接收号码',
+      prop: 'userNumber',
+      placeholder: '请输入短信接收号码'
+    },
+    {
+      compType: 'el-input',
+      colSpan: 6,
+      label: '关联业务编号',
+      prop: 'bizRelation',
+      placeholder: '请输入关联业务编号'
+    },
+    {
+      compType: 'el-select',
+      colSpan: 6,
+      label: '发送状态',
+      prop: 'sendStatus',
+      placeholder: '请选择发送状态',
+      options: 'SMS_SEND_STATUS'
+    }
+  ],
+  [
+    {
+      compType: 'el-input',
+      colSpan: 6,
+      label: '模板名字',
+      prop: 'templateName',
+      placeholder: '请输入模板名字'
+    },
+    {
+      compType: 'el-input',
+      colSpan: 6,
+      label: '合同号',
+      prop: 'contractRelation',
+      placeholder: '请输入合同号'
+    },
+    {
+      compType: 'date-range-picker',
+      colSpan: 12,
+      label: '短信发送时间',
+      propStart: 'sendTimeStart',
+      propEnd: 'sendTimeEnd',
+      placeholderStart: '开始时间',
+      placeholderEnd: '结束时间'
+    }
+  ],
+  [
+    {
+      compType: 'el-input',
+      colSpan: 6,
+      label: '模板编号',
+      prop: 'templateCode',
+      placeholder: '请输入模板编号'
+    }
+  ]
 ]
 const tableConfig: ITableConfigProps[] = [
   {
@@ -217,7 +226,7 @@ const tableConfig: ITableConfigProps[] = [
   },
   {
     label: '模板编号',
-    prop: 'templateName',
+    prop: 'templateCode',
     width: 200,
     align: 'center',
     showOverflowTooltip: true,
@@ -226,7 +235,7 @@ const tableConfig: ITableConfigProps[] = [
   },
   {
     label: '模板名称',
-    prop: 'templateContent',
+    prop: 'templateName',
     width: 260,
     align: 'left',
     showOverflowTooltip: true,

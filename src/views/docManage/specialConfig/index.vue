@@ -21,7 +21,6 @@
       :page-total="pageTotal"
       :setColumnEnable="true"
       :height="tableHeight"
-      :actionWidth="px2rem('100px')"
       v-model:pageSize="queryParams.pageSize"
       v-model:pageNo="queryParams.pageNo"
       @selection-change="selectionChangeHandler"
@@ -54,7 +53,6 @@
 import { reactive, ref, Ref, computed } from 'vue'
 import SearchBar from '@/components/SearchBar/index.vue'
 import { searchConfig, tableConfig } from './data'
-import { px2rem } from '@/utils'
 import { Plus } from '@element-plus/icons-vue'
 
 import { SpecialConfigAPI } from '@/api'

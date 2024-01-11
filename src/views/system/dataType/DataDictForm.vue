@@ -92,12 +92,12 @@ const statusOpt = ref([
   {
     id: 1,
     label: '开启',
-    value: 0
+    value: 1
   },
   {
     id: 2,
     label: '关闭',
-    value: 1
+    value: 0
   }
 ])
 const emit = defineEmits(['success'])

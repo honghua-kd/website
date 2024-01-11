@@ -36,7 +36,7 @@ export default [
             ],
             elements: [],
             menuType: 3,
-            menu: 'logistics',
+            menu: 'mailInformationRegister',
             sort: 2
           }
         ],
@@ -240,7 +240,7 @@ export default [
     elements: [],
     menuType: 5,
     sort: 2,
-    menu: 'mortgage'
+    menu: 'mortgageMange'
   },
   {
     children: [

@@ -7,6 +7,8 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AreaCascader: typeof import('./../components/AreaCascader/index.vue')['default']
+    DataPermissonForm: typeof import('./../components/PermiForm/DataPermissonForm.vue')['default']
     ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCascader: typeof import('element-plus/es')['ElCascader']
@@ -38,6 +40,12 @@ declare module 'vue' {
     ElTimelineItem: typeof import('element-plus/es')['ElTimelineItem']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElUpload: typeof import('element-plus/es')['ElUpload']
+    ErrorPage: typeof import('./../components/ErrorPage/index.vue')['default']
+    Icon: typeof import('./../components/Icon/index.vue')['default']
+    MdEditor: typeof import('./../components/MdEditor/index.vue')['default']
+    PermiListDialog: typeof import('./../components/PermiForm/PermiListDialog.vue')['default']
+    Preview: typeof import('./../components/Preview/index.vue')['default']
+    README: typeof import('./../components/Table/README.md')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

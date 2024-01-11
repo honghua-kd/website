@@ -160,7 +160,7 @@ import {
   Setting,
   ArrowDown
 } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
+import { ElMessageBox, ElMessage } from 'element-plus'
 import type { CascaderOption } from 'element-plus'
 import OperDialog from '@/views/message/messageTemplate/components/operDialog.vue'
 import { reactive, ref, Ref, onMounted } from 'vue'
@@ -311,7 +311,7 @@ const getDicts = () => {
       throw err
     })
 }
-const tableData: Ref<List[]> = ref([])
+const tableData = reactive<List[]>([])
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
 
 type children = {
@@ -403,7 +403,9 @@ const getList = async () => {
   parm.sourceSystem12List = sysList
   API.getSmsTemplatePage(parm).then((res) => {
     if (res.code === 200 && res.data) {
-      tableData.value = res.data.list
+      tableData.splice(0, tableData.length)
+      tableData.push(...(res?.data?.list || []))
+      // tableData.value = res.data.list
       pageTotal.value = res.data.total
     }
   })
