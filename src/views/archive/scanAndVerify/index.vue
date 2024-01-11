@@ -65,7 +65,7 @@
       <template #selection>
         <el-table-column
           type="selection"
-          :width="px2rem('40px')"
+          :width="'40px'"
           :selectable="selectableHandler"
           align="center"
         />

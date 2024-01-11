@@ -51,7 +51,6 @@ export const useNoticeCenter = () => {
                 heartBeatTimer = socketHeartBeat()
               }
               if (msgType === MESSAGE_TYPE.SERVER_MESSAGE_PUSH) {
-                debugger
                 // 消息推送
                 ElNotification({
                   title: '通知',
@@ -154,10 +153,12 @@ export const useNoticeCenter = () => {
     API.changeNoticeStatus({
       ids: [(item as NoticeListItem).id],
       status: READ
-    })
-    router.push({
-      path: (item as NoticeListItem).router,
-      query: (item as NoticeListItem).routerParam
+    }).then(() => {
+      getNoticeCount()
+      router.push({
+        path: (item as NoticeListItem).router,
+        query: (item as NoticeListItem).routerParam
+      })
     })
   })
 

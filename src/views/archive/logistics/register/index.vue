@@ -111,7 +111,6 @@
         :page-total="pageTotal"
         :setColumnEnable="true"
         :height="tableHeight"
-        :actionWidth="px2rem('100px')"
         v-model:pageSize="queryParams.pageSize"
         v-model:pageNo="queryParams.pageNo"
         @selection-change="selectionChangeHandler"
@@ -236,7 +235,7 @@ import { useRouter } from '@toystory/lotso'
 import dayjs from 'dayjs'
 import Table from '@/components/Table/index.vue'
 import { tableConfig } from './data'
-import { px2rem } from '@/utils'
+// import { px2rem } from '@/utils'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import { CommonAPI, ExpressAPI } from '@/api'
 import {
@@ -421,23 +420,27 @@ const exportHandler = () => {
   if (!tableData.length) {
     ElMessage({
       type: 'error',
-      message: '列表无数据无需导出'
+      message: '列表无数据，无需导出'
     })
   } else {
-    const params = {
+    const param = JSON.stringify({
       expressNo: queryParams.expressNo,
       expressCompany: queryParams.expressCompany,
       create_time: queryParams.createTime,
       expressType: queryParams.expressType,
       expressContent: queryParams.expressContent,
       expressContentRemark: queryParams.expressContentRemark
+    })
+    const params = {
+      selectParams: param,
+      bizType: 'EXPRESS_INFO_EXPORT'
     }
-    API.exportExpressContentInfo(params)
+    CommonApi.exportBySelect(params)
       .then((res) => {
         if (res && res.code === 200) {
           if (res?.data?.sync === 1) {
             const params = {
-              fileCode: res?.data?.fileCode
+              fileCode: res?.data?.fileCode as string
             }
             CommonApi.downLoadFiles(params)
               .then((res) => {

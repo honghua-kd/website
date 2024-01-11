@@ -89,7 +89,8 @@ const importHandler = () => {
         const fileCodes = res.data?.fileCodes || []
         const fileNames: string[] = []
         fileList.value.forEach((item) => {
-          const fileName = item.name.substring(0, item.name.lastIndexOf('.'))
+          // const fileName = item.name.substring(0, item.name.lastIndexOf('.'))
+          const fileName = item.name
           fileNames.push(fileName)
         })
         const params: { fileCode: string; fileName: string }[] = []

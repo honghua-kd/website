@@ -39,10 +39,10 @@
             label="公司名称"
             :rules="[{ required: true, message: 'required' }]"
           >
-            <el-input
+            <!-- <el-input
               v-model="editForm.supplierName"
               placeholder="请输入公司名称"
-            />
+            /> -->
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -50,10 +50,10 @@
             label="组织机构代码"
             :rules="[{ required: true, message: 'required' }]"
           >
-            <el-input
+            <!-- <el-input
               v-model="editForm.organCode"
               placeholder="请输入组织机构代码"
-            />
+            /> -->
           </el-form-item>
         </el-col>
       </el-row>
@@ -64,11 +64,11 @@
             label="登记注册号类型"
             :rules="[{ required: true, message: 'required' }]"
           >
-            <el-select
+            <!-- <el-select
               v-model="editForm.registerType"
               style="width: 100%"
               placeholder="请选择登记注册号类型"
-            ></el-select>
+            ></el-select> -->
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -77,10 +77,10 @@
             label="登记注册号码"
             :rules="[{ required: true, message: 'required' }]"
           >
-            <el-input
+            <!-- <el-input
               v-model="editForm.registerCode"
               placeholder="请输入登记注册号码"
-            />
+            /> -->
           </el-form-item>
         </el-col>
       </el-row>
@@ -90,11 +90,11 @@
             label="合作商类型"
             :rules="[{ required: true, message: 'required' }]"
           >
-            <el-select
+            <!-- <el-select
               v-model="editForm.supplierTypes"
               style="width: 100%"
               placeholder="请选择合作商类型"
-            ></el-select>
+            ></el-select> -->
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -103,10 +103,10 @@
             label="公司规模"
             :rules="[{ required: true, message: 'required' }]"
           >
-            <el-input
+            <!-- <el-input
               v-model="editForm.companyScale"
               placeholder="请输入公司规模"
-            />
+            /> -->
           </el-form-item>
         </el-col>
       </el-row>
@@ -117,11 +117,11 @@
             label="归属"
             :rules="[{ required: true, message: 'required' }]"
           >
-            <el-select
+            <!-- <el-select
               v-model="editForm.belongCompanyList"
               style="width: 100%"
               placeholder="请选择归属公司"
-            ></el-select>
+            ></el-select> -->
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -129,12 +129,12 @@
             label="到期日期"
             :rules="[{ required: true, message: 'required' }]"
           >
-            <el-date-picker
+            <!-- <el-date-picker
               v-model="editForm.expireDate"
               style="width: 100%"
               type="datetime"
               placeholder="选择日期时间"
-            />
+            /> -->
           </el-form-item>
         </el-col>
       </el-row>
@@ -144,12 +144,12 @@
             label="签约日期"
             :rules="[{ required: true, message: 'required' }]"
           >
-            <el-date-picker
+            <!-- <el-date-picker
               v-model="editForm.signDate"
               style="width: 100%"
               type="datetime"
               placeholder="选择日期时间"
-            />
+            /> -->
           </el-form-item>
         </el-col>
       </el-row>
@@ -160,10 +160,10 @@
             label="内部对接人"
             :rules="[{ required: true, message: 'required' }]"
           >
-            <el-input
+            <!-- <el-input
               v-model="editForm.innerInterfaceStaffName"
               placeholder="请输入内部对接人"
-            ></el-input>
+            ></el-input> -->
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -171,10 +171,10 @@
             label="联系人"
             :rules="[{ required: true, message: 'required' }]"
           >
-            <el-input
+            <!-- <el-input
               v-model="editForm.contactName"
               placeholder="请输入联系人"
-            ></el-input>
+            ></el-input> -->
           </el-form-item>
         </el-col>
       </el-row>
@@ -184,10 +184,10 @@
             label="联系电话"
             :rules="[{ required: true, message: 'required' }]"
           >
-            <el-input
+            <!-- <el-input
               v-model="editForm.phone"
               placeholder="请输入联系电话"
-            ></el-input>
+            ></el-input> -->
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -195,10 +195,10 @@
             label="公司地址"
             :rules="[{ required: true, message: 'required' }]"
           >
-            <el-input
+            <!-- <el-input
               v-model="editForm.address"
               placeholder="请输入公司地址"
-            ></el-input>
+            ></el-input> -->
           </el-form-item>
         </el-col>
       </el-row>
@@ -208,10 +208,10 @@
             label="联系人邮箱"
             :rules="[{ required: true, message: 'required' }]"
           >
-            <el-input
+            <!-- <el-input
               v-model="editForm.email"
               placeholder="请输入联系人邮箱"
-            ></el-input>
+            ></el-input> -->
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -219,10 +219,10 @@
             label="邮编"
             :rules="[{ required: true, message: 'required' }]"
           >
-            <el-input
+            <!-- <el-input
               v-model="editForm.postcode"
               placeholder="请输入邮编"
-            ></el-input>
+            ></el-input> -->
           </el-form-item>
         </el-col>
       </el-row>
@@ -233,10 +233,10 @@
             label="账户名称"
             :rules="[{ required: true, message: 'required' }]"
           >
-            <el-input
+            <!-- <el-input
               v-model="editForm.accountName"
               placeholder="请输入账户名称"
-            ></el-input>
+            ></el-input> -->
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -244,10 +244,10 @@
             label="银行账户"
             :rules="[{ required: true, message: 'required' }]"
           >
-            <el-input
+            <!-- <el-input
               v-model="editForm.bankAccount"
               placeholder="请输入银行账户"
-            ></el-input>
+            ></el-input> -->
           </el-form-item>
         </el-col>
       </el-row>
@@ -257,10 +257,10 @@
             label="开户银行"
             :rules="[{ required: true, message: 'required' }]"
           >
-            <el-input
+            <!-- <el-input
               v-model="editForm.openBank"
               placeholder="请输入开户银行"
-            ></el-input>
+            ></el-input> -->
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -268,10 +268,10 @@
             label="支行"
             :rules="[{ required: true, message: 'required' }]"
           >
-            <el-input
+            <!-- <el-input
               v-model="editForm.subBank"
               placeholder="请输入支行"
-            ></el-input>
+            ></el-input> -->
           </el-form-item>
         </el-col>
       </el-row>
@@ -282,13 +282,13 @@
             label="开户银行区域"
             :rules="[{ required: true, message: 'required' }]"
           >
-            <el-cascader
+            <!-- <el-cascader
               v-model="editForm.openBankArea"
               placeholder="请选择"
               style="width: 100%"
               :options="BasicData.cityList"
               clearable
-            />
+            /> -->
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -296,10 +296,10 @@
             label="开户行行号"
             :rules="[{ required: true, message: 'required' }]"
           >
-            <el-input
+            <!-- <el-input
               v-model="editForm.openBankCode"
               placeholder="请输入开户行行号"
-            ></el-input>
+            ></el-input> -->
           </el-form-item>
         </el-col>
       </el-row>

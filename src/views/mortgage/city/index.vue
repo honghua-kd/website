@@ -38,7 +38,6 @@
       :page-total="pageTotal"
       :setColumnEnable="true"
       :height="tableHeight"
-      :actionWidth="px2rem('100px')"
       v-model:pageSize="queryParams.pageSize"
       v-model:pageNo="queryParams.pageNo"
       @selection-change="selectionChangeHandler"
@@ -116,7 +115,7 @@ import { tableConfig } from './data'
 import OperDialog from '@/views/mortgage/city/components/operDialog.vue'
 import ImportForm from './ImportForm.vue'
 import { CommonAPI, MortgageCityAPI } from '@/api'
-import { handleDownloadFile, px2rem } from '@/utils'
+import { handleDownloadFile } from '@/utils'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import Table from '@/components/Table/index.vue'
 import { useRouter } from '@toystory/lotso'
