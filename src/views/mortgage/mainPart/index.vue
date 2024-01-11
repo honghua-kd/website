@@ -138,81 +138,81 @@ const state = reactive<StateType>({
   tableColumn: [
     {
       label: '抵押主体名称',
-      prop: '',
+      prop: 'mortgageSubjectName',
       minWidth: 120,
       align: 'left',
       forbiddenEdit: true
     },
     {
       label: '全称',
-      prop: '',
+      prop: 'mortgageSubjectAllName',
       minWidth: 120,
       align: 'left'
     },
     {
       label: '组织机构代码',
-      prop: '',
+      prop: 'organizationCode',
       width: 120,
       align: 'center'
     },
     {
       label: '省',
-      prop: '',
+      prop: 'contactAddressProvinceName',
       width: 120,
       align: 'left'
     },
     {
       label: '市',
-      prop: '',
+      prop: 'contactAddressCityName',
       width: 120,
       align: 'left'
     },
     {
       label: '详细地址',
-      prop: '',
+      prop: 'contactAddressDetail',
       minWidth: 120,
       align: 'left'
     },
     {
       label: '注册地址',
-      prop: '',
+      prop: 'registeredAddress',
       minWidth: 120,
       align: 'left'
     },
     {
       label: '联系人',
-      prop: '',
+      prop: 'contactName',
       minWidth: 120,
       align: 'left'
     },
     {
       label: '联系电话',
-      prop: '',
+      prop: 'contactPhone',
       width: 100,
       align: 'center'
     },
     {
       label: '创建人',
-      prop: '',
+      prop: 'creatorName',
       minWidth: 100,
       fixed: false,
       align: 'left'
     },
     {
       label: '创建时间',
-      prop: '',
+      prop: 'createTime',
       minWidth: 130,
       align: 'center'
     },
     {
       label: '最后更新人',
-      prop: '',
+      prop: 'updaterName',
       minWidth: 100,
       align: 'left'
     },
     {
       label: '更新时间',
-      prop: '',
+      prop: 'updateTime',
       minWidth: 130,
       align: 'center'
     },
