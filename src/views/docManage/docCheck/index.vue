@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 搜索工作栏 -->
-    <div class="doc-check-container" ref="searchBoxRef">
+    <div ref="searchBoxRef">
       <!-- search bar -->
       <SearchBar
         v-model="queryParams"

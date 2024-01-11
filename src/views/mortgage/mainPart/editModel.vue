@@ -3,104 +3,163 @@
     class="main-part-model"
     v-model="dialogVisible"
     :title="dialogTitle"
-    width="700px"
+    width="600px"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     destroy-on-close
     :before-close="handleClose"
   >
     <div>
-      <el-form :model="editForm" label-width="120px">
-        <el-form-item label="名称" width="500">
-          <el-input />
+      <el-form
+        ref="ruleFormRef"
+        :rules="rules"
+        :model="editForm"
+        label-width="120px"
+      >
+        <el-form-item
+          label="名称"
+          width="500"
+          prop="mortgageSubjectName"
+          required
+        >
+          <el-input
+            :maxlength="50"
+            placeholder="请输入"
+            v-model="editForm.mortgageSubjectName"
+            clearable
+          />
         </el-form-item>
-        <el-form-item label="条件">
-          <!-- <el-upload
-            class="avatar-uploader"
-            action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-            :show-file-list="false"
+        <el-form-item label="条件" required prop="mortgageSubjectType">
+          <el-radio-group
+            v-model="editForm.mortgageSubjectType"
+            @change="changeType"
+            class="ml-4"
           >
-            <el-icon class="avatar-uploader-icon"><Plus /></el-icon>
-          </el-upload>
-          <el-upload
-            class="avatar-uploader"
-            action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-            :show-file-list="false"
-          >
-            <el-icon class="avatar-uploader-icon"><Plus /></el-icon>
-          </el-upload>
-          <el-upload
-            class="avatar-uploader"
-            action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-            :show-file-list="false"
-          >
-            <el-icon class="avatar-uploader-icon"><Plus /></el-icon>
-          </el-upload> -->
-          <el-radio-group v-model="condition" class="ml-4">
-            <el-radio label="contractSubject" size="large">合同主体</el-radio>
-            <el-radio label="capitalInfo" size="large">资方信息</el-radio>
-            <el-radio label="高薪小贷" size="large">高薪小贷</el-radio>
+            <el-radio
+              v-for="item in mortgageSubjectOptions"
+              :key="(item.value as string)"
+              :label="(item.value as string)"
+              >{{ item.label }}</el-radio
+            >
           </el-radio-group>
         </el-form-item>
-        <el-form-item v-if="condition === 'contractSubject'" label="合同主体">
+        <el-form-item
+          v-if="editForm.mortgageSubjectType === 'MORTGAGE_SUBJECT_CONTRACT'"
+          label="合同主体"
+          prop="contractSubject"
+          :required="
+            editForm.mortgageSubjectType === 'MORTGAGE_SUBJECT_CONTRACT'
+          "
+        >
           <el-select
+            placeholder="请选择"
             v-model="editForm.contractSubject"
             multiple
             collapse-tags
             collapse-tags-tooltip
-            placeholder="Select"
-            style="width: 240px"
+            style="width: 100%"
+            clearable
           >
-            <!-- <el-option
+            <el-option
               v-for="item in contractSubjectOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            /> -->
+              :key="(item.value as string)"
+              :label="(item.label as string)"
+              :value="(item.value as string)"
+            />
           </el-select>
         </el-form-item>
         <el-form-item
-          v-if="condition === 'capitalInfo'"
+          v-if="editForm.mortgageSubjectType === 'MORTGAGE_CAPITAL_INFO'"
           label="资方信息"
-        ></el-form-item>
-        <el-form-item
-          v-if="condition === '高薪小贷'"
-          label="高薪小贷"
-        ></el-form-item>
-        <el-form-item label="组织机构代码">
-          <el-input />
+          prop="contractSubject"
+          :required="editForm.mortgageSubjectType === 'MORTGAGE_CAPITAL_INFO'"
+        >
+          <el-select
+            placeholder="请选择"
+            v-model="editForm.contractSubject"
+            multiple
+            collapse-tags
+            collapse-tags-tooltip
+            style="width: 100%"
+            clearable
+          >
+            <el-option
+              v-for="item in mortgageCapitalOptions"
+              :key="(item.value as string)"
+              :label="(item.label as string)"
+              :value="(item.value as string)"
+            />
+          </el-select>
         </el-form-item>
-        <el-form-item label="全称呼">
-          <el-input />
+        <el-form-item label="组织机构代码" prop="organizationCode" required>
+          <el-input
+            :maxlength="50"
+            placeholder="请输入"
+            v-model="editForm.organizationCode"
+            clearable
+          />
         </el-form-item>
-        <el-form-item label="注册地址">
-          <el-input />
+        <el-form-item label="全称" prop="mortgageSubjectAllName" required>
+          <el-input
+            :maxlength="50"
+            placeholder="请输入"
+            v-model="editForm.mortgageSubjectAllName"
+            clearable
+          />
         </el-form-item>
-        <span>联系地址</span>
+        <el-form-item label="注册地址" prop="registeredAddress" required>
+          <el-input
+            :maxlength="100"
+            placeholder="请输入"
+            v-model="editForm.registeredAddress"
+            clearable
+          />
+        </el-form-item>
+        <span style="font-size: 18px; font-weight: bolder">联系地址</span>
         <el-form-item label="省/市">
-          <!-- <AreaCasder
-            :value="editForm.areaCode"
-            @changeAreaData="changeAreaData"
-          /> -->
+          <AreaCasder :value="areaCode" @changeAreaData="changeAreaData" />
         </el-form-item>
         <el-form-item label="详细地址">
-          <el-input />
+          <el-input
+            :maxlength="100"
+            placeholder="请输入"
+            v-model="editForm.contactAddressDetail"
+            clearable
+          />
         </el-form-item>
-        <el-form-item label="联系人">
-          <el-input />
-        </el-form-item>
-        <el-form-item label="联系电话">
-          <el-input />
-        </el-form-item>
-        <el-form-item label="优先级">
-          <el-input />
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="联系人">
+              <el-input
+                :maxlength="50"
+                placeholder="请输入"
+                v-model="editForm.contactName"
+                clearable
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="联系电话">
+              <el-input
+                type="number"
+                placeholder="请输入"
+                onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
+                v-model="editForm.contactPhone"
+                clearable
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
     </div>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="onCloseModel('click-close')">取消</el-button>
-        <el-button type="primary" @click="onCloseModel('update-close')"
+        <el-button @click="onCloseModel(ruleFormRef, 'click-close')"
+          >取消</el-button
+        >
+        <el-button
+          type="primary"
+          @click="onCloseModel(ruleFormRef, 'update-close')"
           >确认</el-button
         >
       </span>
@@ -108,96 +167,32 @@
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import { watch, toRefs, reactive } from 'vue'
-// import { Plus } from '@element-plus/icons-vue'
+import { watch, toRefs, reactive, ref } from 'vue'
 import type { ModelStateType } from '@/views/mortgage/mainPart/type'
-import type { MortgageSubjectListResponse } from '@/api/mainPart/types/response'
-// import AreaCasder from '@/components/AreaCascader/index.vue'
+import type { MortgageSubjectDetailResponse } from '@/api/mainPart/types/response'
+import type { FormInstance, FormRules } from 'element-plus'
+import type { InternalRuleItem } from 'async-validator'
+import AreaCasder from '@/components/AreaCascader/index.vue'
+import type { DictListItem, MortgageSubjectAddEditRequest } from '@/api'
+import { MainPartAPI } from '@/api'
+const API = new MainPartAPI()
 
 type ModelPropsType = {
   visible: boolean
-  formValue: MortgageSubjectListResponse
+  formValue: MortgageSubjectDetailResponse
   title: string
+  contractSubjectOptions: DictListItem[]
+  mortgageCapitalOptions: DictListItem[]
+  mortgageSubjectOptions: DictListItem[]
 }
 const props = withDefaults(defineProps<ModelPropsType>(), {
   visible: false,
   formValue: () => ({
-    /**
-     * 资方信息
-     */
-    capitalInfo: '',
-    /**
-     * 联系地址-城市code
-     */
-    contactAddressCityCode: '',
-    /**
-     * 联系地址-城市名称
-     */
-    contactAddressCityName: '',
-    /**
-     * 联系地址-详细地址
-     */
-    contactAddressDetail: '',
-    /**
-     * 联系地址-省份code
-     */
-    contactAddressProvinceCode: '',
-    /**
-     * 联系地址-省份名称
-     */
-    contactAddressProvinceName: '',
-    /**
-     * 联系人
-     */
-    contactName: '',
-    /**
-     * 联系电话
-     */
-    contactPhone: '',
-    /**
-     * 合同主体
-     */
-    contractSubject: '',
-    /**
-     * 创建时间
-     */
-    createTime: '',
-    /**
-     * 创建者
-     */
-    creatorName: '',
-    /**
-     * 抵押主体全称
-     */
     mortgageSubjectAllName: '',
-    /**
-     * 抵押主体唯一Code
-     */
-    mortgageSubjectCode: '',
-    /**
-     * 抵押主体名称
-     */
     mortgageSubjectName: '',
-    /**
-     * 抵押主体类型
-     */
     mortgageSubjectType: '',
-    /**
-     * 组织机构代码
-     */
     organizationCode: '',
-    /**
-     * 注册地址
-     */
-    registeredAddress: '',
-    /**
-     * 更新者
-     */
-    updaterName: '',
-    /**
-     * 更新时间
-     */
-    updateTime: ''
+    registeredAddress: ''
   }),
   title: ''
 })
@@ -205,98 +200,129 @@ const props = withDefaults(defineProps<ModelPropsType>(), {
 const state = reactive<ModelStateType>({
   dialogVisible: false,
   editForm: {
-    /**
-     * 资方信息
-     */
-    capitalInfo: '',
-    /**
-     * 联系地址-城市code
-     */
-    contactAddressCityCode: '',
-    /**
-     * 联系地址-城市名称
-     */
-    contactAddressCityName: '',
-    /**
-     * 联系地址-详细地址
-     */
-    contactAddressDetail: '',
-    /**
-     * 联系地址-省份code
-     */
-    contactAddressProvinceCode: '',
-    /**
-     * 联系地址-省份名称
-     */
-    contactAddressProvinceName: '',
-    /**
-     * 联系人
-     */
-    contactName: '',
-    /**
-     * 联系电话
-     */
-    contactPhone: '',
-    /**
-     * 合同主体
-     */
-    contractSubject: '',
-    /**
-     * 创建时间
-     */
-    createTime: '',
-    /**
-     * 创建者
-     */
-    creatorName: '',
-    /**
-     * 抵押主体全称
-     */
     mortgageSubjectAllName: '',
-    /**
-     * 抵押主体唯一Code
-     */
-    mortgageSubjectCode: '',
-    /**
-     * 抵押主体名称
-     */
     mortgageSubjectName: '',
-    /**
-     * 抵押主体类型
-     */
     mortgageSubjectType: '',
-    /**
-     * 组织机构代码
-     */
     organizationCode: '',
-    /**
-     * 注册地址
-     */
     registeredAddress: '',
-    /**
-     * 更新者
-     */
-    updaterName: '',
-    /**
-     * 更新时间
-     */
-    updateTime: ''
+    contractSubject: []
   },
   dialogTitle: '',
-  condition: ''
+  areaCode: []
 })
-const { dialogVisible, editForm, dialogTitle, condition } = toRefs(state)
+const { dialogVisible, editForm, dialogTitle, areaCode } = toRefs(state)
 watch(
   [() => props.visible, () => props.formValue, () => props.title],
   ([newVisible, newValue, newTitle]) => {
     state.dialogVisible = newVisible
     state.editForm = newValue
     state.dialogTitle = newTitle
+    if (newTitle === '新增') {
+      state.areaCode = []
+      state.editForm.contractSubject = []
+    } else {
+      state.editForm.contractSubject = newValue.contractSubject
+        ? newValue.contractSubject
+        : []
+      if (
+        newValue.contactAddressProvinceCode &&
+        newValue.contactAddressProvinceCode !== '' &&
+        newValue.contactAddressCityCode &&
+        newValue.contactAddressCityCode !== ''
+      ) {
+        state.areaCode = [
+          newValue.contactAddressProvinceCode,
+          newValue.contactAddressCityCode
+        ]
+      }
+    }
   },
   {
     immediate: true
   }
 )
+
+// 表单验证
+const ruleFormRef = ref<FormInstance>()
+const rules = reactive<FormRules<typeof editForm>>({
+  mortgageSubjectName: [
+    {
+      required: true,
+      message: '请输入名称',
+      trigger: 'blur'
+    }
+  ],
+  mortgageSubjectType: [
+    {
+      required: true,
+      message: '请选择条件',
+      trigger: 'change'
+    }
+  ],
+  organizationCode: [
+    {
+      required: true,
+      message: '请输入组织机构代码',
+      trigger: 'blur'
+    }
+  ],
+  mortgageSubjectAllName: [
+    {
+      required: true,
+      message: '请输入全称',
+      trigger: 'blur'
+    }
+  ],
+  registeredAddress: [
+    {
+      required: true,
+      message: '请输入注册地址',
+      trigger: 'blur'
+    }
+  ],
+  contractSubject: [
+    {
+      validator: (
+        rule: InternalRuleItem,
+        value: string[] | undefined,
+        callback: (error?: string | Error | undefined) => void
+      ) => {
+        if (!value || value.length === 0) {
+          callback(new Error('请选择'))
+        } else {
+          callback()
+        }
+      },
+      trigger: 'change'
+    }
+  ]
+})
+
+// 切换条件
+const changeType = (value: string | number | boolean) => {
+  console.log(value)
+  // if (value === 'MORTGAGE_SUBJECT_HIGH_TECH_SMALL_LOAN') {
+  state.editForm.contractSubject = []
+  // }
+}
+
+// 切换城市
+const changeAreaData = ({
+  provinceCode,
+  provinceName,
+  cityCode,
+  cityName
+}: {
+  provinceCode: string
+  provinceName: string
+  cityCode: string
+  cityName: string
+}) => {
+  state.editForm.contactAddressProvinceCode = provinceCode
+  state.editForm.contactAddressCityCode = cityCode
+  state.editForm.contactAddressProvinceName = provinceName
+  state.editForm.contactAddressCityName = cityName
+}
 
 const emit = defineEmits<{
   (e: 'closeModel', { visible, type }: { visible: boolean; type: string }): void
@@ -307,10 +333,69 @@ const handleClose = () => {
     type: 'click-close'
   })
 }
-const onCloseModel = (type: string) => {
-  emit('closeModel', {
-    visible: false,
-    type
+const addOrEditparams = reactive<MortgageSubjectAddEditRequest>({
+  mortgageSubjectAllName: '',
+  mortgageSubjectName: '',
+  mortgageSubjectType: '',
+  organizationCode: '',
+  registeredAddress: '',
+  contractSubject: []
+})
+
+// 弹窗 取消/确定
+const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
+  if (type === 'click-close') {
+    emit('closeModel', {
+      visible: false,
+      type
+    })
+    return
+  }
+  if (!formEl) return
+  await formEl.validate(async (valid, fields) => {
+    if (valid) {
+      if (type === 'update-close') {
+        addOrEditparams.mortgageSubjectAllName =
+          state.editForm.mortgageSubjectAllName
+        addOrEditparams.mortgageSubjectName = state.editForm.mortgageSubjectName
+        addOrEditparams.mortgageSubjectType = state.editForm.mortgageSubjectType
+        addOrEditparams.organizationCode = state.editForm.organizationCode
+        addOrEditparams.registeredAddress = state.editForm.registeredAddress
+        addOrEditparams.contractSubject = state.editForm.contractSubject
+        addOrEditparams.contactAddressProvinceCode =
+          state.editForm.contactAddressProvinceCode
+        addOrEditparams.contactAddressProvinceName =
+          state.editForm.contactAddressProvinceName
+        addOrEditparams.contactAddressCityCode =
+          state.editForm.contactAddressCityCode
+        addOrEditparams.contactAddressCityName =
+          state.editForm.contactAddressCityName
+        addOrEditparams.contactAddressDetail =
+          state.editForm.contactAddressDetail
+        addOrEditparams.contactName = state.editForm.contactName
+        addOrEditparams.contactPhone = state.editForm.contactPhone
+        if (
+          state.editForm.mortgageSubjectType ===
+          'MORTGAGE_SUBJECT_HIGH_TECH_SMALL_LOAN'
+        ) {
+          state.editForm.contractSubject = []
+        }
+        if (state.dialogTitle === '新增') {
+          const paramsClone = JSON.parse(JSON.stringify(addOrEditparams))
+          delete paramsClone.id
+          await API.getMortgageSubjectAdd(paramsClone)
+        } else {
+          addOrEditparams.id = state.editForm.id
+          await API.getMortgageSubjectModify(addOrEditparams)
+        }
+        emit('closeModel', {
+          visible: false,
+          type
+        })
+      }
+    } else {
+      console.log('error submit!', fields)
+    }
   })
 }
 </script>
@@ -346,6 +431,14 @@ const onCloseModel = (type: string) => {
     font-size: 28px;
     text-align: center;
     color: #8c939d;
+  }
+  // 去掉数字输入框快捷符号
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    appearance: none;
+  }
+  input[type='number'] {
+    appearance: textfield;
   }
 }
 </style>

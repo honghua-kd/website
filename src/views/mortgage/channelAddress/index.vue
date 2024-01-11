@@ -293,7 +293,7 @@ const state = reactive<StateType>({
     {
       label: '创建时间',
       prop: 'createTime',
-      width: '130',
+      width: '140',
       minWidth: '',
       fixed: false,
       align: 'center'
@@ -310,7 +310,7 @@ const state = reactive<StateType>({
       label: '更新时间',
       prop: 'updateTime',
       width: '',
-      minWidth: '130',
+      minWidth: '140',
       fixed: false,
       align: 'center'
     },
