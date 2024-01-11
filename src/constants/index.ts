@@ -24,7 +24,8 @@ export const DICT_TYPES = [
   'YESNO',
   'MORTGAGE_CITYCONFIG',
   'MORTGAGE_CITYCONFIG_NO',
-  'SEAL_TYPE'
+  'SEAL_TYPE',
+  'SOURCE_SYSTEM'
 ]
 
 export const NOTICE_STATUS = {

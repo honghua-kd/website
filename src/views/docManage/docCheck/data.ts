@@ -41,6 +41,7 @@ export const searchConfig: ISearchUnit[] = [
       colSpan: 6,
       label: '适用部门',
       prop: 'sourceSystem1',
+      options: 'SOURCE_SYSTEM',
       placeholder: '请选择'
     }
   ]

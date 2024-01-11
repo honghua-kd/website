@@ -6,7 +6,7 @@
       <SearchBar
         v-model="queryParams"
         :searchConfig="searchConfig"
-        :dictTypes="dictTypes"
+        :dictArray="dictTypes"
         @reset="reset"
         @search="searchHandler"
       />

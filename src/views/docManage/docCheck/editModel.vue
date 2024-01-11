@@ -215,6 +215,8 @@ const submitUpload = () => {
   fileList.value.forEach((item) => {
     formData.append('file', item.raw as File)
   })
+  formData.append('bizCode', 'SYSTEM_DOCUMENT_UPLOAD')
+  formData.append('prefixPath', '/document')
   console.log(fileList, formData)
   COMMONAPI.uploadFiles(formData)
     .then((res) => {
