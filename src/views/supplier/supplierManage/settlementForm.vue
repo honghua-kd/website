@@ -51,7 +51,12 @@
 
 <script setup lang="ts">
 import { reactive, ref, Ref } from 'vue'
-import type { DictItem } from '@/api'
+import type {
+  DictItem,
+  AllProvinceResponse,
+  EditSettleRequest,
+  AddSettleRequest
+} from '@/api'
 import { CommonAPI, SupplierAPI } from '@/api'
 import { ElForm, ElMessage } from 'element-plus'
 import type { CascaderProps, CascaderOption } from 'element-plus'
@@ -59,7 +64,11 @@ const CommonApi = new CommonAPI()
 const API = new SupplierAPI()
 import { useDictStore } from '@/store/dict'
 const dialogVisible = ref<boolean>(false)
-const basicInfoForm = reactive({
+type QueryParam = EditSettleRequest & AddSettleRequest
+interface ExtendParams {
+  proandcity: string[]
+}
+const basicInfoForm = reactive<QueryParam & ExtendParams>({
   id: '',
   supplierId: '',
   provinceCode: 0,
@@ -86,7 +95,7 @@ const props: CascaderProps = {
     if (level === 0) {
       const resParent = await CommonApi.getAllProvinces()
       if (resParent && resParent?.data) {
-        resParent?.data.map((item) => {
+        resParent?.data.map((item: AllProvinceResponse) => {
           const area = {
             value: item.code,
             label: item.name,
@@ -149,8 +158,6 @@ const initOptions = async () => {
 /** 打开弹窗 */
 const dialogTitle: Ref<string> = ref('新增结算方式')
 const open = async (row?: string, no?: string) => {
-  console.error(row, no);
-  
   dialogTitle.value = no === 'sid' ? '新增结算方式' : '编辑结算方式'
   dialogVisible.value = true
   if (no === 'sid') {
@@ -178,8 +185,8 @@ const open = async (row?: string, no?: string) => {
 }
 const emit = defineEmits(['success'])
 const addHandler = () => {
-  basicInfoForm.provinceCode = basicInfoForm.proandcity[0]
-  basicInfoForm.cityCode = basicInfoForm.proandcity[1]
+  basicInfoForm.provinceCode = Number(basicInfoForm.proandcity[0])
+  basicInfoForm.cityCode = Number(basicInfoForm.proandcity[1])
   basicInfoForm.provinceName =
     cascader.value.getCheckedNodes()[0].pathLabels[0] || ''
   basicInfoForm.cityName =

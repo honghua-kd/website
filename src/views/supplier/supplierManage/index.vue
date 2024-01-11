@@ -5,7 +5,7 @@
         <el-row :gutter="25">
           <el-col :span="6">
             <el-form-item label="公司名称">
-              <el-input v-model="queryFormList.name" />
+              <el-input v-model="queryFormList.supplierName" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -14,12 +14,13 @@
                 v-model="queryFormList.belongCompany"
                 style="width: 100%"
                 placeholder=""
+                clearable
               >
                 <el-option
                   v-for="item in belongCompanyStatus"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  :key="(item.value as string)"
+                  :label="(item.label as string)"
+                  :value="(item.value as string)"
                 />
               </el-select>
             </el-form-item>
@@ -36,7 +37,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="状态">
-              <el-select v-model="queryFormList.status">
+              <el-select v-model="queryFormList.status" clearable>
                 <el-option
                   v-for="item in supplierDetailStatus"
                   :key="item.value"
@@ -50,7 +51,7 @@
         <el-row :gutter="25">
           <el-col :span="6">
             <el-form-item label="类型">
-              <el-select v-model="queryFormList.type">
+              <el-select v-model="queryFormList.supplierType">
                 <el-option
                   v-for="item in supplierDetailType"
                   :key="item.value"
@@ -125,13 +126,18 @@
       :setColumnEnable="true"
       :height="tableHeight"
       :actionWidth="px2rem('100px')"
-      v-model:pageSize="formModel.pageSize"
-      v-model:pageNo="formModel.pageNo"
+      v-model:pageSize="queryFormList.pageSize"
+      v-model:pageNo="queryFormList.pageNo"
       @selection-change="selectionChangeHandler"
       @size-change="getList"
       @current-change="getList"
     >
       <template #default="{ row, prop }">
+        <span v-if="prop === 'innerInterfaceStaffName'">
+          {{
+            row.innerInterfaceStaffName + ' / ' + row.innerInterfaceStaffCode
+          }}
+        </span>
         <span v-if="prop === 'status'">
           {{ getStatus(row.status) }}
         </span>
@@ -141,7 +147,7 @@
           <el-button link type="primary" @click="checkHandler(scope.row.id)"
             >查看</el-button
           >
-          <el-button link type="primary" @click="editHandler(scope.row)"
+          <el-button link type="primary" @click="editHandler(scope.row.id)"
             >修改</el-button
           >
           <el-button
@@ -166,15 +172,22 @@
     </Table>
     <ImportForm ref="importFormRef" :biztype="bizType" />
     <!-- 供应商弹窗 -->
-    <EditModel
+    <AddModel
       :visible="editModelVisible"
       :formValue="formValue"
       @closeModel="closeModel"
+      @success="getList"
+    />
+    <EditModel
+      :visible="modifyModelVisible"
+      :formValue="formEditValue"
+      @closeModel="closeEditModel"
     />
     <CheckModel
       :visible="editCheckModelVisible"
       :formValue="formCheckValue"
       @closeModel="closeCheckModel"
+      @success="getList"
     />
   </div>
 </template>
@@ -191,25 +204,28 @@ import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import { px2rem } from '@/utils'
 import { reactive, toRefs, ref, onMounted, Ref, computed } from 'vue'
 import { tableConfig } from './data'
+import AddModel from '@/views/supplier/supplierManage/addModel.vue'
 import EditModel from '@/views/supplier/supplierManage/editModel.vue'
 import CheckModel from '@/views/supplier/supplierManage/checkModel.vue'
 import ImportForm from './ImportForm.vue'
 import type {
   StateType,
-  RecordType,
   queryForm
 } from '@/views/supplier/supplierManage/type.ts'
+import type {
+  SupplierDetailResponse,
+  DictItem,
+  SupplierListResponse,
+  DictDataTreeResponse
+} from '@/api'
 import Table from '@/components/Table/index.vue'
-import type { DictItem } from '@/api'
 import { SupplierAPI, CommonAPI } from '@/api'
 const API = new SupplierAPI()
 const CommonApi = new CommonAPI()
 import fileDownload from 'js-file-download'
 import { useDictStore } from '@/store/dict'
-import type { CascaderProps, CascaderValue, CascaderOption } from 'element-plus'
+import type { CascaderProps, CascaderOption } from 'element-plus'
 import dayjs from 'dayjs'
-// import { SupplierAPI } from '@/api'
-// const API = new SupplierAPI()
 const selCity = ref([])
 const props: CascaderProps = {
   lazy: true,
@@ -223,7 +239,7 @@ const props: CascaderProps = {
           const area = {
             value: item.code,
             label: item.name,
-            leaf: level >= 2
+            leaf: level >= 1
           }
           nodes.push(area)
         })
@@ -238,7 +254,7 @@ const props: CascaderProps = {
           const area = {
             value: item.code,
             label: item.name,
-            leaf: level >= 2
+            leaf: level >= 1
           }
           nodes.push(area)
         })
@@ -249,7 +265,7 @@ const props: CascaderProps = {
 }
 const tableLoading = ref<boolean>(false)
 const queryFormList = ref<queryForm>({
-  name: '',
+  supplierName: '',
   belongCompany: '',
   provinceCode: '',
   cityCode: '',
@@ -258,37 +274,17 @@ const queryFormList = ref<queryForm>({
   expireDateStart: '',
   expireDateEnd: '',
   innerInterfaceStaffCode: '',
-  type: '',
+  supplierType: '',
   pageNo: 1,
   pageSize: 10
 })
 const state = reactive<StateType>({
-  // filter form
-  formModel: {
-    name: '',
-    belongCompany: '',
-    provinceCode: '',
-    cityCode: '',
-    countyCode: '',
-    status: '',
-    expireDateStart: '',
-    expireDateEnd: '',
-    innerInterfaceStaffCode: '',
-    areaCode: [], // 地区
-    type: '',
-    pageNo: 1,
-    pageSize: 10
-  },
-  // 表列
-  tableColumn: tableConfig,
-  // 表格数据
   tableData: [],
   pageTotal: 100,
   // 供应商弹窗
   editModelVisible: false
 })
-const { formModel, tableColumn, tableData, pageTotal, editModelVisible } =
-  toRefs(state)
+const { formModel, tableData, pageTotal, editModelVisible } = toRefs(state)
 // 表格最大高度
 const searchBoxRef = ref()
 const tableHeight = computed(() => {
@@ -311,7 +307,8 @@ onMounted(() => {
 const supplierDetailStatus: Ref<DictItem[]> = ref([])
 const supplierDetailType: Ref<DictItem[]> = ref([])
 const dictStore = useDictStore()
-const belongCompanyStatus = ref([])
+
+const belongCompanyStatus = ref<DictDataTreeResponse[]>([])
 const getDicts = () => {
   const params = {
     dictType: 'SOURCE_SYSTEM'
@@ -324,7 +321,7 @@ const getDicts = () => {
             label: item.label,
             value: item.value
           }
-        })
+        }) as DictDataTreeResponse[]
       }
     })
     .catch((err) => {
@@ -337,7 +334,6 @@ const getDicts = () => {
 const getList = async () => {
   queryFormList.value.provinceCode = selCity.value ? selCity.value[0] : ''
   queryFormList.value.cityCode = selCity.value ? selCity.value[1] : ''
-  queryFormList.value.countyCode = selCity.value ? selCity.value[2] : ''
   await API.getSupplierList(queryFormList.value)
     .then((res) => {
       // search()
@@ -358,7 +354,7 @@ const searchHandler = () => {
 }
 // 重置
 const reset = () => {
-  queryFormList.value.name = ''
+  queryFormList.value.supplierName = ''
   queryFormList.value.belongCompany = ''
   queryFormList.value.provinceCode = ''
   queryFormList.value.cityCode = ''
@@ -367,58 +363,62 @@ const reset = () => {
   queryFormList.value.expireDateStart = ''
   queryFormList.value.expireDateEnd = ''
   queryFormList.value.innerInterfaceStaffCode = ''
-  queryFormList.value.type = ''
+  queryFormList.value.supplierType = ''
   queryFormList.value.pageNo = 1
+  selCity.value = []
   queryFormList.value.pageSize = 10
   getList()
 }
 
 // 监听供应商弹窗关闭
-const closeModel = ({ visible, type }: { visible: boolean; type: string }) => {
-  console.error(visible, type)
-  state.editModelVisible = visible
+const closeModel = () => {
+  state.editModelVisible = false
 }
 // 监听查看详情供应商弹窗关闭
-const closeCheckModel = ({
-  visible,
-  type
-}: {
-  visible: boolean
-  type: string
-}) => {
-  console.error(visible, type)
-  editCheckModelVisible.value = visible
+const closeCheckModel = () => {
+  editCheckModelVisible.value = false
+}
+// 监听修改供应商弹窗关闭
+const closeEditModel = () => {
+  modifyModelVisible.value = false
 }
 
-let formValue = reactive({})
+let formValue = reactive<SupplierDetailResponse>({})
 const addHandler = () => {
   formValue = {}
   editModelVisible.value = true
 }
 const editCheckModelVisible = ref<boolean>(false)
-let formCheckValue = reactive({})
+let formCheckValue = reactive<SupplierDetailResponse>({})
 const checkHandler = (val: string) => {
   const params = {
     id: val
   }
   API.supplierDetail(params).then((res) => {
-    console.error(res)
     if (res && res.code === 200) {
-      formCheckValue = res.data
+      formCheckValue = res?.data as SupplierDetailResponse
       editCheckModelVisible.value = true
     }
   })
 }
+let formEditValue = reactive<SupplierDetailResponse>({})
+const modifyModelVisible = ref<boolean>(false)
 const editHandler = (val: string) => {
-  formValue = val
-  editModelVisible.value = true
+  const params = {
+    id: val
+  }
+  API.supplierDetail(params).then((res) => {
+    if (res && res.code === 200) {
+      modifyModelVisible.value = true
+      formEditValue = res.data as SupplierDetailResponse
+    }
+  })
 }
 const stopHandler = (val: string) => {
   const params = {
     id: val
   }
   API.supplierDisable(params).then((res) => {
-    console.error(res)
     if (res && res.code === 200) {
       ElMessage({
         type: 'success',
@@ -433,7 +433,6 @@ const startHandler = (val: string) => {
     id: val
   }
   API.supplierEnable(params).then((res) => {
-    console.error(res)
     if (res && res.code === 200) {
       ElMessage({
         type: 'success',
@@ -479,16 +478,19 @@ const importHandler = () => {
 }
 const getStatus = (val: string) => {
   let label = ''
-  supplierDetailStatus.value.forEach((item) => {
-    if (item.value === val) {
-      label = item.label
-    }
-  })
+  if (supplierDetailStatus.value) {
+    supplierDetailStatus.value.forEach((item) => {
+      if (item.value === val) {
+        label = item.label
+      }
+    })
+  }
+
   return label
 }
-const selectData = ref([])
+const selectData = ref<SupplierListResponse[]>([])
 // 选择的数据
-const selectionChangeHandler = (item) => {
+const selectionChangeHandler = (item: SupplierListResponse[]) => {
   selectData.value.splice(0, selectData.value.length)
   selectData.value.push(...item)
 }

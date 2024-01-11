@@ -7,7 +7,6 @@ import type {
   RecordRequest,
   RelationListRequest,
   BatchExportRequest,
-  BaseProvincesList,
   ProvincesChildrenRequest,
   DictTreeRequest,
   ExportBySelectRequest
@@ -173,7 +172,7 @@ export class CommonAPI {
   }
 
   // 获取所有的省份信息
-  getAllProvinces(): Response<BaseProvincesList<AllProvincesResponse>> {
+  getAllProvinces(): Response<AllProvincesResponse[]> {
     return this.request({
       url: `${prefix}/admin-api/area/getAllProvinces`,
       method: 'post'
@@ -183,7 +182,7 @@ export class CommonAPI {
   // 获取所有的省份信息
   getProvincesChildren(
     data: ProvincesChildrenRequest
-  ): Response<BaseProvincesList<ProvincesChildrenResponse>> {
+  ): Response<ProvincesChildrenResponse[]> {
     return this.request({
       url: `${prefix}/admin-api/area/getChildren`,
       method: 'post',

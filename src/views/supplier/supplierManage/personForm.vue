@@ -48,8 +48,17 @@ import { ElForm, ElMessage } from 'element-plus'
 import type { CascaderProps, CascaderOption } from 'element-plus'
 const CommonApi = new CommonAPI()
 const API = new SupplierAPI()
+import type {
+  EditCityContactsRequest,
+  AddCityContactsRequest,
+  AllProvinceResponse
+} from '@/api'
+type QueryParam = EditCityContactsRequest & AddCityContactsRequest
 const dialogVisible = ref<boolean>(false)
-const basicInfoForm = reactive({
+interface ExtendParams {
+  proandcity: string[]
+}
+const basicInfoForm = reactive<QueryParam & ExtendParams>({
   id: '',
   supplierId: '',
   provinceCode: 0,
@@ -108,7 +117,7 @@ const initOptions = async () => {
   casOption.value = []
   const resParent = await CommonApi.getAllProvinces()
   if (resParent && resParent?.data) {
-    resParent?.data.map(async (item) => {
+    resParent?.data.map(async (item: AllProvinceResponse) => {
       const children: OptionsItem[] = []
       if (item.code === Number(basicInfoForm.provinceCode)) {
         const params = {
@@ -116,7 +125,7 @@ const initOptions = async () => {
         }
         const res = await CommonApi.getProvincesChildren(params)
         if (res && res.data) {
-          res?.data.map((item) => {
+          res?.data.map((item: AllProvinceResponse) => {
             const area = {
               value: String(item.code),
               label: item.name,
@@ -165,8 +174,8 @@ const open = async (row?: string, no?: string) => {
 }
 const emit = defineEmits(['success'])
 const addHandler = () => {
-  basicInfoForm.provinceCode = basicInfoForm.proandcity[0]
-  basicInfoForm.cityCode = basicInfoForm.proandcity[1]
+  basicInfoForm.provinceCode = Number(basicInfoForm.proandcity[0])
+  basicInfoForm.cityCode = Number(basicInfoForm.proandcity[1])
   basicInfoForm.provinceName =
     cascader.value.getCheckedNodes()[0].pathLabels[0] || ''
   basicInfoForm.cityName =
@@ -179,7 +188,7 @@ const addHandler = () => {
       cityCode: basicInfoForm.cityCode,
       cityName: basicInfoForm.cityName,
       contactsName: basicInfoForm.contactsName,
-      phone: basicInfoForm.phone,
+      phone: basicInfoForm.phone
     }
     API.addCityContacts(params)
       .then((res) => {

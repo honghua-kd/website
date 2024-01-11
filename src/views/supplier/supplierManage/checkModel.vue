@@ -9,245 +9,91 @@
     :before-close="handleClose"
     style="overflow-y: scroll; max-height: 90vh"
   >
+    <el-row>
+      <el-col :span="12" class="bfont">
+        {{ editForm.supplierName }}
+        <span class="top-status">{{ getFirstStatus(editForm.status) }}</span>
+      </el-col>
+    </el-row>
     <el-form :model="editForm" label-width="120px" label-position="top" inline>
       <div class="type-title">基础信息</div>
-      <el-row style="width: 100%">
-        <el-col :span="12">
-          <el-form-item
-            label="公司名称"
-            :rules="[{ required: true, message: 'required' }]"
-          >
-            <el-input
-              v-model="editForm.supplierName"
-              placeholder="请输入公司名称"
-            />
-          </el-form-item>
+      <el-row style="width: 100%" class="bgc">
+        <el-col :span="12" class="mb-5">
+          公司名称：{{ editForm.supplierName }}
         </el-col>
-        <el-col :span="12">
-          <el-form-item
-            label="组织机构代码"
-            :rules="[{ required: true, message: 'required' }]"
-          >
-            <el-input
-              v-model="editForm.organCode"
-              placeholder="请输入组织机构代码"
-            />
-          </el-form-item>
+        <el-col :span="12" class="mb-5">
+          组织机构代码：{{ editForm.organCode }}
         </el-col>
       </el-row>
-      <el-row style="width: 100%">
-        <el-col :span="12">
-          <!-- 详情接口无子段 -->
-          <el-form-item
-            label="登记注册号类型"
-            :rules="[{ required: true, message: 'required' }]"
-          >
-            <el-select
-              v-model="editForm.registerType"
-              style="width: 100%"
-              placeholder="请选择登记注册号类型"
-            >
-              <el-option
-                v-for="item in registerTypeStatus"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
+      <el-row style="width: 100%" class="bgc">
+        <el-col :span="12" class="mb-5">
+          登记注册号类型：{{ editForm.registerTypeName }}
         </el-col>
-        <el-col :span="12">
-          <!-- 详情接口无子段 -->
-          <el-form-item
-            label="登记注册号码"
-            :rules="[{ required: true, message: 'required' }]"
-          >
-            <el-input
-              v-model="editForm.registerCode"
-              placeholder="请输入登记注册号码"
-            />
-          </el-form-item>
+        <el-col :span="12" class="mb-5">
+          登记注册号码：{{ editForm.registerCode }}
         </el-col>
       </el-row>
-      <el-row style="width: 100%">
-        <el-col :span="12">
-          <el-form-item
-            label="供应商类型"
-            :rules="[{ required: true, message: 'required' }]"
-          >
-            <el-select
-              v-model="editForm.supplierTypes"
-              style="width: 100%"
-              placeholder="请选择供应商类型"
-              multiple
-            >
-              <el-option
-                v-for="item in supplierDetailType"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
+      <el-row style="width: 100%" class="bgc">
+        <el-col :span="12" class="mb-5">
+          供应商类型：{{ editForm.supplierTypeNames.join() }}
         </el-col>
-        <el-col :span="12">
-          <!-- 详情接口无子段 -->
-          <el-form-item
-            label="公司规模"
-            :rules="[{ required: true, message: 'required' }]"
-          >
-            <el-input
-              v-model="editForm.companyScale"
-              placeholder="请输入公司规模"
-            />
-          </el-form-item>
+        <el-col :span="12" class="mb-5">
+          公司规模：{{ editForm.companyScale }}
         </el-col>
       </el-row>
-      <el-row style="width: 100%">
-        <el-col :span="12">
-          <!-- 详情接口无子段 -->
-          <el-form-item
-            label="归属"
-            :rules="[{ required: true, message: 'required' }]"
-          >
-            <el-select
-              v-model="editForm.belongCompanyList"
-              style="width: 100%"
-              placeholder="请选择归属公司"
-              multiple
-            >
-              <el-option
-                v-for="item in belongCompanyStatus"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
+      <el-row style="width: 100%" class="bgc">
+        <el-col :span="12" class="mb-5">
+          归属：{{ editForm.belongCompanyNames.join() }}
         </el-col>
-        <el-col :span="12">
-          <el-form-item
-            label="到期日期"
-            :rules="[{ required: true, message: 'required' }]"
-          >
-            <el-date-picker
-              v-model="editForm.expireDate"
-              style="width: 100%"
-              type="datetime"
-              placeholder="选择日期时间"
-              format="YYYY-MM-DD"
-              value-format="YYYY-MM-DD"
-            />
-          </el-form-item>
+        <el-col :span="12" class="mb-5">
+          到期日期：{{ editForm.expireDate }}
         </el-col>
       </el-row>
-      <el-row style="width: 100%">
-        <el-col :span="12">
-          <el-form-item
-            label="签约日期"
-            :rules="[{ required: true, message: 'required' }]"
-          >
-            <el-date-picker
-              v-model="editForm.signDate"
-              style="width: 100%"
-              type="datetime"
-              placeholder="选择日期时间"
-              format="YYYY-MM-DD"
-              value-format="YYYY-MM-DD"
-            />
-          </el-form-item>
+      <el-row style="width: 100%" class="bgc">
+        <el-col :span="12" class="mb-5">
+          签约日期：{{ editForm.signDate }}
         </el-col>
       </el-row>
-      <div class="type-title">联系信息</div>
-      <el-row style="width: 100%">
-        <el-col :span="12">
-          <el-form-item
-            label="内部对接人"
-            :rules="[{ required: true, message: 'required' }]"
-          >
-            <el-input
-              v-model="editForm.innerInterfaceStaffCode"
-              placeholder="请输入内部对接人名称"
-              style="width: 50%"
-            ></el-input>
-            <el-input
-              v-model="editForm.innerInterfaceStaffName"
-              placeholder="请输入内部对接人工号"
-              style="width: 50%"
-            ></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item
-            label="联系人"
-            :rules="[{ required: true, message: 'required' }]"
-          >
-            <el-input
-              v-model="editForm.contactName"
-              placeholder="请输入联系人"
-            ></el-input>
-          </el-form-item>
+      <div class="type-title">联系信息：</div>
+      <el-row style="width: 100%" class="bgc">
+        <el-col :span="12" class="mb-5">
+          内部对接人：{{ editForm.innerInterfaceStaffCode }} /
+          {{ editForm.innerInterfaceStaffName }}</el-col
+        >
+        <el-col :span="12" class="mb-5">
+          联系人：{{ editForm.contactName }}
         </el-col>
       </el-row>
-      <el-row style="width: 100%">
-        <el-col :span="12">
-          <el-form-item
-            label="联系电话"
-            :rules="[{ required: true, message: 'required' }]"
-          >
-            <el-input
-              v-model="editForm.phone"
-              placeholder="请输入联系电话"
-            ></el-input>
-          </el-form-item>
+      <el-row style="width: 100%" class="bgc">
+        <el-col :span="12" class="mb-5">
+          联系电话：{{ editForm.phone }}
         </el-col>
-        <el-col :span="12">
-          <el-form-item
-            label="公司地址"
-            :rules="[{ required: true, message: 'required' }]"
-          >
-            <el-input
-              v-model="editForm.address"
-              placeholder="请输入公司地址"
-            ></el-input>
-          </el-form-item>
+        <el-col :span="12" class="mb-5">
+          公司地址：{{ editForm.address }}
         </el-col>
       </el-row>
-      <el-row style="width: 100%">
-        <el-col :span="12">
-          <el-form-item
-            label="联系人邮箱"
-            :rules="[{ required: true, message: 'required' }]"
-          >
-            <el-input
-              v-model="editForm.email"
-              placeholder="请输入联系人邮箱"
-            ></el-input>
-          </el-form-item>
+      <el-row style="width: 100%" class="bgc">
+        <el-col :span="12" class="mb-5">
+          联系人邮箱：{{ editForm.email }}
         </el-col>
-        <el-col :span="12">
-          <el-form-item
-            label="邮编"
-            :rules="[{ required: true, message: 'required' }]"
-          >
-            <el-input
-              v-model="editForm.postcode"
-              placeholder="请输入邮编"
-            ></el-input>
-          </el-form-item>
-        </el-col>
+        <el-col :span="12" class="mb-5"> 邮编：{{ editForm.postcode }} </el-col>
       </el-row>
       <div class="type-title">账号信息</div>
       <el-row
         style="width: 100%"
         v-for="(item, index) in editForm.bankAccountList"
         :key="index"
+        class="bgc"
       >
-        <el-col :span="8">账户名称： {{ item.accountName }}</el-col>
-        <el-col :span="8">银行账户： {{ item.bankAccount }}</el-col>
-        <el-col :span="8">开户银行： {{ item.openBank }}</el-col>
-        <el-col :span="8">支行： {{ item.subBank }}</el-col>
-        <el-col :span="8"
+        <el-col :span="8" class="mb-5"
+          >账户名称： {{ item.accountName }}</el-col
+        >
+        <el-col :span="8" class="mb-5"
+          >银行账户： {{ item.bankAccount }}</el-col
+        >
+        <el-col :span="8" class="mb-5">开户银行： {{ item.openBank }}</el-col>
+        <el-col :span="8" class="mb-5">支行： {{ item.subBank }}</el-col>
+        <el-col :span="8" class="mb-5"
           >开户银行区域：
           {{
             item.openBankProName +
@@ -255,33 +101,48 @@
             item.openBankCountyName
           }}</el-col
         >
-        <el-col :span="8">开户行行号： {{ item.openBankCode }}</el-col>
+        <el-col :span="8" class="mb-5"
+          >开户行行号： {{ item.openBankCode }}</el-col
+        >
       </el-row>
 
-      <div class="type-title">附件上传</div>
+      <div class="type-title">附件</div>
       <!-- 可选 fileCodes -->
       <el-row style="width: 100%">
-        <el-form-item>
-          <el-upload
-            ref="upload"
-            :show-file-list="true"
-            :auto-upload="false"
-            action="#"
-            multiple
-            v-model:file-list="fileList"
-          >
-            <el-button type="primary">选取文件</el-button>
-            <template #tip>
-              <div class="el-upload__tip">
-                请上传大小不超过 <span class="t-red">20MB</span>，格式为
-                <span class="t-red"
-                  >zip/rar/txt/doc/docx/xls/xlsx/ppt/pptx/pdf</span
-                >
-                的文件
-              </div>
+        <el-table
+          :data="editForm.attachmentInfoList"
+          :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
+          border
+          :max-height="px2rem('320px')"
+        >
+          <el-table-column
+            label="序号"
+            prop="number"
+            align="center"
+            type="index"
+          />
+          <el-table-column
+            label="文件名"
+            prop="fileName"
+            align="center"
+            show-overflow-tooltip
+          />
+          <el-table-column label="上传时间" prop="uploadTime" align="center" />
+          <el-table-column label="备注" prop="fileDesc" align="center">
+          </el-table-column>
+
+          <el-table-column label="操作" fixed="right" align="center">
+            <template #default="scope">
+              <el-button
+                link
+                type="danger"
+                @click="delOtherFile(scope.row.fileCode)"
+              >
+                <el-icon><Delete /></el-icon>
+              </el-button>
             </template>
-          </el-upload>
-        </el-form-item>
+          </el-table-column>
+        </el-table>
       </el-row>
     </el-form>
     <!--  -->
@@ -298,7 +159,7 @@
 
       <Table
         :data="accountTableData"
-        :columnConfig="accountColumn"
+        :columnConfig="AccountColumn"
         :isSelected="false"
         :page-total="accountTotal"
         :setColumnEnable="false"
@@ -309,11 +170,19 @@
         @size-change="getAccountList"
         @current-change="getAccountList"
       >
+        <template #default="{ row, prop }">
+          <span v-if="prop === 'status'">
+            {{ getStatus(row.status) }}
+          </span>
+        </template>
         <template #action="scope">
           <template v-if="scope.row.id">
             <el-button link type="primary" @click="editAccount(scope.row)"
               >编辑</el-button
             >
+            <el-button link type="primary" @click="enableAccount(scope.row)">{{
+              scope.row.status === 0 ? '启用' : '停用'
+            }}</el-button>
             <el-button link type="danger" @click="removeAccount(scope.row.id)"
               >删除</el-button
             >
@@ -332,6 +201,12 @@
           @click="addPerson"
           ><CirclePlusFilled
         /></el-icon>
+        <el-button
+          type="primary"
+          @click="importHandler('SUPPLIER_CITY_CONTACTS')"
+        >
+          导入
+        </el-button>
         <el-cascader
           v-model="selCity"
           clearable
@@ -344,7 +219,7 @@
 
       <Table
         :data="personTableData"
-        :columnConfig="personColumn"
+        :columnConfig="PersonColumn"
         :isSelected="false"
         :page-total="personTotal"
         :setColumnEnable="false"
@@ -377,6 +252,12 @@
           @click="addSettlement"
           ><CirclePlusFilled
         /></el-icon>
+        <el-button
+          type="primary"
+          @click="importHandler('SUPPLIER_SETTLEMENT_WAY')"
+        >
+          导入
+        </el-button>
         <el-cascader
           v-model="selSettle"
           clearable
@@ -389,7 +270,7 @@
 
       <Table
         :data="settlementTableData"
-        :columnConfig="settlementColumn"
+        :columnConfig="SettlementColumn"
         :isSelected="false"
         :page-total="settlementTotal"
         :setColumnEnable="false"
@@ -423,35 +304,55 @@
     <!--  -->
     <template #footer>
       <span class="dialog-footer">
+        <el-button @click="deleteItem" type="danger">删除</el-button>
+        <el-button
+          type="primary"
+          v-if="editForm.status === 'SUPPLIER_DETAIL_STATUS_2'"
+          @click="enableSupplier"
+          >启用</el-button
+        >
+        <el-button
+          type="primary"
+          v-if="editForm.status === 'SUPPLIER_DETAIL_STATUS_1'"
+          @click="stopSupplier"
+          >停用</el-button
+        >
         <el-button @click="clickButton">关闭</el-button>
       </span>
     </template>
   </el-dialog>
-
+  <AccountForm ref="accountFormRef" @success="getAccountList" />
   <PersonForm ref="personFormRef" @success="getCityList" />
   <SettlementForm ref="settlementFormRef" @success="getSettlementList" />
+  <ImportForm ref="importFormRef" :biztype="bizType" />
 </template>
 <script lang="ts" setup>
 import { watch, toRefs, reactive, ref, Ref, computed } from 'vue'
 import { px2rem } from '@/utils'
 import type {
   RecordType,
-  ModelStateType
+  ModelStateType,
+  EditForm
 } from '@/views/supplier/supplierManage/type'
-import { CirclePlusFilled } from '@element-plus/icons-vue'
+import { CirclePlusFilled, Delete } from '@element-plus/icons-vue'
 import ImportForm from './ImportForm.vue'
 import {
   PersonColumn,
   AccountColumn,
   SettlementColumn
 } from '@/views/supplier/supplierManage/data'
+import type { CascaderProps, CascaderOption } from 'element-plus'
 import Table from '@/components/Table/index.vue'
+import AccountForm from './accountForm.vue'
 import PersonForm from './personForm.vue'
 import SettlementForm from './settlementForm.vue'
-import type { DictItem } from '@/api'
+import type {
+  DictItem,
+  DictDataTreeResponse,
+  EnableAccountRequest
+} from '@/api'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import { SupplierAPI, CommonAPI } from '@/api'
-import { useUserStore } from '@toystory/lotso'
 const CommonApi = new CommonAPI()
 const SupplierApi = new SupplierAPI()
 import { useDictStore } from '@/store/dict'
@@ -465,23 +366,54 @@ const props = withDefaults(defineProps<ModelPropsType>(), {
 })
 const state = reactive<ModelStateType>({
   dialogVisible: false, // 供应商弹窗
-  editForm: {}, // 表单数据
+  editForm: {
+    id: '',
+    supplierName: '',
+    organCode: '',
+    supplierTypes: [],
+    registerCode: '',
+    registerType: '',
+    companyScale: '',
+    expireDate: '',
+    signDate: '',
+    belongCompanyList: [],
+    bankAccountList: [],
+    innerInterfaceStaffCode: '',
+    innerInterfaceStaffName: '',
+    contactName: '',
+    phone: '',
+    address: '',
+    email: '',
+    postcode: '',
+    accountName: '',
+    bankAccount: '',
+    openBank: '',
+    subBank: '',
+    openBankCode: '',
+    openBankProCode: '',
+    openBankProName: '',
+    openBankCityCode: '',
+    openBankCityName: '',
+    openBankCountyCode: '',
+    openBankCountyName: '',
+    files: [],
+    attachmentInfoList: [],
+    belongCompanyNames: [],
+    supplierTypeNames: []
+  }, // 表单数据
   step: 1, // 步骤
   cancelButtonText: '取消', // 取消按钮文案
   okButtonText: '下一步', // 确认按钮文案
-  personColumn: PersonColumn, // 城市联系人表列
   personTableData: [], // 城市联系人数据
   personModelVisible: false, // 城市联系人弹窗
   personTotal: 0, // 城市联系人数据总数
   pagePersonSize: 10,
   pagePersonNo: 1,
-  settlementColumn: SettlementColumn, // 结算方式表列
   settlementTableData: [], // 结算方式数据
   settlementModelVisible: false, // 结算方式弹窗
   settlementTotal: 0, // 结算方式数据总数
   pageSettleSize: 10,
   pageSettlenNo: 1,
-  accountColumn: AccountColumn, // 结算方式表列
   accountTableData: [], // 结算方式数据
   accountModelVisible: false, // 结算方式弹窗
   accountTotal: 0, // 结算方式数据总数
@@ -492,18 +424,11 @@ const {
   dialogVisible,
   editForm,
   step,
-  cancelButtonText,
-  okButtonText,
-  personColumn,
   personTableData,
-  personModelVisible,
   personTotal,
-  settlementColumn,
   settlementTableData,
-  settlementModelVisible,
   settlementTotal,
   accountTableData,
-  accountColumn,
   accountTotal
 } = toRefs(state)
 // 表格最大高度
@@ -559,47 +484,11 @@ const propsCity: CascaderProps = {
     resolve(nodes) // 回调
   }
 }
-const selArea = ref([])
-const propsArea: CascaderProps = {
-  lazy: true,
-  async lazyLoad(node, resolve) {
-    const nodes: CascaderOption[] = [] // 动态节点
-    const { level } = node
-    if (level === 0) {
-      const resParent = await CommonApi.getAllProvinces()
-      if (resParent && resParent?.data) {
-        resParent?.data.map((item) => {
-          const area = {
-            value: item.code,
-            label: item.name,
-            leaf: level >= 2
-          }
-          nodes.push(area)
-        })
-      }
-    } else {
-      const params = {
-        code: node.value as number
-      }
-      const res = await CommonApi.getProvincesChildren(params)
-      if (res && res.data) {
-        res?.data.map((item) => {
-          const area = {
-            value: item.code,
-            label: item.name,
-            leaf: level >= 2
-          }
-          nodes.push(area)
-        })
-      }
-    }
-    resolve(nodes) // 回调
-  }
-}
 const registerTypeStatus: Ref<DictItem[]> = ref([])
 const dictStore = useDictStore()
-const belongCompanyStatus = ref([])
+const belongCompanyStatus = ref<DictDataTreeResponse[]>([])
 const supplierDetailType: Ref<DictItem[]> = ref([])
+const supplierDetailStatus: Ref<DictItem[]> = ref([])
 const getDicts = () => {
   const params = {
     dictType: 'SOURCE_SYSTEM'
@@ -612,7 +501,7 @@ const getDicts = () => {
             label: item.label,
             value: item.value
           }
-        })
+        }) as DictDataTreeResponse[]
       }
     })
     .catch((err) => {
@@ -620,21 +509,22 @@ const getDicts = () => {
     })
   registerTypeStatus.value = dictStore.dicts.SUPPLIER_REGISTER_TYPE
   supplierDetailType.value = dictStore.dicts.SUPPLIER_DETAIL_TYPE
+  supplierDetailStatus.value = dictStore.dicts.SUPPLIER_DETAIL_STATUS
 }
 const queryAccount = reactive({
-  supplierId: state.editForm.supplierId,
+  supplierId: state.editForm.id,
   pageNo: 1,
   pageSize: 10
 })
 const queryPerson = reactive({
-  supplierId: state.editForm.supplierId,
+  supplierId: state.editForm.id,
   provinceName: '',
   cityName: '',
   pageNo: 1,
   pageSize: 10
 })
 const querySettle = reactive({
-  supplierId: state.editForm.supplierId,
+  supplierId: state.editForm.id,
   provinceName: '',
   cityName: '',
   pageNo: 1,
@@ -644,15 +534,13 @@ const cascaderCity = ref()
 const cascaderSettle = ref()
 const getAccountList = async () => {
   const params = {
-    supplierId: state.editForm.id
-    // supplierId: '1744999920903254018',
+    supplierId: state.editForm.id as string
   }
   await SupplierApi.getAccountList(params)
     .then((res) => {
       if (res && res.code === 200) {
         accountTableData.value.splice(0, accountTableData.value.length)
-        accountTableData.value.push(...(res?.data?.list || []))
-        accountTotal.value = res?.data?.total || 0
+        accountTableData.value.push(...(res?.data || []))
       }
     })
     .catch((err) => {
@@ -662,7 +550,6 @@ const getAccountList = async () => {
 const getCityList = async () => {
   const params = {
     supplierId: state.editForm.id || '',
-    // supplierId: '1744999920903254018',
     provinceName: cascaderCity.value.getCheckedNodes()[0]?.pathLabels[0] || '',
     cityName: cascaderCity.value.getCheckedNodes()[0]?.pathLabels[1] || '',
     pageNo: queryPerson.pageNo,
@@ -707,14 +594,17 @@ watch(
   async ([newVisible, newValue]) => {
     state.step = 1
     state.dialogVisible = newVisible
-    state.editForm = newValue
-    await getDicts()
-    await getCityList()
-    await getSettlementList()
-  }/* ,
+    state.editForm = newValue as unknown as EditForm
+    if (newVisible) {
+      await getDicts()
+      await getAccountList()
+      await getCityList()
+      await getSettlementList()
+    }
+  },
   {
-    immediate: true
-  } */
+    deep: true
+  }
 )
 watch(step, (newValue) => {
   console.log(newValue)
@@ -723,7 +613,7 @@ watch(step, (newValue) => {
 })
 const accountFormRef = ref()
 const addAccount = () => {
-  accountFormRef.value.open()
+  accountFormRef.value.open(state.editForm.id, 'sid')
 }
 const editAccount = (val: string) => {
   accountFormRef.value.open(val)
@@ -757,12 +647,30 @@ const removeAccount = (id: string) => {
       throw err
     })
 }
+const enableAccount = (row: EnableAccountRequest) => {
+  const params = {
+    id: row.id,
+    status: row.status === 0 ? 1 : 0
+  }
+  SupplierApi.enableAccount(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        ElMessage({
+          type: 'success',
+          message: '更新成功'
+        })
+        getAccountList()
+      }
+    })
+    .catch((err: Error) => {
+      throw err
+    })
+}
 // step 2 城市联系人
 // 新增
 const personFormRef = ref()
 const addPerson = () => {
-  // personFormRef.value.open(state.editForm.supplierId, 'sid')
-  personFormRef.value.open('1744999920903254018', 'sid')
+  personFormRef.value.open(state.editForm.id, 'sid')
 }
 // 编辑
 const editPerson = (item: RecordType) => {
@@ -804,8 +712,7 @@ const removePerson = (id: string) => {
 // 新增
 const settlementFormRef = ref()
 const addSettlement = () => {
-  // settlementFormRef.value.open(state.editForm.supplierId, 'sid')
-  settlementFormRef.value.open('1744999920903254018', 'sid')
+  settlementFormRef.value.open(state.editForm.id, 'sid')
 }
 // 编辑
 const editSettlement = (item: RecordType) => {
@@ -845,6 +752,7 @@ const removeSettlement = (id: string) => {
 
 const emit = defineEmits<{
   (e: 'closeModel', { visible, type }: { visible: boolean; type: string }): void
+  (e: 'success'): void
 }>()
 // 供应商弹窗关闭前回调
 const handleClose = () => {
@@ -860,74 +768,10 @@ const clickButton = async () => {
     type: 'click-close'
   })
 }
-const fileList = ref<UploadUserFile[]>([])
-const userStore = useUserStore()
-const tenantUser = ref<string>('')
-const cascaderArea = ref()
-const submitForm = async () => {
-  let fileCodes: string[] = []
-  if (fileList.value.length) {
-    tenantUser.value = userStore.userInfo?.staffCode as string
-    const formData = new FormData()
-    fileList.value.forEach((item) => {
-      formData.append('file', item.raw as File)
-    })
-    formData.append('tenantUser', tenantUser.value)
-    formData.append('prefixPath', 'supplier')
-    formData.append('expireDays', '-1')
-    const firstRes = await CommonApi.uploadFilesBatch(formData)
-    if (firstRes && firstRes.code === 200) {
-      fileCodes = firstRes.data?.fileCodes || []
-    }
-  }
-  const sparams = {
-    supplierName: state.editForm.supplierName,
-    organCode: state.editForm.organCode,
-    supplierTypes: state.editForm.supplierTypes,
-    registerCode: state.editForm.registerCode,
-    registerType: state.editForm.registerType,
-    companyScale: state.editForm.companyScale,
-    expireDate: state.editForm.expireDate,
-    signDate: state.editForm.signDate,
-    belongCompanyList: state.editForm.belongCompanyList,
-    innerInterfaceStaffCode: state.editForm.innerInterfaceStaffCode,
-    innerInterfaceStaffName: state.editForm.innerInterfaceStaffName,
-    contactName: state.editForm.contactName,
-    phone: state.editForm.phone,
-    address: state.editForm.address,
-    email: state.editForm.email,
-    postcode: state.editForm.postcode,
-    accountName: state.editForm.accountName,
-    bankAccount: state.editForm.bankAccount,
-    openBank: state.editForm.openBank,
-    subBank: state.editForm.subBank,
-    openBankCode: state.editForm.openBankCode,
-    openBankProCode: selArea.value[0],
-    openBankProName: cascaderArea.value.getCheckedNodes()[0].pathLabels[0],
-    openBankCityCode: selArea.value[1],
-    openBankCityName: cascaderArea.value.getCheckedNodes()[0].pathLabels[1],
-    openBankCountyCode: selArea.value[2],
-    openBankCountyName: cascaderArea.value.getCheckedNodes()[0].pathLabels[2],
-    fileCodes: fileCodes
-  }
-  SupplierApi.addSupplier(sparams)
-    .then((res) => {
-      if (res && res.code === 200) {
-        state.editForm.supplierId = res.data
-      }
-    })
-    .catch((err: Error) => {
-      throw err
-    })
-}
 const importFormRef = ref()
 const bizType = ref('')
-const importHandler = () => {
-  if (state.step === 2) {
-    bizType.value = 'SUPPLIER_CITY_CONTACTS'
-  } else if (state.step === 3) {
-    bizType.value = 'SUPPLIER_SETTLEMENT_WAY'
-  }
+const importHandler = (val: string) => {
+  bizType.value = val
   importFormRef.value.open()
 }
 const searchPersonList = () => {
@@ -946,6 +790,136 @@ const getWay = (val: string) => {
     }
   })
   return label
+}
+const getStatus = (val: string) => {
+  let label = ''
+  dictStore.dicts.SUPPLIER_ACCOUNT_STATUS.forEach((item) => {
+    if (item.value === val) {
+      label = item.label
+    }
+  })
+  return label
+}
+const getFirstStatus = (val?: string) => {
+  let label = ''
+  if (supplierDetailStatus.value) {
+    supplierDetailStatus.value.forEach((item) => {
+      if (item.value === val) {
+        label = item.label
+      }
+    })
+  }
+  return label
+}
+// 删除附件信息
+const delOtherFile = (code: string) => {
+  ElMessageBox.confirm('确认要删除吗？', '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(() => {
+      const params = {
+        supplierId: state.editForm.id,
+        fileCodes: [code]
+      }
+      SupplierApi.deleteFiles(params)
+        .then((res) => {
+          if (res && res.code === 200) {
+            ElMessage({
+              type: 'success',
+              message: '删除成功'
+            })
+            const param = {
+              id: state.editForm.id
+            }
+            SupplierApi.supplierDetail(param).then((res) => {
+              if (res && res.code === 200) {
+                state.editForm.attachmentInfoList.splice(
+                  0,
+                  state.editForm.attachmentInfoList.length
+                )
+                state.editForm.attachmentInfoList.push(
+                  ...(res?.data?.attachmentInfoList || [])
+                )
+              }
+            })
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    })
+    .catch((err: Error) => {
+      throw err
+    })
+}
+const deleteItem = () => {
+  ElMessageBox.confirm('确认要删除吗？', '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(() => {
+      // 调用删除接口
+      const params = {
+        id: state.editForm.id as string
+      }
+      SupplierApi.supplierDelete(params).then((res) => {
+        if (res && res.code === 200) {
+          ElMessage({
+            type: 'success',
+            message: '删除成功'
+          })
+          emit('closeModel', {
+            visible: false,
+            type: 'click-close'
+          })
+          emit('success')
+        }
+      })
+    })
+    .catch((err: Error) => {
+      throw err
+    })
+}
+const enableSupplier = () => {
+  const params = {
+    id: state.editForm.id as string
+  }
+  SupplierApi.supplierEnable(params).then((res) => {
+    if (res && res.code === 200) {
+      dialogVisible.value = false
+      ElMessage({
+        type: 'success',
+        message: '启用成功'
+      })
+      emit('success')
+      emit('closeModel', {
+        visible: false,
+        type: 'click-close'
+      })
+    }
+  })
+}
+const stopSupplier = () => {
+  const params = {
+    id: state.editForm.id as string
+  }
+  SupplierApi.supplierDisable(params).then((res) => {
+    if (res && res.code === 200) {
+      dialogVisible.value = false
+      ElMessage({
+        type: 'success',
+        message: '停用成功'
+      })
+      emit('success')
+      emit('closeModel', {
+        visible: false,
+        type: 'click-close'
+      })
+    }
+  })
 }
 </script>
 <style lang="scss" scoped>
@@ -997,5 +971,20 @@ const getWay = (val: string) => {
   .settlement-type {
     margin-top: 50px;
   }
+}
+.mb-5 {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+}
+.bgc {
+  background-color: rgb(89 140 255 / 4%);
+}
+.bfont {
+  font-size: $base-font-size-bigger;
+}
+.top-status {
+  font-size: $base-font-size-big;
+  color: $base-color-primary;
 }
 </style>

@@ -18,7 +18,9 @@ import type {
   AccountRequest,
   AddAccountRequest,
   EditAccountRequest,
-  DelAccountRequest
+  DelAccountRequest,
+  EnableAccountRequest,
+  DeleteFileRequest
 } from './types/request'
 import type {
   SupplierListResponse,
@@ -51,7 +53,7 @@ export class SupplierAPI {
   // 供应商详情
   supplierDetail(
     data: SupplierDetailRequest
-  ): Response<PageList<SupplierDetailResponse>> {
+  ): Response<SupplierDetailResponse> {
     return this.request({
       url: `${prefix}/admin-api/mortgage/supplier/getDetail`,
       method: 'post',
@@ -212,7 +214,7 @@ export class SupplierAPI {
   }
 
   // 账号列表
-  getAccountList(data: AccountRequest): Response<PageList<AccountResponse>> {
+  getAccountList(data: AccountRequest): Response<AccountResponse[]> {
     return this.request({
       url: `${prefix}/admin-api/mortgage/supplier/account/list`,
       method: 'post',
@@ -242,6 +244,26 @@ export class SupplierAPI {
   delAccount(data: DelAccountRequest): Response<boolean | null | undefined> {
     return this.request({
       url: `${prefix}/admin-api/mortgage/supplier/account/delete`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 停用启用账号
+  enableAccount(
+    data: EnableAccountRequest
+  ): Response<boolean | null | undefined> {
+    return this.request({
+      url: `${prefix}/admin-api/mortgage/supplier/account/updateStatus`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 删除附件
+  deleteFiles(data: DeleteFileRequest): Response<boolean | null | undefined> {
+    return this.request({
+      url: `${prefix}/admin-api/mortgage/supplier/deleteFiles`,
       method: 'post',
       data
     })

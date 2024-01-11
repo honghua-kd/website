@@ -42,70 +42,169 @@ export interface SupplierListRequest extends PageRequest {
 }
 
 // 新增/编辑 供应商
+export interface SupplierAttachmentReqDto {
+  /**
+   * 附件编号
+   */
+  fileCode?: string
+  /**
+   * 附件备注
+   */
+  remark?: string
+}
+
 export interface EditSupplierRequest {
-  // 主键id
+  /**
+   * 账户名称
+   * 账户名称
+   */
+  accountName?: string
+  /**
+   * 公司地址
+   * 公司地址
+   */
+  address?: string
+  /**
+   * 银行账户
+   * 银行账户
+   */
+  bankAccount?: string
+  /**
+   * 归属公司
+   * 归属公司
+   */
+  belongCompanyList?: string[]
+  /**
+   * 公司规模
+   * 公司规模,子账号数量
+   */
+  companyScale?: string
+  /**
+   * 联系人
+   * 联系人
+   */
+  contactName?: string
+  /**
+   * 电子邮箱
+   * 电子邮箱
+   */
+  email?: string
+  /**
+   * 到期时间
+   * 到期时间
+   */
+  expireDate?: string
+  /**
+   * 附件信息
+   * 附件信息
+   */
+  files?: SupplierAttachmentReqDto[]
+  /**
+   * 供应商id
+   * 主键id
+   */
   id?: string
-  // 账户名称
-  accountName: string
-  // 公司地址
-  address: string
-  // 银行账户
-  bankAccount: string
-  // 归属公司
-  belongCompanyList: string[]
-  // 公司规模,子账号数量
-  companyScale: string
-  // 联系人
-  contactName: string
-  // 电子邮箱
-  email: string
-  // 到期时间
-  expireDate: string
-  // 附件信息
-  fileCodes?: string[]
-  // 内部对接人工号
-  innerInterfaceStaffCode: string
-  // 内部对接人名称
-  innerInterfaceStaffName: string
-  // 开户银行
-  openBank: string
-  // 开户银行区域城市代码
-  openBankCityCode: string
-  // 开户银行区域城市名称
-  openBankCityName: string
-  // 开户行行号
+  /**
+   * 内部对接人工号
+   * 内部对接人工号
+   */
+  innerInterfaceStaffCode?: string
+  /**
+   * 内部对接人名称
+   * 内部对接人名称
+   */
+  innerInterfaceStaffName?: string
+  /**
+   * 开户银行
+   * 开户银行
+   */
+  openBank?: string
+  /**
+   * 开户银行区域城市代码
+   * 开户银行区域城市代码
+   */
+  openBankCityCode?: number | string
+  /**
+   * 开户银行区域城市名称
+   * 开户银行区域城市名称
+   */
+  openBankCityName?: string
+  /**
+   * 开户行行号
+   * 开户行行号
+   */
   openBankCode?: string
-  // 开户银行区域开户区/县代码
-  openBankCountyCode: string
-  // 开户银行区域开户区/县名称
-  openBankCountyName: string
-  // 开户银行区域省份代码
-  openBankProCode: string
-  // 开户银行区域省份名称
-  openBankProName: string
-  // 组织机构代码
-  organCode: string
-  // 联系电话
-  phone: string
-  // 邮编
-  postcode: string
-  // 登记注册号码
-  registerCode: string
-  // 登记注册号类型  枚举值：1=工商注册号;2=统一社会信用代码
-  registerType: number
-  // 签约时间
-  signDate: string
-  // 支行信息
-  subBank: string
-  // 供应商公司名称
-  supplierName: string
-  // 供应商类型类型    1-律所；2-委外机构；3-仓库；4-运输公司；5-收车公司；6-评估机构；7-设备处置平台机构
-  supplierTypes: string[]
+  /**
+   * 开户银行区域开户区/县代码
+   * 开户银行区域开户区/县代码
+   */
+  openBankCountyCode?: number | string
+  /**
+   * 开户银行区域开户区/县名称
+   * 开户银行区域开户区/县名称
+   */
+  openBankCountyName?: string
+  /**
+   * 开户银行区域省份代码
+   * 开户银行区域省份代码
+   */
+  openBankProCode?: number | string
+  /**
+   * 开户银行区域省份名称
+   * 开户银行区域省份名称
+   */
+  openBankProName?: string
+  /**
+   * 组织机构代码
+   * 组织机构代码
+   */
+  organCode?: string
+  /**
+   * 联系电话
+   * 联系电话
+   */
+  phone?: string
+  /**
+   * 邮编
+   * 邮编
+   */
+  postcode?: string
+  /**
+   * 登记注册号码
+   * 登记注册号码
+   */
+  registerCode?: string
+  /**
+   * 登记注册号类型  枚举值：SUPPLIER_REGISTER_TYPE_1=工商注册号;SUPPLIER_REGISTER_TYPE_2=统一社会信用代码
+   * 登记注册号类型  枚举值：SUPPLIER_REGISTER_TYPE_1=工商注册号;SUPPLIER_REGISTER_TYPE_2=统一社会信用代码
+   */
+  registerType?: string
+  /**
+   * 签约时间
+   * 签约时间
+   */
+  signDate?: string
+  /**
+   * 支行信息
+   * 支行信息
+   */
+  subBank?: string
+  /**
+   * 供应商公司名称
+   * 供应商公司名称
+   */
+  supplierName?: string
+  /**
+   * 类型
+   * SUPPLIER_DETAIL_TYPE_1-律所；SUPPLIER_DETAIL_TYPE_2-委外机构；SUPPLIER_DETAIL_TYPE_3-仓库；SUPPLIER_DETAIL_TYPE_4-运输公司；SUPPLIER_DETAIL_TYPE_5-收车公司；SUPPLIER_DETAIL_TYPE_6-评估机构；SUPPLIER_DETAIL_TYPE_7-设备处置平台机构
+   * 供应商类型
+   */
+  supplierTypes?: string[]
 }
 
 // 供应商详情
 export interface SupplierDetailRequest {
-  id: string
+  id?: string | null | undefined
 }
 
 // 导出
@@ -173,7 +272,7 @@ export interface AddCityContactsRequest {
   /**
    * 供应商id
    */
-  supplierId: string
+  supplierId?: string
 }
 
 // 编辑城市联系人
@@ -241,7 +340,7 @@ export interface AddSettleRequest {
   /**
    * 供应商id
    */
-  supplierId: string
+  supplierId?: string
 }
 
 /**
@@ -251,7 +350,7 @@ export interface EditSettleRequest {
   /**
    * 结算金额
    */
-  amount: number
+  amount: number | string
   /**
    * 城市行政规划代码
    */
@@ -305,7 +404,7 @@ export interface AddAccountRequest {
    * 供应商id
    * 供应商id
    */
-  supplierId: string
+  supplierId?: string
 }
 export interface EditAccountRequest {
   /**
@@ -335,4 +434,26 @@ export interface DelAccountRequest {
    * 供应商账号id
    */
   id: string
+}
+export interface EnableAccountRequest {
+  /**
+   * 供应商账号id
+   * 供应商账号id
+   */
+  id: string
+  /**
+   * 状态,0=停用；1=启用
+   * 状态,0=停用；1=启用
+   */
+  status: number
+}
+export interface DeleteFileRequest {
+  /**
+   * 附件编号集合
+   */
+  fileCodes?: string[]
+  /**
+   * 供应商id
+   */
+  supplierId?: string
 }

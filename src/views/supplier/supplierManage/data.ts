@@ -1,23 +1,16 @@
 import type { ITableConfigProps } from '@/components/Table/type'
 export const tableConfig: ITableConfigProps[] = [
   {
-    label: '序号',
-    prop: '',
-    width: '60',
-    minWidth: '',
-    fixed: true
-  },
-  {
     label: '公司名称',
     prop: 'supplierName',
-    width: '120',
+    width: '150',
     minWidth: '',
     fixed: false
   },
   {
     label: '类型',
     prop: 'supplierTypeName',
-    width: '60',
+    width: '120',
     minWidth: '',
     fixed: false
   },
@@ -43,14 +36,14 @@ export const tableConfig: ITableConfigProps[] = [
   {
     label: '联系电话',
     prop: 'phone',
-    width: '100',
+    width: '150',
     minWidth: '',
     fixed: false
   },
   {
     label: '电子邮箱',
     prop: 'email',
-    width: '100',
+    width: '150',
     minWidth: '',
     fixed: false
   },
@@ -145,13 +138,6 @@ export const AccountColumn: ITableConfigProps[] = [
     fixed: true
   },
   {
-    label: '账号',
-    prop: 'accountNo',
-    width: '',
-    minWidth: '',
-    fixed: false
-  },
-  {
     label: '账号名称',
     prop: 'accountName',
     width: '',
@@ -183,7 +169,7 @@ export const AccountColumn: ITableConfigProps[] = [
     label: '操作',
     prop: 'action',
     type: 'action',
-    width: 120,
+    width: 180,
     align: 'center',
     fixed: 'right'
   }
