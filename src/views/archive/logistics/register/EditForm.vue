@@ -492,9 +492,9 @@
       </el-row>
     </el-form>
     <template #footer>
-      <el-button type="primary" @click="updateHandler"> 确 定 </el-button>
+      <el-button type="primary" @click="updateHandler"> 保 存 </el-button>
       <el-button type="primary" @click="dialogVisible = false">
-        取 消
+        关 闭
       </el-button>
     </template>
     <EditExpressForm
