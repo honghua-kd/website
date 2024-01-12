@@ -73,7 +73,7 @@
         :columnConfig="saveListColumn"
         :setColumnEnable="false"
       >
-        <template #btnsBox>
+        <template v-if="title === '新增'" #btnsBox>
           <el-button :icon="Plus" type="primary" @click="addTableItem"
             >新增</el-button
           >
@@ -87,10 +87,20 @@
             placeholder="请输入版本"
             v-model="row.documentVersion"
           />
-          <span v-if="prop === 'fileCode'">{{ row.fileCode }}</span>
+          <el-link
+            type="primary"
+            :underline="false"
+            v-if="prop === 'fileCode'"
+            @click="downloadFile(row.fileName, row.fileCode)"
+            >{{ row.fileName }}</el-link
+          >
         </template>
         <template #action="scope">
-          <el-button link type="danger" @click="removeTableItem(scope.row)"
+          <el-button
+            v-if="title === '新增'"
+            link
+            type="danger"
+            @click="removeTableItem(scope.$index, scope.row)"
             >删除</el-button
           >
           <el-button
@@ -125,6 +135,7 @@
         ref="upload"
         v-model:file-list="fileList"
         class="upload-demo"
+        accept=".docx"
         :limit="1"
         :on-exceed="handleExceed"
         :auto-upload="false"
@@ -140,7 +151,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, reactive, toRefs, watch } from 'vue'
+import { ref, reactive, toRefs, watch, onMounted } from 'vue'
 import type { ModelStateType } from './type'
 import type {
   FormInstance,
@@ -156,8 +167,12 @@ import type { DictListItem, SaveOrUpdateDocRequest } from '@/api'
 import Table from '@/components/Table/index.vue'
 import { Plus } from '@element-plus/icons-vue'
 import { saveListColumn } from './data'
-import { CommonAPI } from '@/api'
+import { DocCheckAPI, CommonAPI } from '@/api'
+import { useUserStore } from '@toystory/lotso'
+import { handleDownloadFile } from '@/utils'
+import type { DocumentPageResponse } from '@/api/docCheck/types/response'
 
+const API = new DocCheckAPI()
 const COMMONAPI = new CommonAPI()
 
 type Iprops = {
@@ -166,13 +181,15 @@ type Iprops = {
   documentTypeOptions: DictListItem[]
   systemOptions: DictListItem[]
   sealOptions: DictListItem[]
+  detailData: DocumentPageResponse
 }
 const props = withDefaults(defineProps<Iprops>(), {
   visible: false,
   title: '',
   documentTypeOptions: () => [],
   systemOptions: () => [],
-  sealOptions: () => []
+  sealOptions: () => [],
+  detailData: () => ({})
 })
 const state = reactive<ModelStateType>({
   dialogVisible: false,
@@ -194,6 +211,35 @@ const {
   listDialogvisible,
   importVisible
 } = toRefs(state)
+
+watch(
+  [() => props.visible, () => props.title, () => props.detailData],
+  ([newVisible, newTitle, newValue]) => {
+    state.dialogVisible = newVisible
+    if (newTitle === '编辑') {
+      console.log(newValue)
+      state.docInfoForm.documentName = newValue.documentName
+        ? newValue.documentName
+        : ''
+      state.docInfoForm.documentType = newValue.documentType
+        ? newValue.documentType
+        : ''
+      state.docInfoForm.sealType = newValue.sealType ? newValue.sealType : ''
+      const sysArr: string[] = []
+      newValue.sourceSystemDetail?.forEach((i) => {
+        const value: string = i.value as string
+        sysArr.push(value)
+      })
+      state.docInfoForm.sourceSystem1 = sysArr
+    }
+  }
+)
+
+const curStaffCode = ref<string>('')
+onMounted(() => {
+  const userStore = useUserStore()
+  curStaffCode.value = userStore.userInfo?.staffCode as string
+})
 
 const fileList = ref<UploadUserFile[]>([])
 const upload = ref<UploadInstance>()
@@ -217,6 +263,8 @@ const submitUpload = () => {
   })
   formData.append('bizCode', 'SYSTEM_DOCUMENT_UPLOAD')
   formData.append('prefixPath', '/document')
+  formData.append('expireDays', '-1')
+  formData.append('tenantUser', curStaffCode.value)
   console.log(fileList, formData)
   COMMONAPI.uploadFiles(formData)
     .then((res) => {
@@ -225,10 +273,11 @@ const submitUpload = () => {
           type: 'success',
           message: '导入成功'
         })
-        state.saveListInfo[state.uploadItemIndex].fileCode = JSON.stringify([
-          fileList.value[0].name,
-          res.data?.fileCode
-        ])
+        state.saveListInfo[state.uploadItemIndex].fileCode = res.data
+          ? res.data.fileCode
+          : ''
+        state.saveListInfo[state.uploadItemIndex].fileName =
+          fileList.value[0].name
       }
       upload.value!.clearFiles()
       state.importVisible = false
@@ -238,9 +287,11 @@ const submitUpload = () => {
     })
 }
 
-watch([() => props.visible, () => props.title], ([newVisible]) => {
-  state.dialogVisible = newVisible
-})
+const downloadFile = (name: string, code: string) => {
+  COMMONAPI.downLoadFiles({ fileCode: code }).then((res) =>
+    handleDownloadFile(res, name)
+  )
+}
 
 // 表单验证
 const ruleFormRef = ref<FormInstance>()
@@ -308,8 +359,12 @@ const addTableItem = () => {
 }
 
 // 移除表格项
-const removeTableItem = (row: SaveOrUpdateDocRequest) => {
-  console.log(row)
+const removeTableItem = (index: number, row: SaveOrUpdateDocRequest) => {
+  console.log(index, row)
+  state.uploadItemIndex = index
+  const saveListInfoClone = JSON.parse(JSON.stringify(state.saveListInfo))
+  saveListInfoClone.splice(index, 1)
+  state.saveListInfo = saveListInfoClone
 }
 
 // 表格单项上传文件
@@ -317,6 +372,14 @@ const uploadTableFile = (index: number, row: SaveOrUpdateDocRequest) => {
   console.log(row)
   state.uploadItemIndex = index
   state.importVisible = true
+}
+
+// 表单置空
+const restForm = () => {
+  state.docInfoForm.documentName = ''
+  state.docInfoForm.documentType = ''
+  state.docInfoForm.sourceSystem1 = []
+  state.docInfoForm.sealType = ''
 }
 
 // 关闭表单弹窗
@@ -328,6 +391,7 @@ const closeFormModel = async (
     emit('closeModel', {
       type
     })
+    restForm()
     return
   }
   if (!formEl) return
@@ -335,18 +399,30 @@ const closeFormModel = async (
     if (valid) {
       if (type === 'update-close') {
         console.log(docInfoForm)
+        const obj: SaveOrUpdateDocRequest = {
+          documentName: docInfoForm.value.documentName,
+          documentType: docInfoForm.value.documentType,
+          sourceSystem1: docInfoForm.value.sourceSystem1,
+          sealType: docInfoForm.value.sealType,
+          documentVersion:
+            props.title === '新增'
+              ? ''
+              : (props.detailData.documentVersion as string),
+          fileCode:
+            props.title === '新增' ? '' : (props.detailData.fileCode as string),
+          fileName:
+            props.title === '新增' ? '' : (props.detailData.fileName as string)
+          // documentVersion: '123',
+          // fileCode: 'qwe',
+          // fileName: 'ppppp'
+        }
+        if (props.title === '编辑') {
+          obj.id = props.detailData.id as number
+          obj.documentNo = props.detailData.documentNo as string
+        }
+        state.saveListInfo = [obj]
         state.dialogVisible = false
         state.listDialogvisible = true
-        state.saveListInfo = [
-          {
-            documentName: docInfoForm.value.documentName,
-            documentType: docInfoForm.value.documentType,
-            sourceSystem1: docInfoForm.value.sourceSystem1,
-            documentVersion: '',
-            sealType: docInfoForm.value.sealType,
-            fileCode: ''
-          }
-        ]
       }
     } else {
       console.log('error submit!', fields)
@@ -355,12 +431,17 @@ const closeFormModel = async (
 }
 
 // 关闭表格弹窗
-const closeTableModel = (type: string) => {
+const closeTableModel = async (type: string) => {
   // 接口交互
   if (type === 'update-close') {
-    console.log(saveListInfo)
+    console.log(saveListInfo.value)
+    await API.saveOrUpdateDocument(saveListInfo.value)
   }
-  // state.listDialogvisible = false
+  state.listDialogvisible = false
+  emit('closeModel', {
+    type
+  })
+  restForm()
 }
 
 const emit = defineEmits<{
@@ -371,6 +452,7 @@ const handleClose = () => {
   emit('closeModel', {
     type: 'click-close'
   })
+  restForm()
 }
 
 const handleTableClose = () => {
@@ -378,5 +460,6 @@ const handleTableClose = () => {
   emit('closeModel', {
     type: 'click-close'
   })
+  restForm()
 }
 </script>

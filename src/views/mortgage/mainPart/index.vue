@@ -258,7 +258,7 @@ const downloadData = async () => {
   }
   const res = await COMMONAPI.exportBySelect({
     // 需要后端走通用下载接口，给出bizType
-    bizType: 'subject_info',
+    bizType: 'SUBJECT_INFO_EXPORT',
     selectParams: JSON.stringify(params)
   })
   if (res && res.code === 200) {
