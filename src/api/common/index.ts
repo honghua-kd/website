@@ -7,6 +7,7 @@ import type {
   RecordRequest,
   RelationListRequest,
   BatchExportRequest,
+  ProvincesChildrenRequest,
   ExportBySelectRequest,
   CodeRequest,
   DictTreeRequest
@@ -18,9 +19,11 @@ import type {
   RecordList,
   FileDownload,
   RelationListItem,
+  AllProvincesResponse,
+  ProvincesChildrenResponse,
+  DictDataTreeResponse,
   ExportBySelectResponse,
-  ProvinceResponse,
-  DictDataTreeResponse
+  ProvinceResponse
 } from './types/response'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
@@ -170,11 +173,30 @@ export class CommonAPI {
     })
   }
 
+  // 获取所有的省份信息
+  getAllProvinces(): Response<AllProvincesResponse[]> {
+    return this.request({
+      url: `${prefix}/admin-api/area/getAllProvinces`,
+      method: 'post'
+    })
+  }
+
   // 获取所有省份信息
   getAllProvince(): Response<Omit<ProvinceResponse, 'haveChildren'>[]> {
     return this.request({
       url: `${prefix}/admin-api/area/getAllProvinces`,
       method: 'post'
+    })
+  }
+
+  // 获取所有的省份信息
+  getProvincesChildren(
+    data: ProvincesChildrenRequest
+  ): Response<ProvincesChildrenResponse[]> {
+    return this.request({
+      url: `${prefix}/admin-api/area/getChildren`,
+      method: 'post',
+      data
     })
   }
 
