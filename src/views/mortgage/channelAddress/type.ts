@@ -4,10 +4,6 @@ import type {
   AgencyAddressDetailResponse
 } from '@/api/channel/types/response'
 import type { ITableConfigProps } from '@/components/Table/type'
-type OptionItemType = {
-  label: string
-  value: string | number
-}
 export type sourceListItem = {
   label?: string | null | undefined
   value?: string | null | undefined
@@ -46,7 +42,6 @@ export type StateType = {
   tableLoading: boolean
   tableColumn: ITableConfigProps[]
   tableData: AgencyAddressListResponse[]
-  tableActionList: OptionItemType[]
   pageTotal: number
   editModelVisible: boolean
   editModelTitle: string

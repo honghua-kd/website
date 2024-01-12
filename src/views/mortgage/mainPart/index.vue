@@ -1,7 +1,7 @@
 <template>
   <div class="main-part-container">
     <!-- 搜索工作栏 -->
-    <div ref="searchBoxRef">
+    <div :ref="searchBoxRef">
       <!-- search bar -->
       <SearchBar
         v-model="formModel"
