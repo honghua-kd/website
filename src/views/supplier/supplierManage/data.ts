@@ -5,7 +5,7 @@ export const tableConfig: ITableConfigProps[] = [
     prop: 'supplierName',
     width: '150',
     minWidth: '',
-    fixed: false
+    fixed: true
   },
   {
     label: '类型',
@@ -31,6 +31,7 @@ export const tableConfig: ITableConfigProps[] = [
     label: '联系人',
     prop: 'contactName',
     width: '100',
+    align: 'center',
     fixed: false
   },
   {
@@ -38,6 +39,7 @@ export const tableConfig: ITableConfigProps[] = [
     prop: 'phone',
     width: '150',
     minWidth: '',
+    align: 'center',
     fixed: false
   },
   {
@@ -52,6 +54,7 @@ export const tableConfig: ITableConfigProps[] = [
     prop: 'status',
     width: '100',
     minWidth: '',
+    align: 'center',
     fixed: false
   },
   {
@@ -59,6 +62,7 @@ export const tableConfig: ITableConfigProps[] = [
     prop: 'expireDate',
     width: '100',
     minWidth: '',
+    align: 'center',
     fixed: false
   },
   {
@@ -66,13 +70,15 @@ export const tableConfig: ITableConfigProps[] = [
     prop: 'expireRemind',
     width: '100',
     minWidth: '',
+    align: 'center',
     fixed: false
   },
   {
     label: '内部对接人',
     prop: 'innerInterfaceStaffName',
-    width: '100',
+    width: '150',
     minWidth: '',
+    align: 'center',
     fixed: false
   },
   {

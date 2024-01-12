@@ -95,8 +95,10 @@
         <el-row justify="end">
           <el-col :span="6" class="btn-row">
             <el-form-item>
-              <el-button type="primary" @click="searchHandler">查询</el-button>
-              <el-button @click="reset">重置</el-button>
+              <el-button type="primary" @click="searchHandler" :icon="Search"
+                >查询</el-button
+              >
+              <el-button @click="reset" :icon="Refresh">重置</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -244,7 +246,8 @@ import {
   Upload,
   Download,
   Check,
-  Search
+  Search,
+  Refresh
 } from '@element-plus/icons-vue'
 import EditForm from './EditForm.vue'
 import LogisticsInfoForm from './LogisticsInfoForm.vue'

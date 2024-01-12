@@ -341,6 +341,7 @@ export interface EditForm {
   openBankCountyName: string
   files: FileItem[]
   accountTableData?: []
+  areaCode?: string[]
 }
 export type ModelStateType = {
   dialogVisible: boolean

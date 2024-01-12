@@ -159,7 +159,6 @@ const open = async (row?: string, no?: string) => {
     basicInfoForm.contactsName = ''
     basicInfoForm.phone = ''
     basicInfoForm.proandcity = []
-    await initOptions()
   } else {
     const data = JSON.parse(JSON.stringify(row))
     basicInfoForm.id = data.id
@@ -170,6 +169,7 @@ const open = async (row?: string, no?: string) => {
     basicInfoForm.contactsName = data.contactsName
     basicInfoForm.phone = data.phone
     basicInfoForm.proandcity = data.proandcity || []
+    await initOptions()
   }
 }
 const emit = defineEmits(['success'])
