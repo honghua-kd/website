@@ -10,13 +10,20 @@
     :before-close="handleClose"
     style="overflow-y: scroll; max-height: 90vh"
   >
-    <el-form :model="editForm" label-width="120px" label-position="top" inline>
+    <el-form
+      :model="editForm"
+      label-width="120px"
+      label-position="top"
+      inline
+      ref="basicInfoFormRef"
+    >
       <div class="type-title">基础信息</div>
       <el-row style="width: 100%">
         <el-col :span="12">
           <el-form-item
             label="公司名称"
             :rules="[{ required: true, message: 'required' }]"
+            prop="supplierName"
           >
             <el-input
               v-model="editForm.supplierName"
@@ -28,6 +35,7 @@
           <el-form-item
             label="组织机构代码"
             :rules="[{ required: true, message: 'required' }]"
+            prop="organCode"
           >
             <el-input
               v-model="editForm.organCode"
@@ -42,6 +50,7 @@
           <el-form-item
             label="登记注册号类型"
             :rules="[{ required: true, message: 'required' }]"
+            prop="registerType"
           >
             <el-select
               v-model="editForm.registerType"
@@ -62,6 +71,7 @@
           <el-form-item
             label="登记注册号码"
             :rules="[{ required: true, message: 'required' }]"
+            prop="registerCode"
           >
             <el-input
               v-model="editForm.registerCode"
@@ -75,6 +85,7 @@
           <el-form-item
             label="供应商类型"
             :rules="[{ required: true, message: 'required' }]"
+            prop="supplierTypes"
           >
             <el-select
               v-model="editForm.supplierTypes"
@@ -96,6 +107,7 @@
           <el-form-item
             label="公司规模"
             :rules="[{ required: true, message: 'required' }]"
+            prop="companyScale"
           >
             <el-input
               v-model="editForm.companyScale"
@@ -110,6 +122,7 @@
           <el-form-item
             label="归属"
             :rules="[{ required: true, message: 'required' }]"
+            prop="belongCompanyCodes"
           >
             <el-select
               v-model="editForm.belongCompanyCodes"
@@ -130,6 +143,7 @@
           <el-form-item
             label="到期日期"
             :rules="[{ required: true, message: 'required' }]"
+            prop="expireDate"
           >
             <el-date-picker
               v-model="editForm.expireDate"
@@ -147,6 +161,7 @@
           <el-form-item
             label="签约日期"
             :rules="[{ required: true, message: 'required' }]"
+            prop="signDate"
           >
             <el-date-picker
               v-model="editForm.signDate"
@@ -165,6 +180,7 @@
           <el-form-item
             label="内部对接人"
             :rules="[{ required: true, message: 'required' }]"
+            prop="innerInterfaceStaffCode"
           >
             <el-input
               v-model="editForm.innerInterfaceStaffCode"
@@ -182,6 +198,7 @@
           <el-form-item
             label="联系人"
             :rules="[{ required: true, message: 'required' }]"
+            prop="contactName"
           >
             <el-input
               v-model="editForm.contactName"
@@ -195,6 +212,7 @@
           <el-form-item
             label="联系电话"
             :rules="[{ required: true, message: 'required' }]"
+            prop="phone"
           >
             <el-input
               v-model="editForm.phone"
@@ -206,6 +224,7 @@
           <el-form-item
             label="公司地址"
             :rules="[{ required: true, message: 'required' }]"
+            prop="address"
           >
             <el-input
               v-model="editForm.address"
@@ -219,6 +238,7 @@
           <el-form-item
             label="联系人邮箱"
             :rules="[{ required: true, message: 'required' }]"
+            prop="email"
           >
             <el-input
               v-model="editForm.email"
@@ -230,6 +250,7 @@
           <el-form-item
             label="邮编"
             :rules="[{ required: true, message: 'required' }]"
+            prop="postcode"
           >
             <el-input
               v-model="editForm.postcode"
@@ -248,6 +269,7 @@
           <el-form-item
             label="账户名称"
             :rules="[{ required: true, message: 'required' }]"
+            prop="accountName"
           >
             <el-input
               v-model="item.accountName"
@@ -259,6 +281,7 @@
           <el-form-item
             label="银行账户"
             :rules="[{ required: true, message: 'required' }]"
+            prop="bankAccount"
           >
             <el-input
               v-model="item.bankAccount"
@@ -270,6 +293,7 @@
           <el-form-item
             label="开户银行"
             :rules="[{ required: true, message: 'required' }]"
+            prop="openBank"
           >
             <el-input
               v-model="item.openBank"
@@ -281,6 +305,7 @@
           <el-form-item
             label="支行"
             :rules="[{ required: true, message: 'required' }]"
+            prop="subBank"
           >
             <el-input
               v-model="item.subBank"
@@ -306,6 +331,7 @@
           <el-form-item
             label="开户行行号"
             :rules="[{ required: true, message: 'required' }]"
+            prop="openBankCode"
           >
             <el-input
               v-model="item.openBankCode"
@@ -562,7 +588,12 @@ const clickButton = async () => {
   })
 }
 const cascaderArea = ref()
+const basicInfoFormRef = ref<InstanceType<typeof ElForm>>()
 const submitForm = async () => {
+  // 校验
+  if (!basicInfoFormRef.value) return
+  const valid = await basicInfoFormRef.value.validate()
+  if (!valid) return
   const filesArr: { fileCode?: string; remark?: string }[] = []
   if (state.editForm.attachmentInfoList.length) {
     state.editForm.attachmentInfoList.forEach((item) => {
