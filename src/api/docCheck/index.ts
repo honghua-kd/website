@@ -6,9 +6,18 @@ import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
 import type {
   DocumentPageRequest,
-  SaveOrUpdateDocRequest
+  SaveOrUpdateDocRequest,
+  getTemplatePageRequest,
+  SaveRequest,
+  DeleteIdsRequest,
+  MortgageSubjectRequest
 } from './types/request'
-import type { DocumentPageResponse } from './types/response'
+import type {
+  DocumentPageResponse,
+  MortgageDocumentVO,
+  DeleteResponse,
+  MortgageSubjectInfoVO
+} from './types/response'
 
 const prefix = '/operations-mortgage'
 export class DocCheckAPI {
@@ -35,6 +44,62 @@ export class DocCheckAPI {
   ): Response<boolean | null | undefined> {
     return this.request({
       url: `${prefix}/admin-api/system-document/saveOrUpdate`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 文书模板分页查询
+  getDocumentTemplatePage(
+    data: getTemplatePageRequest
+  ): Response<PageList<MortgageDocumentVO>> {
+    return this.request({
+      url: `${prefix}/admin-api/mortgage-document-template/page`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 删除文书模板
+  editDocumentTemplateDelete(data: DeleteIdsRequest): Response<DeleteResponse> {
+    return this.request({
+      url: `${prefix}/admin-api/mortgage-document-template/delete`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 文书模板修改状态
+  updateDocumentTemplateStatus(
+    data: FormData
+  ): Response<PageList<DeleteResponse>> {
+    return this.request({
+      url: `${prefix}/admin-api/mortgage-document-template/status`,
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/form-data'
+      },
+      data
+    })
+  }
+
+  // 文书模板修改
+  saveOrUpdateDocumentTemplate(
+    data: SaveRequest
+  ): Response<PageList<DeleteResponse>> {
+    return this.request({
+      url: `${prefix}/admin-api/mortgage-document-template/saveOrUpdate`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 查询抵押主体(全量)
+  queryMortgageSubject(
+    data: MortgageSubjectRequest
+  ): Response<MortgageSubjectInfoVO[]> {
+    return this.request({
+      url: `${prefix}/admin-api/mortgageSubject/queryMortgageSubject`,
       method: 'post',
       data
     })
