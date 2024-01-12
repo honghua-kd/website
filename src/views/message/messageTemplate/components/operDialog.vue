@@ -260,7 +260,13 @@ const treeConfig = {
   indent: 15
 }
 const defaultCheckedkeys = ref<string[]>([])
-const handleNodeClick = (currentKeys, currentNode) => {
+type CurType = {
+  checkedKeys: string[]
+  checkedNodes: string[]
+  halfCheckedKeys: string[]
+  halfCheckedNodes: string[]
+}
+const handleNodeClick = (currentKeys: string, currentNode: CurType) => {
   console.log(currentNode)
   if (currentNode.checkedKeys.length === 0) {
     formParams.sourceSystemWeb = []
