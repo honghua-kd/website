@@ -11,6 +11,7 @@ declare module 'vue' {
     Card: typeof import('./../components/Card/index.vue')['default']
     CityCascader: typeof import('./../components/CityCascader/index.vue')['default']
     DataPermissonForm: typeof import('./../components/PermiForm/DataPermissonForm.vue')['default']
+    EditDialog: typeof import('./../components/EditDialog/index.vue')['default']
     ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElBadge: typeof import('element-plus/es')['ElBadge']

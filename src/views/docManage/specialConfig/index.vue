@@ -10,6 +10,7 @@
         @reset="reset"
         @search="searchHandler"
         :labelWidth="'120px'"
+        :is-search-btn="true"
       />
     </div>
     <el-divider border-style="dashed" />
@@ -51,23 +52,62 @@
         </el-button>
       </template>
     </Table>
+    <EditDialog
+      :title="dialogTitle"
+      v-model="dialogVisible"
+      :dialog-content-config="dialogContentConfig"
+      :dictTypes="dictTypes"
+      v-model:dialogQueryParams="dialogQueryParams"
+    >
+      <template #default>
+        <SearchBar
+          v-model="dialogQueryParams"
+          :dictArray="dictTypes"
+          :searchConfig="dialogContentConfig"
+          :showExpand="false"
+          :labelWidth="'120px'"
+          :is-search-btn="false"
+        >
+          <!-- <template #originalDocument>
+            <el-input
+              v-model="dialogQueryParams.replaceDocumentNo"
+              placeholder="请输入"
+            />
+          </template> -->
+          <template #replaceDocument>
+            <el-input
+              v-model="dialogQueryParams.replaceDocumentNo"
+              placeholder="请输入"
+            />
+          </template>
+        </SearchBar>
+      </template>
+    </EditDialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { reactive, ref, Ref, computed } from 'vue'
 import SearchBar from '@/components/SearchBar/index.vue'
-import { searchConfig, tableConfig } from './data'
+import EditDialog from '@/components/EditDialog/index.vue'
+import { searchConfig, tableConfig, dialogContentConfig } from './data'
 import { Plus } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { SpecialConfigAPI } from '@/api'
-import type { SpecialListItem, SpecialListRequest } from '@/api'
+import type { SpecialListItem, SpecialListRequest, EditRequest } from '@/api'
 
 const API = new SpecialConfigAPI()
 const queryParams = reactive<SpecialListRequest>({
   pageNo: 1,
   pageSize: 10
 })
+const dialogQueryParams = reactive<EditRequest>({
+  batchNo: '',
+  originalDocumentNo: [],
+  replaceDocumentNo: '',
+  systemContractStatus: [[]]
+})
+
 const dictTypes = ['SYSTEM_DOCUMENT_TYPE']
 const tableData = reactive<SpecialListItem[]>([])
 const tableLoading = ref<boolean>(false)
@@ -124,9 +164,20 @@ const getList = () => {
   })
 }
 
+// 新增
+const dialogTitle = ref<string>('')
+const dialogVisible = ref<boolean>(false)
+
+const addHandler = () => {
+  dialogVisible.value = true
+  dialogTitle.value = '新增文书'
+}
+
 // 编辑
 const editHandler = (id: string) => {
   console.log('id', id)
+  dialogVisible.value = true
+  dialogTitle.value = '编辑文书'
 }
 // 删除
 const delHandler = (batchNo: string) => {
@@ -171,8 +222,10 @@ const switchHandler = (batchNo: string, status: number) => {
   })
 }
 
-// 新增
-const addHandler = () => {}
+const init = () => {
+  searchHandler()
+}
+init()
 </script>
 
 <style lang="scss" scoped></style>

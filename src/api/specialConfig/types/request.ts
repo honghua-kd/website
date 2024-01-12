@@ -11,3 +11,11 @@ export interface ChangeStatusRequest {
   batchNo?: string | null
   status?: number | null
 }
+
+type SysContractStatus = string[]
+export interface EditRequest {
+  batchNo?: string
+  originalDocumentNo?: string[]
+  replaceDocumentNo?: string
+  systemContractStatus: SysContractStatus[]
+}
