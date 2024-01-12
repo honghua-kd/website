@@ -159,8 +159,7 @@ export interface ExpressDictItem {
   colorType?: string
   cssClass?: string
 }
-
-export interface ProvinceResponse {
+export interface AllProvincesResponse {
   /**
    * 行政规划代码
    */
@@ -185,6 +184,28 @@ export interface ProvinceResponse {
    * 是否有子集 0-没有, 1-有
    */
   haveChildren: number
+}
+export interface ProvinceResponse {
+  /**
+   * 行政规划代码
+   */
+  code: number
+  /**
+   * 级别 1-省, 2-市, 3-区
+   */
+  level: number
+  /**
+   * 行政规划名称
+   */
+  name: string
+  /**
+   * 父级行政规划代码
+   */
+  parentCode: number
+  /**
+   * 顶级行政区划代码
+   */
+  topParentCode: number
 }
 
 // 查询树形字典数据
@@ -212,4 +233,30 @@ export interface ExportBySelectResponse {
    * 0异步 1同步
    */
   sync?: number
+}
+export interface ProvincesChildrenResponse {
+  /**
+   * 行政规划代码
+   */
+  code: number
+  /**
+   * 是否有子集 0-没有, 1-有
+   */
+  haveChildren: number
+  /**
+   * 级别 1-省, 2-市, 3-区
+   */
+  level: number
+  /**
+   * 行政规划名称
+   */
+  name: string
+  /**
+   * 父级行政规划代码
+   */
+  parentCode: number
+  /**
+   * 顶级行政区划代码
+   */
+  topParentCode: number
 }
