@@ -10,7 +10,7 @@ import type {
 } from './types/request'
 import type { DocumentPageResponse } from './types/response'
 
-const prefix = '/operations-mortgage'
+const prefix = '/operations-management'
 export class DocCheckAPI {
   private request: AxiosInstance
   constructor(readonly options?: RequestConfig) {

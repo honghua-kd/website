@@ -1,33 +1,22 @@
-import type { ITableConfigProps } from '@/components/Table/type'
-import type { MortgageSubjectListResponse } from '@/api/mainPart/types/response'
-type OptionItemType = {
-  label: string
-  value: string | number
-}
+import type {
+  MortgageSubjectListRequest,
+  MortgageSubjectListResponse,
+  MortgageSubjectDetailResponse
+} from '@/api'
 export type StateType = {
-  formModel: {
-    contactAddressCityCode?: string
-    contactAddressProvinceCode?: string
-    mortgageSubjectName?: string
-    pageNo: number
-    pageSize: number
-  }
+  formModel: MortgageSubjectListRequest
   tableLoading: boolean
-  tableColumn: ITableConfigProps[]
   tableData: MortgageSubjectListResponse[]
-  tableActionList: OptionItemType[]
   pageTotal: number
   editModelVisible: boolean
   editModelTitle: string
   selectIdsArr: string[]
-  // 等详情接口出来需要修改
-  detailData: MortgageSubjectListResponse
+  detailData: MortgageSubjectDetailResponse
   areaCode: string[]
 }
 export type ModelStateType = {
   dialogVisible: boolean
-  // 等详情接口出来需要修改
-  editForm: MortgageSubjectListResponse
+  editForm: MortgageSubjectDetailResponse
   dialogTitle: string
-  condition: string
+  areaCode: string[]
 }
