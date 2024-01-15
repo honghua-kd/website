@@ -25,7 +25,7 @@ export const tableColumn: ITableConfigProps[] = [
   {
     label: '抵押主体名称',
     prop: 'mortgageSubjectName',
-    minWidth: 120,
+    width: 120,
     align: 'left',
     forbiddenEdit: true,
     showOverflowTooltip: true
@@ -33,14 +33,14 @@ export const tableColumn: ITableConfigProps[] = [
   {
     label: '全称',
     prop: 'mortgageSubjectAllName',
-    minWidth: 120,
+    width: 120,
     align: 'left',
     showOverflowTooltip: true
   },
   {
     label: '组织机构代码',
     prop: 'organizationCode',
-    minWidth: 120,
+    width: 120,
     align: 'center',
     showOverflowTooltip: true
   },
@@ -61,21 +61,21 @@ export const tableColumn: ITableConfigProps[] = [
   {
     label: '详细地址',
     prop: 'contactAddressDetail',
-    minWidth: 200,
+    width: 200,
     align: 'left',
     showOverflowTooltip: true
   },
   {
     label: '注册地址',
     prop: 'registeredAddress',
-    minWidth: 200,
+    width: 200,
     align: 'left',
     showOverflowTooltip: true
   },
   {
     label: '联系人',
     prop: 'contactName',
-    minWidth: 120,
+    width: 120,
     align: 'left',
     showOverflowTooltip: true
   },
