@@ -5,6 +5,7 @@
       v-model="dialogVisible"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
+      :destroy-on-close="true"
       center
       @open="handleOpen"
     >
@@ -19,7 +20,7 @@
           <el-col :span="12">
             <el-form-item label="文书模板名称" prop="templateName">
               <el-input
-                v-model="formParams.templateName"
+                v-model.trim="formParams.templateName"
                 placeholder="请输入"
                 clearable
               />
@@ -89,7 +90,7 @@
           <el-col :span="12">
             <el-form-item label="优先级" prop="priority">
               <el-input
-                v-model="formParams.priority"
+                v-model.trim="formParams.priority"
                 placeholder="数字越大优先级越高"
                 clearable
               />
@@ -99,14 +100,33 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="备注" prop="remark">
-              <el-input v-model="formParams.remark" clearable />
+              <el-input v-model.trim="formParams.remark" clearable />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item label="选择文书" prop="agencyCode">
-              <el-button type="text" @click="addHandler">+添加</el-button>
+            <el-form-item label="选择文书" prop="documents">
+              <el-row style="margin-top: 15px">
+                <el-tag
+                  v-for="(item, index) in formParams.documents"
+                  :key="item.documentNo"
+                  closable
+                  style="margin-right: 10px; margin-bottom: 8px"
+                  @close="deleteOverdue(index)"
+                >
+                  {{
+                    (item.documentName || '') +
+                    ' ' +
+                    (item.documentVersion || '')
+                  }}
+                </el-tag>
+              </el-row>
+              <el-row>
+                <el-col>
+                  <el-button type="text" @click="addHandler">+添加</el-button>
+                </el-col>
+              </el-row>
             </el-form-item>
           </el-col>
         </el-row>
@@ -126,7 +146,8 @@
 import { reactive, ref, Ref } from 'vue'
 import type {
   MortgageDocumentVO,
-  MortgageSubjectInfoVO
+  MortgageSubjectInfoVO,
+  DocumentDTO
 } from '@/api/docCheck/types/response.ts'
 import type { SaveRequest } from '@/api/docCheck/types/request.ts'
 import { ElForm, ElMessage } from 'element-plus'
@@ -160,7 +181,8 @@ const formParams = reactive<SaveRequest>({
   mortgageSubjectCode: '',
   priority: null,
   remark: '',
-  documentNo: ['DY20240112094903767000001', 'JY20240112094903775000001']
+  documents: [],
+  documentNo: []
 })
 const formRules = reactive({
   templateName: [
@@ -169,7 +191,10 @@ const formRules = reactive({
   applicableType: [
     { required: true, message: '适用任务类型不能为空', trigger: 'blur' }
   ],
-  priority: [{ required: true, message: '优先级不能为空', trigger: 'blur' }]
+  priority: [{ required: true, message: '优先级不能为空', trigger: 'blur' }],
+  documents: [
+    { required: true, message: '文书不能为空', trigger: ['blur', 'change'] }
+  ]
 })
 const handleOpen = () => {
   getDicts()
@@ -228,6 +253,10 @@ const submitForm = async () => {
   const valid = await formRef.value.validate()
   if (!valid) return
   formLoading.value = true
+  const dNo = formParams.documents.map((el: DocumentDTO) => {
+    return el.documentNo
+  })
+  formParams.documentNo = dNo
   API.saveOrUpdateDocumentTemplate(formParams).then((res) => {
     if (res && res.code === 200 && res?.data) {
       ElMessage({
@@ -240,19 +269,26 @@ const submitForm = async () => {
     }
   })
 }
-const handleSuccess = () => {}
+const handleSuccess = (ids: string, version: string, name: string) => {
+  formParams.documents?.push({
+    documentName: name,
+    documentVersion: version,
+    documentNo: ids
+  })
+}
+const deleteOverdue = (tag: number) => {
+  formParams.documents.splice(tag, 1)
+}
 const docRef = ref()
 const addHandler = () => {
   docRef.value.open('add')
 }
 
 const open = (type: string, row: MortgageDocumentVO) => {
-  console.log('3333333', row)
   dialogVisible.value = true
   currentType.value = type
   dialogTitle.value = type === 'add' ? '新增' : '编辑'
   if (type === 'edit') {
-    console.log(row)
     formParams.id = row?.id
     formParams.templateName = row?.templateName
     formParams.applicableType = row?.applicableType as string
@@ -266,6 +302,7 @@ const open = (type: string, row: MortgageDocumentVO) => {
     formParams.priority = row?.priority
     formParams.remark = row?.remark
     cityForm.value = [row?.provinceCode as string, row?.cityCode as string]
+    formParams.documents = row?.documents || []
   } else {
     formParams.templateName = ''
     formParams.applicableType = ''
@@ -279,6 +316,8 @@ const open = (type: string, row: MortgageDocumentVO) => {
     formParams.priority = null
     formParams.remark = ''
     cityForm.value = []
+    formParams.documents = []
+    formParams.id = null
   }
 }
 defineExpose({ open })

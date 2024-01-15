@@ -1,75 +1,18 @@
 <template>
   <div>
-    <el-form :model="queryParams" ref="formRef" class="scan-form">
-      <div class="scan-search-bar">
-        <el-row :gutter="20">
-          <el-col :span="6">
-            <el-form-item label="材料模版名称:" prop="templateName">
-              <el-input
-                v-model="queryParams.templateName"
-                placeholder="请输入"
-                clearable
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="城市:" prop="provinceCode">
-              <AreaCasder :value="cityForm" @changeAreaData="changeAreaData" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="适用业务类型:" prop="applicableType">
-              <el-select
-                v-model="queryParams.applicableType"
-                clearable
-                placeholder="请选择"
-              >
-                <el-option
-                  v-for="item in applicableType"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="文书模版编号:" prop="templateCode">
-              <el-input
-                v-model="queryParams.templateCode"
-                placeholder="请输入"
-                clearable
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="6">
-            <el-form-item label="状态:" prop="status">
-              <el-select
-                v-model="queryParams.status"
-                clearable
-                placeholder="请选择"
-                @change="handleTypeChange"
-              >
-                <el-option
-                  v-for="item in TaskStatus"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </div>
-      <div class="search-btn">
-        <el-button type="primary" :icon="Search" @click="searchHandler"
-          >查询</el-button
-        >
-        <el-button :icon="Refresh" @click="reset">重置</el-button>
-      </div>
-    </el-form>
+    <div class="scan-search-container" ref="searchBoxRef">
+      <SearchBar
+        v-model="queryParams"
+        :dictArray="dictTypes"
+        :searchConfig="searchConfig"
+        @reset="reset"
+        @search="searchHandler"
+      >
+        <template #businessCategory>
+          <AreaCasder :value="cityForm" @changeAreaData="changeAreaData" />
+        </template>
+      </SearchBar>
+    </div>
     <el-row :gutter="8" style="margin: 10px 0">
       <el-tooltip content="新增" placement="top-start">
         <el-button type="primary" :icon="Plus" @click="addHandler">
@@ -162,31 +105,23 @@
 
 <script setup lang="ts">
 import { reactive, ref, Ref, onMounted } from 'vue'
-import {
-  Search,
-  Refresh,
-  Plus,
-  Download,
-  Delete
-} from '@element-plus/icons-vue'
+import { Plus, Download, Delete } from '@element-plus/icons-vue'
 import type {
   UploadInstance,
   UploadProps,
   UploadRawFile,
   UploadUserFile
 } from 'element-plus'
-import { ElForm, ElMessage, ElMessageBox, genFileId } from 'element-plus'
+import { ElMessage, ElMessageBox, genFileId } from 'element-plus'
 import type { getTemplatePageRequest } from '@/api/docCheck/types/request.ts'
 import type { MortgageDocumentVO } from '@/api/docCheck/types/response.ts'
 import { DocCheckAPI, CommonAPI } from '@/api'
-import type { DictItem } from '@/api'
 import type { ITableConfigProps } from '@/components/Table/type'
 import AreaCasder from '@/components/AreaCascader/index.vue'
 import OperDialog from '@/views/docManage/templateManage/components/operDialog.vue'
 import { handleDownloadFile } from '@/utils'
+import type { ISearchUnit } from '@/components/SearchBar/type'
 
-const applicableType: Ref<DictItem[]> = ref([])
-const TaskStatus: Ref<DictItem[]> = ref([])
 const tableData = reactive<MortgageDocumentVO[]>([])
 const tableLoading: Ref<boolean> = ref(false)
 const selectData: Ref<MortgageDocumentVO[]> = ref([])
@@ -197,9 +132,12 @@ const CommonApi = new CommonAPI()
 const API = new DocCheckAPI()
 const importVisible: Ref<boolean> = ref(false)
 const fileList = ref<UploadUserFile[]>([])
+const dictTypes = [
+  'DOCUMENT_TEMPLATE_APPLICABLE_TYPE',
+  'START_STOP_TASK_STATUS'
+]
 
 onMounted(() => {
-  getDicts()
   getList()
 })
 const queryParams = reactive<getTemplatePageRequest>({
@@ -227,26 +165,6 @@ const reset = () => {
   queryParams.status = ''
   cityForm.value = []
   getList()
-}
-const getDicts = () => {
-  const dictTypes = [
-    'DOCUMENT_TEMPLATE_APPLICABLE_TYPE',
-    'START_STOP_TASK_STATUS'
-  ]
-  const params = {
-    dictTypes
-  }
-  CommonApi.getDictsList(params)
-    .then((res) => {
-      if (res && res.code === 200) {
-        applicableType.value = res?.data
-          ?.DOCUMENT_TEMPLATE_APPLICABLE_TYPE as DictItem[]
-        TaskStatus.value = res?.data?.START_STOP_TASK_STATUS as DictItem[]
-      }
-    })
-    .catch((err: Error) => {
-      throw err
-    })
 }
 const getList = async () => {
   API.getDocumentTemplatePage(queryParams).then((res) => {
@@ -354,9 +272,6 @@ const switchHandler = (id: string, status: string) => {
     }
   })
 }
-const handleTypeChange = () => {
-  console.log('object')
-}
 const handleDelect = () => {
   if (selectData.value.length === 0) {
     ElMessage({
@@ -430,8 +345,52 @@ const addHandler = () => {
   operRef.value.open('add')
 }
 const editHandler = (row: MortgageDocumentVO) => {
-  operRef.value.open('edit', row)
+  operRef.value.open('edit', JSON.parse(JSON.stringify(row)))
 }
+const searchConfig: ISearchUnit[] = [
+  [
+    {
+      compType: 'el-input',
+      colSpan: 6,
+      label: '材料模版名称',
+      prop: 'templateName',
+      placeholder: '请输入材料模版名称'
+    },
+    {
+      compType: 'el-cascader',
+      colSpan: 6,
+      label: '城市',
+      prop: 'businessCategory',
+      placeholder: '请选择城市',
+      slotName: 'businessCategory'
+    },
+    {
+      compType: 'el-select',
+      colSpan: 6,
+      label: '适用业务类型',
+      prop: 'sendStatus',
+      placeholder: '请选适用业务类型',
+      options: 'DOCUMENT_TEMPLATE_APPLICABLE_TYPE'
+    },
+    {
+      compType: 'el-input',
+      colSpan: 6,
+      label: '文书模版编号',
+      prop: 'templateCode',
+      placeholder: '请输入文书模版编号'
+    }
+  ],
+  [
+    {
+      compType: 'el-select',
+      colSpan: 6,
+      label: '状态',
+      prop: 'status',
+      placeholder: '请选状态',
+      options: 'START_STOP_TASK_STATUS'
+    }
+  ]
+]
 const tableConfig: ITableConfigProps[] = [
   {
     label: '文书模版编号',

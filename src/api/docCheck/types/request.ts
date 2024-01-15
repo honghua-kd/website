@@ -127,6 +127,32 @@ export interface UpdateRequest {
    */
   status: number
 }
+export interface DocumentDTO {
+  /**
+   * 文书名称
+   */
+  documentName?: null | string
+  /**
+   * 文书编号
+   */
+  documentNo: string
+  /**
+   * 文书类型
+   */
+  documentType?: null | string
+  /**
+   * 文书版本
+   */
+  documentVersion?: null | string
+  /**
+   * 文件编号
+   */
+  fileCode?: null | string
+  /**
+   * 文件名称
+   */
+  fileName?: null | string
+}
 /**
  * MortgageDocumentAddReq
  */
@@ -154,7 +180,11 @@ export interface SaveRequest {
   /**
    * 文书编号
    */
-  documentNo?: string[] | null
+  documentNo: string[]
+  /**
+   * 文书
+   */
+  documents: DocumentDTO[]
   /**
    * 主键ID，更新时传递
    */
@@ -208,4 +238,20 @@ export interface MortgageSubjectRequest {
    * 省份
    */
   provinces?: string[] | null
+}
+export interface DocumentNameRequest {
+  /**
+   * 文书类型
+   */
+  documentType?: string
+}
+export interface ByNameAndTypeRequest {
+  /**
+   * 文书名称
+   */
+  documentName?: string
+  /**
+   * 文书类型
+   */
+  documentType?: string
 }

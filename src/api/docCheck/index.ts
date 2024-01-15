@@ -16,7 +16,9 @@ import type {
   DocumentPageResponse,
   MortgageDocumentVO,
   DeleteResponse,
-  MortgageSubjectInfoVO
+  MortgageSubjectInfoVO,
+  DocumentNameResponse,
+  SystemDocumentVO
 } from './types/response'
 
 const prefix = '/operations-mortgage'
@@ -101,6 +103,30 @@ export class DocCheckAPI {
     return this.request({
       url: `${prefix}/admin-api/mortgageSubject/queryMortgageSubject`,
       method: 'post',
+      data
+    })
+  }
+
+  // 根据文书类型获取文书名称
+  getByDocumentNameByType(data: FormData): Response<DocumentNameResponse> {
+    return this.request({
+      url: `/operations-management/admin-api/system-document/getByDocumentNameByType`,
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/form-data'
+      },
+      data
+    })
+  }
+
+  // 根据文书类型，文书名称获取文书信息
+  getByDocumentByNameAndType(data: FormData): Response<SystemDocumentVO[]> {
+    return this.request({
+      url: `/operations-management/admin-api/system-document/getByDocumentByNameAndType`,
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/form-data'
+      },
       data
     })
   }
