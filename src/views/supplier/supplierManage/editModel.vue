@@ -358,11 +358,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item
-            label="开户行行号"
-            :rules="[{ required: true, message: '请输入开户行行号' }]"
-            prop="openBankCode"
-          >
+          <el-form-item label="开户行行号" prop="openBankCode">
             <el-input
               v-model="item.openBankCode"
               placeholder="请输入开户行行号"
@@ -730,7 +726,7 @@ const submitForm = async () => {
     bankAccount: state.editForm.bankAccountList[0].bankAccount,
     openBank: state.editForm.bankAccountList[0].openBank,
     subBank: state.editForm.bankAccountList[0].subBank,
-    openBankCode: state.editForm.bankAccountList[0].openBankCode,
+    openBankCode: state.editForm.bankAccountList[0].openBankCode || '',
     openBankProCode: selArea.value[0],
     openBankProName: cascaderArea.value[0].getCheckedNodes()[0].pathLabels[0],
     openBankCityCode: selArea.value[1],

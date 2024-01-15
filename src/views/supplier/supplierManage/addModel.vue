@@ -381,11 +381,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item
-            label="开户行行号"
-            :rules="[{ required: true, message: '请输入开户行行号' }]"
-            prop="openBankCode"
-          >
+          <el-form-item label="开户行行号" prop="openBankCode">
             <el-input
               v-model="editForm.openBankCode"
               placeholder="请输入开户行行号"
