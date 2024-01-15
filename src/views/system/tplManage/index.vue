@@ -408,6 +408,7 @@ const addTemplate = () => {
   formParams.remark = ''
   businessFormCascader.value = []
   dialogVisible.value = true
+  uploadRef.value!.clearFiles()
 }
 
 // 编辑
