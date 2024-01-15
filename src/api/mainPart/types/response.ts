@@ -6,7 +6,7 @@ export interface MortgageSubjectListResponse {
   /**
    * 资方信息
    */
-  capitalInfo?: string
+  capitalInfo?: string[]
   /**
    * 联系地址-城市code
    */
@@ -38,7 +38,7 @@ export interface MortgageSubjectListResponse {
   /**
    * 合同主体
    */
-  contractSubject?: string
+  contractSubject?: string[]
   /**
    * 创建时间
    */
@@ -122,9 +122,13 @@ export interface MortgageSubjectDetailResponse {
    */
   contactPhone?: null | string
   /**
-   * 合同主体/资方信息
+   * 合同主体
    */
   contractSubject?: string[]
+  /**
+   * 资方信息
+   */
+  capitalInfo?: string[]
   /**
    * 创建时间
    */

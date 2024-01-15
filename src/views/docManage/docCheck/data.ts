@@ -97,9 +97,10 @@ export const tableColumn: ITableConfigProps[] = [
   {
     label: '文书文件',
     prop: 'fileName',
-    minWidth: 120,
+    width: 150,
     fixed: false,
-    align: 'center'
+    align: 'left',
+    showOverflowTooltip: true
   },
   {
     label: '审核状态',

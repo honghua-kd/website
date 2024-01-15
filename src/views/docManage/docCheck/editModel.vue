@@ -68,53 +68,101 @@
       width="900px"
       :before-close="handleTableClose"
     >
-      <Table
-        :data="saveListInfo"
-        :columnConfig="saveListColumn"
-        :setColumnEnable="false"
+      <el-button
+        v-if="title === '新增'"
+        style="margin-bottom: 10px"
+        :icon="Plus"
+        type="primary"
+        @click="addTableItem"
+        >新增</el-button
       >
-        <template v-if="title === '新增'" #btnsBox>
-          <el-button :icon="Plus" type="primary" @click="addTableItem"
-            >新增</el-button
-          >
-        </template>
-        <template #default="{ row, prop }">
-          <span v-if="prop === 'documentType'">{{
-            getDocumentLabel(row.documentType)
-          }}</span>
-          <el-input
-            v-if="prop === 'documentVersion'"
-            placeholder="请输入版本"
-            v-model="row.documentVersion"
+      <el-form ref="ruleSaveListForm" :model="saveListForm">
+        <el-table
+          :data="saveListForm.saveListInfo"
+          :header-cell-style="{
+            background: '#eef1f6',
+            color: '#606266',
+            textAlign: 'center'
+          }"
+          border
+          :cell-style="{ borderRight: '1px solid #fff' }"
+        >
+          <el-table-column type="index" width="50" align="center" />
+          <el-table-column
+            prop="documentName"
+            label="文书名称"
+            show-overflow-tooltip
           />
-          <el-link
-            type="primary"
-            :underline="false"
-            v-if="prop === 'fileCode'"
-            @click="downloadFile(row.fileName, row.fileCode)"
-            >{{ row.fileName }}</el-link
+          <el-table-column
+            prop="documentType"
+            label="文书类型"
+            width="180"
+            align="center"
           >
-        </template>
-        <template #action="scope">
-          <el-button
-            v-if="title === '新增'"
-            link
-            type="danger"
-            @click="removeTableItem(scope.$index, scope.row)"
-            >删除</el-button
+            <template #default="{ row }">{{
+              getDocumentLabel(row.documentType)
+            }}</template>
+          </el-table-column>
+          <el-table-column prop="documentVersion" label="文书版本" width="180">
+            <template #default="{ row, $index }">
+              <el-form-item
+                :prop="`saveListInfo.${$index}.documentVersion`"
+                :rules="ruleSaveListFormRules.documentVersion"
+              >
+                <el-input
+                  placeholder="请输入版本"
+                  v-model="row.documentVersion"
+                />
+              </el-form-item>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="fileCode"
+            label="附件信息"
+            width="180"
+            show-overflow-tooltip
           >
-          <el-button
-            link
-            type="primary"
-            @click="uploadTableFile(scope.$index, scope.row)"
-            >上传</el-button
-          >
-        </template>
-      </Table>
+            <template #default="{ row, $index }">
+              <el-form-item
+                :prop="`saveListInfo.${$index}.fileCode`"
+                :rules="ruleSaveListFormRules.fileCode"
+                ><el-link
+                  type="primary"
+                  :underline="false"
+                  @click="downloadFile(row.fileName, row.fileCode)"
+                  >{{ row.fileName }}</el-link
+                ></el-form-item
+              >
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="100" align="center">
+            <template #default="scope">
+              <el-button
+                v-if="title === '新增' && saveListForm.saveListInfo.length > 1"
+                link
+                type="danger"
+                @click="removeTableItem(scope.$index, scope.row)"
+                >删除</el-button
+              >
+              <el-button
+                v-if="detailData.approvalStatus !== 'APPROVED'"
+                link
+                type="primary"
+                @click="uploadTableFile(scope.$index, scope.row)"
+                >上传</el-button
+              >
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="closeTableModel('click-close')">取消</el-button>
-          <el-button type="primary" @click="closeTableModel('update-close')"
+          <el-button @click="closeTableModel(ruleSaveListForm, 'click-close')"
+            >取消</el-button
+          >
+          <el-button
+            type="primary"
+            @click="closeTableModel(ruleSaveListForm, 'update-close')"
             >确认</el-button
           >
         </span>
@@ -164,9 +212,7 @@ import type {
 import { ElMessage, genFileId } from 'element-plus'
 import type { InternalRuleItem } from 'async-validator'
 import type { DictListItem, SaveOrUpdateDocRequest } from '@/api'
-import Table from '@/components/Table/index.vue'
 import { Plus } from '@element-plus/icons-vue'
-import { saveListColumn } from './data'
 import { DocCheckAPI, CommonAPI } from '@/api'
 import { useUserStore } from '@toystory/lotso'
 import { handleDownloadFile } from '@/utils'
@@ -199,7 +245,9 @@ const state = reactive<ModelStateType>({
     sourceSystem1: [],
     sealType: ''
   },
-  saveListInfo: [],
+  saveListForm: {
+    saveListInfo: []
+  },
   listDialogvisible: false,
   importVisible: false,
   uploadItemIndex: -1
@@ -207,7 +255,7 @@ const state = reactive<ModelStateType>({
 const {
   dialogVisible,
   docInfoForm,
-  saveListInfo,
+  saveListForm,
   listDialogvisible,
   importVisible
 } = toRefs(state)
@@ -273,10 +321,9 @@ const submitUpload = () => {
           type: 'success',
           message: '导入成功'
         })
-        state.saveListInfo[state.uploadItemIndex].fileCode = res.data
-          ? res.data.fileCode
-          : ''
-        state.saveListInfo[state.uploadItemIndex].fileName =
+        state.saveListForm.saveListInfo[state.uploadItemIndex].fileCode =
+          res.data ? res.data.fileCode : ''
+        state.saveListForm.saveListInfo[state.uploadItemIndex].fileName =
           fileList.value[0].name
       }
       upload.value!.clearFiles()
@@ -334,6 +381,23 @@ const rules = reactive<FormRules<typeof docInfoForm>>({
     }
   ]
 })
+const ruleSaveListForm = ref<FormInstance>()
+const ruleSaveListFormRules = reactive<FormRules>({
+  documentVersion: [
+    {
+      required: true,
+      message: '请输入文书版本',
+      trigger: 'blur'
+    }
+  ],
+  fileCode: [
+    {
+      required: true,
+      message: '请上传附件',
+      trigger: 'blur'
+    }
+  ]
+})
 
 // 根据value获取文书类型label
 const getDocumentLabel = (value: string): string => {
@@ -348,7 +412,7 @@ const getDocumentLabel = (value: string): string => {
 
 // 新增表格项
 const addTableItem = () => {
-  state.saveListInfo.push({
+  state.saveListForm.saveListInfo.push({
     documentName: docInfoForm.value.documentName,
     documentType: docInfoForm.value.documentType,
     sourceSystem1: docInfoForm.value.sourceSystem1,
@@ -362,9 +426,11 @@ const addTableItem = () => {
 const removeTableItem = (index: number, row: SaveOrUpdateDocRequest) => {
   console.log(index, row)
   state.uploadItemIndex = index
-  const saveListInfoClone = JSON.parse(JSON.stringify(state.saveListInfo))
+  const saveListInfoClone = JSON.parse(
+    JSON.stringify(state.saveListForm.saveListInfo)
+  )
   saveListInfoClone.splice(index, 1)
-  state.saveListInfo = saveListInfoClone
+  state.saveListForm.saveListInfo = saveListInfoClone
 }
 
 // 表格单项上传文件
@@ -420,7 +486,7 @@ const closeFormModel = async (
           obj.id = props.detailData.id as number
           obj.documentNo = props.detailData.documentNo as string
         }
-        state.saveListInfo = [obj]
+        state.saveListForm.saveListInfo = [obj]
         state.dialogVisible = false
         state.listDialogvisible = true
       }
@@ -431,17 +497,34 @@ const closeFormModel = async (
 }
 
 // 关闭表格弹窗
-const closeTableModel = async (type: string) => {
+const closeTableModel = async (
+  formEl: FormInstance | undefined,
+  type: string
+) => {
+  if (type === 'click-close') {
+    emit('closeModel', {
+      type
+    })
+    state.listDialogvisible = false
+    restForm()
+    return
+  }
+  if (!formEl) return
   // 接口交互
   if (type === 'update-close') {
-    console.log(saveListInfo.value)
-    await API.saveOrUpdateDocument(saveListInfo.value)
+    await formEl.validate(async (valid, fields) => {
+      if (valid) {
+        console.log(state.saveListForm.saveListInfo)
+        await API.saveOrUpdateDocument(state.saveListForm.saveListInfo)
+        emit('closeModel', {
+          type
+        })
+        state.listDialogvisible = false
+      } else {
+        console.log('error submit!', fields)
+      }
+    })
   }
-  state.listDialogvisible = false
-  emit('closeModel', {
-    type
-  })
-  restForm()
 }
 
 const emit = defineEmits<{

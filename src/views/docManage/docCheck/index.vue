@@ -69,6 +69,15 @@
           @click="downloadFile(row.fileName, row.fileCode)"
           >{{ row.fileName }}</el-link
         >
+        <span v-if="prop === 'documentType'">{{
+          getLabel('SYSTEM_DOCUMENT_TYPE', row.documentType)
+        }}</span>
+        <span v-if="prop === 'sealType'">{{
+          getLabel('SEAL_TYPE', row.sealType)
+        }}</span>
+        <span v-if="prop === 'approvalStatus'">{{
+          getLabel('SYSTEM_DOCUMENT_APPROVAL_STATUS', row.approvalStatus)
+        }}</span>
       </template>
       <template #action="{ row }">
         <el-button
@@ -92,7 +101,13 @@
           type="danger"
           >删除</el-button
         >
-        <el-button v-if="row.approvalStatus === 'APPROVED'" link type="primary"
+        <el-button
+          v-if="
+            row.approvalStatus === 'APPROVED' ||
+            row.approvalStatus === 'IN_APPROVAL'
+          "
+          link
+          type="primary"
           >查看审批记录</el-button
         >
         <el-button
@@ -184,6 +199,17 @@ const tableHeight = computed(() => {
   }
 })
 
+const getLabel = (source: string, value: string) => {
+  let result = ''
+  const arr = dictStore.dicts[source]
+  arr.forEach((i) => {
+    if (i.value === value) {
+      result = i.label
+    }
+  })
+  return result
+}
+
 // 查询
 const searchHandler = () => {
   queryParams.value.pageNo = 1
@@ -234,6 +260,7 @@ const closeModel = ({ type }: { type: string }) => {
 }
 
 const add = () => {
+  state.detailData = {}
   state.editModelVisible = true
   state.editModelTitle = '新增'
 }
@@ -253,8 +280,10 @@ const getDictTreeListData = async () => {
 }
 const getListData = async () => {
   state.tableLoading = true
-  const { createTimeStart, createTimeEnd, ...others } = queryParams.value
+  const { documentName, createTimeStart, createTimeEnd, ...others } =
+    queryParams.value
   const params = {
+    documentName: documentName?.trim(),
     createTimeStart: createTimeStart
       ? dayjs(createTimeStart).format('YYYY-MM-DD HH:mm:ss')
       : '',

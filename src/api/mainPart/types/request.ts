@@ -144,7 +144,7 @@ export interface MortgageSubjectAddEditRequest {
   /**
    * 资方信息
    */
-  capitalInfo?: string | null
+  capitalInfo?: string[] | null
 }
 
 /**

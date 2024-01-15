@@ -285,7 +285,8 @@ const closeModel = ({ visible, type }: { visible: boolean; type: string }) => {
     mortgageSubjectType: '',
     organizationCode: '',
     registeredAddress: '',
-    contractSubject: []
+    contractSubject: [],
+    capitalInfo: []
   }
 }
 

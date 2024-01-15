@@ -71,12 +71,12 @@
         <el-form-item
           v-if="editForm.mortgageSubjectType === 'MORTGAGE_CAPITAL_INFO'"
           label="资方信息"
-          prop="contractSubject"
+          prop="capitalInfo"
           :required="editForm.mortgageSubjectType === 'MORTGAGE_CAPITAL_INFO'"
         >
           <el-select
             placeholder="请选择"
-            v-model="editForm.contractSubject"
+            v-model="editForm.capitalInfo"
             multiple
             collapse-tags
             collapse-tags-tooltip
@@ -141,6 +141,7 @@
           <el-col :span="12">
             <el-form-item label="联系电话">
               <el-input
+                :maxlength="50"
                 type="number"
                 placeholder="请输入"
                 onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
@@ -205,7 +206,8 @@ const state = reactive<ModelStateType>({
     mortgageSubjectType: '',
     organizationCode: '',
     registeredAddress: '',
-    contractSubject: []
+    contractSubject: [],
+    capitalInfo: []
   },
   dialogTitle: '',
   areaCode: []
@@ -220,9 +222,13 @@ watch(
     if (newTitle === '新增') {
       state.areaCode = []
       state.editForm.contractSubject = []
+      state.editForm.capitalInfo = []
     } else {
       state.editForm.contractSubject = newValue.contractSubject
         ? newValue.contractSubject
+        : []
+      state.editForm.capitalInfo = newValue.capitalInfo
+        ? newValue.capitalInfo
         : []
       if (
         newValue.contactAddressProvinceCode &&
@@ -295,6 +301,22 @@ const rules = reactive<FormRules<typeof editForm>>({
       },
       trigger: 'change'
     }
+  ],
+  capitalInfo: [
+    {
+      validator: (
+        rule: InternalRuleItem,
+        value: string[] | undefined,
+        callback: (error?: string | Error | undefined) => void
+      ) => {
+        if (!value || value.length === 0) {
+          callback(new Error('请选择'))
+        } else {
+          callback()
+        }
+      },
+      trigger: 'change'
+    }
   ]
 })
 
@@ -302,7 +324,7 @@ const rules = reactive<FormRules<typeof editForm>>({
 const changeType = (value: string | number | boolean) => {
   console.log(value)
   // if (value === 'MORTGAGE_SUBJECT_HIGH_TECH_SMALL_LOAN') {
-  state.editForm.contractSubject = []
+  // state.editForm.contractSubject = []
   // }
 }
 
@@ -339,7 +361,8 @@ const addOrEditparams = reactive<MortgageSubjectAddEditRequest>({
   mortgageSubjectType: '',
   organizationCode: '',
   registeredAddress: '',
-  contractSubject: []
+  contractSubject: [],
+  capitalInfo: []
 })
 
 // 弹窗 取消/确定
@@ -361,7 +384,14 @@ const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
         addOrEditparams.mortgageSubjectType = state.editForm.mortgageSubjectType
         addOrEditparams.organizationCode = state.editForm.organizationCode
         addOrEditparams.registeredAddress = state.editForm.registeredAddress
-        addOrEditparams.contractSubject = state.editForm.contractSubject
+        addOrEditparams.contractSubject =
+          state.editForm.mortgageSubjectType === 'MORTGAGE_SUBJECT_CONTRACT'
+            ? state.editForm.contractSubject
+            : []
+        addOrEditparams.capitalInfo =
+          state.editForm.mortgageSubjectType === 'MORTGAGE_CAPITAL_INFO'
+            ? state.editForm.capitalInfo
+            : []
         addOrEditparams.contactAddressProvinceCode =
           state.editForm.contactAddressProvinceCode
         addOrEditparams.contactAddressProvinceName =
@@ -379,6 +409,7 @@ const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
           'MORTGAGE_SUBJECT_HIGH_TECH_SMALL_LOAN'
         ) {
           state.editForm.contractSubject = []
+          state.editForm.capitalInfo = []
         }
         if (state.dialogTitle === '新增') {
           const paramsClone = JSON.parse(JSON.stringify(addOrEditparams))
