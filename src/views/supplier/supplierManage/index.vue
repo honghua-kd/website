@@ -209,9 +209,10 @@ import {
   Refresh,
   Search
 } from '@element-plus/icons-vue'
+import { useRoute } from '@toystory/lotso'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import { px2rem } from '@/utils'
-import { reactive, toRefs, ref, onMounted, Ref, computed } from 'vue'
+import { reactive, toRefs, ref, onMounted, Ref, computed, watch } from 'vue'
 import { tableConfig } from './data'
 import AddModel from '@/views/supplier/supplierManage/addModel.vue'
 import EditModel from '@/views/supplier/supplierManage/editModel.vue'
@@ -562,6 +563,30 @@ const downloadHandler = () => {
       throw err
     })
 }
+const route = useRoute()
+watch(
+  () => route,
+  (val) => {
+    if (
+      val &&
+      val.value &&
+      val?.value?.query &&
+      val?.value?.query.innerInterfaceStaffCode &&
+      val?.value?.query.expireDate
+    ) {
+      const { innerInterfaceStaffCode, expireDate } = val.value.query
+      queryFormList.value.innerInterfaceStaffCode = String(
+        innerInterfaceStaffCode
+      )
+      queryFormList.value.expireDateStart = String(expireDate)
+      queryFormList.value.expireDateEnd = String(expireDate)
+      getList()
+    }
+  },
+  {
+    immediate: true
+  }
+)
 </script>
 
 <style lang="scss" scoped>
