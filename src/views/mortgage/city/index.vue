@@ -4,7 +4,7 @@
       <el-form :model="queryParams" ref="formRef">
         <el-row :gutter="20">
           <el-col :span="6">
-            <el-form-item label="城市:" prop="city">
+            <el-form-item label="省市:" prop="city">
               <el-cascader
                 v-model="selCity"
                 clearable
@@ -23,7 +23,10 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-button type="primary" @click="searchHandler"> 查询 </el-button>
+            <el-button type="primary" @click="searchHandler" :icon="Search">
+              查询
+            </el-button>
+            <el-button @click="reset" :icon="Refresh"> 重置 </el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -47,31 +50,49 @@
       <template #btnsBox>
         <el-row :gutter="8" style="margin: 10px 0">
           <el-col :span="1.5">
-            <el-button type="primary" @click="importHandler"> 导入 </el-button>
+            <el-button type="primary" @click="importHandler" :icon="Upload">
+              导入
+            </el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="primary" @click="downloadTemplate">
+            <el-button
+              type="primary"
+              @click="downloadTemplate"
+              :icon="Download"
+            >
               下载导入模版
             </el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="primary" @click="addHandler"> 新增 </el-button>
+            <el-button type="primary" @click="addHandler" :icon="Plus">
+              新增
+            </el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="primary" @click="exportHandler"> 下载 </el-button>
+            <el-button type="primary" @click="exportHandler" :icon="Download">
+              下载
+            </el-button>
           </el-col>
           <el-col :span="1.5">
             <el-tooltip
               content="需勾选下方条目，方可操作"
               placement="top-start"
             >
-              <el-button type="primary" @click="delHandler(selectIds)">
+              <el-button
+                type="primary"
+                @click="delHandler(selectIds)"
+                :icon="Delete"
+              >
                 删除
               </el-button>
             </el-tooltip>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="primary" @click="importResultHandler">
+            <el-button
+              type="primary"
+              @click="importResultHandler"
+              :icon="Search"
+            >
               导入结果查询
             </el-button>
           </el-col>
@@ -81,16 +102,16 @@
         <span v-if="prop === 'applyMortgage'">
           <el-switch
             v-model="row[prop]"
-            :active-value="0"
-            :inactive-value="1"
+            :active-value="1"
+            :inactive-value="0"
             @click="changeStatus(row)"
           />
         </span>
         <span v-if="prop === 'applyDischarge'">
           <el-switch
             v-model="row[prop]"
-            :active-value="0"
-            :inactive-value="1"
+            :active-value="1"
+            :inactive-value="0"
             @click="changeStatus(row)"
           />
         </span>
@@ -110,6 +131,14 @@
 </template>
 
 <script setup lang="ts">
+import {
+  Plus,
+  Delete,
+  Upload,
+  Download,
+  Search,
+  Refresh
+} from '@element-plus/icons-vue'
 import { reactive, ref, Ref, onMounted, computed } from 'vue'
 import { tableConfig } from './data'
 import OperDialog from '@/views/mortgage/city/components/operDialog.vue'
@@ -229,6 +258,14 @@ const searchHandler = () => {
   queryParams.pageNo = 1
   getList()
 }
+const reset = () => {
+  queryParams.pageNo = 1
+  queryParams.pageSize = 10
+  queryParams.provinceCityCodes = []
+  queryParams.licensePlateCode = ''
+  selCity.value = []
+  getList()
+}
 const getList = async () => {
   tableLoading.value = true
   queryParams.provinceCityCodes = []
@@ -313,7 +350,7 @@ const delHandler = (ids: string[]) => {
     .then(() => {
       // 调用删除接口
       const params = {
-        ids: selectIds.value
+        ids: ids
       }
       MortgageCityApi.delMortgageCity(params).then((res) => {
         console.error(res)
