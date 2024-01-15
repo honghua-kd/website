@@ -48,6 +48,7 @@ export {
   IProps,
   dictState,
   queryState,
+  ISearchProps,
   ISearchConfigTimer,
   ISearchConfigCommon,
   ISearchConfigCascader,

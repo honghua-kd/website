@@ -12,12 +12,16 @@
           <el-row :gutter="20" v-if="index > 1 ? expandFlag : true">
             <template v-for="item in unit" :key="item.prop">
               <el-col :span="item.colSpan">
-                <el-form-item
+                <FormItem
+                  :form-item="item"
+                  v-model="modelValue[item.prop]"
+                  :dictArray="dictArray"
+                />
+                <!-- <el-form-item
                   :label="item.label"
                   :prop="[(item as ISearchConfigCommon).prop]"
                 >
                   <slot :name="item.slotName ? item.slotName : 'default'">
-                    <!-- timeRange -->
                     <template v-if="item.compType === 'timeRange'">
                       <el-date-picker
                         v-model="modelValue[(item as ISearchConfigTimer).propStart ] "
@@ -32,7 +36,7 @@
                         style="width: 48%"
                       />
                     </template>
-                    <!-- el-input -->
+
                     <template v-else-if="item.compType === 'el-input'">
                       <el-input
                         v-model="modelValue[(item as ISearchConfigCommon).prop]"
@@ -40,7 +44,7 @@
                         :placeholder="item.placeholder || '请输入'"
                       />
                     </template>
-                    <!-- el-select -->
+
                     <template v-else-if="item.compType === 'el-select'">
                       <el-select
                         v-model="modelValue[(item as ISearchConfigCommon).prop]"
@@ -64,7 +68,7 @@
                       />
                     </template>
                   </slot>
-                </el-form-item>
+                </el-form-item> -->
               </el-col>
             </template>
           </el-row>
@@ -107,12 +111,13 @@ import {
 } from '@element-plus/icons-vue'
 import { ElForm } from 'element-plus'
 import { useDictStore } from '@/store/dict'
+import FormItem from '@/components/ElFormItem/index.vue'
 import type {
   IProps,
-  dictState,
-  ISearchConfigCommon,
-  ISearchConfigTimer,
-  ISearchConfigCascader
+  dictState
+  // ISearchConfigCommon,
+  // ISearchConfigTimer,
+  // ISearchConfigCascader
 } from './type'
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
 
