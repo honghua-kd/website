@@ -1,11 +1,15 @@
 <template>
   <div class="supplier-container">
-    <el-form :model="formModel" class="scan-form" label-width="80px">
+    <el-form :model="formModel" class="scan-form" :label-width="px2rem('90px')">
       <div class="scan-search-bar">
         <el-row :gutter="25">
           <el-col :span="6">
             <el-form-item label="公司名称">
-              <el-input v-model="queryFormList.supplierName" clearable />
+              <el-input
+                v-model="queryFormList.supplierName"
+                placeholder="请输入公司名称"
+                clearable
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -37,7 +41,11 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="状态">
-              <el-select v-model="queryFormList.status" clearable>
+              <el-select
+                v-model="queryFormList.status"
+                clearable
+                style="width: 100%"
+              >
                 <el-option
                   v-for="item in supplierDetailStatus"
                   :key="item.value"
@@ -51,7 +59,11 @@
         <el-row :gutter="25">
           <el-col :span="6">
             <el-form-item label="类型">
-              <el-select v-model="queryFormList.supplierType">
+              <el-select
+                v-model="queryFormList.supplierType"
+                clearable
+                style="width: 100%"
+              >
                 <el-option
                   v-for="item in supplierDetailType"
                   :key="item.value"
@@ -70,6 +82,7 @@
                 format="YYYY-MM-DD"
                 value-format="YYYY-MM-DD"
                 style="margin-right: 4%; width: 48%"
+                clearable
               />
               <el-date-picker
                 v-model="queryFormList.expireDateEnd"
@@ -78,12 +91,17 @@
                 format="YYYY-MM-DD"
                 value-format="YYYY-MM-DD"
                 style="width: 48%"
+                clearable
               />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="内部对接人">
-              <el-input v-model="queryFormList.innerInterfaceStaffCode" />
+              <el-input
+                v-model="queryFormList.innerInterfaceStaffCode"
+                placeholder="请输入工号"
+                clearable
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -96,27 +114,7 @@
       </div>
     </el-form>
 
-    <div class="action">
-      <el-tooltip content="新建" placement="top-start">
-        <el-button type="primary" :icon="Plus" @click="addHandler">
-          新建
-        </el-button>
-      </el-tooltip>
-      <el-tooltip content="导入" placement="top-start">
-        <el-button type="primary" :icon="Setting" @click="importHandler">
-          导入
-        </el-button>
-      </el-tooltip>
-      <el-tooltip content="下载" placement="top-start">
-        <el-button
-          type="primary"
-          :icon="ArrowDownBold"
-          @click="downloadHandler"
-        >
-          下载
-        </el-button>
-      </el-tooltip>
-    </div>
+    <div class="action"></div>
     <Table
       :data="tableData"
       :loading="tableLoading"
@@ -132,6 +130,21 @@
       @size-change="getList"
       @current-change="getList"
     >
+      <template #btnsBox>
+        <el-button type="primary" :icon="Plus" @click="addHandler">
+          新建
+        </el-button>
+        <el-button type="primary" :icon="Setting" @click="importHandler">
+          导入
+        </el-button>
+        <el-button
+          type="primary"
+          :icon="ArrowDownBold"
+          @click="downloadHandler"
+        >
+          下载
+        </el-button>
+      </template>
       <template #default="{ row, prop }">
         <span v-if="prop === 'innerInterfaceStaffName'">
           {{
@@ -151,7 +164,7 @@
             >修改</el-button
           >
           <el-button
-            v-if="scope.row.status === 'SUPPLIER_DETAIL_STATUS_1'"
+            v-if="scope.row.status !== 'SUPPLIER_DETAIL_STATUS_2'"
             link
             type="primary"
             @click="stopHandler(scope.row.id)"
@@ -332,15 +345,16 @@ const getDicts = () => {
 }
 // 获取列表数据
 const getList = async () => {
+  tableLoading.value = true
   queryFormList.value.provinceCode = selCity.value ? selCity.value[0] : ''
   queryFormList.value.cityCode = selCity.value ? selCity.value[1] : ''
   await API.getSupplierList(queryFormList.value)
     .then((res) => {
-      // search()
       if (res && res.code === 200) {
         tableData.value.splice(0, tableData.value.length)
         tableData.value.push(...(res?.data?.list || []))
         pageTotal.value = res?.data?.total || 0
+        tableLoading.value = false
       }
     })
     .catch((err) => {

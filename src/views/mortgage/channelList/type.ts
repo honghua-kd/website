@@ -34,7 +34,6 @@ export type StateType = {
   tableLoading: boolean
   tableColumn: ITableConfigProps[]
   tableData: AgencyListResponse[]
-  tableActionList: OptionItemType[]
   pageTotal: number
   editModelVisible: boolean
   editModelTitle: string
