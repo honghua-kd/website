@@ -39,4 +39,16 @@ export class DocCheckAPI {
       data
     })
   }
+
+  // 删除已审文书
+  deleteDocument(data: FormData): Response<boolean | null | undefined> {
+    return this.request({
+      url: `${prefix}/admin-api/system-document/delete`,
+      method: 'post',
+      data,
+      headers: {
+        'Content-Type': 'application/form-data'
+      }
+    })
+  }
 }

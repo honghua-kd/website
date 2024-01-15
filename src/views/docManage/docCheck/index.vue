@@ -48,9 +48,15 @@
         <el-button :icon="Plus" type="primary" @click="add">新增</el-button>
         <el-button type="primary">审批</el-button>
         <el-button type="primary">发起审核</el-button>
-        <el-button :icon="Download" type="primary">下载</el-button>
-        <el-button :icon="Plus" type="primary">导入</el-button>
-        <el-button :icon="Download" type="primary">下载导入模版</el-button>
+        <el-button :icon="Download" type="primary" @click="downloadData"
+          >下载</el-button
+        >
+        <el-button :icon="Plus" type="primary" @click="batchImport"
+          >导入</el-button
+        >
+        <el-button :icon="Download" type="primary" @click="downloadTemplate"
+          >下载导入模版</el-button
+        >
       </template>
       <template #selection>
         <el-table-column
@@ -71,9 +77,6 @@
         >
         <span v-if="prop === 'documentType'">{{
           getLabel('SYSTEM_DOCUMENT_TYPE', row.documentType)
-        }}</span>
-        <span v-if="prop === 'sealType'">{{
-          getLabel('SEAL_TYPE', row.sealType)
         }}</span>
         <span v-if="prop === 'approvalStatus'">{{
           getLabel('SYSTEM_DOCUMENT_APPROVAL_STATUS', row.approvalStatus)
@@ -99,6 +102,7 @@
           "
           link
           type="danger"
+          @click="deleteItem(row.id)"
           >删除</el-button
         >
         <el-button
@@ -128,6 +132,33 @@
       :sealOptions="dictStore.dicts['SEAL_TYPE']"
       @closeModel="closeModel"
     />
+
+    <!-- 导入 -->
+    <el-dialog
+      class="import-model"
+      v-model="importVisible"
+      title="批量导入"
+      width="550px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      destroy-on-close
+    >
+      <el-upload
+        ref="upload"
+        v-model:file-list="fileList"
+        class="upload-demo"
+        :limit="1"
+        :on-exceed="handleExceed"
+        :auto-upload="false"
+      >
+        <template #trigger>
+          <el-button>选择文件</el-button>
+        </template>
+      </el-upload>
+      <template #footer>
+        <el-button type="primary" @click="submitUpload">导入</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -140,10 +171,17 @@ import { searchConfig, tableColumn } from './data'
 import type { StateType } from './type'
 import type { DocumentPageResponse } from '@/api/docCheck/types/response'
 import { Plus, Download } from '@element-plus/icons-vue'
+import { ElMessageBox, ElMessage, genFileId } from 'element-plus'
 import { px2rem, handleDownloadFile } from '@/utils'
 import { useDictStore } from '@/store/dict'
 import { CommonAPI, DocCheckAPI } from '@/api'
 import dayjs from 'dayjs'
+import type {
+  UploadInstance,
+  UploadProps,
+  UploadRawFile,
+  UploadUserFile
+} from 'element-plus'
 
 const API = new DocCheckAPI()
 const COMMONAPI = new CommonAPI()
@@ -159,8 +197,8 @@ const state = reactive<StateType>({
     documentType: '',
     approvalStatus: '',
     sourceSystem1: [],
-    createTimeStart: '',
-    createTimeEnd: ''
+    createTimeStart: dayjs().startOf('day').toString(),
+    createTimeEnd: dayjs().endOf('day').toString()
   },
   pageTotal: 0,
   tableData: [],
@@ -169,7 +207,8 @@ const state = reactive<StateType>({
   editModelVisible: false,
   editModelTitle: '',
   systemOptions: [],
-  detailData: {}
+  detailData: {},
+  importVisible: false
 })
 const {
   queryParams,
@@ -180,7 +219,8 @@ const {
   editModelVisible,
   editModelTitle,
   systemOptions,
-  detailData
+  detailData,
+  importVisible
 } = toRefs(state)
 
 // 表格最大高度
@@ -222,8 +262,8 @@ const reset = () => {
   queryParams.value.documentType = ''
   queryParams.value.approvalStatus = ''
   queryParams.value.sourceSystem1 = []
-  queryParams.value.createTimeStart = ''
-  queryParams.value.createTimeEnd = ''
+  queryParams.value.createTimeStart = dayjs().startOf('day').toString()
+  queryParams.value.createTimeEnd = dayjs().endOf('day').toString()
   getListData()
 }
 
@@ -246,6 +286,98 @@ const handleSizeChange = (size: number) => {
 const handleCurrentChange = (page: number) => {
   queryParams.value.pageNo = page
   getListData()
+}
+
+// 下载数据
+const downloadData = async () => {
+  state.tableLoading = true
+  let params = {}
+  if (selectIdsArr.value.length === 0) {
+    const {
+      pageFlag,
+      documentName,
+      documentType,
+      approvalStatus,
+      sourceSystem1,
+      createTimeStart,
+      createTimeEnd
+    } = state.queryParams
+    params = {
+      pageFlag,
+      documentName,
+      documentType,
+      approvalStatus,
+      sourceSystem1,
+      createTimeStart,
+      createTimeEnd
+    }
+  } else {
+    params = { ids: selectIdsArr.value }
+  }
+  const res = await COMMONAPI.exportBySelect({
+    bizType: 'SYSTEM_DOCUMENT_EXPORT',
+    selectParams: JSON.stringify(params)
+  })
+  if (res && res.code === 200) {
+    if (res.data?.sync === 1) {
+      const params = { fileCode: res.data.fileCode as string }
+      COMMONAPI.downLoadFiles(params).then((res) =>
+        handleDownloadFile(res, '文书审核.xlsx')
+      )
+    }
+  }
+  state.tableLoading = false
+}
+
+// 下载导入模版
+const downloadTemplate = () => {
+  const params = {
+    bizType: 'DOCUMENT'
+  }
+  COMMONAPI.getDownLoadTemplate(params).then((res) => {
+    handleDownloadFile(res)
+  })
+}
+
+const fileList = ref<UploadUserFile[]>([])
+const upload = ref<UploadInstance>()
+const handleExceed: UploadProps['onExceed'] = (files) => {
+  upload.value!.clearFiles()
+  const file = files[0] as UploadRawFile
+  file.uid = genFileId()
+  upload.value!.handleStart(file)
+}
+const submitUpload = () => {
+  if (fileList.value.length === 0) {
+    ElMessage({
+      type: 'error',
+      message: '请先选择文件'
+    })
+    return
+  }
+  const formData = new FormData()
+  fileList.value.forEach((item) => {
+    formData.append('file', item.raw as File)
+  })
+  formData.append('bizType', 'DOCUMENT')
+  COMMONAPI.getAsyncImport(formData)
+    .then((res) => {
+      if (res && res.code === 200) {
+        ElMessage({
+          type: 'success',
+          message: '导入成功'
+        })
+      }
+      upload.value!.clearFiles()
+      getListData()
+      state.importVisible = false
+    })
+    .catch((err: Error) => {
+      throw err
+    })
+}
+const batchImport = () => {
+  state.importVisible = true
 }
 
 const closeModel = ({ type }: { type: string }) => {
@@ -305,6 +437,33 @@ const editItem = (row: DocumentPageResponse) => {
   state.detailData = row
   state.editModelVisible = true
   state.editModelTitle = '编辑'
+}
+
+// 删除
+const deleteItem = async (id: string) => {
+  // 二次确认
+  ElMessageBox.confirm('确认要删除吗？', '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(() => {
+      // 调用删除接口
+      const formData = new FormData()
+      formData.append('id', id)
+      API.deleteDocument(formData).then((res) => {
+        if (res && res.code === 200) {
+          ElMessage({
+            type: 'success',
+            message: '删除成功'
+          })
+          getListData()
+        }
+      })
+    })
+    .catch((err: Error) => {
+      throw err
+    })
 }
 
 // 点击表格中的文件可下载

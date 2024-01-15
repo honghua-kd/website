@@ -40,7 +40,13 @@
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="用印类型" prop="sealType" required>
-            <el-select v-model="docInfoForm.sealType" style="width: 100%">
+            <el-select
+              v-model="docInfoForm.sealType"
+              multiple
+              collapse-tags
+              collapse-tags-tooltip
+              style="width: 100%"
+            >
               <el-option
                 v-for="item in sealOptions"
                 :key="(item.value as string)"
@@ -243,7 +249,7 @@ const state = reactive<ModelStateType>({
     documentName: '',
     documentType: '',
     sourceSystem1: [],
-    sealType: ''
+    sealType: []
   },
   saveListForm: {
     saveListInfo: []
@@ -272,7 +278,15 @@ watch(
       state.docInfoForm.documentType = newValue.documentType
         ? newValue.documentType
         : ''
-      state.docInfoForm.sealType = newValue.sealType ? newValue.sealType : ''
+      if (newValue.sealTypeDetail && newValue.sealTypeDetail.length > 0) {
+        const arr: string[] = []
+        newValue.sealTypeDetail.forEach((i) => {
+          arr.push(i.value as string)
+        })
+        state.docInfoForm.sealType = arr
+      } else {
+        state.docInfoForm.sealType = []
+      }
       const sysArr: string[] = []
       newValue.sourceSystemDetail?.forEach((i) => {
         const value: string = i.value as string
@@ -445,7 +459,7 @@ const restForm = () => {
   state.docInfoForm.documentName = ''
   state.docInfoForm.documentType = ''
   state.docInfoForm.sourceSystem1 = []
-  state.docInfoForm.sealType = ''
+  state.docInfoForm.sealType = []
 }
 
 // 关闭表单弹窗

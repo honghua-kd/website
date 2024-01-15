@@ -14,13 +14,14 @@ export type StateType = {
   editModelTitle: string
   systemOptions: DictListItem[]
   detailData: DocumentPageResponse
+  importVisible: boolean
 }
 
 export type EditDocInfo = {
   documentName: string
   documentType: string
   sourceSystem1: string[]
-  sealType: string
+  sealType: string[]
 }
 export type ModelStateType = {
   dialogVisible: boolean

@@ -72,11 +72,16 @@ export interface SaveOrUpdateDocRequest {
   /**
    * 用印类型 字典表 SEAL_TYPE
    */
-  sealType: string
+  sealType: string[]
   /**
    * 适用部门
    */
   sourceSystem1: string[]
   // 自行添加属性
   fileName?: string
+}
+
+// 删除已审文书
+export interface DeleteDocumentRequest {
+  id: number
 }
