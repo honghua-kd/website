@@ -328,19 +328,20 @@ export interface EditForm {
    */
   updateTime?: string
   belongCompanyList: string[]
-  accountName: string
-  bankAccount: string
-  openBank: string
-  subBank: string
-  openBankCode: string
-  openBankProCode: string
-  openBankProName: string
-  openBankCityCode: string
-  openBankCityName: string
-  openBankCountyCode: string
-  openBankCountyName: string
+  accountName?: string
+  bankAccount?: string
+  openBank?: string
+  subBank?: string
+  openBankCode?: string
+  openBankProCode?: string | number
+  openBankProName?: string
+  openBankCityCode?: string | number
+  openBankCityName?: string
+  openBankCountyCode?: string | number
+  openBankCountyName?: string
   files: FileItem[]
   accountTableData?: []
+  areaCode?: string[]
 }
 export type ModelStateType = {
   dialogVisible: boolean
