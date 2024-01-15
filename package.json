@@ -23,7 +23,7 @@
     "@element-plus/icons-vue": "2.1.0",
     "@icon-park/vue-next": "^1.3.5",
     "@tinymce/tinymce-vue": "^5.1.1",
-    "@toystory/lotso": "2.1.6",
+    "@toystory/lotso": "2.1.7",
     "@toystory/potato": "^0.1.1",
     "@vueuse/core": "^10.5.0",
     "axios": "^1.5.1",

@@ -1,90 +1,105 @@
+export interface DictDataSimpleRespVO {
+  colorType?: null | string
+  cssClass?: null | string
+  dictType?: null | string
+  label?: null | string
+  value?: null | string
+}
 export interface DocumentPageResponse {
   /**
-   * 审批流程ID 审批页面根据这个参数分页查询文书信息，还调用本接口
+   * 审批流程ID
    */
-  approvalBizInstanceId: null
+  approvalBizInstanceId?: null | string
   /**
    * 审批流程名称
    */
-  approvalBizInstanceName: null
+  approvalBizInstanceName?: null | string
   /**
-   * 审批业务编号 对应流程审批接口的bizKey参数
+   * 审批业务编号
    */
-  approvalBizKey: null
+  approvalBizKey?: null | string
   /**
-   * 审批流程对应的key 对应流程审批接口的bizKey参数
+   * 审批流程对应的key
    */
-  approvalBizType: null
+  approvalBizType?: null | string
   /**
-   * 审核状态 字典表SYSTEM_DOCUMENT_APPROVAL_STATUS
+   * 审核状态
    */
-  approvalStatus: string
+  approvalStatus?: null | string
   /**
    * 创建时间
    */
-  createTime: string
+  createTime?: null | string
   /**
    * 创建人
    */
-  creator: string
+  creator?: null | string
   /**
    * 创建人名称
    */
-  creatorName: string
+  creatorName?: null | string
   /**
    * 文书名称
    */
-  documentName: string
+  documentName?: null | string
   /**
-   * 文书编号 更新时这个参数传过来
+   * 文书编号
    */
-  documentNo: string
+  documentNo?: null | string
   /**
-   * 文书类型 字典表SYSTEM_DOCUMENT_TYPE
+   * 文书类型
    */
-  documentType: string
+  documentType?: null | string
   /**
    * 文书版本
    */
-  documentVersion: string
+  documentVersion?: null | string
   /**
    * 文件编号
    */
-  fileCode: string
+  fileCode?: null | string
   /**
    * 文件名称
    */
-  fileName: string
+  fileName?: null | string
   /**
-   * 是否有关联数据 根据这个参数决定是否展示二级确认框
+   * 是否有关联数据
    */
-  hasAssociateData: boolean
+  hasAssociateData?: boolean | null
   /**
-   * 主键ID 更新时这个参数传过来
+   * 主键id
    */
-  id: string
+  id?: number | null
   /**
    * 备注
    */
-  remark: null
+  remark?: null | string
   /**
-   * 用印类型 字典表SEAL_TYPE
+   * 用印类型
    */
-  sealType: string
+  sealType?: null | string
   /**
    * 适用部门
    */
-  sourceSystem1: string
+  sourceSystem1?: null | string
+  /**
+   * 适用部门详情
+   */
+  sourceSystemDetail?: DictDataSimpleRespVO[] | null
+  /**
+   * 是否启用 1-启用 0-停用
+   */
+  status?: number | null
   /**
    * 更新人
    */
-  updater: string
+  updater?: null | string
   /**
    * 更新人名称
    */
-  updaterName: string
+  updaterName?: null | string
   /**
    * 更新时间
    */
-  updateTime: string
+  updateTime?: null | string
 }
