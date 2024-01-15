@@ -212,11 +212,11 @@
         <el-col :span="12">
           <el-form-item
             label="内部对接人名称"
-            :rules="[{ required: true, message: '请输入内部对接人名称' }]"
-            prop="innerInterfaceStaffCode"
+            :rules="[{ required: true, message: '请输入内部对接人工号' }]"
+            prop="innerInterfaceStaffName"
           >
             <el-input
-              v-model="editForm.innerInterfaceStaffCode"
+              v-model="editForm.innerInterfaceStaffName"
               placeholder="请输入内部对接人名称"
               style="width: 100%"
               clearable
@@ -226,11 +226,11 @@
         <el-col :span="12">
           <el-form-item
             label="内部对接人工号"
-            :rules="[{ required: true, message: '请输入内部对接人工号' }]"
-            prop="innerInterfaceStaffName"
+            :rules="[{ required: true, message: '请输入内部对接人名称' }]"
+            prop="innerInterfaceStaffCode"
           >
             <el-input
-              v-model="editForm.innerInterfaceStaffName"
+              v-model="editForm.innerInterfaceStaffCode"
               placeholder="请输入内部对接人工号"
               style="width: 100%"
               clearable
@@ -442,13 +442,15 @@
     <!--  -->
     <div v-show="step === 2" class="city-person">
       <h3 class="flex-start-center">
-        负责城市联系人<el-icon
-          style="margin: 0 0 2px 10px; cursor: pointer"
-          color="#1890FF"
-          size="18"
+        负责城市联系人
+        <el-button
+          type="primary"
+          :icon="Plus"
           @click="addPerson"
-          ><CirclePlusFilled
-        /></el-icon>
+          style="margin-left: 5px"
+        >
+          新建
+        </el-button>
         <el-cascader
           v-model="selCity"
           clearable
@@ -487,13 +489,15 @@
     <!--  -->
     <div v-show="step === 3" class="settlement-type">
       <h3 class="flex-start-center">
-        结算方式<el-icon
-          style="margin: 0 0 2px 10px; cursor: pointer"
-          color="#1890FF"
-          size="18"
+        结算方式
+        <el-button
+          type="primary"
+          :icon="Plus"
           @click="addSettlement"
-          ><CirclePlusFilled
-        /></el-icon>
+          style="margin-left: 5px"
+        >
+          新建
+        </el-button>
         <el-cascader
           v-model="selSettle"
           clearable
@@ -562,7 +566,7 @@ import type {
   AttachmentDetailDto,
   EditForm
 } from '@/views/supplier/supplierManage/type'
-import { CirclePlusFilled, Delete } from '@element-plus/icons-vue'
+import { Plus, Delete } from '@element-plus/icons-vue'
 import ImportForm from './ImportForm.vue'
 import {
   PersonColumn,

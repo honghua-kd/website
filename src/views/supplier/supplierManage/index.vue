@@ -134,14 +134,10 @@
         <el-button type="primary" :icon="Plus" @click="addHandler">
           新建
         </el-button>
-        <el-button type="primary" :icon="Setting" @click="importHandler">
+        <el-button type="primary" :icon="Upload" @click="importHandler">
           导入
         </el-button>
-        <el-button
-          type="primary"
-          :icon="ArrowDownBold"
-          @click="downloadHandler"
-        >
+        <el-button type="primary" :icon="Download" @click="downloadHandler">
           下载
         </el-button>
       </template>
@@ -207,9 +203,9 @@
 
 <script setup lang="ts">
 import {
-  ArrowDownBold,
+  Download,
   Plus,
-  Setting,
+  Upload,
   Refresh,
   Search
 } from '@element-plus/icons-vue'

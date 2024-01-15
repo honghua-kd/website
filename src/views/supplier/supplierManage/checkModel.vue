@@ -148,13 +148,15 @@
     <!--  -->
     <div class="settlement-account">
       <h3 class="flex-start-center">
-        供应商账号<el-icon
-          style="margin: 0 0 2px 10px; cursor: pointer"
-          color="#1890FF"
-          size="18"
+        供应商账号
+        <el-button
+          type="primary"
+          :icon="Plus"
           @click="addAccount"
-          ><CirclePlusFilled
-        /></el-icon>
+          style="margin-left: 5px"
+        >
+          新建
+        </el-button>
       </h3>
 
       <Table
@@ -194,22 +196,22 @@
     <!--  -->
     <div class="city-person">
       <h3 class="flex-start-center">
-        负责城市联系人<el-icon
-          style="margin: 0 0 2px 10px; cursor: pointer"
-          color="#1890FF"
-          size="18"
+        负责城市联系人
+        <el-button
+          type="primary"
+          :icon="Plus"
           @click="addPerson"
-          ><CirclePlusFilled
-        /></el-icon>
-        <el-tooltip content="导入" placement="top">
-          <el-icon
-            style="margin: 0 0 2px 10px; cursor: pointer"
-            color="#1890FF"
-            size="22"
-            @click="importHandler('SUPPLIER_CITY_CONTACTS')"
-            ><UploadFilled
-          /></el-icon>
-        </el-tooltip>
+          style="margin-left: 5px"
+        >
+          新建
+        </el-button>
+        <el-button
+          type="primary"
+          :icon="Upload"
+          @click="importHandler('SUPPLIER_CITY_CONTACTS')"
+        >
+          导入
+        </el-button>
         <el-cascader
           v-model="selCity"
           clearable
@@ -249,23 +251,21 @@
     <div class="settlement-type">
       <h3 class="flex-start-center">
         结算方式
-        <el-icon
-          style="margin: 0 0 2px 10px; cursor: pointer"
-          color="#1890FF"
-          size="18"
+        <el-button
+          type="primary"
+          :icon="Plus"
           @click="addSettlement"
-          ><CirclePlusFilled
-        /></el-icon>
-        <el-tooltip content="导入" placement="top">
-          <el-icon
-            style="margin: 0 0 2px 10px; cursor: pointer"
-            color="#1890FF"
-            size="22"
-            @click="importHandler('SUPPLIER_SETTLEMENT_WAY')"
-            ><UploadFilled
-          /></el-icon>
-        </el-tooltip>
-
+          style="margin-left: 5px"
+        >
+          新建
+        </el-button>
+        <el-button
+          type="primary"
+          :icon="Upload"
+          @click="importHandler('SUPPLIER_SETTLEMENT_WAY')"
+        >
+          导入
+        </el-button>
         <el-cascader
           v-model="selSettle"
           clearable
@@ -342,7 +342,7 @@ import type {
   ModelStateType,
   EditForm
 } from '@/views/supplier/supplierManage/type'
-import { CirclePlusFilled, Delete, UploadFilled } from '@element-plus/icons-vue'
+import { Delete, Upload, Plus } from '@element-plus/icons-vue'
 import ImportForm from './ImportForm.vue'
 import {
   PersonColumn,
