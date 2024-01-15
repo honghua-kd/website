@@ -4,7 +4,7 @@
       <el-form :model="queryParams" ref="formRef">
         <el-row :gutter="20">
           <el-col :span="6">
-            <el-form-item label="城市:" prop="city">
+            <el-form-item label="省市:" prop="city">
               <el-cascader
                 v-model="selCity"
                 clearable

@@ -201,12 +201,15 @@
           @click="addPerson"
           ><CirclePlusFilled
         /></el-icon>
-        <el-button
-          type="primary"
-          @click="importHandler('SUPPLIER_CITY_CONTACTS')"
-        >
-          导入
-        </el-button>
+        <el-tooltip content="导入" placement="top">
+          <el-icon
+            style="margin: 0 0 2px 10px; cursor: pointer"
+            color="#1890FF"
+            size="22"
+            @click="importHandler('SUPPLIER_CITY_CONTACTS')"
+            ><UploadFilled
+          /></el-icon>
+        </el-tooltip>
         <el-cascader
           v-model="selCity"
           clearable
@@ -245,19 +248,24 @@
     <!--  -->
     <div class="settlement-type">
       <h3 class="flex-start-center">
-        结算方式<el-icon
+        结算方式
+        <el-icon
           style="margin: 0 0 2px 10px; cursor: pointer"
           color="#1890FF"
           size="18"
           @click="addSettlement"
           ><CirclePlusFilled
         /></el-icon>
-        <el-button
-          type="primary"
-          @click="importHandler('SUPPLIER_SETTLEMENT_WAY')"
-        >
-          导入
-        </el-button>
+        <el-tooltip content="导入" placement="top">
+          <el-icon
+            style="margin: 0 0 2px 10px; cursor: pointer"
+            color="#1890FF"
+            size="22"
+            @click="importHandler('SUPPLIER_SETTLEMENT_WAY')"
+            ><UploadFilled
+          /></el-icon>
+        </el-tooltip>
+
         <el-cascader
           v-model="selSettle"
           clearable
@@ -334,7 +342,7 @@ import type {
   ModelStateType,
   EditForm
 } from '@/views/supplier/supplierManage/type'
-import { CirclePlusFilled, Delete } from '@element-plus/icons-vue'
+import { CirclePlusFilled, Delete, UploadFilled } from '@element-plus/icons-vue'
 import ImportForm from './ImportForm.vue'
 import {
   PersonColumn,
@@ -794,7 +802,7 @@ const getWay = (val: string) => {
 const getStatus = (val: string) => {
   let label = ''
   dictStore.dicts.SUPPLIER_ACCOUNT_STATUS.forEach((item) => {
-    if (item.value === val) {
+    if (item.value === String(val)) {
       label = item.label
     }
   })

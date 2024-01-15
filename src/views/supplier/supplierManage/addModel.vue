@@ -108,7 +108,9 @@
         <el-col :span="12">
           <el-form-item
             label="供应商类型"
-            :rules="[{ required: true, message: '请选择供应商类型' }]"
+            :rules="[
+              { required: true, message: '请选择供应商类型', trigger: 'blur' }
+            ]"
             prop="supplierTypes"
           >
             <el-select
@@ -147,7 +149,9 @@
           <!-- 详情接口无子段 -->
           <el-form-item
             label="归属"
-            :rules="[{ required: true, message: '请选择归属公司' }]"
+            :rules="[
+              { required: true, message: '请选择归属公司', trigger: 'blur' }
+            ]"
             prop="belongCompanyList"
           >
             <el-select
@@ -572,7 +576,12 @@ import dayjs from 'dayjs'
 import Table from '@/components/Table/index.vue'
 import ImportAttachment from './attachmentForm.vue'
 import PersonForm from './personForm.vue'
-import type { CascaderProps, CascaderOption, FormRules } from 'element-plus'
+import type {
+  CascaderProps,
+  CascaderOption,
+  FormRules,
+  CascaderValue
+} from 'element-plus'
 import SettlementForm from './settlementForm.vue'
 import type { DictItem } from '@/api'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
@@ -843,14 +852,14 @@ const rules = reactive<FormRules<typeof editForm>>({
         }
       },
       trigger: 'change',
-      required: 'true'
+      required: true
     }
   ],
   phone: [
     {
       validator: (
         rule: InternalRuleItem,
-        value: string | undefined,
+        value: string,
         callback: (error?: string | Error | undefined) => void
       ) => {
         var regExp1 = /^1[3456789]\d{9}$/
@@ -866,9 +875,10 @@ const rules = reactive<FormRules<typeof editForm>>({
     }
   ]
 })
-const changeArea = (val) => {
+const changeArea = (val: CascaderValue) => {
+  val = val as string[]
   if (val?.length) {
-    state.editForm.areaCode = [val[0], val[1], val[2]]
+    state.editForm.areaCode = [String(val[0]), String(val[1]), String(val[2])]
   } else {
     state.editForm.areaCode = []
   }
@@ -1044,11 +1054,11 @@ const submitForm = async () => {
     subBank: state.editForm.subBank,
     openBankCode: state.editForm.openBankCode,
     openBankProCode: selArea.value[0],
-    // openBankProName: cascaderArea.value.getCheckedNodes()[0].pathLabels[0],
-    // openBankCityCode: selArea.value[1],
-    // openBankCityName: cascaderArea.value.getCheckedNodes()[0].pathLabels[1],
-    // openBankCountyCode: selArea.value[2],
-    // openBankCountyName: cascaderArea.value.getCheckedNodes()[0].pathLabels[2],
+    openBankProName: cascaderArea.value.getCheckedNodes()[0].pathLabels[0],
+    openBankCityCode: selArea.value[1],
+    openBankCityName: cascaderArea.value.getCheckedNodes()[0].pathLabels[1],
+    openBankCountyCode: selArea.value[2],
+    openBankCountyName: cascaderArea.value.getCheckedNodes()[0].pathLabels[2],
     files: state.editForm.files || []
   }
   SupplierApi.addSupplier(sparams)

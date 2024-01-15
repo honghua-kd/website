@@ -123,38 +123,38 @@ const props: CascaderProps = {
     resolve(nodes) // 回调
   }
 }
-const initOptions = async () => {
-  casOption.value = []
-  const resParent = await CommonApi.getAllProvinces()
-  if (resParent && resParent?.data) {
-    resParent?.data.map(async (item) => {
-      const children: OptionsItem[] = []
-      if (item.code === Number(basicInfoForm.provinceCode)) {
-        const params = {
-          code: Number(basicInfoForm.provinceCode)
-        }
-        const res = await CommonApi.getProvincesChildren(params)
-        if (res && res.data) {
-          res?.data.map((item) => {
-            const area = {
-              value: String(item.code),
-              label: item.name,
-              leaf: true
-            }
-            children.push(area)
-          })
-        }
-      }
-      const resArea = {
-        value: String(item.code),
-        label: item.name,
-        children: children,
-        leaf: false
-      }
-      casOption.value.push(resArea)
-    })
-  }
-}
+// const initOptions = async () => {
+//   casOption.value = []
+//   const resParent = await CommonApi.getAllProvinces()
+//   if (resParent && resParent?.data) {
+//     resParent?.data.map(async (item) => {
+//       const children: OptionsItem[] = []
+//       if (item.code === Number(basicInfoForm.provinceCode)) {
+//         const params = {
+//           code: Number(basicInfoForm.provinceCode)
+//         }
+//         const res = await CommonApi.getProvincesChildren(params)
+//         if (res && res.data) {
+//           res?.data.map((item) => {
+//             const area = {
+//               value: String(item.code),
+//               label: item.name,
+//               leaf: true
+//             }
+//             children.push(area)
+//           })
+//         }
+//       }
+//       const resArea = {
+//         value: String(item.code),
+//         label: item.name,
+//         children: children,
+//         leaf: false
+//       }
+//       casOption.value.push(resArea)
+//     })
+//   }
+// }
 /** 打开弹窗 */
 const dialogTitle: Ref<string> = ref('新增结算方式')
 const open = async (row?: string, no?: string) => {
@@ -169,7 +169,6 @@ const open = async (row?: string, no?: string) => {
     basicInfoForm.settlementWay = ''
     basicInfoForm.amount = ''
     basicInfoForm.proandcity = []
-    await initOptions()
   } else {
     const data = JSON.parse(JSON.stringify(row))
     basicInfoForm.id = data.id
@@ -222,7 +221,7 @@ const addHandler = () => {
         if (res && res.code === 200) {
           ElMessage({
             type: 'success',
-            message: '修改成功'
+            message: '编辑成功'
           })
           dialogVisible.value = false
           emit('success')

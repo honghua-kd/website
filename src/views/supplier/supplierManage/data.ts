@@ -38,7 +38,6 @@ export const tableConfig: ITableConfigProps[] = [
     label: '联系电话',
     prop: 'phone',
     width: '150',
-    minWidth: '',
     align: 'center',
     fixed: false
   },
@@ -91,39 +90,39 @@ export const tableConfig: ITableConfigProps[] = [
   }
 ]
 export const PersonColumn: ITableConfigProps[] = [
-  {
-    label: '序号',
-    prop: '',
-    width: '60',
-    minWidth: '',
-    fixed: true
-  },
+  // {
+  //   label: '序号',
+  //   prop: '',
+  //   width: '60',
+  //   minWidth: '',
+  //   fixed: true
+  // },
   {
     label: '省份',
     prop: 'provinceName',
     width: '',
-    minWidth: '',
+    align: 'center',
     fixed: false
   },
   {
     label: '城市',
     prop: 'cityName',
     width: '',
-    minWidth: '',
+    align: 'center',
     fixed: false
   },
   {
     label: '联系人',
     prop: 'contactsName',
     width: '',
-    minWidth: '',
+    align: 'center',
     fixed: false
   },
   {
     label: '联系电话',
     prop: 'phone',
     width: '',
-    minWidth: '',
+    align: 'center',
     fixed: false
   },
   {
@@ -136,39 +135,39 @@ export const PersonColumn: ITableConfigProps[] = [
   }
 ]
 export const AccountColumn: ITableConfigProps[] = [
-  {
-    label: '序号',
-    prop: '',
-    width: '60',
-    minWidth: '',
-    fixed: true
-  },
+  // {
+  //   label: '序号',
+  //   prop: '',
+  //   width: '60',
+  //   minWidth: '',
+  //   fixed: true
+  // },
   {
     label: '账号名称',
     prop: 'accountName',
     width: '',
-    minWidth: '',
+    align: 'center',
     fixed: false
   },
   {
     label: '电子邮箱',
     prop: 'email',
     width: '',
-    minWidth: '',
+    align: 'center',
     fixed: false
   },
   {
     label: '联系电话',
     prop: 'phone',
     width: '',
-    minWidth: '',
+    align: 'center',
     fixed: false
   },
   {
     label: '状态',
     prop: 'status',
     width: '',
-    minWidth: '',
+    align: 'center',
     fixed: false
   },
   {
@@ -181,39 +180,39 @@ export const AccountColumn: ITableConfigProps[] = [
   }
 ]
 export const SettlementColumn: ITableConfigProps[] = [
-  {
-    label: '序号',
-    prop: '',
-    width: '60',
-    minWidth: '',
-    fixed: true
-  },
+  // {
+  //   label: '序号',
+  //   prop: '',
+  //   width: '60',
+  //   minWidth: '',
+  //   fixed: true
+  // },
   {
     label: '省份',
     prop: 'provinceName',
     width: '',
-    minWidth: '',
+    align: 'center',
     fixed: false
   },
   {
     label: '城市',
     prop: 'cityName',
     width: '',
-    minWidth: '',
+    align: 'center',
     fixed: false
   },
   {
     label: '结算方式',
     prop: 'settlementWay',
     width: '',
-    minWidth: '',
+    align: 'center',
     fixed: false
   },
   {
     label: '结算金额',
     prop: 'amount',
     width: '',
-    minWidth: '',
+    align: 'center',
     fixed: false
   },
   {

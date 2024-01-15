@@ -442,7 +442,12 @@ import type {
 } from '@/views/supplier/supplierManage/type'
 import type { DictDataTreeResponse, DictItem } from '@/api'
 import { Delete } from '@element-plus/icons-vue'
-import type { CascaderProps, CascaderOption, FormRules } from 'element-plus'
+import type {
+  CascaderProps,
+  CascaderOption,
+  FormRules,
+  CascaderValue
+} from 'element-plus'
 import ImportAttachment from './attachmentForm.vue'
 import dayjs from 'dayjs'
 import type { InternalRuleItem } from 'async-validator'
@@ -607,6 +612,11 @@ watch(
       Number(state.editForm.bankAccountList[0].openBankCityCode),
       Number(state.editForm.bankAccountList[0].openBankCountyCode)
     ]
+    state.editForm.areaCode = [
+      String(state.editForm.bankAccountList[0]?.openBankProCode),
+      String(state.editForm.bankAccountList[0].openBankCityCode),
+      String(state.editForm.bankAccountList[0].openBankCountyCode)
+    ]
     await getDicts()
   },
   {
@@ -634,14 +644,14 @@ const rules = reactive<FormRules<typeof editForm>>({
         }
       },
       trigger: 'change',
-      required: 'true'
+      required: true
     }
   ],
   phone: [
     {
       validator: (
         rule: InternalRuleItem,
-        value: string | undefined,
+        value: string,
         callback: (error?: string | Error | undefined) => void
       ) => {
         var regExp1 = /^1[3456789]\d{9}$/
@@ -657,9 +667,10 @@ const rules = reactive<FormRules<typeof editForm>>({
     }
   ]
 })
-const changeArea = (val) => {
+const changeArea = (val: CascaderValue) => {
+  val = val as string[]
   if (val?.length) {
-    state.editForm.areaCode = [val[0], val[1], val[2]]
+    state.editForm.areaCode = [String(val[0]), String(val[1]), String(val[2])]
   } else {
     state.editForm.areaCode = []
   }
