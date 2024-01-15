@@ -6,6 +6,7 @@
       <SearchBar
         v-model="queryParams"
         :searchConfig="searchConfig"
+        :dictArray="dictTypes"
         @reset="reset"
         @search="searchHandler"
       />
@@ -56,9 +57,9 @@
     <EditModel
       :visible="editModelVisible"
       :title="editModelTitle"
-      :documentTypeOptions="documentTypeOptions"
+      :documentTypeOptions="dictStore.dicts['SYSTEM_DOCUMENT_TYPE']"
       :systemOptions="systemOptions"
-      :sealOptions="sealOptions"
+      :sealOptions="dictStore.dicts['SEAL_TYPE']"
       @closeModel="closeModel"
     />
   </div>
@@ -74,15 +75,24 @@ import type { StateType } from './type'
 import type { DocumentPageResponse } from '@/api/docCheck/types/response'
 import { Plus, Download } from '@element-plus/icons-vue'
 import { px2rem } from '@/utils'
+import { useDictStore } from '@/store/dict'
 import { CommonAPI, DocCheckAPI } from '@/api'
 const API = new DocCheckAPI()
 const COMMONAPI = new CommonAPI()
+const dictStore = useDictStore()
 
+const dictTypes = ['SYSTEM_DOCUMENT_TYPE']
 const state = reactive<StateType>({
   queryParams: {
     pageFlag: 1,
     pageNo: 1,
-    pageSize: 10
+    pageSize: 10,
+    documentName: '',
+    documentType: '',
+    approvalStatus: '',
+    sourceSystem1: [],
+    createTimeStart: '',
+    createTimeEnd: ''
   },
   pageTotal: 0,
   tableData: [],
@@ -90,9 +100,7 @@ const state = reactive<StateType>({
   selectIdsArr: [],
   editModelVisible: false,
   editModelTitle: '',
-  documentTypeOptions: [],
-  systemOptions: [],
-  sealOptions: []
+  systemOptions: []
 })
 const {
   queryParams,
@@ -102,9 +110,7 @@ const {
   selectIdsArr,
   editModelVisible,
   editModelTitle,
-  documentTypeOptions,
-  systemOptions,
-  sealOptions
+  systemOptions
 } = toRefs(state)
 
 // 表格最大高度
@@ -151,6 +157,9 @@ const closeModel = ({ type }: { type: string }) => {
   if (type === 'update-close') {
     state.editModelTitle = ''
     state.editModelVisible = false
+  } else {
+    state.editModelTitle = ''
+    state.editModelVisible = false
   }
 }
 
@@ -159,18 +168,6 @@ const add = () => {
   state.editModelTitle = '新增'
 }
 
-const getDicList = async () => {
-  const res = await COMMONAPI.getDictsList({
-    dictTypes: ['SYSTEM_DOCUMENT_TYPE', 'SEAL_TYPE']
-  })
-  console.log(res)
-  if (res && res.code === 200) {
-    state.documentTypeOptions = res.data?.SYSTEM_DOCUMENT_TYPE
-      ? res.data.SYSTEM_DOCUMENT_TYPE
-      : []
-    state.sealOptions = res.data?.SEAL_TYPE ? res.data.SEAL_TYPE : []
-  }
-}
 const getDictTreeListData = async () => {
   const params = {
     dictType: 'SOURCE_SYSTEM'
@@ -187,7 +184,6 @@ const getDictTreeListData = async () => {
 
 onMounted(() => {
   API.getDocumentList(queryParams.value)
-  getDicList()
   getDictTreeListData()
 })
 </script>
