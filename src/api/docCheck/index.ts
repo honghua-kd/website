@@ -85,7 +85,8 @@ export class DocCheckAPI {
       data,
       headers: {
         'Content-Type': 'application/form-data'
-      }
+      },
+      responseType: 'blob'
     })
   }
 

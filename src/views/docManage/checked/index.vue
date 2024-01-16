@@ -476,7 +476,7 @@ const changeSwitch = async (row: DocumentPageResponse) => {
 }
 
 // 测试文书
-const testDocument = async (documentNo: string) => {
+const testDocument = (documentNo: string) => {
   const formData = new FormData()
   formData.append('documentNo', documentNo + '')
   // formData.append('documentNo', 'DY20240110094153497000001')
