@@ -56,6 +56,9 @@
         <el-button link type="primary" @click="editHandler(scope.row)">
           编辑
         </el-button>
+        <el-button link type="primary" @click="downloadHandler(scope.row)">
+          下载
+        </el-button>
         <el-button link type="danger" @click="delHandler([scope.row.id])">
           删除
         </el-button>
@@ -144,7 +147,7 @@ import { SystemAPI, CommonAPI } from '@/api'
 import { TemplateListItem } from '@/api/system/types/response'
 import { Plus, Delete, UploadFilled } from '@element-plus/icons-vue'
 // import { useDictStore } from '@/store/dict'
-import { px2rem } from '@/utils'
+import { px2rem, handleDownloadFile } from '@/utils'
 import { ElMessageBox, ElMessage, genFileId } from 'element-plus'
 import type {
   UploadRawFile,
@@ -191,8 +194,8 @@ const businessCascader = ref<string[]>([])
 watch(
   () => businessCascader.value,
   (newVal) => {
-    queryParams.businessCategory = newVal[0]
-    queryParams.businessSubcategory = newVal[0]
+    queryParams.businessCategory = newVal ? newVal[0] : ''
+    queryParams.businessSubcategory = newVal ? newVal[1] : ''
   }
 )
 
@@ -367,13 +370,20 @@ const selectIds = computed(() => {
 })
 
 const getList = () => {
-  API.getTemplateList(queryParams).then((res) => {
-    if (res.data) {
-      tableData.splice(0, tableData.length)
-      tableData.push(...(res.data.list || []))
-      pageTotal.value = Number(res.data.total)
-    }
-  })
+  tableLoading.value = true
+  API.getTemplateList(queryParams)
+    .then((res) => {
+      tableLoading.value = false
+      if (res.data) {
+        tableData.splice(0, tableData.length)
+        tableData.push(...(res.data.list || []))
+        pageTotal.value = Number(res.data.total)
+      }
+    })
+    .catch((err) => {
+      tableLoading.value = false
+      throw new Error(err)
+    })
 }
 
 // 删除
@@ -435,6 +445,17 @@ const editHandler = (row: TemplateListItem) => {
     businessSubcategory || ''
   ]
   dialogVisible.value = true
+}
+
+// 下载
+const downloadHandler = (row: TemplateListItem) => {
+  const { businessCategory, businessSubcategory } = row
+  API.templateImportResult({ businessCategory, businessSubcategory }).then(
+    (res) => {
+      handleDownloadFile(res)
+      ElMessage.success('下载成功')
+    }
+  )
 }
 
 getList()
