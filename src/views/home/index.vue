@@ -4,6 +4,7 @@
       <h1>欢迎使用</h1>
       <h1>海通恒信运营中台系统</h1>
     </div>
+    <DynamicForm :data="data" v-model="query" />
   </div>
 </template>
 
@@ -11,6 +12,19 @@
 export default {
   name: 'Home'
 }
+</script>
+<script setup lang="ts">
+import { data } from './data'
+import { reactive } from 'vue'
+const query = reactive({
+  string1: '',
+  string2: '',
+  string3: '',
+  string4: '',
+  string5: '',
+  string6: '',
+  string7: ''
+})
 </script>
 
 <style lang="scss" scoped>

@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AreaCascader: typeof import('./../components/AreaCascader/index.vue')['default']
     DataPermissonForm: typeof import('./../components/PermiForm/DataPermissonForm.vue')['default']
+    DynamicForm: typeof import('./../components/DynamicForm/index.vue')['default']
     EditDialog: typeof import('./../components/EditDialog/index.vue')['default']
     ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
