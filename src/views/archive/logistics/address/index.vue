@@ -30,8 +30,10 @@
         <el-row justify="end">
           <el-col :span="10" class="btn-row">
             <el-form-item>
-              <el-button type="primary" @click="searchHandler">查询</el-button>
-              <el-button @click="reset">重置</el-button>
+              <el-button type="primary" @click="searchHandler" :icon="Search"
+                >查询</el-button
+              >
+              <el-button @click="reset" :icon="Refresh">重置</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -76,7 +78,7 @@
 <script lang="ts" setup>
 import { ref, reactive, Ref, computed } from 'vue'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
-import { Plus } from '@element-plus/icons-vue'
+import { Plus, Search, Refresh } from '@element-plus/icons-vue'
 import type { UsualAddressListItem } from '@/api'
 import { ExpressAPI } from '@/api'
 import { px2rem } from '@/utils'
@@ -144,10 +146,6 @@ const delHandler = (id: number) => {
       })
     })
     .catch((err: Error) => {
-      ElMessage({
-        type: 'error',
-        message: '删除失败'
-      })
       throw err
     })
 }
@@ -160,11 +158,7 @@ const addHandler = () => {
 // 获取列表
 const getList = () => {
   tableLoading.value = true
-  const params = {
-    userName: queryParams.userName,
-    userPhone: queryParams.userPhone
-  }
-  API.getUsualAddressList(params)
+  API.getUsualAddressList(queryParams)
     .then((res) => {
       tableLoading.value = false
       if (res && res.code === 200) {

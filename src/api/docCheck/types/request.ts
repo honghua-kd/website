@@ -36,7 +36,7 @@ export interface DocumentPageRequest extends PageRequest {
   /**
    * 适用部门
    */
-  sourceSystem1?: string[] | null
+  sourceSystem1?: string[]
   /**
    * 文书状态 0-停用 1-启用
    */
@@ -77,6 +77,8 @@ export interface SaveOrUpdateDocRequest {
    * 适用部门
    */
   sourceSystem1: string[]
+  // 自行添加属性
+  fileName?: string
 }
 
 /**

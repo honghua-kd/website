@@ -12,7 +12,7 @@
     <el-row>
       <el-col :span="12" class="bfont">
         {{ editForm.supplierName }}
-        <span class="top-status">{{ getFirstStatus(editForm.status) }}</span>
+        <el-tag>{{ getFirstStatus(editForm.status) }}</el-tag>
       </el-col>
     </el-row>
     <el-form :model="editForm" label-width="120px" label-position="top" inline>
@@ -148,13 +148,15 @@
     <!--  -->
     <div class="settlement-account">
       <h3 class="flex-start-center">
-        供应商账号<el-icon
-          style="margin: 0 0 2px 10px; cursor: pointer"
-          color="#1890FF"
-          size="18"
+        供应商账号
+        <el-button
+          type="primary"
+          :icon="Plus"
           @click="addAccount"
-          ><CirclePlusFilled
-        /></el-icon>
+          style="margin-left: 5px"
+        >
+          新建
+        </el-button>
       </h3>
 
       <Table
@@ -194,15 +196,18 @@
     <!--  -->
     <div class="city-person">
       <h3 class="flex-start-center">
-        负责城市联系人<el-icon
-          style="margin: 0 0 2px 10px; cursor: pointer"
-          color="#1890FF"
-          size="18"
-          @click="addPerson"
-          ><CirclePlusFilled
-        /></el-icon>
+        负责城市联系人
         <el-button
           type="primary"
+          :icon="Plus"
+          @click="addPerson"
+          style="margin-left: 5px"
+        >
+          新建
+        </el-button>
+        <el-button
+          type="primary"
+          :icon="Upload"
           @click="importHandler('SUPPLIER_CITY_CONTACTS')"
         >
           导入
@@ -245,15 +250,18 @@
     <!--  -->
     <div class="settlement-type">
       <h3 class="flex-start-center">
-        结算方式<el-icon
-          style="margin: 0 0 2px 10px; cursor: pointer"
-          color="#1890FF"
-          size="18"
-          @click="addSettlement"
-          ><CirclePlusFilled
-        /></el-icon>
+        结算方式
         <el-button
           type="primary"
+          :icon="Plus"
+          @click="addSettlement"
+          style="margin-left: 5px"
+        >
+          新建
+        </el-button>
+        <el-button
+          type="primary"
+          :icon="Upload"
           @click="importHandler('SUPPLIER_SETTLEMENT_WAY')"
         >
           导入
@@ -334,7 +342,7 @@ import type {
   ModelStateType,
   EditForm
 } from '@/views/supplier/supplierManage/type'
-import { CirclePlusFilled, Delete } from '@element-plus/icons-vue'
+import { Delete, Upload, Plus } from '@element-plus/icons-vue'
 import ImportForm from './ImportForm.vue'
 import {
   PersonColumn,
@@ -595,6 +603,8 @@ watch(
     state.step = 1
     state.dialogVisible = newVisible
     state.editForm = newValue as unknown as EditForm
+    selCity.value = []
+    selSettle.value = []
     if (newVisible) {
       await getDicts()
       await getAccountList()
@@ -794,7 +804,7 @@ const getWay = (val: string) => {
 const getStatus = (val: string) => {
   let label = ''
   dictStore.dicts.SUPPLIER_ACCOUNT_STATUS.forEach((item) => {
-    if (item.value === val) {
+    if (item.value === String(val)) {
       label = item.label
     }
   })
@@ -982,9 +992,5 @@ const stopSupplier = () => {
 }
 .bfont {
   font-size: $base-font-size-bigger;
-}
-.top-status {
-  font-size: $base-font-size-big;
-  color: $base-color-primary;
 }
 </style>

@@ -106,7 +106,7 @@ const addHandler = () => {
         if (res && res.code === 200) {
           ElMessage({
             type: 'success',
-            message: '修改成功'
+            message: '编辑成功'
           })
           dialogVisible.value = false
           emit('success')

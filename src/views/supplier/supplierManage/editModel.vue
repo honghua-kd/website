@@ -16,30 +16,33 @@
       label-position="top"
       inline
       ref="basicInfoFormRef"
+      :rules="rules"
     >
       <div class="type-title">基础信息</div>
       <el-row style="width: 100%">
         <el-col :span="12">
           <el-form-item
             label="公司名称"
-            :rules="[{ required: true, message: 'required' }]"
+            :rules="[{ required: true, message: '请输入公司名称' }]"
             prop="supplierName"
           >
             <el-input
               v-model="editForm.supplierName"
               placeholder="请输入公司名称"
+              clearable
             />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item
             label="组织机构代码"
-            :rules="[{ required: true, message: 'required' }]"
+            :rules="[{ required: true, message: '请输入组织机构代码' }]"
             prop="organCode"
           >
             <el-input
               v-model="editForm.organCode"
               placeholder="请输入组织机构代码"
+              clearable
             />
           </el-form-item>
         </el-col>
@@ -49,13 +52,14 @@
           <!-- 详情接口无子段 -->
           <el-form-item
             label="登记注册号类型"
-            :rules="[{ required: true, message: 'required' }]"
+            :rules="[{ required: true, message: '请选择登记注册号类型' }]"
             prop="registerType"
           >
             <el-select
               v-model="editForm.registerType"
               style="width: 100%"
               placeholder="请选择登记注册号类型"
+              clearable
             >
               <el-option
                 v-for="item in registerTypeStatus"
@@ -70,12 +74,13 @@
           <!-- 详情接口无子段 -->
           <el-form-item
             label="登记注册号码"
-            :rules="[{ required: true, message: 'required' }]"
+            :rules="[{ required: true, message: '请输入登记注册号码' }]"
             prop="registerCode"
           >
             <el-input
               v-model="editForm.registerCode"
               placeholder="请输入登记注册号码"
+              clearable
             />
           </el-form-item>
         </el-col>
@@ -84,7 +89,7 @@
         <el-col :span="12">
           <el-form-item
             label="供应商类型"
-            :rules="[{ required: true, message: 'required' }]"
+            :rules="[{ required: true, message: '请选择供应商类型' }]"
             prop="supplierTypes"
           >
             <el-select
@@ -92,6 +97,7 @@
               style="width: 100%"
               placeholder="请选择供应商类型"
               multiple
+              clearable
             >
               <el-option
                 v-for="item in supplierDetailType"
@@ -106,12 +112,13 @@
           <!-- 详情接口无子段 -->
           <el-form-item
             label="公司规模"
-            :rules="[{ required: true, message: 'required' }]"
+            :rules="[{ required: true, message: '请输入公司规模' }]"
             prop="companyScale"
           >
             <el-input
               v-model="editForm.companyScale"
               placeholder="请输入公司规模"
+              clearable
             />
           </el-form-item>
         </el-col>
@@ -121,7 +128,7 @@
           <!-- 详情接口无子段 -->
           <el-form-item
             label="归属"
-            :rules="[{ required: true, message: 'required' }]"
+            :rules="[{ required: true, message: '请选择归属公司' }]"
             prop="belongCompanyCodes"
           >
             <el-select
@@ -129,6 +136,7 @@
               style="width: 100%"
               placeholder="请选择归属公司"
               multiple
+              clearable
             >
               <el-option
                 v-for="item in belongCompanyStatus"
@@ -142,7 +150,7 @@
         <el-col :span="12">
           <el-form-item
             label="到期日期"
-            :rules="[{ required: true, message: 'required' }]"
+            :rules="[{ required: true, message: '请选择到期日期' }]"
             prop="expireDate"
           >
             <el-date-picker
@@ -152,6 +160,7 @@
               placeholder="选择日期时间"
               format="YYYY-MM-DD"
               value-format="YYYY-MM-DD"
+              clearable
             />
           </el-form-item>
         </el-col>
@@ -160,7 +169,7 @@
         <el-col :span="12">
           <el-form-item
             label="签约日期"
-            :rules="[{ required: true, message: 'required' }]"
+            :rules="[{ required: true, message: '请选择签约日期' }]"
             prop="signDate"
           >
             <el-date-picker
@@ -170,6 +179,7 @@
               placeholder="选择日期时间"
               format="YYYY-MM-DD"
               value-format="YYYY-MM-DD"
+              clearable
             />
           </el-form-item>
         </el-col>
@@ -178,31 +188,53 @@
       <el-row style="width: 100%">
         <el-col :span="12">
           <el-form-item
-            label="内部对接人"
-            :rules="[{ required: true, message: 'required' }]"
-            prop="innerInterfaceStaffCode"
+            label="内部对接人名称"
+            :rules="[{ required: true, message: '请输入内部对接人工号' }]"
+            prop="innerInterfaceStaffName"
           >
             <el-input
-              v-model="editForm.innerInterfaceStaffCode"
-              placeholder="请输入内部对接人名称"
-              style="width: 50%"
-            ></el-input>
-            <el-input
               v-model="editForm.innerInterfaceStaffName"
-              placeholder="请输入内部对接人工号"
-              style="width: 50%"
+              placeholder="请输入内部对接人名称"
+              style="width: 100%"
+              clearable
             ></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item
+            label="内部对接人工号"
+            :rules="[{ required: true, message: '请输入内部对接人名称' }]"
+            prop="innerInterfaceStaffCode"
+          >
+            <el-input
+              v-model="editForm.innerInterfaceStaffCode"
+              placeholder="请输入内部对接人工号"
+              style="width: 100%"
+              clearable
+            ></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row style="width: 100%">
+        <el-col :span="12">
+          <el-form-item
             label="联系人"
-            :rules="[{ required: true, message: 'required' }]"
+            :rules="[{ required: true, message: '请输入联系人' }]"
             prop="contactName"
           >
             <el-input
               v-model="editForm.contactName"
               placeholder="请输入联系人"
+              clearable
+            ></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="联系电话" prop="phone">
+            <el-input
+              v-model="editForm.phone"
+              placeholder="请输入联系电话"
+              clearable
             ></el-input>
           </el-form-item>
         </el-col>
@@ -210,51 +242,47 @@
       <el-row style="width: 100%">
         <el-col :span="12">
           <el-form-item
-            label="联系电话"
-            :rules="[{ required: true, message: 'required' }]"
-            prop="phone"
-          >
-            <el-input
-              v-model="editForm.phone"
-              placeholder="请输入联系电话"
-            ></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item
             label="公司地址"
-            :rules="[{ required: true, message: 'required' }]"
+            :rules="[{ required: true, message: '请输入公司地址' }]"
             prop="address"
           >
             <el-input
               v-model="editForm.address"
               placeholder="请输入公司地址"
+              clearable
             ></el-input>
           </el-form-item>
         </el-col>
-      </el-row>
-      <el-row style="width: 100%">
         <el-col :span="12">
           <el-form-item
             label="联系人邮箱"
-            :rules="[{ required: true, message: 'required' }]"
+            :rules="[
+              { required: true, message: '请输入邮箱地址' },
+              {
+                type: 'email',
+                message: '请输入正确的邮箱地址',
+                trigger: ['blur', 'change']
+              }
+            ]"
             prop="email"
           >
             <el-input
               v-model="editForm.email"
               placeholder="请输入联系人邮箱"
+              clearable
             ></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item
             label="邮编"
-            :rules="[{ required: true, message: 'required' }]"
+            :rules="[{ required: true, message: '请输入邮编' }]"
             prop="postcode"
           >
             <el-input
               v-model="editForm.postcode"
               placeholder="请输入邮编"
+              clearable
             ></el-input>
           </el-form-item>
         </el-col>
@@ -268,74 +296,73 @@
         <el-col :span="12">
           <el-form-item
             label="账户名称"
-            :rules="[{ required: true, message: 'required' }]"
+            :rules="[{ required: true, message: '请输入账户名称' }]"
             prop="accountName"
           >
             <el-input
               v-model="item.accountName"
               placeholder="请输入账户名称"
+              clearable
             ></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item
             label="银行账户"
-            :rules="[{ required: true, message: 'required' }]"
+            :rules="[{ required: true, message: '请输入银行账户' }]"
             prop="bankAccount"
           >
             <el-input
               v-model="item.bankAccount"
               placeholder="请输入银行账户"
+              clearable
             ></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item
             label="开户银行"
-            :rules="[{ required: true, message: 'required' }]"
+            :rules="[{ required: true, message: '请输入开户银行' }]"
             prop="openBank"
           >
             <el-input
               v-model="item.openBank"
               placeholder="请输入开户银行"
+              clearable
             ></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item
             label="支行"
-            :rules="[{ required: true, message: 'required' }]"
+            :rules="[{ required: true, message: '请输入支行' }]"
             prop="subBank"
           >
             <el-input
               v-model="item.subBank"
               placeholder="请输入支行"
+              clearable
             ></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item
-            label="开户银行区域"
-            :rules="[{ required: true, message: 'required' }]"
-          >
+          <el-form-item label="开户银行区域" prop="areaCode">
             <el-cascader
               v-model="selArea"
               clearable
               ref="cascaderArea"
               :props="propsArea"
               style="width: 100%"
+              @change="changeArea"
             />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item
-            label="开户行行号"
-            :rules="[{ required: true, message: 'required' }]"
-            prop="openBankCode"
-          >
+          <el-form-item label="开户行行号" prop="openBankCode">
             <el-input
               v-model="item.openBankCode"
               placeholder="请输入开户行行号"
+              clearable
             ></el-input>
           </el-form-item>
         </el-col>
@@ -411,10 +438,15 @@ import type {
 } from '@/views/supplier/supplierManage/type'
 import type { DictDataTreeResponse, DictItem } from '@/api'
 import { Delete } from '@element-plus/icons-vue'
-import type { CascaderProps, CascaderOption } from 'element-plus'
+import type {
+  CascaderProps,
+  CascaderOption,
+  FormRules,
+  CascaderValue
+} from 'element-plus'
 import ImportAttachment from './attachmentForm.vue'
 import dayjs from 'dayjs'
-
+import type { InternalRuleItem } from 'async-validator'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import { SupplierAPI, CommonAPI } from '@/api'
 const CommonApi = new CommonAPI()
@@ -460,6 +492,7 @@ const state = reactive<ModelStateType>({
     openBankCityName: '',
     openBankCountyCode: '',
     openBankCountyName: '',
+    areaCode: [],
     files: [],
     attachmentInfoList: [],
     supplierTypeNames: [],
@@ -546,10 +579,27 @@ const getDicts = () => {
   supplierDetailType.value = dictStore.dicts.SUPPLIER_DETAIL_TYPE
 }
 watch(
+  () => state.editForm.bankAccountList,
+  (val) => {
+    if (val?.length) {
+      state.editForm.accountName = val[0]?.accountName
+      state.editForm.bankAccount = val[0]?.bankAccount
+      state.editForm.openBank = val[0]?.openBank
+      state.editForm.subBank = val[0]?.subBank
+      state.editForm.openBankCode = val[0]?.openBankCode
+      state.editForm.openBankProCode = val[0]?.openBankProCode
+      state.editForm.openBankProName = val[0]?.openBankProName
+      state.editForm.openBankCityCode = val[0]?.openBankCityCode
+      state.editForm.openBankCityName = val[0]?.openBankCityName
+      state.editForm.openBankCountyCode = val[0]?.openBankCountyCode
+      state.editForm.openBankCountyName = val[0]?.openBankCountyName
+    }
+  },
+  { deep: true }
+)
+watch(
   [() => props.visible, () => props.formValue],
   async ([newVisible, newValue]) => {
-    console.error(newVisible)
-
     state.step = 1
     state.dialogVisible = newVisible
     state.editForm = newValue as unknown as EditForm
@@ -557,6 +607,11 @@ watch(
       Number(state.editForm.bankAccountList[0]?.openBankProCode),
       Number(state.editForm.bankAccountList[0].openBankCityCode),
       Number(state.editForm.bankAccountList[0].openBankCountyCode)
+    ]
+    state.editForm.areaCode = [
+      String(state.editForm.bankAccountList[0]?.openBankProCode),
+      String(state.editForm.bankAccountList[0].openBankCityCode),
+      String(state.editForm.bankAccountList[0].openBankCountyCode)
     ]
     await getDicts()
   },
@@ -570,6 +625,52 @@ watch(step, (newValue) => {
   state.okButtonText = newValue === 3 ? '确认' : '下一步'
 })
 
+const rules = reactive<FormRules<typeof editForm>>({
+  areaCode: [
+    {
+      validator: (
+        rule: InternalRuleItem,
+        value: string[] | undefined,
+        callback: (error?: string | Error | undefined) => void
+      ) => {
+        if (value && value?.length) {
+          callback()
+        } else {
+          callback(new Error('请输入开户银行区域'))
+        }
+      },
+      trigger: 'change',
+      required: true
+    }
+  ],
+  phone: [
+    {
+      validator: (
+        rule: InternalRuleItem,
+        value: string,
+        callback: (error?: string | Error | undefined) => void
+      ) => {
+        var regExp1 = /^1[3456789]\d{9}$/
+        var regExp2 = /^(0\d{2,3}-?)?\d{7,8}(-\d{1,4})?$/
+        if (regExp1.test(value) || regExp2.test(value)) {
+          callback()
+        } else {
+          callback(new Error('请正确输入联系电话'))
+        }
+      },
+      required: true,
+      trigger: 'blur'
+    }
+  ]
+})
+const changeArea = (val: CascaderValue) => {
+  val = val as string[]
+  if (val?.length) {
+    state.editForm.areaCode = [String(val[0]), String(val[1]), String(val[2])]
+  } else {
+    state.editForm.areaCode = []
+  }
+}
 const emit = defineEmits<{
   (e: 'closeModel', { visible, type }: { visible: boolean; type: string }): void
 }>()
@@ -625,7 +726,7 @@ const submitForm = async () => {
     bankAccount: state.editForm.bankAccountList[0].bankAccount,
     openBank: state.editForm.bankAccountList[0].openBank,
     subBank: state.editForm.bankAccountList[0].subBank,
-    openBankCode: state.editForm.bankAccountList[0].openBankCode,
+    openBankCode: state.editForm.bankAccountList[0].openBankCode || '',
     openBankProCode: selArea.value[0],
     openBankProName: cascaderArea.value[0].getCheckedNodes()[0].pathLabels[0],
     openBankCityCode: selArea.value[1],

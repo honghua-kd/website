@@ -1,41 +1,24 @@
 <template>
   <div class="main-part-container">
-    <!-- filter -->
-    <div class="main-search-container" :ref="searchBoxRef">
-      <el-form
-        :inline="true"
-        :model="formModel"
-        class="filter-form"
-        :label-width="px2rem('110px')"
+    <!-- 搜索工作栏 -->
+    <div :ref="searchBoxRef">
+      <!-- search bar -->
+      <SearchBar
+        v-model="formModel"
+        :searchConfig="searchConfig"
+        :labelWidth="'100px'"
+        @reset="reset"
+        @search="searchHandler"
       >
-        <el-row :gutter="20">
-          <el-col :span="6"
-            ><el-form-item label="抵押主体名称" style="width: 100%">
-              <el-input
-                v-model="formModel.mortgageSubjectName"
-              /> </el-form-item
-          ></el-col>
-          <el-col :span="6">
-            <el-form-item label="城市" style="width: 100%">
-              <AreaCasder
-                style="width: 100%"
-                :multiple="true"
-                :value="areaCode"
-                @changeAreaData="changeAreaData"
-              /> </el-form-item
-          ></el-col>
-        </el-row>
-        <el-row justify="end">
-          <el-col :span="6" class="btn-row"
-            ><el-form-item>
-              <el-button :icon="Search" type="primary" @click="search"
-                >查询</el-button
-              >
-              <el-button :icon="Refresh" @click="refresh">重置</el-button>
-            </el-form-item></el-col
-          >
-        </el-row>
-      </el-form>
+        <template #area>
+          <AreaCasder
+            :value="areaCode"
+            style="width: 100%"
+            :multiple="true"
+            @changeAreaData="changeAreaData"
+          />
+        </template>
+      </SearchBar>
     </div>
     <el-divider border-style="dashed" />
     <!-- list -->
@@ -78,29 +61,30 @@
         <template #selection>
           <el-table-column
             type="selection"
-            :width="px2rem('40px')"
+            :width="40"
             :selectable="() => true"
             :fixed="true"
             align="center"
           />
         </template>
-        <template #action="scope">
-          <el-button
-            v-for="item in tableActionList"
-            :key="item.value"
-            link
-            :type="item.value === 'delete' ? 'danger' : 'primary'"
-            @click="actionTableItem(scope, item.value)"
-            >{{ item.label }}</el-button
+        <template #action="{ row }">
+          <el-button link type="primary" @click="actionTableItem(row, 'edit')"
+            >编辑</el-button
           >
-        </template></Table
-      >
+          <el-button link type="danger" @click="actionTableItem(row, 'delete')"
+            >删除</el-button
+          >
+        </template>
+      </Table>
     </div>
     <!--  -->
     <EditModel
       :visible="editModelVisible"
       :formValue="detailData"
       :title="editModelTitle"
+      :contractSubjectOptions="dictStore.dicts['CONTRACT_SUBJECT']"
+      :mortgageCapitalOptions="dictStore.dicts['MORTGAGE_CAPITAL_INFO']"
+      :mortgageSubjectOptions="dictStore.dicts['MORTGAGE_SUBJECT_TYPE']"
       @closeModel="closeModel"
     />
   </div>
@@ -108,215 +92,48 @@
 
 <script setup lang="ts">
 import { reactive, toRefs, ref, computed, onMounted } from 'vue'
-import BasicData from '@/views/mortgage/mainPart/data'
-import EditModel from '@/views/mortgage/mainPart/editModel.vue'
-import {
-  Refresh,
-  Search,
-  Plus,
-  Delete,
-  Download
-} from '@element-plus/icons-vue'
+import { searchConfig, tableColumn } from './data'
+import EditModel from './editModel.vue'
+import { Plus, Delete, Download } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { px2rem } from '@/utils'
+import { handleDownloadFile } from '@/utils'
+import SearchBar from '@/components/SearchBar/index.vue'
 import Table from '@/components/Table/index.vue'
-import { MainPartAPI } from '@/api'
+import { MainPartAPI, CommonAPI } from '@/api'
 import AreaCasder from '@/components/AreaCascader/index.vue'
-import type { StateType } from '@/views/mortgage/mainPart/type'
+import type { StateType } from './type'
 import type { MortgageSubjectListResponse } from '@/api/mainPart/types/response'
-
+import { useDictStore } from '@/store/dict'
 const API = new MainPartAPI()
+const COMMONAPI = new CommonAPI()
+const dictStore = useDictStore()
 const state = reactive<StateType>({
   formModel: {
     mortgageSubjectName: '',
-    contactAddressProvinceCode: '',
-    contactAddressCityCode: '',
+    provinces: [],
+    cities: [],
     pageNo: 1,
     pageSize: 10
   },
   tableLoading: false,
-  tableColumn: [
-    {
-      label: '抵押主体名称',
-      prop: 'mortgageSubjectName',
-      minWidth: 120,
-      align: 'left',
-      forbiddenEdit: true
-    },
-    {
-      label: '全称',
-      prop: 'mortgageSubjectAllName',
-      minWidth: 120,
-      align: 'left'
-    },
-    {
-      label: '组织机构代码',
-      prop: 'organizationCode',
-      width: 120,
-      align: 'center'
-    },
-    {
-      label: '省',
-      prop: 'contactAddressProvinceName',
-      width: 120,
-      align: 'left'
-    },
-    {
-      label: '市',
-      prop: 'contactAddressCityName',
-      width: 120,
-      align: 'left'
-    },
-    {
-      label: '详细地址',
-      prop: 'contactAddressDetail',
-      minWidth: 120,
-      align: 'left'
-    },
-    {
-      label: '注册地址',
-      prop: 'registeredAddress',
-      minWidth: 120,
-      align: 'left'
-    },
-    {
-      label: '联系人',
-      prop: 'contactName',
-      minWidth: 120,
-      align: 'left'
-    },
-    {
-      label: '联系电话',
-      prop: 'contactPhone',
-      width: 100,
-      align: 'center'
-    },
-    {
-      label: '创建人',
-      prop: 'creatorName',
-      minWidth: 100,
-      fixed: false,
-      align: 'left'
-    },
-    {
-      label: '创建时间',
-      prop: 'createTime',
-      minWidth: 130,
-      align: 'center'
-    },
-    {
-      label: '最后更新人',
-      prop: 'updaterName',
-      minWidth: 100,
-      align: 'left'
-    },
-    {
-      label: '更新时间',
-      prop: 'updateTime',
-      minWidth: 130,
-      align: 'center'
-    },
-    {
-      type: 'action',
-      label: '操作',
-      prop: '',
-      width: 120,
-      fixed: 'right',
-      align: 'center'
-    }
-  ],
   tableData: [],
-  tableActionList: BasicData.tableActionList,
   pageTotal: 100,
   editModelVisible: false,
   editModelTitle: '',
   selectIdsArr: [],
   detailData: {
-    /**
-     * 资方信息
-     */
-    capitalInfo: '',
-    /**
-     * 联系地址-城市code
-     */
-    contactAddressCityCode: '',
-    /**
-     * 联系地址-城市名称
-     */
-    contactAddressCityName: '',
-    /**
-     * 联系地址-详细地址
-     */
-    contactAddressDetail: '',
-    /**
-     * 联系地址-省份code
-     */
-    contactAddressProvinceCode: '',
-    /**
-     * 联系地址-省份名称
-     */
-    contactAddressProvinceName: '',
-    /**
-     * 联系人
-     */
-    contactName: '',
-    /**
-     * 联系电话
-     */
-    contactPhone: '',
-    /**
-     * 合同主体
-     */
-    contractSubject: '',
-    /**
-     * 创建时间
-     */
-    createTime: '',
-    /**
-     * 创建者
-     */
-    creatorName: '',
-    /**
-     * 抵押主体全称
-     */
     mortgageSubjectAllName: '',
-    /**
-     * 抵押主体唯一Code
-     */
-    mortgageSubjectCode: '',
-    /**
-     * 抵押主体名称
-     */
     mortgageSubjectName: '',
-    /**
-     * 抵押主体类型
-     */
     mortgageSubjectType: '',
-    /**
-     * 组织机构代码
-     */
     organizationCode: '',
-    /**
-     * 注册地址
-     */
-    registeredAddress: '',
-    /**
-     * 更新者
-     */
-    updaterName: '',
-    /**
-     * 更新时间
-     */
-    updateTime: ''
+    registeredAddress: ''
   },
   areaCode: []
 })
 const {
   formModel,
   tableLoading,
-  tableColumn,
   tableData,
-  tableActionList,
   pageTotal,
   editModelVisible,
   editModelTitle,
@@ -345,6 +162,7 @@ onMounted(() => {
   getListData()
 })
 
+// 获取列表数据
 const getListData = async () => {
   state.tableLoading = true
   const res = await API.getMortgageSubjectList(formModel.value)
@@ -355,23 +173,27 @@ const getListData = async () => {
   }
 }
 
-const search = () => {
+// 查询
+const searchHandler = () => {
   formModel.value.pageNo = 1
   getListData()
 }
-const refresh = () => {
+// 重置
+const reset = () => {
   state.areaCode = []
   formModel.value.mortgageSubjectName = ''
-  formModel.value.contactAddressProvinceCode = ''
-  formModel.value.contactAddressCityCode = ''
+  formModel.value.provinces = []
+  formModel.value.cities = []
   formModel.value.pageNo = 1
   getListData()
 }
+// 切换分页size
 const handleSizeChange = (size: number) => {
   formModel.value.pageSize = size
   formModel.value.pageNo = 1
   getListData()
 }
+// 切换分页
 const handleCurrentChange = (page: number) => {
   formModel.value.pageNo = page
   getListData()
@@ -387,6 +209,8 @@ const action = (val: string | number) => {
     downloadData()
   }
 }
+
+// 删除数据
 const deleteData = () => {
   if (selectIdsArr.value.length === 0) {
     ElMessage({
@@ -403,52 +227,95 @@ const deleteData = () => {
   })
     .then(() => {
       // 调用删除接口
-      console.log(selectIdsArr.value)
+      API.getMortgageSubjectDelete({
+        ids: state.selectIdsArr
+      }).then((res) => {
+        if (res && res.code === 200) {
+          ElMessage({
+            type: 'success',
+            message: '删除成功'
+          })
+          getListData()
+        }
+      })
     })
     .catch((err: Error) => {
       throw err
     })
 }
+
+// 下载数据
 const downloadData = async () => {
-  state.tableLoading = true
-  const params = {}
-  // if (selectIdsArr.value.length === 0) {
-  // } else {
-  // }
-  // 调用下载接口
-  console.log(params)
-  state.tableLoading = false
-}
-const closeModel = ({ visible, type }: { visible: boolean; type: string }) => {
-  console.log(visible, type)
-  state.editModelVisible = visible
+  let params = {}
+  if (selectIdsArr.value.length === 0) {
+    params = {
+      mortgageSubjectName: formModel.value.mortgageSubjectName,
+      provinces: formModel.value.provinces,
+      cities: formModel.value.cities
+    }
+  } else {
+    params = { ids: selectIdsArr.value }
+  }
+  const res = await COMMONAPI.exportBySelect({
+    // 需要后端走通用下载接口，给出bizType
+    bizType: 'SUBJECT_INFO_EXPORT',
+    selectParams: JSON.stringify(params)
+  })
+  if (res && res.code === 200) {
+    if (res.data?.sync === 1) {
+      const params = { fileCode: res.data.fileCode as string }
+      COMMONAPI.downLoadFiles(params).then((res) =>
+        handleDownloadFile(res, '抵押主体.xlsx')
+      )
+    }
+  }
 }
 
+// 监听新增/编辑弹窗
+const closeModel = ({ visible, type }: { visible: boolean; type: string }) => {
+  state.editModelVisible = visible
+  if (type === 'update-close') {
+    // 是否需要返回第一页
+    // formModel.value.pageNo = 1
+    getListData()
+  }
+  state.detailData = {
+    mortgageSubjectAllName: '',
+    mortgageSubjectName: '',
+    mortgageSubjectType: '',
+    organizationCode: '',
+    registeredAddress: '',
+    contractSubject: [],
+    capitalInfo: []
+  }
+}
+
+// 表格数据选择
 const selectData = (selection: MortgageSubjectListResponse[]) => {
   const result: string[] = []
   if (selection.length !== 0) {
     selection.forEach((i: MortgageSubjectListResponse) => {
-      result.push(`${i.mortgageSubjectCode}`)
+      result.push(`${i.id}`)
     })
   }
   state.selectIdsArr = result
 }
 
+// 表格数据操作
 const actionTableItem = async (
-  row: { row: MortgageSubjectListResponse },
+  row: MortgageSubjectListResponse,
   value: string | number
 ) => {
-  const rowData = row.row
-  // if (value === 'edit') {
-  //   const res = await API.getAgencyDetail({ id: rowData.id })
-  //   if (res && res.code === 200) {
-  //     if (res.data) {
-  //       state.detailData = res.data
-  //     }
-  //     state.editModelTitle = '编辑'
-  //     state.editModelVisible = true
-  //   }
-  // }
+  if (value === 'edit') {
+    const res = await API.getMortgageSubjectDetail({ id: row.id })
+    if (res && res.code === 200) {
+      if (res.data) {
+        state.detailData = res.data
+      }
+      state.editModelTitle = '编辑'
+      state.editModelVisible = true
+    }
+  }
   if (value === 'delete') {
     // 二次确认
     ElMessageBox.confirm('确认要删除吗？', '警告', {
@@ -459,7 +326,7 @@ const actionTableItem = async (
       .then(() => {
         // 调用删除接口
         API.getMortgageSubjectDelete({
-          mortgageSubjectCode: rowData.mortgageSubjectCode
+          ids: [row.id]
         }).then((res) => {
           if (res && res.code === 200) {
             ElMessage({
@@ -476,6 +343,7 @@ const actionTableItem = async (
   }
 }
 
+// 切换地区
 const changeAreaData = ({
   provinceCode,
   provinceName,
@@ -488,8 +356,8 @@ const changeAreaData = ({
   cityName: string
 }) => {
   console.log(provinceCode, provinceName, cityCode, cityName)
-  formModel.value.contactAddressProvinceCode = provinceCode
-  formModel.value.contactAddressCityCode = cityCode
+  formModel.value.provinces = provinceCode.split(',')
+  formModel.value.cities = cityCode.split(',')
 }
 </script>
 
