@@ -10,7 +10,8 @@ import type {
   getTemplatePageRequest,
   SaveRequest,
   DeleteIdsRequest,
-  MortgageSubjectRequest
+  MortgageSubjectRequest,
+  InitiateApprovalRequest
 } from './types/request'
 import type {
   DocumentPageResponse,
@@ -91,6 +92,29 @@ export class DocCheckAPI {
   ): Response<PageList<DeleteResponse>> {
     return this.request({
       url: `${prefix}/admin-api/mortgage-document-template/saveOrUpdate`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 删除已审文书
+  deleteDocument(data: FormData): Response<boolean | null | undefined> {
+    return this.request({
+      url: `${prefix}/admin-api/system-document/delete`,
+      method: 'post',
+      data,
+      headers: {
+        'Content-Type': 'application/form-data'
+      }
+    })
+  }
+
+  // 发起审核
+  InitiateApproval(
+    data: InitiateApprovalRequest
+  ): Response<boolean | null | undefined> {
+    return this.request({
+      url: `${prefix}/admin-api/system-document/initiateApproval`,
       method: 'post',
       data
     })

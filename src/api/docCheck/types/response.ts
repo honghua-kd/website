@@ -78,6 +78,7 @@ export interface DocumentPageResponse {
    * 用印类型
    */
   sealType?: null | string
+  sealTypeDetail?: DictDataSimpleRespVO[] | null
   /**
    * 适用部门
    */

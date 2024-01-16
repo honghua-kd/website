@@ -72,7 +72,7 @@ export interface SaveOrUpdateDocRequest {
   /**
    * 用印类型 字典表 SEAL_TYPE
    */
-  sealType: string
+  sealType: string[]
   /**
    * 适用部门
    */
@@ -256,4 +256,24 @@ export interface ByNameAndTypeRequest {
    * 文书类型
    */
   documentType?: string
+}
+// 删除已审文书
+export interface DeleteDocumentRequest {
+  id: number
+}
+
+// 发起审核
+export interface InitiateApprovalRequest {
+  /**
+   * 审批路径
+   */
+  approvalPath?: null | string
+  /**
+   * 待审批文书编号
+   */
+  documentNos: string[]
+  /**
+   * 备注
+   */
+  remark: string
 }
