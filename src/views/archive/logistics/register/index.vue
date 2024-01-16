@@ -95,8 +95,10 @@
         <el-row justify="end">
           <el-col :span="6" class="btn-row">
             <el-form-item>
-              <el-button type="primary" @click="searchHandler">查询</el-button>
-              <el-button @click="reset">重置</el-button>
+              <el-button type="primary" @click="searchHandler" :icon="Search"
+                >查询</el-button
+              >
+              <el-button @click="reset" :icon="Refresh">重置</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -244,7 +246,8 @@ import {
   Upload,
   Download,
   Check,
-  Search
+  Search,
+  Refresh
 } from '@element-plus/icons-vue'
 import EditForm from './EditForm.vue'
 import LogisticsInfoForm from './LogisticsInfoForm.vue'
@@ -420,23 +423,27 @@ const exportHandler = () => {
   if (!tableData.length) {
     ElMessage({
       type: 'error',
-      message: '列表无数据无需导出'
+      message: '列表无数据，无需导出'
     })
   } else {
-    const params = {
+    const param = JSON.stringify({
       expressNo: queryParams.expressNo,
       expressCompany: queryParams.expressCompany,
       create_time: queryParams.createTime,
       expressType: queryParams.expressType,
       expressContent: queryParams.expressContent,
       expressContentRemark: queryParams.expressContentRemark
+    })
+    const params = {
+      selectParams: param,
+      bizType: 'EXPRESS_INFO_EXPORT'
     }
-    API.exportExpressContentInfo(params)
+    CommonApi.exportBySelect(params)
       .then((res) => {
         if (res && res.code === 200) {
           if (res?.data?.sync === 1) {
             const params = {
-              fileCode: res?.data?.fileCode
+              fileCode: res?.data?.fileCode as string
             }
             CommonApi.downLoadFiles(params)
               .then((res) => {

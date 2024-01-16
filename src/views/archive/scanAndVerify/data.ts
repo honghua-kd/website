@@ -204,7 +204,7 @@ export const tableConfig: ITableConfigProps[] = [
 export const searchConfig: ISearchUnit[] = [
   [
     {
-      compType: 'timeRange',
+      compType: 'date-range-picker',
       colSpan: 12,
       label: '核验时间',
       propStart: 'startVerifyTime',

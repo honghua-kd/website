@@ -6,6 +6,7 @@
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       center
+      width="40%"
     >
       <el-form
         ref="formRef"
@@ -14,7 +15,7 @@
         :label-width="px2rem('140px')"
       >
         <el-row>
-          <el-col :span="12">
+          <el-col :span="20">
             <el-form-item
               label="省市"
               prop="proandcity"
@@ -34,43 +35,7 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
-            <el-form-item label="是否可以办理抵押" prop="mortgageName">
-              <el-select
-                v-model="formParams.mortgageName"
-                clearable
-                placeholder="请选择"
-                style="width: 100%"
-              >
-                <el-option
-                  v-for="item in mortgageOpts"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.label"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="是否可以办理解押" prop="dischargeName">
-              <el-select
-                v-model="formParams.dischargeName"
-                clearable
-                placeholder="请选择"
-                style="width: 100%"
-              >
-                <el-option
-                  v-for="item in releaseOpts"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.label"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
+          <el-col :span="20">
             <el-row>
               <el-col :span="12">
                 <el-form-item
@@ -118,6 +83,44 @@
                 </el-form-item>
               </el-col>
             </el-row>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="20">
+            <el-form-item label="是否可以办理抵押" prop="mortgageName">
+              <el-select
+                v-model="formParams.mortgageName"
+                clearable
+                placeholder="请选择"
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="item in mortgageOpts"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.label"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="20">
+            <el-form-item label="是否可以办理解押" prop="dischargeName">
+              <el-select
+                v-model="formParams.dischargeName"
+                clearable
+                placeholder="请选择"
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="item in releaseOpts"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.label"
+                />
+              </el-select>
+            </el-form-item>
           </el-col>
         </el-row>
       </el-form>
@@ -272,8 +275,8 @@ const submitForm = async () => {
     cityCode: formParams.cityCode,
     cityName: formParams.cityName,
     licensePlateCode: formParams.licensePlateCode,
-    applyMortgage: formParams.mortgageName === '是' ? 0 : 1,
-    applyDischarge: formParams.dischargeName === '是' ? 0 : 1
+    applyMortgage: formParams.mortgageName === '是' ? 1 : 0,
+    applyDischarge: formParams.dischargeName === '是' ? 1 : 0
   }
   if (dialogTitle.value === '新增') {
     MortgageCityApi.addMortgageCity(params)
@@ -340,8 +343,8 @@ const open = async (
     formParams.licensePlateCode!.split(',').forEach((item: string) => {
       formParams.carCode.push(item[1])
     })
-    formParams.mortgageName = formParams.applyMortgage === 1 ? '否' : '是'
-    formParams.dischargeName = formParams.applyDischarge === 1 ? '否' : '是'
+    formParams.mortgageName = formParams.applyMortgage === 0 ? '否' : '是'
+    formParams.dischargeName = formParams.applyDischarge === 0 ? '否' : '是'
     await initOptions()
   } else {
     formParams.id = ''

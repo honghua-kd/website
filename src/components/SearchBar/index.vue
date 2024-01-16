@@ -22,7 +22,8 @@
                   :prop="[(item as ISearchConfigCommon).prop]"
                 >
                   <slot :name="item.slotName ? item.slotName : 'default'">
-                    <template v-if="item.compType === 'timeRange'">
+            
+                    <template v-if="item.compType === 'date-range-picker'">
                       <el-date-picker
                         v-model="modelValue[(item as ISearchConfigTimer).propStart ] "
                         type="datetime"
@@ -30,7 +31,7 @@
                         style="margin-right: 4%; width: 48%"
                       />
                       <el-date-picker
-                        v-model="modelValue[(item as ISearchConfigTimer).propEnd ]"
+                        v-model="modelValue[(item as ISearchConfigTimer).propEnd]"
                         type="datetime"
                         :placeholder="(item as ISearchConfigTimer).placeholderEnd || '请选择'"
                         style="width: 48%"

@@ -15,10 +15,11 @@ export const searchConfig: ISearchUnit[] = [
       colSpan: 6,
       label: '文书类型',
       prop: 'documentType',
+      options: 'SYSTEM_DOCUMENT_TYPE',
       placeholder: '请选择'
     },
     {
-      compType: 'el-date-picker',
+      compType: 'date-range-picker',
       colSpan: 12,
       label: '创建日期',
       propStart: 'createTimeStart',
@@ -33,14 +34,17 @@ export const searchConfig: ISearchUnit[] = [
       colSpan: 6,
       label: '审核状态',
       prop: 'approvalStatus',
+      options: 'SYSTEM_DOCUMENT_APPROVAL_STATUS',
       placeholder: '请选择'
     },
     {
-      compType: 'el-select',
+      compType: '',
       colSpan: 6,
       label: '适用部门',
-      prop: 'sourceSystem1',
-      placeholder: '请选择'
+      prop: '',
+      options: '',
+      placeholder: '请选择',
+      slotName: 'sourceSystem1'
     }
   ]
 ]
@@ -48,7 +52,7 @@ export const tableColumn: ITableConfigProps[] = [
   {
     label: '文书编号',
     prop: 'documentNo',
-    minWidth: 120,
+    minWidth: 200,
     fixed: false,
     align: 'center',
     forbiddenEdit: true
@@ -56,10 +60,11 @@ export const tableColumn: ITableConfigProps[] = [
   {
     label: '文书名称',
     prop: 'documentName',
-    minWidth: 120,
+    width: 120,
     fixed: false,
     align: 'center',
-    forbiddenEdit: true
+    forbiddenEdit: true,
+    showOverflowTooltip: true
   },
   {
     label: '文件类型',
@@ -91,24 +96,26 @@ export const tableColumn: ITableConfigProps[] = [
   },
   {
     label: '文书文件',
-    prop: 'fileCode',
-    minWidth: 120,
+    prop: 'fileName',
+    width: 150,
     fixed: false,
-    align: 'center'
+    align: 'left',
+    showOverflowTooltip: true
   },
   {
     label: '审核状态',
     prop: 'approvalStatus',
-    minWidth: 120,
+    width: 120,
     fixed: false,
     align: 'center'
   },
   {
     label: '备注',
     prop: 'remark',
-    minWidth: 120,
+    width: 150,
     fixed: false,
-    align: 'center'
+    align: 'center',
+    showOverflowTooltip: true
   },
   {
     label: '创建人',
@@ -121,7 +128,7 @@ export const tableColumn: ITableConfigProps[] = [
   {
     label: '创建时间',
     prop: 'createTime',
-    width: '130',
+    width: '140',
     minWidth: '',
     fixed: false,
     align: 'center'
@@ -138,7 +145,7 @@ export const tableColumn: ITableConfigProps[] = [
     label: '更新时间',
     prop: 'updateTime',
     width: '',
-    minWidth: '130',
+    minWidth: '140',
     fixed: false,
     align: 'center'
   },
@@ -154,15 +161,8 @@ export const tableColumn: ITableConfigProps[] = [
 ]
 export const saveListColumn: ITableConfigProps[] = [
   {
-    label: '排序',
-    prop: 'index',
-    width: '40',
-    align: 'canter'
-  },
-  {
     label: '文书名称',
     prop: 'documentName',
-    width: '',
     minWidth: '130',
     fixed: false,
     align: 'left',
@@ -178,15 +178,13 @@ export const saveListColumn: ITableConfigProps[] = [
   {
     label: '文书版本',
     prop: 'documentVersion',
-    width: '',
-    minWidth: '100',
+    width: '80',
     align: 'center'
   },
   {
     label: '附件信息',
     prop: 'fileCode',
-    width: '',
-    minWidth: '130',
+    width: '130',
     align: 'left',
     showOverflowTooltip: true
   },
@@ -195,6 +193,6 @@ export const saveListColumn: ITableConfigProps[] = [
     label: '操作',
     prop: 'action',
     width: '100',
-    align: 'canter'
+    align: 'center'
   }
 ]

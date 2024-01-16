@@ -12,9 +12,8 @@ export type StateType = {
   selectIdsArr: string[]
   editModelVisible: boolean
   editModelTitle: string
-  documentTypeOptions: DictListItem[]
   systemOptions: DictListItem[]
-  sealOptions: DictListItem[]
+  detailData: DocumentPageResponse
 }
 
 export type EditDocInfo = {
@@ -26,6 +25,10 @@ export type EditDocInfo = {
 export type ModelStateType = {
   dialogVisible: boolean
   docInfoForm: EditDocInfo
-  saveListInfo: SaveOrUpdateDocRequest[]
+  saveListForm: {
+    saveListInfo: SaveOrUpdateDocRequest[]
+  }
   listDialogvisible: boolean
+  importVisible: boolean
+  uploadItemIndex: number
 }

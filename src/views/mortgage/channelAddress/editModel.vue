@@ -60,6 +60,8 @@
           <el-col :span="11"
             ><el-form-item label="联系电话" prop="phone">
               <el-input
+                type="number"
+                onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
                 v-model="editForm.phone"
                 placeholder="请输入"
                 clearable
@@ -236,25 +238,26 @@ const rules = reactive<FormRules<typeof editForm>>({
       },
       trigger: 'change'
     }
-  ],
-  phone: [
-    {
-      validator: (
-        rule: InternalRuleItem,
-        value: string | undefined,
-        callback: (error?: string | Error | undefined) => void
-      ) => {
-        var regExp = /^1[3456789]\d{9}$/
-        if (!value || (value !== '' && regExp.test(value))) {
-          callback()
-        } else {
-          callback(new Error('请正确输入联系电话'))
-        }
-      },
-      required: false,
-      trigger: 'blur'
-    }
   ]
+  // 暂时不做手机号校验
+  // phone: [
+  //   {
+  //     validator: (
+  //       rule: InternalRuleItem,
+  //       value: string | undefined,
+  //       callback: (error?: string | Error | undefined) => void
+  //     ) => {
+  //       var regExp = /^1[3456789]\d{9}$/
+  //       if (!value || (value !== '' && regExp.test(value))) {
+  //         callback()
+  //       } else {
+  //         callback(new Error('请正确输入联系电话'))
+  //       }
+  //     },
+  //     required: false,
+  //     trigger: 'blur'
+  //   }
+  // ]
 })
 
 const emit = defineEmits<{
@@ -361,6 +364,13 @@ const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
     font-size: 28px;
     text-align: center;
     color: #8c939d;
+  }
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    appearance: none;
+  }
+  input[type='number'] {
+    appearance: textfield;
   }
 }
 </style>

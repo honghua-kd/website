@@ -8,8 +8,6 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AreaCascader: typeof import('./../components/AreaCascader/index.vue')['default']
-    Card: typeof import('./../components/Card/index.vue')['default']
-    CityCascader: typeof import('./../components/CityCascader/index.vue')['default']
     DataPermissonForm: typeof import('./../components/PermiForm/DataPermissonForm.vue')['default']
     EditDialog: typeof import('./../components/EditDialog/index.vue')['default']
     ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
@@ -66,7 +64,6 @@ declare module 'vue' {
     ElTimeline: typeof import('element-plus/es')['ElTimeline']
     ElTimelineItem: typeof import('element-plus/es')['ElTimelineItem']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
-    ElTree: typeof import('element-plus/es')['ElTree']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     ErrorPage: typeof import('./../components/ErrorPage/index.vue')['default']
     FormItem: typeof import('./../components/FormItem/index.vue')['default']
