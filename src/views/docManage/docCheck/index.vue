@@ -130,6 +130,7 @@
       :documentTypeOptions="dictStore.dicts['SYSTEM_DOCUMENT_TYPE']"
       :systemOptions="systemOptions"
       :sealOptions="dictStore.dicts['SEAL_TYPE']"
+      :pathOptions="pathOptions"
       @closeModel="closeModel"
     />
 
@@ -208,7 +209,8 @@ const state = reactive<StateType>({
   editModelTitle: '',
   systemOptions: [],
   detailData: {},
-  importVisible: false
+  importVisible: false,
+  pathOptions: []
 })
 const {
   queryParams,
@@ -220,7 +222,8 @@ const {
   editModelTitle,
   systemOptions,
   detailData,
-  importVisible
+  importVisible,
+  pathOptions
 } = toRefs(state)
 
 // 表格最大高度
@@ -381,13 +384,10 @@ const batchImport = () => {
 }
 
 const closeModel = ({ type }: { type: string }) => {
-  if (type === 'update-close') {
-    state.editModelTitle = ''
-    state.editModelVisible = false
+  state.editModelTitle = ''
+  state.editModelVisible = false
+  if (type === 'update-close' || type === 'approval-click-close') {
     getListData()
-  } else {
-    state.editModelTitle = ''
-    state.editModelVisible = false
   }
 }
 
@@ -410,6 +410,17 @@ const getDictTreeListData = async () => {
     }
   }
 }
+
+// 获取审批路径
+const getApprovalPath = async () => {
+  const formData = new FormData()
+  formData.append('businessCategory', 'DOCUMENT')
+  const res = await COMMONAPI.getApprovalPath(formData)
+  if (res && res.code === 200) {
+    state.pathOptions = res.data || []
+  }
+}
+
 const getListData = async () => {
   state.tableLoading = true
   const { documentName, createTimeStart, createTimeEnd, ...others } =
@@ -475,6 +486,7 @@ const downloadFile = (name: string, code: string) => {
 
 onMounted(() => {
   getDictTreeListData()
+  getApprovalPath()
   getListData()
 })
 </script>

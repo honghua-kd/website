@@ -85,3 +85,19 @@ export interface SaveOrUpdateDocRequest {
 export interface DeleteDocumentRequest {
   id: number
 }
+
+// 发起审核
+export interface InitiateApprovalRequest {
+  /**
+   * 审批路径
+   */
+  approvalPath?: null | string
+  /**
+   * 待审批文书编号
+   */
+  documentNos: string[]
+  /**
+   * 备注
+   */
+  remark: string
+}

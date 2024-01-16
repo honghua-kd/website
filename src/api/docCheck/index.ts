@@ -6,7 +6,8 @@ import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
 import type {
   DocumentPageRequest,
-  SaveOrUpdateDocRequest
+  SaveOrUpdateDocRequest,
+  InitiateApprovalRequest
 } from './types/request'
 import type { DocumentPageResponse } from './types/response'
 
@@ -49,6 +50,17 @@ export class DocCheckAPI {
       headers: {
         'Content-Type': 'application/form-data'
       }
+    })
+  }
+
+  // 发起审核
+  InitiateApproval(
+    data: InitiateApprovalRequest
+  ): Response<boolean | null | undefined> {
+    return this.request({
+      url: `${prefix}/admin-api/system-document/initiateApproval`,
+      method: 'post',
+      data
     })
   }
 }

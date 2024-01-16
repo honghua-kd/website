@@ -3,7 +3,7 @@ import type {
   SaveOrUpdateDocRequest
 } from '@/api/docCheck/types/request'
 import type { DocumentPageResponse } from '@/api/docCheck/types/response'
-import type { DictListItem } from '@/api'
+import type { DictListItem, ApprovalPathResponse } from '@/api'
 export type StateType = {
   queryParams: DocumentPageRequest
   pageTotal: number
@@ -15,6 +15,7 @@ export type StateType = {
   systemOptions: DictListItem[]
   detailData: DocumentPageResponse
   importVisible: boolean
+  pathOptions: ApprovalPathResponse[]
 }
 
 export type EditDocInfo = {
@@ -32,4 +33,6 @@ export type ModelStateType = {
   listDialogvisible: boolean
   importVisible: boolean
   uploadItemIndex: number
+  approvalDialogVisible: boolean
+  documentNos: string[]
 }

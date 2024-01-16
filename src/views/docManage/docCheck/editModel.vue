@@ -202,6 +202,14 @@
         <el-button type="primary" @click="submitUpload">导入</el-button>
       </template>
     </el-dialog>
+
+    <!-- 审核弹窗 -->
+    <ApprovalModel
+      :visible="approvalDialogVisible"
+      :documentNos="documentNos"
+      v-bind="$attrs"
+      @closeApprovalModel="closeApprovalModel"
+    />
   </div>
 </template>
 <script setup lang="ts">
@@ -223,6 +231,7 @@ import { DocCheckAPI, CommonAPI } from '@/api'
 import { useUserStore } from '@toystory/lotso'
 import { handleDownloadFile } from '@/utils'
 import type { DocumentPageResponse } from '@/api/docCheck/types/response'
+import ApprovalModel from './approvalModel.vue'
 
 const API = new DocCheckAPI()
 const COMMONAPI = new CommonAPI()
@@ -256,14 +265,18 @@ const state = reactive<ModelStateType>({
   },
   listDialogvisible: false,
   importVisible: false,
-  uploadItemIndex: -1
+  uploadItemIndex: -1,
+  approvalDialogVisible: false,
+  documentNos: []
 })
 const {
   dialogVisible,
   docInfoForm,
   saveListForm,
   listDialogvisible,
-  importVisible
+  importVisible,
+  approvalDialogVisible,
+  documentNos
 } = toRefs(state)
 
 watch(
@@ -492,9 +505,6 @@ const closeFormModel = async (
             props.title === '新增' ? '' : (props.detailData.fileCode as string),
           fileName:
             props.title === '新增' ? '' : (props.detailData.fileName as string)
-          // documentVersion: '123',
-          // fileCode: 'qwe',
-          // fileName: 'ppppp'
         }
         if (props.title === '编辑') {
           obj.id = props.detailData.id as number
@@ -530,15 +540,22 @@ const closeTableModel = async (
       if (valid) {
         console.log(state.saveListForm.saveListInfo)
         await API.saveOrUpdateDocument(state.saveListForm.saveListInfo)
-        emit('closeModel', {
-          type
-        })
         state.listDialogvisible = false
+        if (props.title === '新增') {
+          state.approvalDialogVisible = true
+        }
       } else {
         console.log('error submit!', fields)
       }
     })
   }
+}
+
+const closeApprovalModel = ({ type }: { type: string }) => {
+  emit('closeModel', {
+    type
+  })
+  state.approvalDialogVisible = false
 }
 
 const emit = defineEmits<{

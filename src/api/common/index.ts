@@ -23,7 +23,8 @@ import type {
   ProvincesChildrenResponse,
   DictDataTreeResponse,
   ExportBySelectResponse,
-  ProvinceResponse
+  ProvinceResponse,
+  ApprovalPathResponse
 } from './types/response'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
@@ -226,6 +227,18 @@ export class CommonAPI {
       url: `${prefix}/admin-api/export/file/record/exportBySelect`,
       method: 'post',
       data
+    })
+  }
+
+  // 获取审批路径
+  getApprovalPath(data: FormData): Response<ApprovalPathResponse[]> {
+    return this.request({
+      url: `${prefix}/admin-api/tianshu/workflow/getApprovalPath`,
+      method: 'post',
+      data,
+      headers: {
+        'Content-Type': 'application/form-data'
+      }
     })
   }
 }
