@@ -52,7 +52,7 @@ export const tableColumn: ITableConfigProps[] = [
   {
     label: '文书编号',
     prop: 'documentNo',
-    minWidth: 200,
+    minWidth: 220,
     fixed: false,
     align: 'center',
     forbiddenEdit: true

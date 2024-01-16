@@ -46,8 +46,8 @@
     >
       <template #btnsBox>
         <el-button :icon="Plus" type="primary" @click="add">新增</el-button>
-        <el-button type="primary">审批</el-button>
-        <el-button type="primary">发起审核</el-button>
+        <el-button type="primary">审核</el-button>
+        <el-button type="primary" @click="approval">发起审核</el-button>
         <el-button :icon="Download" type="primary" @click="downloadData"
           >下载</el-button
         >
@@ -112,7 +112,7 @@
           "
           link
           type="primary"
-          >查看审批记录</el-button
+          >查看审核记录</el-button
         >
         <el-button
           v-if="row.approvalStatus === 'APPROVAL_REJECTION'"
@@ -130,7 +130,6 @@
       :documentTypeOptions="dictStore.dicts['SYSTEM_DOCUMENT_TYPE']"
       :systemOptions="systemOptions"
       :sealOptions="dictStore.dicts['SEAL_TYPE']"
-      :pathOptions="pathOptions"
       @closeModel="closeModel"
     />
 
@@ -148,6 +147,7 @@
         ref="upload"
         v-model:file-list="fileList"
         class="upload-demo"
+        accept=".xlsx"
         :limit="1"
         :on-exceed="handleExceed"
         :auto-upload="false"
@@ -160,6 +160,14 @@
         <el-button type="primary" @click="submitUpload">导入</el-button>
       </template>
     </el-dialog>
+
+    <!-- 审批弹窗 -->
+    <ApprovalModel
+      :visible="approvalDialogVisible"
+      :documentNos="documentNos"
+      :pathOptions="pathOptions"
+      @closeApprovalModel="closeApprovalModel"
+    />
   </div>
 </template>
 
@@ -183,6 +191,7 @@ import type {
   UploadRawFile,
   UploadUserFile
 } from 'element-plus'
+import ApprovalModel from './approvalModel.vue'
 
 const API = new DocCheckAPI()
 const COMMONAPI = new CommonAPI()
@@ -210,7 +219,9 @@ const state = reactive<StateType>({
   systemOptions: [],
   detailData: {},
   importVisible: false,
-  pathOptions: []
+  pathOptions: [],
+  approvalDialogVisible: false,
+  documentNos: []
 })
 const {
   queryParams,
@@ -223,7 +234,9 @@ const {
   systemOptions,
   detailData,
   importVisible,
-  pathOptions
+  pathOptions,
+  approvalDialogVisible,
+  documentNos
 } = toRefs(state)
 
 // 表格最大高度
@@ -274,7 +287,7 @@ const selectData = (selection: DocumentPageResponse[]) => {
   const result: string[] = []
   if (selection.length !== 0) {
     selection.forEach((i: DocumentPageResponse) => {
-      result.push(`${i.id}`)
+      result.push(`${i.id}&${i.approvalStatus}&${i.documentNo}`)
     })
   }
   state.selectIdsArr = result
@@ -315,7 +328,8 @@ const downloadData = async () => {
       createTimeEnd
     }
   } else {
-    params = { ids: selectIdsArr.value }
+    const ids = selectIdsArr.value.map((i: string) => i.split('&')[0])
+    params = { ids }
   }
   const res = await COMMONAPI.exportBySelect({
     bizType: 'SYSTEM_DOCUMENT_EXPORT',
@@ -383,10 +397,39 @@ const batchImport = () => {
   state.importVisible = true
 }
 
+// 发起审批
+const approval = () => {
+  if (selectIdsArr.value.length === 0) {
+    ElMessage({
+      type: 'error',
+      message: '请选择审批数据'
+    })
+    return
+  }
+  let num: number = 0
+  const result: string[] = []
+  selectIdsArr.value.forEach((i: string) => {
+    const arr = i.split('&')
+    result.push(arr[2])
+    if (arr[1] === 'TO_BE_SUBMITTED') {
+      num++
+    }
+  })
+  state.documentNos = result
+  if (num !== selectIdsArr.value.length) {
+    ElMessage({
+      type: 'error',
+      message: '请选择待提交状态数据'
+    })
+    return
+  }
+  state.approvalDialogVisible = true
+}
+
 const closeModel = ({ type }: { type: string }) => {
   state.editModelTitle = ''
   state.editModelVisible = false
-  if (type === 'update-close' || type === 'approval-click-close') {
+  if (type === 'update-close') {
     getListData()
   }
 }
@@ -482,6 +525,15 @@ const downloadFile = (name: string, code: string) => {
   COMMONAPI.downLoadFiles({ fileCode: code }).then((res) =>
     handleDownloadFile(res, name)
   )
+}
+
+// 审批弹窗回调
+const closeApprovalModel = ({ type }: { type: string }) => {
+  state.approvalDialogVisible = false
+  state.documentNos = []
+  if (type === 'update-close') {
+    getListData()
+  }
 }
 
 onMounted(() => {

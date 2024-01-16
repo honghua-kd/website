@@ -10,6 +10,7 @@ import type {
   InitiateApprovalRequest
 } from './types/request'
 import type { DocumentPageResponse } from './types/response'
+import type { FileDownload } from '@/api'
 
 const prefix = '/operations-management'
 export class DocCheckAPI {
@@ -54,7 +55,7 @@ export class DocCheckAPI {
   }
 
   // 发起审核
-  InitiateApproval(
+  initiateApproval(
     data: InitiateApprovalRequest
   ): Response<boolean | null | undefined> {
     return this.request({
@@ -63,4 +64,38 @@ export class DocCheckAPI {
       data
     })
   }
+
+  // 修改状态
+  editStatus(data: FormData): Response<boolean | null | undefined> {
+    return this.request({
+      url: `${prefix}/admin-api/system-document/status`,
+      method: 'post',
+      data,
+      headers: {
+        'Content-Type': 'application/form-data'
+      }
+    })
+  }
+
+  // 测试文书
+  testDocument(data: FormData): Promise<FileDownload> {
+    return this.request({
+      url: `${prefix}/admin-api/system-document/testDocument`,
+      method: 'post',
+      data,
+      headers: {
+        'Content-Type': 'application/form-data'
+      }
+    })
+  }
+
+  // // 下载接口
+  // downLoadFiles(data: Pick<RecordList, 'fileCode'>): Promise<FileDownload> {
+  //   return this.request({
+  //     url: `${prefix}/admin-api/file/attachment/downloadAttachment`,
+  //     method: 'post',
+  //     responseType: 'blob',
+  //     params: data
+  //   })
+  // }
 }
