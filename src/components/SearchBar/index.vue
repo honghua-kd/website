@@ -12,17 +12,16 @@
           <el-row :gutter="20" v-if="index > 1 ? expandFlag : true">
             <template v-for="item in unit" :key="item.prop">
               <el-col :span="item.colSpan">
-                <FormItem
+                <!-- <FormItem
                   :form-item="item"
                   v-model="modelValue[item.prop]"
                   :dictArray="dictArray"
-                />
-                <!-- <el-form-item
+                /> -->
+                <el-form-item
                   :label="item.label"
                   :prop="[(item as ISearchConfigCommon).prop]"
                 >
                   <slot :name="item.slotName ? item.slotName : 'default'">
-            
                     <template v-if="item.compType === 'date-range-picker'">
                       <el-date-picker
                         v-model="modelValue[(item as ISearchConfigTimer).propStart ] "
@@ -69,7 +68,7 @@
                       />
                     </template>
                   </slot>
-                </el-form-item> -->
+                </el-form-item>
               </el-col>
             </template>
           </el-row>
@@ -112,13 +111,13 @@ import {
 } from '@element-plus/icons-vue'
 import { ElForm } from 'element-plus'
 import { useDictStore } from '@/store/dict'
-import FormItem from '@/components/ElFormItem/index.vue'
+// import FormItem from '@/components/ElFormItem/index.vue'
 import type {
   IProps,
-  dictState
-  // ISearchConfigCommon,
-  // ISearchConfigTimer,
-  // ISearchConfigCascader
+  dictState,
+  ISearchConfigCommon,
+  ISearchConfigTimer,
+  ISearchConfigCascader
 } from './type'
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
 

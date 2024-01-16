@@ -66,6 +66,7 @@ declare module 'vue' {
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     ErrorPage: typeof import('./../components/ErrorPage/index.vue')['default']
+    Form: typeof import('./../components/DynamicForm/Form.vue')['default']
     FormItem: typeof import('./../components/FormItem/index.vue')['default']
     Icon: typeof import('./../components/Icon/index.vue')['default']
     MdEditor: typeof import('./../components/MdEditor/index.vue')['default']
