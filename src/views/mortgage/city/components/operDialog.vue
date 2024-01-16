@@ -275,8 +275,8 @@ const submitForm = async () => {
     cityCode: formParams.cityCode,
     cityName: formParams.cityName,
     licensePlateCode: formParams.licensePlateCode,
-    applyMortgage: formParams.mortgageName === '是' ? 0 : 1,
-    applyDischarge: formParams.dischargeName === '是' ? 0 : 1
+    applyMortgage: formParams.mortgageName === '是' ? 1 : 0,
+    applyDischarge: formParams.dischargeName === '是' ? 1 : 0
   }
   if (dialogTitle.value === '新增') {
     MortgageCityApi.addMortgageCity(params)
@@ -343,8 +343,8 @@ const open = async (
     formParams.licensePlateCode!.split(',').forEach((item: string) => {
       formParams.carCode.push(item[1])
     })
-    formParams.mortgageName = formParams.applyMortgage === 1 ? '否' : '是'
-    formParams.dischargeName = formParams.applyDischarge === 1 ? '否' : '是'
+    formParams.mortgageName = formParams.applyMortgage === 0 ? '否' : '是'
+    formParams.dischargeName = formParams.applyDischarge === 0 ? '否' : '是'
     await initOptions()
   } else {
     formParams.id = ''

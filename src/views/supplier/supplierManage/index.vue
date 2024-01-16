@@ -134,14 +134,10 @@
         <el-button type="primary" :icon="Plus" @click="addHandler">
           新建
         </el-button>
-        <el-button type="primary" :icon="Setting" @click="importHandler">
+        <el-button type="primary" :icon="Upload" @click="importHandler">
           导入
         </el-button>
-        <el-button
-          type="primary"
-          :icon="ArrowDownBold"
-          @click="downloadHandler"
-        >
+        <el-button type="primary" :icon="Download" @click="downloadHandler">
           下载
         </el-button>
       </template>
@@ -207,15 +203,16 @@
 
 <script setup lang="ts">
 import {
-  ArrowDownBold,
+  Download,
   Plus,
-  Setting,
+  Upload,
   Refresh,
   Search
 } from '@element-plus/icons-vue'
+import { useRoute } from '@toystory/lotso'
 import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import { px2rem } from '@/utils'
-import { reactive, toRefs, ref, onMounted, Ref, computed } from 'vue'
+import { reactive, toRefs, ref, onMounted, Ref, computed, watch } from 'vue'
 import { tableConfig } from './data'
 import AddModel from '@/views/supplier/supplierManage/addModel.vue'
 import EditModel from '@/views/supplier/supplierManage/editModel.vue'
@@ -566,6 +563,30 @@ const downloadHandler = () => {
       throw err
     })
 }
+const route = useRoute()
+watch(
+  () => route,
+  (val) => {
+    if (
+      val &&
+      val.value &&
+      val?.value?.query &&
+      val?.value?.query.innerInterfaceStaffCode &&
+      val?.value?.query.expireDate
+    ) {
+      const { innerInterfaceStaffCode, expireDate } = val.value.query
+      queryFormList.value.innerInterfaceStaffCode = String(
+        innerInterfaceStaffCode
+      )
+      queryFormList.value.expireDateStart = String(expireDate)
+      queryFormList.value.expireDateEnd = String(expireDate)
+      getList()
+    }
+  },
+  {
+    immediate: true
+  }
+)
 </script>
 
 <style lang="scss" scoped>
