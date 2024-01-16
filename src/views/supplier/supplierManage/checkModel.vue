@@ -12,7 +12,7 @@
     <el-row>
       <el-col :span="12" class="bfont">
         {{ editForm.supplierName }}
-        <span class="top-status">{{ getFirstStatus(editForm.status) }}</span>
+        <el-tag>{{ getFirstStatus(editForm.status) }}</el-tag>
       </el-col>
     </el-row>
     <el-form :model="editForm" label-width="120px" label-position="top" inline>
@@ -603,6 +603,8 @@ watch(
     state.step = 1
     state.dialogVisible = newVisible
     state.editForm = newValue as unknown as EditForm
+    selCity.value = []
+    selSettle.value = []
     if (newVisible) {
       await getDicts()
       await getAccountList()
@@ -990,9 +992,5 @@ const stopSupplier = () => {
 }
 .bfont {
   font-size: $base-font-size-bigger;
-}
-.top-status {
-  font-size: $base-font-size-big;
-  color: $base-color-primary;
 }
 </style>
