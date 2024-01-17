@@ -1,0 +1,7 @@
+export default {
+  hidden: false,
+  title: '费用减免',
+  icon: 'configCenter',
+  name: 'costReduction',
+  sort: 2
+}

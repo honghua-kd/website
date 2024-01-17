@@ -67,6 +67,7 @@ declare module 'vue' {
     ErrorPage: typeof import('./../components/ErrorPage/index.vue')['default']
     Icon: typeof import('./../components/Icon/index.vue')['default']
     MdEditor: typeof import('./../components/MdEditor/index.vue')['default']
+    PageBuilding: typeof import('./../components/PageBuilding/index.vue')['default']
     PermiListDialog: typeof import('./../components/PermiForm/PermiListDialog.vue')['default']
     Preview: typeof import('./../components/Preview/index.vue')['default']
     README: typeof import('./../components/Table/README.md')['default']
