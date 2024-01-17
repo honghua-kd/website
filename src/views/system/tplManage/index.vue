@@ -267,8 +267,8 @@ const businessFormCascader = ref<string[]>([])
 watch(
   () => businessFormCascader.value,
   (newVal) => {
-    formParams.businessCategory = newVal[0]
-    formParams.businessSubcategory = newVal[0]
+    formParams.businessCategory = newVal ? newVal[0] : ''
+    formParams.businessSubcategory = newVal ? newVal[1] : ''
   }
 )
 
