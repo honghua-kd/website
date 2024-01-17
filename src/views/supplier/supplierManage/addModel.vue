@@ -1032,6 +1032,7 @@ const submitForm = async () => {
   const valid = await basicInfoFormRef.value.validate()
   if (!valid) return
   const sparams = {
+    id: state.editForm.id,
     supplierName: state.editForm.supplierName,
     organCode: state.editForm.organCode,
     supplierTypes: state.editForm.supplierTypes,
@@ -1061,18 +1062,33 @@ const submitForm = async () => {
     openBankCountyName: cascaderArea.value.getCheckedNodes()[0].pathLabels[2],
     files: state.editForm.files || []
   }
-  SupplierApi.addSupplier(sparams)
-    .then((res) => {
-      if (res && res.code === 200) {
-        state.editForm.id = String(res?.data)
-        getCityList()
-        getSettlementList()
-        state.step = 2
-      }
-    })
-    .catch((err: Error) => {
-      throw err
-    })
+  if (state.editForm.id) {
+    SupplierApi.editSupplier(sparams)
+      .then((res) => {
+        if (res && res.code === 200) {
+          getCityList()
+          getSettlementList()
+          state.step = 2
+        }
+      })
+      .catch((err: Error) => {
+        throw err
+      })
+  } else {
+    delete sparams.id
+    SupplierApi.addSupplier(sparams)
+      .then((res) => {
+        if (res && res.code === 200) {
+          state.editForm.id = String(res?.data)
+          getCityList()
+          getSettlementList()
+          state.step = 2
+        }
+      })
+      .catch((err: Error) => {
+        throw err
+      })
+  }
 }
 const importFormRef = ref()
 const bizType = ref('')
