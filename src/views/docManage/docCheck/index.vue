@@ -394,6 +394,7 @@ const submitUpload = () => {
     })
 }
 const batchImport = () => {
+  fileList.value = []
   state.importVisible = true
 }
 

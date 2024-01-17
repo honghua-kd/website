@@ -86,7 +86,9 @@
       <template #action="{ row }">
         <div class="opera-context">
           <el-button link type="primary" @click="editItem(row)">修改</el-button>
-          <el-button link type="primary">配置</el-button>
+          <el-button link type="primary" @click="oconfigItem(row.documentNo)"
+            >配置</el-button
+          >
           <el-dropdown>
             <span class="el-dropdown-link">
               更多
@@ -100,7 +102,7 @@
                   <el-button
                     link
                     type="primary"
-                    @click="testDocument(row.documentNo)"
+                    @click="testItem(row.documentNo)"
                     >测试</el-button
                   >
                 </el-dropdown-item>
@@ -115,7 +117,7 @@
         </div>
       </template>
     </Table>
-    <!--  -->
+    <!-- 修改文书弹窗 -->
     <EditModel
       :visible="editModelVisible"
       :title="editModelTitle"
@@ -124,6 +126,17 @@
       :systemOptions="systemOptions"
       :sealOptions="dictStore.dicts['SEAL_TYPE']"
       @closeModel="closeModel"
+    />
+
+    <!-- 配置参数弹窗 -->
+    <ConfigModel
+      :configVisible="configVisible"
+      :paramConfig="paramConfig"
+      :paramTypeOptions="dictStore.dicts['DOCUMENT_PARAM_TYPE']"
+      :yesOrNoOptions="dictStore.dicts['YESNO']"
+      :documentNo="documentNo"
+      :paramsConfigDetail="paramsConfigDetail"
+      @closeModel="closeConfigModel"
     />
 
     <!-- 导入 -->
@@ -161,6 +174,7 @@ import { ref, computed, reactive, toRefs, onMounted } from 'vue'
 import SearchBar from '@/components/SearchBar/index.vue'
 import Table from '@/components/Table/index.vue'
 import EditModel from './editModel.vue'
+import ConfigModel from './configModel.vue'
 import { searchConfig, tableColumn } from './data'
 import type { StateType } from './type'
 import type { DocumentPageResponse } from '@/api/docCheck/types/response'
@@ -195,8 +209,10 @@ const state = reactive<StateType>({
     documentType: '',
     status: null,
     sourceSystem1: [],
-    createTimeStart: dayjs().startOf('day').toString(),
-    createTimeEnd: dayjs().endOf('day').toString()
+    createTimeStart: '',
+    createTimeEnd: ''
+    // createTimeStart: dayjs().startOf('day').toString(),
+    // createTimeEnd: dayjs().endOf('day').toString()
   },
   pageTotal: 0,
   tableData: [],
@@ -206,7 +222,11 @@ const state = reactive<StateType>({
   editModelTitle: '',
   systemOptions: [],
   detailData: {},
-  importVisible: false
+  importVisible: false,
+  configVisible: false,
+  paramConfig: [],
+  documentNo: '',
+  paramsConfigDetail: []
 })
 const {
   queryParams,
@@ -218,7 +238,11 @@ const {
   editModelTitle,
   systemOptions,
   detailData,
-  importVisible
+  importVisible,
+  configVisible,
+  paramConfig,
+  documentNo,
+  paramsConfigDetail
 } = toRefs(state)
 
 // 表格最大高度
@@ -376,9 +400,11 @@ const submitUpload = () => {
     })
 }
 const batchImport = () => {
+  fileList.value = []
   state.importVisible = true
 }
 
+// 关闭修改弹窗回调
 const closeModel = ({ type }: { type: string }) => {
   state.editModelTitle = ''
   state.editModelVisible = false
@@ -387,6 +413,15 @@ const closeModel = ({ type }: { type: string }) => {
   }
 }
 
+// 关闭配置弹窗回调
+const closeConfigModel = ({ type }: { type: string }) => {
+  state.configVisible = false
+  if (type === 'update-close') {
+    getListData()
+  }
+}
+
+// 获取部门
 const getDictTreeListData = async () => {
   const params = {
     dictType: 'SOURCE_SYSTEM'
@@ -401,13 +436,22 @@ const getDictTreeListData = async () => {
   }
 }
 
+// 获取文书参数配置
+const getDocumentParamConfig = async () => {
+  const res = await API.getDocumentParamConfig({})
+  if (res && res.code === 200) {
+    state.paramConfig = res.data || []
+  }
+}
+
+// 获取列表数据
 const getListData = async () => {
   state.tableLoading = true
   const { documentName, status, createTimeStart, createTimeEnd, ...others } =
     queryParams.value
   const params = {
     documentName: documentName?.trim(),
-    status: status || null, // 类型？？？
+    status: status ? Number(status) : null, // 类型？？？
     createTimeStart: createTimeStart
       ? dayjs(createTimeStart).format('YYYY-MM-DD HH:mm:ss')
       : '',
@@ -458,6 +502,35 @@ const deleteItem = async (id: string) => {
     })
 }
 
+// 测试
+const testItem = (documentNo: string) => {
+  state.tableLoading = true
+  const formData = new FormData()
+  formData.append('documentNo', documentNo + '')
+  API.testDocument(formData)
+    .then((res) => {
+      state.tableLoading = false
+      handleDownloadFile(res, '前端自行规范.docx')
+    })
+    .catch(() => {
+      state.tableLoading = false
+    })
+}
+
+// 配置
+const oconfigItem = async (documentNo: string) => {
+  state.tableLoading = true
+  const formData = new FormData()
+  formData.append('documentNo', documentNo)
+  const res = await API.getDocumentParam(formData)
+  state.tableLoading = false
+  if (res && res.code === 200) {
+    state.paramsConfigDetail = res.data || []
+    state.documentNo = documentNo
+    state.configVisible = true
+  }
+}
+
 // 点击表格中的文件可下载
 const downloadFile = (name: string, code: string) => {
   COMMONAPI.downLoadFiles({ fileCode: code }).then((res) =>
@@ -475,19 +548,10 @@ const changeSwitch = async (row: DocumentPageResponse) => {
   getListData()
 }
 
-// 测试文书
-const testDocument = (documentNo: string) => {
-  const formData = new FormData()
-  formData.append('documentNo', documentNo + '')
-  // formData.append('documentNo', 'DY20240110094153497000001')
-  API.testDocument(formData).then((res) => {
-    handleDownloadFile(res, '前端自行规范.docx')
-  })
-}
-
 onMounted(() => {
   getDictTreeListData()
   getListData()
+  getDocumentParamConfig()
 })
 </script>
 

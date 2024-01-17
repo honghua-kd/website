@@ -101,3 +101,45 @@ export interface InitiateApprovalRequest {
    */
   remark: string
 }
+
+// 获取文书参数配置
+export interface SystemParamConfigRequest {
+  /**
+   * 列名（中文名）
+   */
+  columnName?: null | string
+}
+
+// 配置文书参数
+export interface EditParamConfigRequest {
+  /**
+   * 批量出具是否空白 1-空白 0-不空白
+   */
+  batchBlank: string
+  /**
+   * 书签名称
+   */
+  bookmarkName: string
+  /**
+   * 书签参数
+   */
+  bookmarkParam: string
+  /**
+   * 列名
+   */
+  column: string
+  /**
+   * 文书编号
+   */
+  documentNo: string
+  /**
+   * 参数类型 0-普通字段属性 1-list
+   */
+  paramType: string
+  /**
+   * 表名
+   */
+  table: string
+  // 自行添加
+  tableAndColumn?: string[]
+}

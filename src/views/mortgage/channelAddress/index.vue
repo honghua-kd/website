@@ -261,7 +261,7 @@ const state = reactive<StateType>({
       width: '',
       minWidth: '100',
       fixed: false,
-      align: 'left'
+      align: 'center'
     },
     {
       label: '创建时间',
@@ -277,7 +277,7 @@ const state = reactive<StateType>({
       width: '',
       minWidth: '100',
       fixed: false,
-      align: 'left'
+      align: 'center'
     },
     {
       label: '更新时间',
@@ -595,6 +595,7 @@ const submitUpload = () => {
     })
 }
 const batchImport = () => {
+  fileList.value = []
   state.importVisible = true
 }
 

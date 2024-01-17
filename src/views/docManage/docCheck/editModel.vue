@@ -13,7 +13,7 @@
         <el-form ref="ruleFormRef" :model="docInfoForm" :rules="rules">
           <el-form-item label="文书名称" prop="documentName" required>
             <el-input
-              v-model="docInfoForm.documentName"
+              v-model.trim="docInfoForm.documentName"
               :maxlength="50"
               placeholder="请输入"
               clearable
@@ -87,8 +87,13 @@
         @click="addTableItem"
         >新增</el-button
       >
-      <el-form ref="ruleSaveListForm" :model="saveListForm">
+      <el-form
+        ref="ruleSaveListForm"
+        :model="saveListForm"
+        :show-message="false"
+      >
         <el-table
+          class="save-list-table"
           :data="saveListForm.saveListInfo"
           :header-cell-style="{
             background: '#eef1f6',
@@ -98,7 +103,12 @@
           border
           :cell-style="{ borderRight: '1px solid #fff' }"
         >
-          <el-table-column type="index" width="50" align="center" />
+          <el-table-column
+            type="index"
+            label="序号"
+            width="50"
+            align="center"
+          />
           <el-table-column
             prop="documentName"
             label="文书名称"
@@ -122,7 +132,7 @@
               >
                 <el-input
                   placeholder="请输入"
-                  v-model="row.documentVersion"
+                  v-model.trim="row.documentVersion"
                   clearable
                 />
               </el-form-item>
@@ -160,7 +170,7 @@
                 v-if="detailData.approvalStatus !== 'APPROVED'"
                 link
                 type="primary"
-                @click="uploadTableFile(scope.$index, scope.row)"
+                @click="uploadTableFile(scope.$index)"
                 >上传</el-button
               >
             </template>
@@ -454,8 +464,8 @@ const removeTableItem = (index: number, row: SaveOrUpdateDocRequest) => {
 }
 
 // 表格单项上传文件
-const uploadTableFile = (index: number, row: SaveOrUpdateDocRequest) => {
-  console.log(row)
+const uploadTableFile = (index: number) => {
+  fileList.value = []
   state.uploadItemIndex = index
   state.importVisible = true
 }

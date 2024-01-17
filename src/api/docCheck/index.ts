@@ -7,9 +7,15 @@ import type { AxiosInstance } from 'axios'
 import type {
   DocumentPageRequest,
   SaveOrUpdateDocRequest,
-  InitiateApprovalRequest
+  InitiateApprovalRequest,
+  SystemParamConfigRequest,
+  EditParamConfigRequest
 } from './types/request'
-import type { DocumentPageResponse } from './types/response'
+import type {
+  DocumentPageResponse,
+  SystemParamConfigResponse,
+  GetDocumentParamResponse
+} from './types/response'
 import type { FileDownload } from '@/api'
 
 const prefix = '/operations-management'
@@ -90,13 +96,37 @@ export class DocCheckAPI {
     })
   }
 
-  // // 下载接口
-  // downLoadFiles(data: Pick<RecordList, 'fileCode'>): Promise<FileDownload> {
-  //   return this.request({
-  //     url: `${prefix}/admin-api/file/attachment/downloadAttachment`,
-  //     method: 'post',
-  //     responseType: 'blob',
-  //     params: data
-  //   })
-  // }
+  // 获取文书参数
+  getDocumentParam(data: FormData): Response<GetDocumentParamResponse[]> {
+    return this.request({
+      url: `${prefix}/admin-api/system-document/getDocumentParam`,
+      method: 'post',
+      data,
+      headers: {
+        'Content-Type': 'application/form-data'
+      }
+    })
+  }
+
+  // 获取文书参数配置
+  getDocumentParamConfig(
+    data: SystemParamConfigRequest
+  ): Response<SystemParamConfigResponse[]> {
+    return this.request({
+      url: `${prefix}/admin-api/system-document/getDocumentParamConfig`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 配置文书参数
+  paramConfig(
+    data: EditParamConfigRequest[]
+  ): Response<boolean | null | undefined> {
+    return this.request({
+      url: `${prefix}/admin-api/system-document/paramConfig`,
+      method: 'post',
+      data
+    })
+  }
 }

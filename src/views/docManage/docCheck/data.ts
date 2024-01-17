@@ -123,7 +123,7 @@ export const tableColumn: ITableConfigProps[] = [
     width: '',
     minWidth: '100',
     fixed: false,
-    align: 'left'
+    align: 'center'
   },
   {
     label: '创建时间',
@@ -139,7 +139,7 @@ export const tableColumn: ITableConfigProps[] = [
     width: '',
     minWidth: '100',
     fixed: false,
-    align: 'left'
+    align: 'center'
   },
   {
     label: '更新时间',

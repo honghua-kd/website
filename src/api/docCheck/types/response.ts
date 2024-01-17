@@ -104,3 +104,74 @@ export interface DocumentPageResponse {
    */
   updateTime?: null | string
 }
+
+// 获取文书参数配置
+
+export interface ColumnList {
+  /**
+   * 列名
+   */
+  column: string
+  /**
+   * 列中文名
+   */
+  columnName: string
+}
+export interface SystemParamConfigResponse {
+  /**
+   * 表对应的列
+   */
+  columnList: ColumnList[]
+  /**
+   * 表名
+   */
+  table: string
+  /**
+   * 表中文名
+   */
+  tableName: string
+}
+
+// 获取文书参数
+export interface GetDocumentParamResponse {
+  /**
+   * 批量出具是否空白 1-空白 0-不空白
+   */
+  batchBlank?: number | null
+  /**
+   * 书签名称
+   */
+  bookmarkName?: null | string
+  /**
+   * 书签参数
+   */
+  bookmarkParam?: null | string
+  /**
+   * 列名
+   */
+  column?: null | string
+  /**
+   * 文书编号
+   */
+  documentNo?: null | string
+  /**
+   * 主键ID
+   */
+  id?: number | null
+  /**
+   * 变量表达式
+   */
+  paramExpression?: null | string
+  /**
+   * 变量表达式(中文转义后)
+   */
+  paramExpressionStr?: null | string
+  /**
+   * 参数类型（0-普通字段属性  1-list集合）
+   */
+  paramType?: number | null
+  /**
+   * 表名
+   */
+  table?: null | string
+}
