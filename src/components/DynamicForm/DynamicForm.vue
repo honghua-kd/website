@@ -2,9 +2,21 @@
   <el-form
     class="dynamic-form"
     ref="dynamicFormRef"
-    v-bind="props"
+    :rules="rules"
+    :inline="inline"
+    :labelPosition="labelPosition"
+    :labelWidth="formLabelWidth"
+    :labelSuffix="labelSuffix"
+    :hideRequiredAsterisk="hideRequiredAsterisk"
+    :requireAsteriskPosition="requireAsteriskPosition"
+    :showMessage="showMessage"
+    :inlineMessage="inlineMessage"
+    :statusIcon="statusIcon"
+    :validateOnRuleChange="validateOnRuleChange"
+    :size="size"
+    :disabled="disabled"
+    :scrollToError="scrollToError"
     :model="modelValue"
-    :label-width="formLabelWidth"
   >
     <el-row
       :gutter="gutter || 20"
@@ -33,7 +45,7 @@ import { ref, watch, computed } from 'vue'
 import { px2rem } from '@/utils'
 import { ElForm } from 'element-plus'
 // import FormItem from '@/components/ElFormItem/index.vue'
-import type { DynamicFormProps, DynamicFormItemProps } from './type'
+import type { DynamicFormProps, DynamicFormDataItem } from './type'
 const dynamicFormRef = ref<InstanceType<typeof ElForm>>()
 
 const props = withDefaults(defineProps<DynamicFormProps>(), {
@@ -58,7 +70,7 @@ const colSpan = computed(() => {
 })
 
 const dynamicData = computed(() => {
-  const data: DynamicFormItemProps[] = []
+  const data: DynamicFormDataItem[] = []
   let defer = 0
   for (let i = 0; i < itemLength.value; i++) {
     const rowSpan = props.data[i].rowSpan || 1

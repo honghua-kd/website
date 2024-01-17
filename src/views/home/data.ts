@@ -1,33 +1,40 @@
-import type { DynamicFormItemProps } from '@/components/DynamicForm/type'
-export const data: DynamicFormItemProps[] = [
+import type { DynamicFormDataItem } from '@/components/DynamicForm/type'
+export const data: DynamicFormDataItem[] = [
   {
     prop: 'string1',
-    type: 'string'
+    label: '测试1',
+    type: 'el-input'
   },
   {
     prop: 'string2',
-    type: 'string',
+    label: '测试2',
+    type: 'el-input',
     rowSpan: 2
   },
   {
+    label: '测试3',
     prop: 'string3',
-    type: 'string'
+    type: 'el-input'
   },
   {
+    label: '测试4',
     prop: 'string4',
-    type: 'string',
+    type: 'el-input',
     rowSpan: 2
   },
   {
+    label: '测试5',
     prop: 'string5',
-    type: 'string'
+    type: 'el-input'
   },
   {
+    label: '测试6',
     prop: 'string6',
-    type: 'string'
+    type: 'el-input'
   },
   {
+    label: '测试7',
     prop: 'string7',
-    type: 'string'
+    type: 'el-input'
   }
 ]
