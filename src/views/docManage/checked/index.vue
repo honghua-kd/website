@@ -107,7 +107,10 @@
                   >
                 </el-dropdown-item>
                 <el-dropdown-item>
-                  <el-button link type="danger" @click="deleteItem(row.id)"
+                  <el-button
+                    link
+                    type="danger"
+                    @click="deleteItem(row.id, row.hasAssociateData)"
                     >删除</el-button
                   >
                 </el-dropdown-item>
@@ -330,8 +333,12 @@ const downloadData = async () => {
       documentType,
       status,
       sourceSystem1,
-      createTimeStart,
-      createTimeEnd
+      createTimeStart: createTimeStart
+        ? dayjs(createTimeStart).format('YYYY-MM-DD HH:mm:ss')
+        : '',
+      createTimeEnd: createTimeEnd
+        ? dayjs(createTimeEnd).format('YYYY-MM-DD HH:mm:ss')
+        : ''
     }
   } else {
     const ids = selectIdsArr.value.map((i: string) => i.split('&')[0])
@@ -476,7 +483,14 @@ const editItem = (row: DocumentPageResponse) => {
 }
 
 // 删除
-const deleteItem = async (id: string) => {
+const deleteItem = async (id: string, hasAssociateData: boolean | null) => {
+  if (hasAssociateData) {
+    ElMessage({
+      type: 'error',
+      message: '已有关联数据，无法删除'
+    })
+    return
+  }
   // 二次确认
   ElMessageBox.confirm('确认要删除吗？', '警告', {
     confirmButtonText: '确定',
@@ -510,7 +524,7 @@ const testItem = (documentNo: string) => {
   API.testDocument(formData)
     .then((res) => {
       state.tableLoading = false
-      handleDownloadFile(res, '前端自行规范.docx')
+      handleDownloadFile(res, `${documentNo}.docx`)
     })
     .catch(() => {
       state.tableLoading = false
@@ -540,7 +554,13 @@ const downloadFile = (name: string, code: string) => {
 
 // 修改文书状态
 const changeSwitch = async (row: DocumentPageResponse) => {
-  console.log(row)
+  if (row.hasAssociateData) {
+    ElMessage({
+      type: 'error',
+      message: '已有关联数据，无法修改状态'
+    })
+    return
+  }
   const formData = new FormData()
   formData.append('id', row.id + '')
   formData.append('status', row.status === 1 ? '0' : '1')
