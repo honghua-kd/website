@@ -192,7 +192,7 @@ const tableConfig: ITableConfigProps[] = [
   },
   {
     label: '模板编号',
-    prop: 'templateName',
+    prop: 'templateCode',
     width: 200,
     align: 'center',
     showOverflowTooltip: true,
@@ -201,8 +201,17 @@ const tableConfig: ITableConfigProps[] = [
   },
   {
     label: '模板名称',
-    prop: 'templateContent',
+    prop: 'templateName',
     width: 260,
+    align: 'center',
+    showOverflowTooltip: true,
+    fixed: false,
+    forbiddenEdit: false
+  },
+  {
+    label: '模板内容',
+    prop: 'templateContent',
+    width: 400,
     align: 'left',
     showOverflowTooltip: true,
     fixed: false,
