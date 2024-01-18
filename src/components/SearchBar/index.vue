@@ -105,7 +105,7 @@ import {
   ArrowDownBold,
   ArrowUpBold
 } from '@element-plus/icons-vue'
-import { ElForm } from 'element-plus'
+import { ElForm, ElFormItem } from 'element-plus'
 import { useDictStore } from '@/store/dict'
 import type {
   IProps,

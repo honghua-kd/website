@@ -239,3 +239,9 @@ export interface CreateExpRequest {
    */
   url?: string | undefined
 }
+
+export interface childrenRequest {
+  dictType: string
+  parentValue: string
+  status: string | null
+}

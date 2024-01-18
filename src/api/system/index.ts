@@ -2,9 +2,10 @@ import { useRequest } from '@toystory/lotso'
 import requestConfig from '@/config/request.config'
 import type { Response, PageList } from '../types/response'
 
+import type { CascaderOption } from 'element-plus'
+
 import type {
   RoleDO,
-  DictListItem,
   DictDataItem,
   DictDataDetail,
   RoleListPermission,
@@ -16,7 +17,8 @@ import type {
   DictTypeAllItem,
   OrgStructure,
   StaffList,
-  ExpDetail
+  ExpDetail,
+  DictDataSimpleRespVO
 } from './types/response'
 
 import type {
@@ -43,7 +45,8 @@ import type {
   GetExpDetailRequest,
   DelExpRequest,
   CreateExpRequest,
-  StaffInfoRequest
+  StaffInfoRequest,
+  childrenRequest
 } from './types/request'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
@@ -118,7 +121,7 @@ export class SystemAPI {
   }
 
   // 角色管理-数据权限-获取字典信息
-  getSingleDict(data: DictListRequest): Response<DictListItem[]> {
+  getSingleDict(data: DictListRequest): Response<CascaderOption[]> {
     return this.request({
       url: `${prefix}/admin-api/system/dict-data/list`,
       method: 'post',
@@ -290,6 +293,15 @@ export class SystemAPI {
   getStaffInfo(data: StaffInfoRequest): Response<StaffList> {
     return this.request({
       url: `${prefix}/admin-api/ehr/orgstructure/getDepartmentStaff`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 查询子级字典数据
+  getchildrenInfo(data: childrenRequest): Response<DictDataSimpleRespVO[]> {
+    return this.request({
+      url: `${prefix}/admin-api/system/dict-data/children`,
       method: 'post',
       data
     })

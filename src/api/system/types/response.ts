@@ -576,3 +576,10 @@ export interface ExpDetail {
    */
   url: null | string
 }
+export interface DictDataSimpleRespVO {
+  colorType?: null | string
+  cssClass?: null | string
+  dictType?: null | string
+  label?: null | string
+  value?: null | string
+}
