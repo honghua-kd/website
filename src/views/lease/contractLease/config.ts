@@ -1,6 +1,6 @@
 export default {
   hidden: false,
   title: '合同起租',
-  icon: 'configCenter',
+  icon: 'contractLease',
   name: 'contractLease'
 }

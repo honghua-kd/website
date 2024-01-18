@@ -1,7 +1,7 @@
 export default {
   hidden: false,
   title: '费用减免',
-  icon: 'configCenter',
+  icon: 'costReduction',
   name: 'costReduction',
   sort: 2
 }

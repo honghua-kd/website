@@ -1,7 +1,7 @@
 export default {
   hidden: false,
   title: '代理人管理',
-  icon: 'configCenter',
+  icon: 'agentManagement',
   name: 'agentManagement',
   sort: 2
 }

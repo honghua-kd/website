@@ -1,7 +1,7 @@
 export default {
   hidden: false,
   title: '溶津开票系统',
-  icon: 'configCenter',
+  icon: 'rongjin',
   name: 'rongjin',
   sort: 2
 }

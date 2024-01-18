@@ -1,7 +1,7 @@
 export default {
   hidden: false,
   title: '已开发票查询',
-  icon: 'configCenter',
+  icon: 'invoicedQuery',
   name: 'invoicedQuery',
   sort: 2
 }
