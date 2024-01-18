@@ -162,7 +162,7 @@ import {
 } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import type { CascaderOption } from 'element-plus'
-import OperDialog from '@/views/message/messageTemplate/components/operDialog.vue'
+import OperDialog from './components/operDialog.vue'
 import { reactive, ref, Ref, onMounted } from 'vue'
 const tableLoading: Ref<boolean> = ref(false)
 import { MessageAPI, CommonAPI } from '@/api'
