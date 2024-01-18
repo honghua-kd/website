@@ -10,7 +10,8 @@ import type {
   ProvincesChildrenRequest,
   ExportBySelectRequest,
   CodeRequest,
-  DictTreeRequest
+  DictTreeRequest,
+  DeptRequest
 } from './types/request'
 import type {
   UploadFile,
@@ -24,6 +25,7 @@ import type {
   DictDataTreeResponse,
   ExportBySelectResponse,
   ProvinceResponse,
+  DeptResponse,
   ApprovalPathResponse
 } from './types/response'
 import type { RequestConfig } from '@toystory/lotso'
@@ -225,6 +227,15 @@ export class CommonAPI {
   ): Response<ExportBySelectResponse> {
     return this.request({
       url: `${prefix}/admin-api/export/file/record/exportBySelect`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 查询部门
+  getDeptByName(data: DeptRequest): Response<DeptResponse> {
+    return this.request({
+      url: `${prefix}/admin-api/ehr/orgstructure/getDept`,
       method: 'post',
       data
     })

@@ -172,13 +172,13 @@ export default [
             children: [],
             elements: [],
             menuType: 3,
-            menu: 'mortgageRules',
+            menu: 'mortgageAllocationRule',
             sort: 1
           }
         ],
         elements: [],
         menuType: 5,
-        menu: 'mortgageRulesdMenu'
+        menu: 'mortgageRuleMenu'
       },
       {
         children: [
