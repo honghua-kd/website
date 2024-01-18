@@ -129,7 +129,7 @@ export interface UpdateRequest {
    */
   status: number
 }
-export interface DocumentDTO {
+export interface DocumentDTORequest {
   /**
    * 文书名称
    */
@@ -186,7 +186,7 @@ export interface SaveRequest {
   /**
    * 文书
    */
-  documents: DocumentDTO[]
+  documents: DocumentDTORequest[]
   /**
    * 主键ID，更新时传递
    */
