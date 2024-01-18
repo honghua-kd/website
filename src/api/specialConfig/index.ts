@@ -7,8 +7,7 @@ import type {
   SpecialListRequest,
   saveRequest,
   ChangeDetailResponse,
-  OriginalDocResponse,
-  DictDataSimpleRespVO
+  OriginalDocResponse
 } from './types/request'
 import type { SpecialListItem } from './types/response'
 // import type {CascaderOption} from 'element-plus'
@@ -59,7 +58,7 @@ export class SpecialConfigAPI {
   }
 
   // 一级文书
-  getOriginalDoc(data: FormData): Response<DictDataSimpleRespVO[]> {
+  getOriginalDoc(data: FormData): Response<string[]> {
     return this.request({
       url: `${specialPrefix}/system-document/getByDocumentNameByType`,
       method: 'post',
