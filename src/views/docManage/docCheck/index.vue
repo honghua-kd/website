@@ -324,8 +324,12 @@ const downloadData = async () => {
       documentType,
       approvalStatus,
       sourceSystem1,
-      createTimeStart,
-      createTimeEnd
+      createTimeStart: createTimeStart
+        ? dayjs(createTimeStart).format('YYYY-MM-DD HH:mm:ss')
+        : '',
+      createTimeEnd: createTimeEnd
+        ? dayjs(createTimeEnd).format('YYYY-MM-DD HH:mm:ss')
+        : ''
     }
   } else {
     const ids = selectIdsArr.value.map((i: string) => i.split('&')[0])
