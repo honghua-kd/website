@@ -18,7 +18,7 @@ export default {
   overflow: hidden;
   margin: -6px -20px;
   padding: 6px 20px;
-  height: calc(100vh - 106px);
+  height: calc(100vh - 98px);
   background-position: 50%;
   background-repeat: no-repeat;
   background-size: cover;

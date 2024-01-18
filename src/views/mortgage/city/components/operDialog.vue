@@ -42,7 +42,7 @@
                   label="车牌代码"
                   prop="carProvince"
                   :rules="[
-                    { required: true, message: '不能为空', trigger: 'change' }
+                    { required: true, message: '不能为空', trigger: 'blur' }
                   ]"
                 >
                   <el-select
@@ -64,7 +64,7 @@
                   prop="carCode"
                   label-width="5px"
                   :rules="[
-                    { required: true, message: '不能为空', trigger: 'change' }
+                    { required: true, message: '不能为空', trigger: 'blur' }
                   ]"
                 >
                   <el-select
@@ -135,7 +135,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, Ref } from 'vue'
+import { reactive, ref, Ref, watch } from 'vue'
 import { ElForm, ElMessage } from 'element-plus'
 import { px2rem } from '@/utils'
 import type {
@@ -275,8 +275,8 @@ const submitForm = async () => {
     cityCode: formParams.cityCode,
     cityName: formParams.cityName,
     licensePlateCode: formParams.licensePlateCode,
-    applyMortgage: formParams.mortgageName === '是' ? 0 : 1,
-    applyDischarge: formParams.dischargeName === '是' ? 0 : 1
+    applyMortgage: formParams.mortgageName === '是' ? 1 : 0,
+    applyDischarge: formParams.dischargeName === '是' ? 1 : 0
   }
   if (dialogTitle.value === '新增') {
     MortgageCityApi.addMortgageCity(params)
@@ -317,11 +317,22 @@ const mortgageOpts: Ref<DictItem[]> = ref([])
 const releaseOpts: Ref<DictItem[]> = ref([])
 const dictStore = useDictStore()
 const getDicts = () => {
-  carProOpts.value = dictStore.dicts.MORTGAGE_CITYCONFIG
+  // carProOpts.value = dictStore.dicts.MORTGAGE_CITYCONFIG
   carNoOpts.value = dictStore.dicts.MORTGAGE_CITYCONFIG_NO
   mortgageOpts.value = dictStore.dicts.YESNO
   releaseOpts.value = dictStore.dicts.YESNO
 }
+watch(
+  () => formParams.proandcity,
+  (val) => {
+    if (val && val.length) {
+      const province = dictStore.dicts.MORTGAGE_CITYCONFIG.find(
+        (o) => o.value === String(val[0])
+      )
+      carProOpts.value = province ? [province] : []
+    }
+  }
+)
 const open = async (
   type: string,
   row: MortgageCityListResponse & { proandcity?: string[] | null }
@@ -343,8 +354,8 @@ const open = async (
     formParams.licensePlateCode!.split(',').forEach((item: string) => {
       formParams.carCode.push(item[1])
     })
-    formParams.mortgageName = formParams.applyMortgage === 1 ? '否' : '是'
-    formParams.dischargeName = formParams.applyDischarge === 1 ? '否' : '是'
+    formParams.mortgageName = formParams.applyMortgage === 0 ? '否' : '是'
+    formParams.dischargeName = formParams.applyDischarge === 0 ? '否' : '是'
     await initOptions()
   } else {
     formParams.id = ''

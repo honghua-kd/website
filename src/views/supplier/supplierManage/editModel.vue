@@ -189,11 +189,11 @@
         <el-col :span="12">
           <el-form-item
             label="内部对接人名称"
-            :rules="[{ required: true, message: '请输入内部对接人名称' }]"
-            prop="innerInterfaceStaffCode"
+            :rules="[{ required: true, message: '请输入内部对接人工号' }]"
+            prop="innerInterfaceStaffName"
           >
             <el-input
-              v-model="editForm.innerInterfaceStaffCode"
+              v-model="editForm.innerInterfaceStaffName"
               placeholder="请输入内部对接人名称"
               style="width: 100%"
               clearable
@@ -203,11 +203,11 @@
         <el-col :span="12">
           <el-form-item
             label="内部对接人工号"
-            :rules="[{ required: true, message: '请输入内部对接人工号' }]"
-            prop="innerInterfaceStaffName"
+            :rules="[{ required: true, message: '请输入内部对接人名称' }]"
+            prop="innerInterfaceStaffCode"
           >
             <el-input
-              v-model="editForm.innerInterfaceStaffName"
+              v-model="editForm.innerInterfaceStaffCode"
               placeholder="请输入内部对接人工号"
               style="width: 100%"
               clearable
@@ -358,11 +358,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item
-            label="开户行行号"
-            :rules="[{ required: true, message: '请输入开户行行号' }]"
-            prop="openBankCode"
-          >
+          <el-form-item label="开户行行号" prop="openBankCode">
             <el-input
               v-model="item.openBankCode"
               placeholder="请输入开户行行号"
@@ -730,7 +726,7 @@ const submitForm = async () => {
     bankAccount: state.editForm.bankAccountList[0].bankAccount,
     openBank: state.editForm.bankAccountList[0].openBank,
     subBank: state.editForm.bankAccountList[0].subBank,
-    openBankCode: state.editForm.bankAccountList[0].openBankCode,
+    openBankCode: state.editForm.bankAccountList[0].openBankCode || '',
     openBankProCode: selArea.value[0],
     openBankProName: cascaderArea.value[0].getCheckedNodes()[0].pathLabels[0],
     openBankCityCode: selArea.value[1],

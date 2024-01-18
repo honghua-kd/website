@@ -42,8 +42,8 @@ const userViteConfig: ViteConfig = {
   proxy: {
     // 正则表达式写法
     '^/api/.*': {
-      // target: 'https://test-op.utfinancing.com',
-      target: 'https://dev-op.utfinancing.com',
+      target: 'https://test-op.utfinancing.com',
+      // target: 'https://dev-op.utfinancing.com',
       // target: 'http://10.102.3.168:28080',
       // target: 'http://10.13.13.113:32374',
       changeOrigin: true
@@ -63,7 +63,7 @@ const userViteConfig: ViteConfig = {
   // 是否使用图片压缩
   useImageMin: false,
   // 是否使用px2rem
-  // usePx2Rem: process.env.NODE_ENV !== 'development'
-  usePx2Rem: true
+  usePx2Rem: process.env.NODE_ENV !== 'development'
+  // usePx2Rem: true
 }
 export default userViteConfig

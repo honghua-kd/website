@@ -1,58 +1,35 @@
 <template>
   <div class="channel-container">
     <!-- filter -->
-    <div class="channel-search-container" :ref="searchBoxRef">
-      <el-form
-        :inline="true"
-        :model="formModel"
-        class="filter-form"
-        :label-width="px2rem('110px')"
+    <div :ref="searchBoxRef">
+      <SearchBar
+        v-model="formModel"
+        :searchConfig="searchConfig"
+        :labelWidth="'110px'"
+        @reset="reset"
+        @search="searchHandler"
       >
-        <el-row>
-          <el-col :span="6">
-            <el-form-item label="来源系统" style="width: 100%">
-              <el-cascader
-                v-model="formModel.sourceSystem12List"
-                :options="sourceArr"
-                :props="{ multiple: true }"
-                collapse-tags
-                collapse-tags-tooltip
-                clearable
-                placeholder="请选择"
-                style="width: 100%"
-                @change="selectSourceSystem"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="代理商/办事处" style="width: 100%">
-              <el-input
-                placeholder="请输入"
-                v-model="formModel.agencyName"
-                clearable
-                :maxlength="50"
-              /> </el-form-item
-          ></el-col>
-          <el-col :span="6"
-            ><el-form-item label="城市" style="width: 100%">
-              <AreaCasder
-                :value="formModel.areaCodeparams"
-                :multiple="true"
-                @changeAreaData="changeAreaData"
-              /> </el-form-item
-          ></el-col>
-        </el-row>
-        <el-row justify="end">
-          <el-col :span="6" class="btn-row">
-            <el-form-item>
-              <el-button :icon="Search" type="primary" @click="search"
-                >查询</el-button
-              >
-              <el-button :icon="Refresh" @click="refresh">重置</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
+        <template #sourceSystem>
+          <el-cascader
+            v-model="formModel.sourceSystem12List"
+            :options="sourceArr"
+            :props="{ multiple: true }"
+            collapse-tags
+            collapse-tags-tooltip
+            clearable
+            placeholder="请选择"
+            style="width: 100%"
+            @change="selectSourceSystem"
+          />
+        </template>
+        <template #area>
+          <AreaCasder
+            :value="formModel.areaCodeparams"
+            :multiple="true"
+            @changeAreaData="changeAreaData"
+          />
+        </template>
+      </SearchBar>
     </div>
     <el-divider border-style="dashed" />
     <!-- action -->
@@ -121,13 +98,14 @@
           }}</span></template
         >
         <template #action="scope">
+          <el-button link type="primary" @click="actionTableItem(scope, 'edit')"
+            >编辑</el-button
+          >
           <el-button
-            v-for="item in tableActionList"
-            :key="item.value"
             link
-            :type="item.value === 'delete' ? 'danger' : 'primary'"
-            @click="actionTableItem(scope, item.value)"
-            >{{ item.label }}</el-button
+            type="danger"
+            @click="actionTableItem(scope, 'delete')"
+            >删除</el-button
           >
         </template>
       </Table>
@@ -171,7 +149,7 @@
 
 <script setup lang="ts">
 import { reactive, toRefs, ref, computed, onMounted } from 'vue'
-import BasicData from '@/views/mortgage/channelAddress/data'
+import { searchConfig } from './data'
 import EditModel from '@/views/mortgage/channelAddress/editModel.vue'
 import type { StateType } from '@/views/mortgage/channelAddress/type'
 import type {
@@ -183,19 +161,14 @@ import type {
   UploadUserFile
 } from 'element-plus'
 import { ElMessageBox, ElMessage, genFileId } from 'element-plus'
-import {
-  Refresh,
-  Search,
-  Plus,
-  Delete,
-  Download
-} from '@element-plus/icons-vue'
+import { Plus, Delete, Download } from '@element-plus/icons-vue'
 import type { DictDataTreeResponse } from '@/api/common/types/response'
 import type { AgencyAddressListResponse } from '@/api/channel/types/response'
 import AreaCasder from '@/components/AreaCascader/index.vue'
-import { px2rem, handleDownloadFile } from '@/utils'
+import { handleDownloadFile } from '@/utils'
 import { AgencyAPI, CommonAPI } from '@/api'
 import Table from '@/components/Table/index.vue'
+import SearchBar from '@/components/SearchBar/index.vue'
 const API = new AgencyAPI()
 const COMMONAPI = new CommonAPI()
 
@@ -293,7 +266,7 @@ const state = reactive<StateType>({
     {
       label: '创建时间',
       prop: 'createTime',
-      width: '130',
+      width: '140',
       minWidth: '',
       fixed: false,
       align: 'center'
@@ -310,7 +283,7 @@ const state = reactive<StateType>({
       label: '更新时间',
       prop: 'updateTime',
       width: '',
-      minWidth: '130',
+      minWidth: '140',
       fixed: false,
       align: 'center'
     },
@@ -325,7 +298,6 @@ const state = reactive<StateType>({
     }
   ],
   tableData: [],
-  tableActionList: BasicData.tableActionList,
   pageTotal: 100,
   editModelVisible: false,
   editModelTitle: '',
@@ -348,7 +320,6 @@ const {
   tableLoading,
   tableColumn,
   tableData,
-  tableActionList,
   pageTotal,
   editModelVisible,
   editModelTitle,
@@ -481,11 +452,11 @@ const changeAreaData = ({
   // formModel.cityName = cityName
 }
 
-const search = () => {
+const searchHandler = () => {
   formModel.value.pageNo = 1
   getListData()
 }
-const refresh = () => {
+const reset = () => {
   formModel.value.pageNo = 1
   formModel.value.agencyName = ''
   formModel.value.sourceSystem12List = []
