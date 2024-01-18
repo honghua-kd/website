@@ -7,6 +7,7 @@ interface ISearchConfigBase {
   placeholder?: string
   options?: string
   slotName?: string
+  maxlength?: number
 }
 
 interface ISearchConfigCommon extends ISearchConfigBase {

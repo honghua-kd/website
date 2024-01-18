@@ -7,7 +7,8 @@ export const searchConfig: ISearchUnit[] = [
       colSpan: 6,
       label: '抵押主体名称',
       prop: 'mortgageSubjectName',
-      placeholder: '请输入'
+      placeholder: '请输入',
+      maxlength: 50
     },
     {
       compType: 'el-select',

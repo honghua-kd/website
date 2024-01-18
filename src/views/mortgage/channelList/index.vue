@@ -139,12 +139,14 @@
         ref="upload"
         v-model:file-list="fileList"
         class="upload-demo"
+        accept=".xlsx"
         :limit="1"
         :on-exceed="handleExceed"
         :auto-upload="false"
       >
         <template #trigger>
           <el-button>选择文件</el-button>
+          <el-text class="mx-1" type="danger">请上传 .xlsx格式文件</el-text>
         </template>
       </el-upload>
       <template #footer>
@@ -231,7 +233,7 @@ const state = reactive<StateType>({
       prop: 'creatorName',
       minWidth: 100,
       fixed: false,
-      align: 'left'
+      align: 'center'
     },
     {
       label: '创建时间',
@@ -245,7 +247,7 @@ const state = reactive<StateType>({
       prop: 'updaterName',
       minWidth: 100,
       fixed: false,
-      align: 'left'
+      align: 'center'
     },
     {
       label: '更新时间',
@@ -533,6 +535,7 @@ const submitUpload = () => {
     })
 }
 const batchImport = () => {
+  fileList.value = []
   state.importVisible = true
 }
 const closeModel = ({ visible, type }: { visible: boolean; type: string }) => {

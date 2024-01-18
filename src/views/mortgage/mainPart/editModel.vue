@@ -115,7 +115,7 @@
             clearable
           />
         </el-form-item>
-        <span style="font-size: 18px; font-weight: bolder">联系地址</span>
+        <span style="font-size: 0.9375rem; font-weight: bolder">联系地址</span>
         <el-form-item label="省/市">
           <AreaCasder :value="areaCode" @changeAreaData="changeAreaData" />
         </el-form-item>
@@ -139,12 +139,18 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="联系电话">
-              <el-input
+            <el-form-item label="联系电话" prop="contactPhone">
+              <!-- <el-input
                 :maxlength="50"
                 type="number"
                 placeholder="请输入"
                 onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
+                v-model="editForm.contactPhone"
+                clearable
+              /> -->
+              <el-input
+                :maxlength="50"
+                placeholder="请输入"
                 v-model="editForm.contactPhone"
                 clearable
               />
@@ -316,6 +322,24 @@ const rules = reactive<FormRules<typeof editForm>>({
         }
       },
       trigger: 'change'
+    }
+  ],
+  contactPhone: [
+    {
+      validator: (
+        rule: InternalRuleItem,
+        value: string | undefined,
+        callback: (error?: string | Error | undefined) => void
+      ) => {
+        // const reg = /^1[3456789]\d{9}$/
+        const reg = /^[0-9]+$/
+        if (value && value !== '' && !reg.test(value)) {
+          callback(new Error('请正确输入联系电话'))
+        } else {
+          callback()
+        }
+      },
+      trigger: 'blur'
     }
   ]
 })
