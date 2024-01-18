@@ -37,6 +37,7 @@
               <el-input
                 placeholder="请输入"
                 v-model.trim="row.bookmarkName"
+                :maxlength="50"
                 clearable
               />
             </el-form-item>
@@ -51,6 +52,7 @@
               <el-input
                 placeholder="请输入"
                 v-model.trim="row.bookmarkParam"
+                :maxlength="50"
                 clearable
               />
             </el-form-item>

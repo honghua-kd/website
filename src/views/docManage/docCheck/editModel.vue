@@ -133,6 +133,7 @@
                 <el-input
                   placeholder="请输入"
                   v-model.trim="row.documentVersion"
+                  :maxlength="50"
                   clearable
                 />
               </el-form-item>
@@ -148,7 +149,14 @@
               <el-form-item
                 :prop="`saveListInfo.${$index}.fileCode`"
                 :rules="ruleSaveListFormRules.fileCode"
-                ><el-link
+              >
+                <el-text
+                  type="danger"
+                  v-if="!row.fileName || row.fileName === ''"
+                  >请上传附件</el-text
+                >
+                <el-link
+                  v-else
                   type="primary"
                   :underline="false"
                   @click="downloadFile(row.fileName, row.fileCode)"
@@ -212,6 +220,7 @@
       >
         <template #trigger>
           <el-button>选择文件</el-button>
+          <el-text class="mx-1" type="danger">请上传 .docx格式文件</el-text>
         </template>
       </el-upload>
       <template #footer>
@@ -574,3 +583,10 @@ const handleTableClose = () => {
   restForm()
 }
 </script>
+<style lang="scss">
+.save-list-table {
+  .el-form-item {
+    margin-bottom: 0 !important;
+  }
+}
+</style>

@@ -38,6 +38,7 @@
                         v-model="modelValue[(item as ISearchConfigCommon).prop]"
                         clearable
                         :placeholder="item.placeholder"
+                        :maxlength="item.maxlength || 50"
                       />
                     </template>
                     <!-- el-select -->

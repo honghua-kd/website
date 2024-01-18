@@ -133,6 +133,7 @@
                 <el-input
                   placeholder="请输入"
                   v-model.trim="row.documentVersion"
+                  :maxlength="50"
                   clearable
                 />
               </el-form-item>
@@ -212,6 +213,7 @@
       >
         <template #trigger>
           <el-button>选择文件</el-button>
+          <el-text class="mx-1" type="danger">请上传 .docx格式文件</el-text>
         </template>
       </el-upload>
       <template #footer>
@@ -574,3 +576,10 @@ const handleTableClose = () => {
   restForm()
 }
 </script>
+<style lang="scss">
+.save-list-table {
+  .el-form-item {
+    margin-bottom: 0 !important;
+  }
+}
+</style>

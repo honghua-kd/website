@@ -139,12 +139,14 @@
         ref="upload"
         v-model:file-list="fileList"
         class="upload-demo"
+        accept=".xlsx"
         :limit="1"
         :on-exceed="handleExceed"
         :auto-upload="false"
       >
         <template #trigger>
           <el-button>选择文件</el-button>
+          <el-text class="mx-1" type="danger">请上传 .xlsx格式文件</el-text>
         </template>
       </el-upload>
       <template #footer>

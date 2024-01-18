@@ -178,7 +178,7 @@ import ConfigModel from './configModel.vue'
 import { searchConfig, tableColumn } from './data'
 import type { StateType } from './type'
 import type { DocumentPageResponse } from '@/api/docCheck/types/response'
-import { Plus, Download } from '@element-plus/icons-vue'
+import { Plus, Download, ArrowDown } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage, genFileId } from 'element-plus'
 import { px2rem, handleDownloadFile } from '@/utils'
 import { useDictStore } from '@/store/dict'
@@ -209,10 +209,10 @@ const state = reactive<StateType>({
     documentType: '',
     status: null,
     sourceSystem1: [],
-    createTimeStart: '',
-    createTimeEnd: ''
-    // createTimeStart: dayjs().startOf('day').toString(),
-    // createTimeEnd: dayjs().endOf('day').toString()
+    // createTimeStart: '',
+    // createTimeEnd: ''
+    createTimeStart: dayjs().startOf('day').toString(),
+    createTimeEnd: dayjs().endOf('day').toString()
   },
   pageTotal: 0,
   tableData: [],
@@ -561,8 +561,13 @@ onMounted(() => {
   justify-content: space-around;
   align-items: center;
   > .el-dropdown {
-    margin-top: 4px;
     cursor: pointer;
   }
+}
+.el-dropdown-link {
+  display: flex;
+  align-items: center;
+  color: var(--el-color-primary);
+  cursor: pointer;
 }
 </style>

@@ -29,6 +29,7 @@
           v-model="formData.remark"
           :rows="4"
           :maxlength="500"
+          :show-word-limit="true"
           type="textarea"
           placeholder="请输入"
         />

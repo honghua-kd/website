@@ -8,7 +8,8 @@ export const searchConfig: ISearchUnit[] = [
       colSpan: 6,
       label: '文书名称',
       prop: 'documentName',
-      placeholder: '请输入'
+      placeholder: '请输入',
+      maxlength: 50
     },
     {
       compType: 'el-select',
@@ -145,7 +146,7 @@ export const tableColumn: ITableConfigProps[] = [
     type: 'action',
     label: '操作',
     prop: 'action',
-    width: '150',
+    width: '160',
     minWidth: '',
     fixed: 'right',
     align: 'center'
