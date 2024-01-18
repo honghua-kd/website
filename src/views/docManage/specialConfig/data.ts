@@ -1,5 +1,6 @@
 import type { ISearchUnit } from '@/components/SearchBar/type'
 import type { ITableConfigProps } from '@/components/Table/type'
+
 export const searchConfig: ISearchUnit[] = [
   [
     {
@@ -117,4 +118,53 @@ export const tableConfig: ITableConfigProps[] = [
     align: 'center',
     fixed: 'right'
   }
+]
+
+export const dialogContentConfig: ISearchUnit[] = [
+  [
+    {
+      compType: 'el-cascader',
+      colSpan: 24,
+      label: '合同查询',
+      prop: 'systemContractStatus',
+      placeholder: '请选择合同查询状态',
+      cascaderProps: {
+        multiple: true,
+        lazy: true,
+        lazyLoad(node, resolve) {
+          let id = 0
+          const { level } = node
+          setTimeout(() => {
+            const nodes = Array.from({ length: level + 1 }).map(() => ({
+              value: ++id,
+              label: `Option - ${id}`,
+              leaf: level >= 2
+            }))
+            // Invoke `resolve` callback to return the child nodes data and indicate the loading is finished.
+            resolve(nodes)
+          }, 1000)
+        }
+      }
+    }
+  ],
+  // [
+  //   {
+  //     compType: 'custom',
+  //     colSpan: 24,
+  //     label: '原始文书',
+  //     prop: 'originalDocumentNo',
+  //     placeholder: '请选择',
+  //     slotName: 'originalDocument'
+  //   }
+  // ],
+  [
+    {
+      compType: 'custom',
+      colSpan: 24,
+      label: '替换文书',
+      prop: 'replaceDocumentNo',
+      placeholder: '请选择',
+      slotName: 'replaceDocument'
+    }
+  ]
 ]
