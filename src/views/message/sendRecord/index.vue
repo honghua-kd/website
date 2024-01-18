@@ -56,8 +56,9 @@ import type {
 } from '@/api/message/types/request.ts'
 import { handleDownloadFile } from '@/utils'
 
-import { MessageAPI } from '@/api'
+import { MessageAPI, CommonAPI } from '@/api'
 const API = new MessageAPI()
+const CommonApi = new CommonAPI()
 const dictTypes = ['ARCHIVE_STATUS', 'OCR_STATUS']
 
 onMounted(() => {
@@ -130,13 +131,48 @@ const handleSendExport = () => {
   exportParams.bizRelation = queryParams.bizRelation
   exportParams.sendTimeStart = queryParams.sendTimeStart
   exportParams.sendTimeEnd = queryParams.sendTimeEnd
-  API.exportExcelSendMessage(exportParams).then((res) => {
-    handleDownloadFile(res)
-    ElMessage({
-      type: 'success',
-      message: '操作成功'
+  const params = {
+    selectParams: JSON.stringify(exportParams),
+    bizType: 'SMS_SEND_EXPORT'
+  }
+  tableLoading.value = true
+  CommonApi.exportBySelect(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        if (res?.data?.sync === 1) {
+          const params = {
+            fileCode: res?.data?.fileCode as string
+          }
+          CommonApi.downLoadFiles(params)
+            .then((dRes) => {
+              // const fileStream = dRes?.data
+              // const fileName = `邮寄信息登记${dayjs().format(
+              //   'YYYYMMDD'
+              // )}.xlsx`
+              // fileDownload(fileStream, fileName)
+              tableLoading.value = false
+              handleDownloadFile(dRes, '发送记录.xlsx')
+              ElMessage({
+                type: 'success',
+                message: '操作成功'
+              })
+            })
+            .catch((err: Error) => {
+              tableLoading.value = false
+              throw err
+            })
+        } else if (res?.data?.sync === 0) {
+          tableLoading.value = false
+          ElMessage({
+            type: 'success',
+            message: '导出任务已经产生，前面有任务待处理，请至我的下载中查看'
+          })
+        }
+      }
     })
-  })
+    .catch((err: Error) => {
+      throw err
+    })
 }
 const searchConfig: ISearchUnit[] = [
   [
@@ -255,6 +291,15 @@ const tableConfig: ITableConfigProps[] = [
     label: '关联业务编号',
     prop: 'bizRelation',
     width: 160,
+    align: 'center',
+    showOverflowTooltip: true,
+    fixed: false,
+    forbiddenEdit: false
+  },
+  {
+    label: '短信接收号码',
+    prop: 'userNumber',
+    width: 120,
     align: 'center',
     showOverflowTooltip: true,
     fixed: false,

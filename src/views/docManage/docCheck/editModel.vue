@@ -40,7 +40,13 @@
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="用印类型" prop="sealType" required>
-            <el-select v-model="docInfoForm.sealType" style="width: 100%">
+            <el-select
+              v-model="docInfoForm.sealType"
+              multiple
+              collapse-tags
+              collapse-tags-tooltip
+              style="width: 100%"
+            >
               <el-option
                 v-for="item in sealOptions"
                 :key="(item.value as string)"
@@ -196,6 +202,14 @@
         <el-button type="primary" @click="submitUpload">导入</el-button>
       </template>
     </el-dialog>
+
+    <!-- 审核弹窗 -->
+    <ApprovalModel
+      :visible="approvalDialogVisible"
+      :documentNos="documentNos"
+      v-bind="$attrs"
+      @closeApprovalModel="closeApprovalModel"
+    />
   </div>
 </template>
 <script setup lang="ts">
@@ -217,6 +231,7 @@ import { DocCheckAPI, CommonAPI } from '@/api'
 import { useUserStore } from '@toystory/lotso'
 import { handleDownloadFile } from '@/utils'
 import type { DocumentPageResponse } from '@/api/docCheck/types/response'
+import ApprovalModel from './approvalModel.vue'
 
 const API = new DocCheckAPI()
 const COMMONAPI = new CommonAPI()
@@ -243,21 +258,25 @@ const state = reactive<ModelStateType>({
     documentName: '',
     documentType: '',
     sourceSystem1: [],
-    sealType: ''
+    sealType: []
   },
   saveListForm: {
     saveListInfo: []
   },
   listDialogvisible: false,
   importVisible: false,
-  uploadItemIndex: -1
+  uploadItemIndex: -1,
+  approvalDialogVisible: false,
+  documentNos: []
 })
 const {
   dialogVisible,
   docInfoForm,
   saveListForm,
   listDialogvisible,
-  importVisible
+  importVisible,
+  approvalDialogVisible,
+  documentNos
 } = toRefs(state)
 
 watch(
@@ -272,7 +291,15 @@ watch(
       state.docInfoForm.documentType = newValue.documentType
         ? newValue.documentType
         : ''
-      state.docInfoForm.sealType = newValue.sealType ? newValue.sealType : ''
+      if (newValue.sealTypeDetail && newValue.sealTypeDetail.length > 0) {
+        const arr: string[] = []
+        newValue.sealTypeDetail.forEach((i) => {
+          arr.push(i.value as string)
+        })
+        state.docInfoForm.sealType = arr
+      } else {
+        state.docInfoForm.sealType = []
+      }
       const sysArr: string[] = []
       newValue.sourceSystemDetail?.forEach((i) => {
         const value: string = i.value as string
@@ -445,7 +472,7 @@ const restForm = () => {
   state.docInfoForm.documentName = ''
   state.docInfoForm.documentType = ''
   state.docInfoForm.sourceSystem1 = []
-  state.docInfoForm.sealType = ''
+  state.docInfoForm.sealType = []
 }
 
 // 关闭表单弹窗
@@ -478,9 +505,6 @@ const closeFormModel = async (
             props.title === '新增' ? '' : (props.detailData.fileCode as string),
           fileName:
             props.title === '新增' ? '' : (props.detailData.fileName as string)
-          // documentVersion: '123',
-          // fileCode: 'qwe',
-          // fileName: 'ppppp'
         }
         if (props.title === '编辑') {
           obj.id = props.detailData.id as number
@@ -516,15 +540,22 @@ const closeTableModel = async (
       if (valid) {
         console.log(state.saveListForm.saveListInfo)
         await API.saveOrUpdateDocument(state.saveListForm.saveListInfo)
-        emit('closeModel', {
-          type
-        })
         state.listDialogvisible = false
+        if (props.title === '新增') {
+          state.approvalDialogVisible = true
+        }
       } else {
         console.log('error submit!', fields)
       }
     })
   }
+}
+
+const closeApprovalModel = ({ type }: { type: string }) => {
+  emit('closeModel', {
+    type
+  })
+  state.approvalDialogVisible = false
 }
 
 const emit = defineEmits<{
