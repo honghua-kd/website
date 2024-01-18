@@ -1,137 +1,94 @@
-export interface RuleAction {
+export interface RuleItemResponse {
   /**
-   * 分配人员(多人用逗号分割)
+   * 分配规则唯一Code
    */
-  allocationPersonnel: string
+  allocationRuleCode: string
+  /**
+   * 规则名称
+   */
+  allocationRuleName: string
   /**
    * 分配类型
    */
   allocationType: string
   /**
-   * 是否自动分配 0:否 1:是
+   * 分配人员工号(或者供应商编号),多个人员用逗号分割
    */
-  isAutoAllocation: string
+  allocationUserCode: string
   /**
-   * 是否发送短信 0:否 1:是
+   * 分配人员名称(或者供应商名称),多个人员用逗号分割
    */
-  isSendSms: string
+  allocationUserName: string
+  /**
+   * 城市code
+   */
+  cityCode: string
+  /**
+   * 城市名称
+   */
+  cityName: string
+  /**
+   * 创建时间
+   */
+  createTime?: string
+  /**
+   * 创建者工号
+   */
+  creator?: string
+  /**
+   * 创建者名称
+   */
+  creatorName?: string
+  /**
+   * 是否自动分配 0：否 1：是
+   */
+  isAutoAllocation: number
+  /**
+   * 是否发送短信 0：否 1：是
+   */
+  isSendSms: number
+  /**
+   * 是否启用 0：否 1：是
+   */
+  isUsed?: number
+  /**
+   * 最新执行时间
+   */
+  lastExecTime?: string
+  /**
+   * 省份code
+   */
+  provinceCode: string
+  /**
+   * 省份名称
+   */
+  provinceName: string
   /**
    * 短信模板Code
    */
-  smsTemplateCode?: string
-}
-export interface RuleItemResponse {
+  smsTemplateCode: string
   /**
-   * 是否用户自定义(0:否,1:是)
-   */
-  isCustom: number
-  /**
-   * 是否启用(0:否,1:是)
-   */
-  isUsed: number
-  /**
-   * 规则执行动作
-   */
-  ruleActionContent?: RuleAction
-  /**
-   * 规则对应的业务类型一级
-   */
-  ruleBusinessType1: string
-  /**
-   * 规则对应的业务类型二级
-   */
-  ruleBusinessType2: string
-  /**
-   * 规则Code(规则唯一标识)
-   */
-  ruleCode: string
-  /**
-   * 规则条件的执行表达式
-   */
-  ruleConditionExpressExec: string
-  /**
-   * 规则条件的原始表达式
-   */
-  ruleConditionExpressOriginal: string
-  /**
-   * 规则名称
-   */
-  ruleName: string
-  /**
-   * 规则备注
-   */
-  ruleNotes?: string
-  /**
-   * 规则优先级(1-999的数值,数值越大,优先级越高)
-   */
-  rulePriority?: number
-  /**
-   * 系统一级来源(多选用逗号分割)
+   * 系统一级来源
    */
   sourceSystem1: string
   /**
-   * 系统二级来源(多选用逗号分割)
+   * 系统二级来源
    */
-  sourceSystem2?: string
-}
-
-export interface ProvinceChild {
+  sourceSystem2: string
   /**
-   * 子集
+   * 任务类型
    */
-  children: []
+  taskType: string
   /**
-   * 行政规划代码
+   * 更新者工号
    */
-  code: number
+  updater?: string
   /**
-   * 是否有子集 0-没有, 1-有
+   * 更新者
    */
-  haveChildren: number
+  updaterName?: string
   /**
-   * 级别 1-省, 2-市, 3-区
+   * 更新时间
    */
-  level: number
-  /**
-   * 行政规划名称
-   */
-  name: string
-  /**
-   * 父级行政规划代码
-   */
-  parentCode: number
-  /**
-   * 顶级行政区划代码
-   */
-  topParentCode: number
-}
-export interface ProvinceCityResponse {
-  /**
-   * 子集
-   */
-  children: ProvinceChild[]
-  /**
-   * 行政规划代码
-   */
-  code: number
-  /**
-   * 是否有子集 0-没有, 1-有
-   */
-  haveChildren: number
-  /**
-   * 级别 1-省, 2-市, 3-区
-   */
-  level: number
-  /**
-   * 行政规划名称
-   */
-  name: string
-  /**
-   * 父级行政规划代码
-   */
-  parentCode: number
-  /**
-   * 顶级行政区划代码
-   */
-  topParentCode: number
+  updateTime?: string
 }

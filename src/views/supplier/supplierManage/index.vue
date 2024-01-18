@@ -13,7 +13,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="归属公司">
+            <el-form-item label="归属公司" style="width: 100%">
               <el-select
                 v-model="queryFormList.belongCompany"
                 style="width: 100%"

@@ -6,11 +6,11 @@ export interface SupplierListRequest extends PageRequest {
   /**
    * 城市行政规划代码
    */
-  cityCode?: number | ''
+  cityCode?: number | string
   /**
    * 区/县行政规划代码
    */
-  countyCode?: number | ''
+  countyCode?: number | string
   /**
    * 到期时间-结束时间 (时间格式:yyyy-MM-dd)
    */
@@ -30,11 +30,11 @@ export interface SupplierListRequest extends PageRequest {
   /**
    * 省份行政规划代码
    */
-  provinceCode?: number | ''
+  provinceCode?: number | string
   /**
    * 状态,0=已过期;1=合作中;2=已停用
    */
-  status?: number | ''
+  status?: number | string
   /**
    * 类型    1-律所；2-委外机构；3-仓库；4-运输公司；5-收车公司；6-评估机构；7-设备处置平台机构
    */

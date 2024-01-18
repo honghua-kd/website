@@ -6,12 +6,12 @@ import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
 import type {
   RuleListRequest,
-  AddRuleRequest,
+  EditRuleRequest,
   OnOffRequest,
-  ProvinceCityRequest
+  DeleteRuleReuest
 } from './types/request'
-import type { RuleItemResponse, ProvinceCityResponse } from './types/response'
-const prefix = '/operations-management'
+import type { RuleItemResponse } from './types/response'
+const prefix = '/operations-mortgage'
 
 export class RuleAPI {
   private request: AxiosInstance
@@ -23,7 +23,7 @@ export class RuleAPI {
   // 查询规则列表
   getRuleList(data: RuleListRequest): Response<PageList<RuleItemResponse>> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage/rule/queryRule`,
+      url: `${prefix}/admin-api/mortgageAllocationRule/query`,
       method: 'post',
       data
     })
@@ -31,30 +31,28 @@ export class RuleAPI {
 
   // 新增规则
   addRule(
-    data: Omit<AddRuleRequest, 'ruleCode'>
+    data: Omit<EditRuleRequest, 'allocationRuleCode'>
   ): Response<boolean | null | undefined> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage/rule/addRule`,
+      url: `${prefix}/admin-api/mortgageAllocationRule/add`,
       method: 'post',
       data
     })
   }
 
   // 编辑规则
-  editRule(data: AddRuleRequest): Response<boolean | null | undefined> {
+  editRule(data: EditRuleRequest): Response<boolean | null | undefined> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage/rule/modifyRule`,
+      url: `${prefix}/admin-api/mortgageAllocationRule/modify`,
       method: 'post',
       data
     })
   }
 
   // 删除规则
-  delRule(
-    data: Omit<OnOffRequest, 'isUsed'>
-  ): Response<boolean | null | undefined> {
+  delRule(data: DeleteRuleReuest): Response<boolean | null | undefined> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage/rule/deleteRule`,
+      url: `${prefix}/admin-api/mortgageAllocationRule/delete`,
       method: 'post',
       data
     })
@@ -63,16 +61,7 @@ export class RuleAPI {
   // 启用/停用规则
   onOffRule(data: OnOffRequest): Response<boolean | null | undefined> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage/rule/modifyOnOrOffRule`,
-      method: 'post',
-      data
-    })
-  }
-
-  // 获取省份及城市
-  getProvinceCity(data: ProvinceCityRequest): Response<ProvinceCityResponse> {
-    return this.request({
-      url: `${prefix}/admin-api/area/getProvinceCity`,
+      url: `${prefix}/admin-api/mortgageAllocationRule/modifyIsUsed`,
       method: 'post',
       data
     })
