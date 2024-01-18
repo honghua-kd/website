@@ -524,7 +524,7 @@ const testItem = (documentNo: string) => {
   API.testDocument(formData)
     .then((res) => {
       state.tableLoading = false
-      handleDownloadFile(res, '前端自行规范.docx')
+      handleDownloadFile(res, `${documentNo}.docx`)
     })
     .catch(() => {
       state.tableLoading = false
