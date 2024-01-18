@@ -1,15 +1,20 @@
 <template>
   <el-dialog
     v-model="modelVisible"
-    title="选择审核路径"
+    title="选择审批路径"
     width="550px"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     destroy-on-close
     :before-close="handleClose"
   >
-    <el-form ref="ruleFormRef" :model="formData" :rules="rules">
-      <el-form-item prop="approvalPath">
+    <el-form
+      ref="ruleFormRef"
+      :model="formData"
+      :rules="rules"
+      :label-width="100"
+    >
+      <el-form-item label="审批路径" prop="approvalPath">
         <el-radio-group v-model="formData.approvalPath" class="ml-4">
           <el-radio
             v-for="item in pathOptions"
@@ -23,6 +28,8 @@
         <el-input
           v-model="formData.remark"
           :rows="4"
+          :maxlength="500"
+          :show-word-limit="true"
           type="textarea"
           placeholder="请输入"
         />
@@ -30,7 +37,7 @@
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="closeModel(ruleFormRef, 'approval-click-close')"
+        <el-button @click="closeModel(ruleFormRef, 'click-close')"
           >取消</el-button
         >
         <el-button
@@ -92,20 +99,24 @@ const emit = defineEmits<{
 }>()
 
 const closeModel = async (formEl: FormInstance | undefined, type: string) => {
-  if (type === 'approval-click-close') {
+  if (type === 'click-close') {
     emit('closeApprovalModel', {
       type
     })
+    formData.approvalPath = ''
+    formData.remark = ''
     return
   }
   if (!formEl) return
   if (type === 'update-close') {
     await formEl.validate(async (valid, fields) => {
       if (valid) {
-        await API.InitiateApproval(formData)
+        await API.initiateApproval(formData)
         emit('closeApprovalModel', {
           type
         })
+        formData.approvalPath = ''
+        formData.remark = ''
       } else {
         console.log('error submit!', fields)
       }
@@ -115,7 +126,7 @@ const closeModel = async (formEl: FormInstance | undefined, type: string) => {
 
 const handleClose = () => {
   emit('closeApprovalModel', {
-    type: 'approval-click-close'
+    type: 'click-close'
   })
   formData.approvalPath = ''
   formData.remark = ''

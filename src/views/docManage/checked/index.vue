@@ -75,50 +75,70 @@
         <span v-if="prop === 'documentType'">{{
           getLabel('SYSTEM_DOCUMENT_TYPE', row.documentType)
         }}</span>
-        <span v-if="prop === 'approvalStatus'">{{
-          getLabel('SYSTEM_DOCUMENT_APPROVAL_STATUS', row.approvalStatus)
-        }}</span>
+        <span v-if="prop === 'status'"
+          ><el-switch
+            :value="row.status"
+            :active-value="1"
+            :inactive-value="0"
+            @click="changeSwitch(row)"
+        /></span>
       </template>
       <template #action="{ row }">
-        <el-button
-          v-if="
-            row.approvalStatus === 'TO_BE_SUBMITTED' ||
-            row.approvalStatus === 'APPROVAL_REJECTION' ||
-            row.approvalStatus === 'APPROVED'
-          "
-          link
-          type="primary"
-          @click="editItem(row)"
-          >编辑</el-button
-        >
-        <el-button
-          v-if="
-            row.approvalStatus === 'TO_BE_SUBMITTED' ||
-            row.approvalStatus === 'APPROVAL_REJECTION' ||
-            row.approvalStatus === 'APPROVED'
-          "
-          link
-          type="danger"
-          @click="deleteItem(row.id)"
-          >删除</el-button
-        >
-        <el-button
-          v-if="
-            row.approvalStatus === 'APPROVED' ||
-            row.approvalStatus === 'IN_APPROVAL'
-          "
-          link
-          type="primary"
-          >查看审批记录</el-button
-        >
-        <el-button
-          v-if="row.approvalStatus === 'APPROVAL_REJECTION'"
-          link
-          type="primary"
-          >查看拒绝原因</el-button
-        >
+        <div class="opera-context">
+          <el-button link type="primary" @click="editItem(row)">修改</el-button>
+          <el-button link type="primary" @click="oconfigItem(row.documentNo)"
+            >配置</el-button
+          >
+          <el-dropdown>
+            <span class="el-dropdown-link">
+              更多
+              <el-icon class="el-icon--right">
+                <arrow-down />
+              </el-icon>
+            </span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item>
+                  <el-button
+                    link
+                    type="primary"
+                    @click="testItem(row.documentNo)"
+                    >测试</el-button
+                  >
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <el-button link type="danger" @click="deleteItem(row.id)"
+                    >删除</el-button
+                  >
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </div>
       </template>
     </Table>
+    <!-- 修改文书弹窗 -->
+    <EditModel
+      :visible="editModelVisible"
+      :title="editModelTitle"
+      :detailData="detailData"
+      :documentTypeOptions="dictStore.dicts['SYSTEM_DOCUMENT_TYPE']"
+      :systemOptions="systemOptions"
+      :sealOptions="dictStore.dicts['SEAL_TYPE']"
+      @closeModel="closeModel"
+    />
+
+    <!-- 配置参数弹窗 -->
+    <ConfigModel
+      :configVisible="configVisible"
+      :paramConfig="paramConfig"
+      :paramTypeOptions="dictStore.dicts['DOCUMENT_PARAM_TYPE']"
+      :yesOrNoOptions="dictStore.dicts['YESNO']"
+      :documentNo="documentNo"
+      :paramsConfigDetail="paramsConfigDetail"
+      @closeModel="closeConfigModel"
+    />
+
     <!-- 导入 -->
     <el-dialog
       class="import-model"
@@ -133,6 +153,7 @@
         ref="upload"
         v-model:file-list="fileList"
         class="upload-demo"
+        accept=".xlsx"
         :limit="1"
         :on-exceed="handleExceed"
         :auto-upload="false"
@@ -152,10 +173,12 @@
 import { ref, computed, reactive, toRefs, onMounted } from 'vue'
 import SearchBar from '@/components/SearchBar/index.vue'
 import Table from '@/components/Table/index.vue'
+import EditModel from './editModel.vue'
+import ConfigModel from './configModel.vue'
 import { searchConfig, tableColumn } from './data'
 import type { StateType } from './type'
 import type { DocumentPageResponse } from '@/api/docCheck/types/response'
-import { Plus, Download } from '@element-plus/icons-vue'
+import { Plus, Download, ArrowDown } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage, genFileId } from 'element-plus'
 import { px2rem, handleDownloadFile } from '@/utils'
 import { useDictStore } from '@/store/dict'
@@ -171,7 +194,11 @@ import type {
 const API = new DocCheckAPI()
 const COMMONAPI = new CommonAPI()
 const dictStore = useDictStore()
-const dictTypes = ['SYSTEM_DOCUMENT_TYPE', 'SYSTEM_DOCUMENT_APPROVAL_STATUS']
+const dictTypes = [
+  'SYSTEM_DOCUMENT_TYPE',
+  'SYSTEM_DOCUMENT_APPROVAL_STATUS',
+  'START_STOP_TASK_STATUS'
+]
 
 const state = reactive<StateType>({
   queryParams: {
@@ -180,8 +207,10 @@ const state = reactive<StateType>({
     pageSize: 10,
     documentName: '',
     documentType: '',
-    approvalStatus: '',
+    status: null,
     sourceSystem1: [],
+    // createTimeStart: '',
+    // createTimeEnd: ''
     createTimeStart: dayjs().startOf('day').toString(),
     createTimeEnd: dayjs().endOf('day').toString()
   },
@@ -189,10 +218,15 @@ const state = reactive<StateType>({
   tableData: [],
   tableLoading: false,
   selectIdsArr: [],
+  editModelVisible: false,
+  editModelTitle: '',
   systemOptions: [],
   detailData: {},
   importVisible: false,
-  pathOptions: []
+  configVisible: false,
+  paramConfig: [],
+  documentNo: '',
+  paramsConfigDetail: []
 })
 const {
   queryParams,
@@ -200,8 +234,15 @@ const {
   tableData,
   tableLoading,
   selectIdsArr,
+  editModelVisible,
+  editModelTitle,
   systemOptions,
-  importVisible
+  detailData,
+  importVisible,
+  configVisible,
+  paramConfig,
+  documentNo,
+  paramsConfigDetail
 } = toRefs(state)
 
 // 表格最大高度
@@ -241,7 +282,7 @@ const reset = () => {
   queryParams.value.pageNo = 1
   queryParams.value.documentName = ''
   queryParams.value.documentType = ''
-  queryParams.value.approvalStatus = ''
+  queryParams.value.status = null
   queryParams.value.sourceSystem1 = []
   queryParams.value.createTimeStart = dayjs().startOf('day').toString()
   queryParams.value.createTimeEnd = dayjs().endOf('day').toString()
@@ -252,7 +293,7 @@ const selectData = (selection: DocumentPageResponse[]) => {
   const result: string[] = []
   if (selection.length !== 0) {
     selection.forEach((i: DocumentPageResponse) => {
-      result.push(`${i.id}`)
+      result.push(`${i.id}&${i.approvalStatus}&${i.documentNo}`)
     })
   }
   state.selectIdsArr = result
@@ -278,7 +319,7 @@ const downloadData = async () => {
       pageFlag,
       documentName,
       documentType,
-      approvalStatus,
+      status,
       sourceSystem1,
       createTimeStart,
       createTimeEnd
@@ -287,13 +328,14 @@ const downloadData = async () => {
       pageFlag,
       documentName,
       documentType,
-      approvalStatus,
+      status,
       sourceSystem1,
       createTimeStart,
       createTimeEnd
     }
   } else {
-    params = { ids: selectIdsArr.value }
+    const ids = selectIdsArr.value.map((i: string) => i.split('&')[0])
+    params = { ids }
   }
   const res = await COMMONAPI.exportBySelect({
     bizType: 'SYSTEM_DOCUMENT_EXPORT',
@@ -358,9 +400,28 @@ const submitUpload = () => {
     })
 }
 const batchImport = () => {
+  fileList.value = []
   state.importVisible = true
 }
 
+// 关闭修改弹窗回调
+const closeModel = ({ type }: { type: string }) => {
+  state.editModelTitle = ''
+  state.editModelVisible = false
+  if (type === 'update-close') {
+    getListData()
+  }
+}
+
+// 关闭配置弹窗回调
+const closeConfigModel = ({ type }: { type: string }) => {
+  state.configVisible = false
+  if (type === 'update-close') {
+    getListData()
+  }
+}
+
+// 获取部门
 const getDictTreeListData = async () => {
   const params = {
     dictType: 'SOURCE_SYSTEM'
@@ -375,12 +436,22 @@ const getDictTreeListData = async () => {
   }
 }
 
+// 获取文书参数配置
+const getDocumentParamConfig = async () => {
+  const res = await API.getDocumentParamConfig({})
+  if (res && res.code === 200) {
+    state.paramConfig = res.data || []
+  }
+}
+
+// 获取列表数据
 const getListData = async () => {
   state.tableLoading = true
-  const { documentName, createTimeStart, createTimeEnd, ...others } =
+  const { documentName, status, createTimeStart, createTimeEnd, ...others } =
     queryParams.value
   const params = {
     documentName: documentName?.trim(),
+    status: status ? Number(status) : null, // 类型？？？
     createTimeStart: createTimeStart
       ? dayjs(createTimeStart).format('YYYY-MM-DD HH:mm:ss')
       : '',
@@ -400,6 +471,8 @@ const getListData = async () => {
 // 编辑
 const editItem = (row: DocumentPageResponse) => {
   state.detailData = row
+  state.editModelVisible = true
+  state.editModelTitle = '编辑'
 }
 
 // 删除
@@ -429,6 +502,35 @@ const deleteItem = async (id: string) => {
     })
 }
 
+// 测试
+const testItem = (documentNo: string) => {
+  state.tableLoading = true
+  const formData = new FormData()
+  formData.append('documentNo', documentNo + '')
+  API.testDocument(formData)
+    .then((res) => {
+      state.tableLoading = false
+      handleDownloadFile(res, '前端自行规范.docx')
+    })
+    .catch(() => {
+      state.tableLoading = false
+    })
+}
+
+// 配置
+const oconfigItem = async (documentNo: string) => {
+  state.tableLoading = true
+  const formData = new FormData()
+  formData.append('documentNo', documentNo)
+  const res = await API.getDocumentParam(formData)
+  state.tableLoading = false
+  if (res && res.code === 200) {
+    state.paramsConfigDetail = res.data || []
+    state.documentNo = documentNo
+    state.configVisible = true
+  }
+}
+
 // 点击表格中的文件可下载
 const downloadFile = (name: string, code: string) => {
   COMMONAPI.downLoadFiles({ fileCode: code }).then((res) =>
@@ -436,10 +538,36 @@ const downloadFile = (name: string, code: string) => {
   )
 }
 
+// 修改文书状态
+const changeSwitch = async (row: DocumentPageResponse) => {
+  console.log(row)
+  const formData = new FormData()
+  formData.append('id', row.id + '')
+  formData.append('status', row.status === 1 ? '0' : '1')
+  await API.editStatus(formData)
+  getListData()
+}
+
 onMounted(() => {
   getDictTreeListData()
   getListData()
+  getDocumentParamConfig()
 })
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.opera-context {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  > .el-dropdown {
+    cursor: pointer;
+  }
+}
+.el-dropdown-link {
+  display: flex;
+  align-items: center;
+  color: var(--el-color-primary);
+  cursor: pointer;
+}
+</style>

@@ -16,6 +16,8 @@ export type StateType = {
   detailData: DocumentPageResponse
   importVisible: boolean
   pathOptions: ApprovalPathResponse[]
+  approvalDialogVisible: boolean
+  documentNos: string[]
 }
 
 export type EditDocInfo = {
@@ -33,6 +35,4 @@ export type ModelStateType = {
   listDialogvisible: boolean
   importVisible: boolean
   uploadItemIndex: number
-  approvalDialogVisible: boolean
-  documentNos: string[]
 }

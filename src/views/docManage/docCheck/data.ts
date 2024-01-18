@@ -8,7 +8,8 @@ export const searchConfig: ISearchUnit[] = [
       colSpan: 6,
       label: '文书名称',
       prop: 'documentName',
-      placeholder: '请输入'
+      placeholder: '请输入',
+      maxlength: 50
     },
     {
       compType: 'el-select',
@@ -52,7 +53,7 @@ export const tableColumn: ITableConfigProps[] = [
   {
     label: '文书编号',
     prop: 'documentNo',
-    minWidth: 200,
+    minWidth: 220,
     fixed: false,
     align: 'center',
     forbiddenEdit: true
@@ -123,7 +124,7 @@ export const tableColumn: ITableConfigProps[] = [
     width: '',
     minWidth: '100',
     fixed: false,
-    align: 'left'
+    align: 'center'
   },
   {
     label: '创建时间',
@@ -139,7 +140,7 @@ export const tableColumn: ITableConfigProps[] = [
     width: '',
     minWidth: '100',
     fixed: false,
-    align: 'left'
+    align: 'center'
   },
   {
     label: '更新时间',

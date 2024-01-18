@@ -8,7 +8,8 @@ export const searchConfig: ISearchUnit[] = [
       colSpan: 6,
       label: '文书名称',
       prop: 'documentName',
-      placeholder: '请输入'
+      placeholder: '请输入',
+      maxlength: 50
     },
     {
       compType: 'el-select',
@@ -33,8 +34,8 @@ export const searchConfig: ISearchUnit[] = [
       compType: 'el-select',
       colSpan: 6,
       label: '文书状态',
-      prop: 'approvalStatus',
-      options: 'SYSTEM_DOCUMENT_APPROVAL_STATUS',
+      prop: 'status',
+      options: 'START_STOP_TASK_STATUS',
       placeholder: '请选择'
     },
     {
@@ -52,7 +53,7 @@ export const tableColumn: ITableConfigProps[] = [
   {
     label: '文书编号',
     prop: 'documentNo',
-    minWidth: 200,
+    minWidth: 220,
     fixed: false,
     align: 'center',
     forbiddenEdit: true
@@ -103,8 +104,8 @@ export const tableColumn: ITableConfigProps[] = [
     showOverflowTooltip: true
   },
   {
-    label: '审核状态',
-    prop: 'approvalStatus',
+    label: '文书状态',
+    prop: 'status',
     width: 120,
     fixed: false,
     align: 'center'
@@ -115,7 +116,7 @@ export const tableColumn: ITableConfigProps[] = [
     width: '',
     minWidth: '100',
     fixed: false,
-    align: 'left'
+    align: 'center'
   },
   {
     label: '创建时间',
@@ -131,7 +132,7 @@ export const tableColumn: ITableConfigProps[] = [
     width: '',
     minWidth: '100',
     fixed: false,
-    align: 'left'
+    align: 'center'
   },
   {
     label: '更新时间',
@@ -145,9 +146,46 @@ export const tableColumn: ITableConfigProps[] = [
     type: 'action',
     label: '操作',
     prop: 'action',
-    width: '120',
+    width: '160',
     minWidth: '',
     fixed: 'right',
+    align: 'center'
+  }
+]
+export const saveListColumn: ITableConfigProps[] = [
+  {
+    label: '文书名称',
+    prop: 'documentName',
+    minWidth: '130',
+    fixed: false,
+    align: 'left',
+    showOverflowTooltip: true
+  },
+  {
+    label: '文书类型',
+    prop: 'documentType',
+    width: '',
+    minWidth: '100',
+    align: 'center'
+  },
+  {
+    label: '文书版本',
+    prop: 'documentVersion',
+    width: '80',
+    align: 'center'
+  },
+  {
+    label: '附件信息',
+    prop: 'fileCode',
+    width: '130',
+    align: 'left',
+    showOverflowTooltip: true
+  },
+  {
+    type: 'action',
+    label: '操作',
+    prop: 'action',
+    width: '100',
     align: 'center'
   }
 ]

@@ -7,6 +7,8 @@ import type { AxiosInstance } from 'axios'
 import type {
   DocumentPageRequest,
   SaveOrUpdateDocRequest,
+  SystemParamConfigRequest,
+  EditParamConfigRequest,
   getTemplatePageRequest,
   SaveRequest,
   DeleteIdsRequest,
@@ -15,13 +17,15 @@ import type {
 } from './types/request'
 import type {
   DocumentPageResponse,
+  SystemParamConfigResponse,
+  GetDocumentParamResponse,
   MortgageDocumentVO,
   DeleteResponse,
   MortgageSubjectInfoVO,
   DocumentNameResponse,
   SystemDocumentVO
 } from './types/response'
-
+import type { FileDownload } from '@/api'
 const prefix = '/operations-management'
 export class DocCheckAPI {
   private request: AxiosInstance
@@ -110,11 +114,70 @@ export class DocCheckAPI {
   }
 
   // 发起审核
-  InitiateApproval(
+  initiateApproval(
     data: InitiateApprovalRequest
   ): Response<boolean | null | undefined> {
     return this.request({
       url: `${prefix}/admin-api/system-document/initiateApproval`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 修改状态
+  editStatus(data: FormData): Response<boolean | null | undefined> {
+    return this.request({
+      url: `${prefix}/admin-api/system-document/status`,
+      method: 'post',
+      data,
+      headers: {
+        'Content-Type': 'application/form-data'
+      }
+    })
+  }
+
+  // 测试文书
+  testDocument(data: FormData): Promise<FileDownload> {
+    return this.request({
+      url: `${prefix}/admin-api/system-document/testDocument`,
+      method: 'post',
+      data,
+      headers: {
+        'Content-Type': 'application/form-data'
+      },
+      responseType: 'blob'
+    })
+  }
+
+  // 获取文书参数
+  getDocumentParam(data: FormData): Response<GetDocumentParamResponse[]> {
+    return this.request({
+      url: `${prefix}/admin-api/system-document/getDocumentParam`,
+      method: 'post',
+      data,
+      headers: {
+        'Content-Type': 'application/form-data'
+      }
+    })
+  }
+
+  // 获取文书参数配置
+  getDocumentParamConfig(
+    data: SystemParamConfigRequest
+  ): Response<SystemParamConfigResponse[]> {
+    return this.request({
+      url: `${prefix}/admin-api/system-document/getDocumentParamConfig`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 配置文书参数
+  paramConfig(
+    data: EditParamConfigRequest[]
+  ): Response<boolean | null | undefined> {
+    return this.request({
+      url: `${prefix}/admin-api/system-document/paramConfig`,
       method: 'post',
       data
     })
@@ -151,6 +214,7 @@ export class DocCheckAPI {
       headers: {
         'Content-Type': 'application/form-data'
       },
+
       data
     })
   }
