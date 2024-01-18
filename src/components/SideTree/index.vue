@@ -53,7 +53,7 @@ const props = withDefaults(
     height: string
   }>(),
   {
-    height: ''
+    height: 'calc(100vh - 280px)'
   }
 )
 const treehight = computed(() => props.height)
