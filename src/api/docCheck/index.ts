@@ -27,6 +27,7 @@ import type {
 } from './types/response'
 import type { FileDownload } from '@/api'
 const prefix = '/operations-management'
+const prefixTemplate = '/operations-mortgage'
 export class DocCheckAPI {
   private request: AxiosInstance
   constructor(readonly options?: RequestConfig) {
@@ -61,7 +62,7 @@ export class DocCheckAPI {
     data: getTemplatePageRequest
   ): Response<PageList<MortgageDocumentVO>> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage-document-template/page`,
+      url: `${prefixTemplate}/admin-api/mortgage-document-template/page`,
       method: 'post',
       data
     })
@@ -70,7 +71,7 @@ export class DocCheckAPI {
   // 删除文书模板
   editDocumentTemplateDelete(data: DeleteIdsRequest): Response<DeleteResponse> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage-document-template/delete`,
+      url: `${prefixTemplate}/admin-api/mortgage-document-template/delete`,
       method: 'post',
       data
     })
@@ -81,7 +82,7 @@ export class DocCheckAPI {
     data: FormData
   ): Response<PageList<DeleteResponse>> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage-document-template/status`,
+      url: `${prefixTemplate}/admin-api/mortgage-document-template/status`,
       method: 'post',
       headers: {
         'Content-Type': 'application/form-data'
@@ -95,7 +96,7 @@ export class DocCheckAPI {
     data: SaveRequest
   ): Response<PageList<DeleteResponse>> {
     return this.request({
-      url: `${prefix}/admin-api/mortgage-document-template/saveOrUpdate`,
+      url: `${prefixTemplate}/admin-api/mortgage-document-template/saveOrUpdate`,
       method: 'post',
       data
     })
@@ -188,7 +189,7 @@ export class DocCheckAPI {
     data: MortgageSubjectRequest
   ): Response<MortgageSubjectInfoVO[]> {
     return this.request({
-      url: `${prefix}/admin-api/mortgageSubject/queryMortgageSubject`,
+      url: `${prefixTemplate}/admin-api/mortgageSubject/queryMortgageSubject`,
       method: 'post',
       data
     })
