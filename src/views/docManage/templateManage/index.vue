@@ -118,9 +118,11 @@ import type { MortgageDocumentVO } from '@/api/docCheck/types/response.ts'
 import { DocCheckAPI, CommonAPI } from '@/api'
 import type { ITableConfigProps } from '@/components/Table/type'
 import AreaCasder from '@/components/AreaCascader/index.vue'
-import OperDialog from '@/views/docManage/templateManage/components/operDialog.vue'
+import OperDialog from './components/operDialog.vue'
 import { handleDownloadFile } from '@/utils'
 import type { ISearchUnit } from '@/components/SearchBar/type'
+import SearchBar from '@/components/SearchBar/index.vue'
+import Table from '@/components/Table/index.vue'
 
 const tableData = reactive<MortgageDocumentVO[]>([])
 const tableLoading: Ref<boolean> = ref(false)
