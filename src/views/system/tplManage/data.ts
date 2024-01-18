@@ -100,7 +100,7 @@ export const tableConfig: ITableConfigProps[] = [
     label: '操作',
     prop: 'action',
     type: 'action',
-    width: 120,
+    width: 160,
     align: 'center',
     fixed: 'right'
   }

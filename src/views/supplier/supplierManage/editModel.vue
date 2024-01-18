@@ -189,11 +189,11 @@
         <el-col :span="12">
           <el-form-item
             label="内部对接人名称"
-            :rules="[{ required: true, message: '请输入内部对接人名称' }]"
-            prop="innerInterfaceStaffCode"
+            :rules="[{ required: true, message: '请输入内部对接人工号' }]"
+            prop="innerInterfaceStaffName"
           >
             <el-input
-              v-model="editForm.innerInterfaceStaffCode"
+              v-model="editForm.innerInterfaceStaffName"
               placeholder="请输入内部对接人名称"
               style="width: 100%"
               clearable
@@ -203,11 +203,11 @@
         <el-col :span="12">
           <el-form-item
             label="内部对接人工号"
-            :rules="[{ required: true, message: '请输入内部对接人工号' }]"
-            prop="innerInterfaceStaffName"
+            :rules="[{ required: true, message: '请输入内部对接人名称' }]"
+            prop="innerInterfaceStaffCode"
           >
             <el-input
-              v-model="editForm.innerInterfaceStaffName"
+              v-model="editForm.innerInterfaceStaffCode"
               placeholder="请输入内部对接人工号"
               style="width: 100%"
               clearable

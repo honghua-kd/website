@@ -257,7 +257,7 @@ const tableConfig: ITableConfigProps[] = [
     label: '操作',
     prop: 'action',
     type: 'action',
-    width: 170,
+    width: 140,
     align: 'center',
     fixed: 'right'
   }
