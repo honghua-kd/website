@@ -55,6 +55,7 @@ import type {
   ExportSendRequest
 } from '@/api/message/types/request.ts'
 import { handleDownloadFile } from '@/utils'
+import SearchBar from '@/components/SearchBar/index.vue'
 
 import { MessageAPI, CommonAPI } from '@/api'
 const API = new MessageAPI()
