@@ -162,7 +162,7 @@ import {
 } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import type { CascaderOption } from 'element-plus'
-import OperDialog from '@/views/message/messageTemplate/components/operDialog.vue'
+import OperDialog from './components/operDialog.vue'
 import { reactive, ref, Ref, onMounted } from 'vue'
 const tableLoading: Ref<boolean> = ref(false)
 import { MessageAPI, CommonAPI } from '@/api'
@@ -192,7 +192,7 @@ const tableConfig: ITableConfigProps[] = [
   },
   {
     label: '模板编号',
-    prop: 'templateName',
+    prop: 'templateCode',
     width: 200,
     align: 'center',
     showOverflowTooltip: true,
@@ -201,8 +201,17 @@ const tableConfig: ITableConfigProps[] = [
   },
   {
     label: '模板名称',
-    prop: 'templateContent',
+    prop: 'templateName',
     width: 260,
+    align: 'center',
+    showOverflowTooltip: true,
+    fixed: false,
+    forbiddenEdit: false
+  },
+  {
+    label: '模板内容',
+    prop: 'templateContent',
+    width: 400,
     align: 'left',
     showOverflowTooltip: true,
     fixed: false,
@@ -257,7 +266,7 @@ const tableConfig: ITableConfigProps[] = [
     label: '操作',
     prop: 'action',
     type: 'action',
-    width: 170,
+    width: 140,
     align: 'center',
     fixed: 'right'
   }

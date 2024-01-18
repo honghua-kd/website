@@ -5,6 +5,7 @@
       v-model="dialogVisible"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
+      :destroy-on-close="true"
       center
     >
       <el-form
@@ -125,6 +126,10 @@ import type { List } from '@/api/message/types/response.ts'
 import type { DictItem } from '@/api'
 import type { CascaderOption } from 'element-plus'
 import { MessageAPI } from '@/api'
+// import type {
+//   TreeNodeData,
+//   TreeKey
+// } from 'element-plus/es/components/tree/src/tree.type'
 // import overdueDialog from '@/views/message/messageTemplate/components/overdueDialog'
 // import showAfterDialog from '@/views/message/messageTemplate/components/showAfterDialog'
 // import contractDialog from '@/views/message/messageTemplate/components/contractDialog'
@@ -260,14 +265,21 @@ const treeConfig = {
   indent: 15
 }
 const defaultCheckedkeys = ref<string[]>([])
+// type CurType = {
+//   checkedNodes: TreeNodeData[]
+//   checkedKeys: TreeKey[]
+//   halfCheckedNodes: TreeNodeData[]
+//   halfCheckedKeys: TreeKey[]
+// }
 type CurType = {
-  checkedKeys: string[]
-  checkedNodes: string[]
-  halfCheckedKeys: string[]
-  halfCheckedNodes: string[]
+  checkedNodes: []
+  checkedKeys: []
+  halfCheckedNodes: []
+  halfCheckedKeys: []
 }
+// const handleNodeClick = (currentKeys: TreeNodeData, currentNode: CurType) => {
 const handleNodeClick = (currentKeys: string, currentNode: CurType) => {
-  console.log(currentNode)
+  console.log(currentKeys, currentNode)
   if (currentNode.checkedKeys.length === 0) {
     formParams.sourceSystemWeb = []
     return
@@ -288,7 +300,7 @@ const handleNodeClick = (currentKeys: string, currentNode: CurType) => {
   // }
   // const defaultCheckedkeys = ref<object>([])
   // const handleNodeClick = () => {}
-
+  console.log('object', currentNode.checkedKeys)
   const sysList: System12List[] = []
   const srotLs = currentNode.checkedKeys.sort((a: string, b: string) => {
     return a.length - b.length
@@ -402,9 +414,10 @@ const open = (type: string, row: List) => {
     formParams.templateName = row?.templateName
     formParams.templateType = row?.templateType ? row?.templateType : ''
     formParams.sourceSystem12List = []
-    // formParams.sourceSystemWeb = row?.sourceSystemWeb
+    formParams.sourceSystemWeb = defList
   } else {
     treeRef.value?.setCheckedKeys([], true)
+    defaultCheckedkeys.value = []
     formParams.id = ''
     formParams.bizType = []
     formParams.contactorType = ''

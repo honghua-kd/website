@@ -314,3 +314,8 @@ export interface TemplateEditRequest extends TemplateAddRequest {
    */
   id: number | null
 }
+export interface childrenRequest {
+  dictType: string
+  parentValue: string
+  status: string | null
+}

@@ -527,3 +527,20 @@ export interface DeptResponse {
    */
   orgList?: OrgstructureInfoDto[] | null
 }
+/**
+ * 获取审批路径
+ */
+export interface ApprovalPathResponse {
+  /**
+   * 业务名称
+   */
+  bizName?: null | string
+  /**
+   * 业务编号，即审批路径
+   */
+  bizCode?: null | string
+  /**
+   * 业务大类
+   */
+  businessCategory?: null | string
+}

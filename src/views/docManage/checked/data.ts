@@ -33,9 +33,9 @@ export const searchConfig: ISearchUnit[] = [
     {
       compType: 'el-select',
       colSpan: 6,
-      label: '审核状态',
-      prop: 'approvalStatus',
-      options: 'SYSTEM_DOCUMENT_APPROVAL_STATUS',
+      label: '文书状态',
+      prop: 'status',
+      options: 'START_STOP_TASK_STATUS',
       placeholder: '请选择'
     },
     {
@@ -104,19 +104,11 @@ export const tableColumn: ITableConfigProps[] = [
     showOverflowTooltip: true
   },
   {
-    label: '审核状态',
-    prop: 'approvalStatus',
+    label: '文书状态',
+    prop: 'status',
     width: 120,
     fixed: false,
     align: 'center'
-  },
-  {
-    label: '备注',
-    prop: 'remark',
-    width: 150,
-    fixed: false,
-    align: 'center',
-    showOverflowTooltip: true
   },
   {
     label: '创建人',
@@ -154,7 +146,7 @@ export const tableColumn: ITableConfigProps[] = [
     type: 'action',
     label: '操作',
     prop: 'action',
-    width: '120',
+    width: '160',
     minWidth: '',
     fixed: 'right',
     align: 'center'

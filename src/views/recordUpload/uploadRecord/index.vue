@@ -37,8 +37,16 @@
       v-loading="tableLoading"
     >
       <el-table-column type="index" width="80" label="序号" align="center" />
-      <el-table-column prop="creatorName" label="上传人"></el-table-column>
-      <el-table-column prop="createTime" label="上传时间"></el-table-column>
+      <el-table-column
+        prop="creatorName"
+        width="100"
+        label="上传人"
+      ></el-table-column>
+      <el-table-column
+        prop="createTime"
+        width="180"
+        label="上传时间"
+      ></el-table-column>
       <el-table-column prop="fileName" label="上传文件">
         <template v-slot="scope">
           <el-button @click="downUploadFile(scope.row)" type="text">{{
@@ -46,9 +54,17 @@
           }}</el-button>
         </template>
       </el-table-column>
-      <el-table-column prop="importTypeName" label="导入类型"></el-table-column>
-      <el-table-column prop="statusName" label="状态"></el-table-column>
-      <el-table-column prop="statusName" label="失败原因下载">
+      <el-table-column
+        prop="importTypeName"
+        width="200"
+        label="导入类型"
+      ></el-table-column>
+      <el-table-column
+        prop="statusName"
+        width="80"
+        label="状态"
+      ></el-table-column>
+      <el-table-column prop="statusName" width="100" label="失败原因下载">
         <template v-slot="scope">
           <el-button
             v-if="scope.row.status == 2"

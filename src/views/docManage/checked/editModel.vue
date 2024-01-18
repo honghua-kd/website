@@ -149,14 +149,7 @@
               <el-form-item
                 :prop="`saveListInfo.${$index}.fileCode`"
                 :rules="ruleSaveListFormRules.fileCode"
-              >
-                <el-text
-                  type="danger"
-                  v-if="!row.fileName || row.fileName === ''"
-                  >请上传附件</el-text
-                >
-                <el-link
-                  v-else
+                ><el-link
                   type="primary"
                   :underline="false"
                   @click="downloadFile(row.fileName, row.fileCode)"

@@ -1,9 +1,15 @@
 import type {
   DocumentPageRequest,
-  SaveOrUpdateDocRequest
+  SaveOrUpdateDocRequest,
+  EditParamConfigRequest
 } from '@/api/docCheck/types/request'
-import type { DocumentPageResponse } from '@/api/docCheck/types/response'
-import type { DictListItem, ApprovalPathResponse } from '@/api'
+import type {
+  DocumentPageResponse,
+  GetDocumentParamResponse,
+  SystemParamConfigResponse
+} from '@/api/docCheck/types/response'
+import type { DictListItem } from '@/api'
+import type { CascaderOption } from 'element-plus'
 export type StateType = {
   queryParams: DocumentPageRequest
   pageTotal: number
@@ -15,9 +21,10 @@ export type StateType = {
   systemOptions: DictListItem[]
   detailData: DocumentPageResponse
   importVisible: boolean
-  pathOptions: ApprovalPathResponse[]
-  approvalDialogVisible: boolean
-  documentNos: string[]
+  configVisible: boolean
+  paramConfig: SystemParamConfigResponse[]
+  documentNo: string
+  paramsConfigDetail: GetDocumentParamResponse[]
 }
 
 export type EditDocInfo = {
@@ -35,4 +42,13 @@ export type ModelStateType = {
   listDialogvisible: boolean
   importVisible: boolean
   uploadItemIndex: number
+}
+
+export type ConfigStateType = {
+  dialogVisible: boolean
+  configCascaderOptions: CascaderOption[]
+  saveListForm: {
+    saveListInfo: EditParamConfigRequest[]
+  }
+  itemIndex: number
 }
