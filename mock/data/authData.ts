@@ -2,10 +2,17 @@ export default [
   {
     children: [
       {
-        children: [],
+        children: [
+          {
+            elements: [],
+            menuType: 3,
+            menu: 'configCenterIndex',
+            sort: 1
+          }
+        ],
         elements: [],
         menuType: 3,
-        menu: 'configCenter'
+        menu: 'configCenterMenu'
       }
     ],
     elements: [],
@@ -627,7 +634,7 @@ export default [
             children: [],
             elements: [],
             menuType: 3,
-            menu: 'margin',
+            menu: 'marginIndex',
             sort: 1
           }
         ],
@@ -649,7 +656,7 @@ export default [
             children: [],
             elements: [],
             menuType: 3,
-            menu: 'reportCenter',
+            menu: 'reportCenterIndex',
             sort: 1
           }
         ],
@@ -671,7 +678,7 @@ export default [
             children: [],
             elements: [],
             menuType: 3,
-            menu: 'square',
+            menu: 'squareIndex',
             sort: 1
           }
         ],
