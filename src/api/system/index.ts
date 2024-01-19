@@ -3,11 +3,11 @@ import requestConfig from '@/config/request.config'
 import type { Response, PageList } from '../types/response'
 
 import type { FileDownload } from '../common/types/response'
-import type { CascaderOption } from 'element-plus'
 
 import type {
   RoleDO,
   DictDataItem,
+  DictListItem,
   DictDataDetail,
   RoleListPermission,
   UserListPermission,
@@ -127,7 +127,7 @@ export class SystemAPI {
   }
 
   // 角色管理-数据权限-获取字典信息
-  getSingleDict(data: DictListRequest): Response<CascaderOption[]> {
+  getSingleDict(data: DictListRequest): Response<DictListItem[]> {
     return this.request({
       url: `${prefix}/admin-api/system/dict-data/list`,
       method: 'post',
