@@ -22,6 +22,7 @@
                   :prop="[(item as ISearchConfigCommon).prop]"
                 >
                   <slot :name="item.slotName ? item.slotName : 'default'">
+                    <!-- el-date-picker -->
                     <template v-if="item.compType === 'date-range-picker'">
                       <el-date-picker
                         v-model="modelValue[(item as ISearchConfigTimer).propStart ] "
@@ -41,6 +42,7 @@
                       <el-input
                         v-model="modelValue[(item as ISearchConfigCommon).prop]"
                         clearable
+                        :maxlength="item.maxlength || 90"
                         :placeholder="item.placeholder || '请输入'"
                       />
                     </template>
@@ -109,7 +111,7 @@ import {
   ArrowDownBold,
   ArrowUpBold
 } from '@element-plus/icons-vue'
-import { ElForm } from 'element-plus'
+import { ElForm, ElFormItem } from 'element-plus'
 import { useDictStore } from '@/store/dict'
 // import FormItem from '@/components/ElFormItem/index.vue'
 import type {

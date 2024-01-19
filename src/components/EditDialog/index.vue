@@ -5,6 +5,7 @@
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       :width="dialogWidth"
+      @close="closeDialog"
     >
       <template #header>
         <div class="dialog-title">
@@ -34,9 +35,18 @@ import { ref, watch } from 'vue'
 import type { IProps } from './type'
 
 const props = withDefaults(defineProps<IProps>(), {})
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits([
+  'update:modelValue',
+  'triggerChildMethod',
+  'closeEditDialog'
+])
 const dialogVisible = ref<boolean>(props.modelValue)
-const submitHandler = () => {}
+const submitHandler = () => {
+  emit('triggerChildMethod')
+}
+const closeDialog = () => {
+  emit('closeEditDialog')
+}
 
 watch(
   () => props.modelValue,

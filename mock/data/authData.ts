@@ -4,11 +4,82 @@ export default [
       {
         children: [
           {
+            elements: [],
+            menuType: 3,
+            menu: 'configCenterIndex',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 3,
+        menu: 'configCenterMenu'
+      }
+    ],
+    elements: [],
+    menuType: 5,
+    sort: 2,
+    menu: 'configCenter'
+  },
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'contractLease',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'contractLeaseMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'revokeLease',
+            sort: 2
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'revokeLeaseMenu'
+      }
+    ],
+    elements: [],
+    menuType: 5,
+    sort: 3,
+    menu: 'lease'
+  },
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'fileSystem',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'fileSystemMenu'
+      },
+      {
+        children: [
+          {
             children: [],
             elements: [],
             menuType: 3,
             menu: 'scanAndVerify',
-            sort: 1
+            sort: 2
           }
         ],
         elements: [],
@@ -18,36 +89,35 @@ export default [
       {
         children: [
           {
-            children: [
-              {
-                children: [],
-                elements: [],
-                menuType: 2,
-                menu: 'register',
-                sort: 1
-              },
-              {
-                children: [],
-                elements: [],
-                menuType: 2,
-                menu: 'address',
-                sort: 2
-              }
-            ],
+            children: [],
             elements: [],
             menuType: 3,
             menu: 'mailInformationRegister',
-            sort: 2
+            sort: 3
           }
         ],
         elements: [],
         menuType: 5,
-        menu: 'logisticsMenu'
+        menu: 'registerMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'address',
+            sort: 4
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'addressMenu'
       }
     ],
     elements: [],
     menuType: 5,
-    sort: 1,
+    sort: 4,
     menu: 'archive'
   },
   {
@@ -172,58 +242,72 @@ export default [
             children: [],
             elements: [],
             menuType: 3,
-            menu: 'mortgageRules',
+            menu: 'mortMangement',
             sort: 1
           }
         ],
         elements: [],
         menuType: 5,
-        menu: 'mortgageRulesdMenu'
+        menu: 'mortMangementMenu'
       },
       {
         children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'releaseManage',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'releaseManageMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'supplement',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'supplementMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'mortgageRules',
+            sort: 1
+          },
           {
             children: [],
             elements: [],
             menuType: 3,
             menu: 'cityManage',
             sort: 2
-          }
-        ],
-        elements: [],
-        menuType: 5,
-        menu: 'cityManageMenu'
-      },
-      {
-        children: [
+          },
           {
             children: [],
             elements: [],
             menuType: 3,
             menu: 'channelList',
             sort: 3
-          }
-        ],
-        elements: [],
-        menuType: 5,
-        menu: 'channelListMenu'
-      },
-      {
-        children: [
+          },
           {
             children: [],
             elements: [],
             menuType: 3,
             menu: 'channelAddress',
             sort: 4
-          }
-        ],
-        elements: [],
-        menuType: 5,
-        menu: 'channelAddressMenu'
-      },
-      {
-        children: [
+          },
           {
             children: [],
             elements: [],
@@ -234,16 +318,8 @@ export default [
         ],
         elements: [],
         menuType: 5,
-        menu: 'mainPartMenu'
-      }
-    ],
-    elements: [],
-    menuType: 5,
-    sort: 2,
-    menu: 'mortgageMange'
-  },
-  {
-    children: [
+        menu: 'mortgageMange'
+      },
       {
         children: [
           {
@@ -252,14 +328,7 @@ export default [
             menuType: 3,
             menu: 'supplierManage',
             sort: 1
-          }
-        ],
-        elements: [],
-        menuType: 5,
-        menu: 'supplierManageMenu'
-      },
-      {
-        children: [
+          },
           {
             children: [],
             elements: [],
@@ -270,29 +339,7 @@ export default [
         ],
         elements: [],
         menuType: 5,
-        menu: 'settleAccountsMenu'
-      }
-    ],
-    elements: [],
-    menuType: 5,
-    sort: 3,
-    menu: 'supplier'
-  },
-  {
-    children: [
-      {
-        children: [
-          {
-            children: [],
-            elements: [],
-            menuType: 3,
-            menu: 'docCheck',
-            sort: 1
-          }
-        ],
-        elements: [],
-        menuType: 5,
-        menu: 'docCheckMenu'
+        menu: 'supplierManageParent'
       },
       {
         children: [
@@ -301,46 +348,76 @@ export default [
             elements: [],
             menuType: 3,
             menu: 'checked',
-            sort: 2
-          }
-        ],
-        elements: [],
-        menuType: 5,
-        menu: 'checkedMenu'
-      },
-      {
-        children: [
+            sort: 1
+          },
           {
             children: [],
             elements: [],
             menuType: 3,
-            menu: 'templateConfig',
-            sort: 3
-          }
-        ],
-        elements: [],
-        menuType: 5,
-        menu: 'templateConfigMenu'
-      },
-      {
-        children: [
+            menu: 'docCheck',
+            sort: 2
+          },
           {
             children: [],
             elements: [],
             menuType: 3,
             menu: 'specialConfig',
+            sort: 3
+          },
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'templateConfig',
             sort: 4
           }
         ],
         elements: [],
         menuType: 5,
-        menu: 'specialConfigMenu'
+        menu: 'docManage'
       }
     ],
     elements: [],
     menuType: 5,
-    sort: 4,
-    menu: 'docManage'
+    sort: 3,
+    menu: 'releaseOrMortgage'
+  },
+
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'inquiry',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'inquiryMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'changes',
+            sort: 2
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'changesMenu'
+      }
+    ],
+    elements: [],
+    menuType: 5,
+    sort: 5,
+    menu: 'contractManage'
   },
   {
     children: [
@@ -352,15 +429,39 @@ export default [
             menuType: 3,
             menu: 'messageTemplate',
             sort: 1
+          },
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'sendRecord',
+            sort: 2
           }
         ],
         elements: [],
         menuType: 5,
         menu: 'messageManage'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'noticeCenterIndex',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'noticeCenterMenu'
       }
-    ]
+    ],
+    elements: [],
+    menuType: 5,
+    sort: 6,
+    menu: 'notificationMange'
   },
-
   {
     children: [
       {
@@ -380,7 +481,7 @@ export default [
     ],
     elements: [],
     menuType: 5,
-    sort: 5,
+    sort: 7,
     menu: 'recordUpload'
   },
   {
@@ -391,14 +492,388 @@ export default [
             children: [],
             elements: [],
             menuType: 3,
-            menu: 'messageTemplate',
+            menu: 'fundClaim',
             sort: 1
           }
         ],
         elements: [],
         menuType: 5,
-        menu: 'messageManage'
+        menu: 'fundClaimMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'withDrawal',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'withDrawalMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'agentManagement',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'agentManagementMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'onlineBankPurposeClaim',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'onlineBankPurposeClaimMenu'
       }
-    ]
+    ],
+    elements: [],
+    menuType: 5,
+    sort: 8,
+    menu: 'onlineBank'
+  },
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'paymentWithdrawal',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'paymentWithdrawalMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'excessReserves',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'excessReservesMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'costReduction',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'costReductionMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'batchWithdrawal',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'batchWithdrawalMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'recoil',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'recoilMenu'
+      }
+    ],
+    elements: [],
+    menuType: 5,
+    sort: 8,
+    menu: 'settlement'
+  },
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'marginIndex',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'marginMenu'
+      }
+    ],
+    elements: [],
+    menuType: 5,
+    sort: 8,
+    menu: 'margin'
+  },
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'reportCenterIndex',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'reportCenterMenu'
+      }
+    ],
+    elements: [],
+    menuType: 5,
+    sort: 8,
+    menu: 'reportCenter'
+  },
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'squareIndex',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'squareMenu'
+      }
+    ],
+    elements: [],
+    menuType: 5,
+    sort: 8,
+    menu: 'square'
+  },
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'invoiceApplication',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'invoiceApplicationMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'invoiceApplicationCus',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'invoiceApplicationCusMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'invoicedImport',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'invoicedImportMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'invoicedQuery',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'invoicedQueryMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'invoicingSet',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'invoicingSetMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'onlineInvoicing',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'onlineInvoicingMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'sendInvoices',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'sendInvoicesMenu'
+      }
+    ],
+    elements: [],
+    menuType: 5,
+    sort: 8,
+    menu: 'billCenter'
+  },
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'creditSys',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'creditSysMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'customerService',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'customerServiceMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'hante',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'hanteMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'operationsKnowledgeCenter',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'operationsKnowledgeCenterMenu'
+      },
+      {
+        children: [
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'rongjin',
+            sort: 1
+          }
+        ],
+        elements: [],
+        menuType: 5,
+        menu: 'rongjinMenu'
+      }
+    ],
+    elements: [],
+    menuType: 5,
+    sort: 8,
+    menu: 'otherSystem'
   }
 ]

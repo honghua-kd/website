@@ -2,10 +2,12 @@ import { useRequest } from '@toystory/lotso'
 import requestConfig from '@/config/request.config'
 import type { Response, PageList } from '../types/response'
 
+import type { FileDownload } from '../common/types/response'
+
 import type {
   RoleDO,
-  DictListItem,
   DictDataItem,
+  DictListItem,
   DictDataDetail,
   RoleListPermission,
   UserListPermission,
@@ -17,7 +19,8 @@ import type {
   OrgStructure,
   StaffList,
   ExpDetail,
-  TemplateListItem
+  TemplateListItem,
+  DictDataSimpleRespVO
 } from './types/response'
 
 import type {
@@ -48,7 +51,8 @@ import type {
   TemplateListRequest,
   TemplateDelRequest,
   TemplateEditRequest,
-  TemplateAddRequest
+  TemplateAddRequest,
+  childrenRequest
 } from './types/request'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
@@ -311,6 +315,15 @@ export class SystemAPI {
     })
   }
 
+  // 查询子级字典数据
+  getchildrenInfo(data: childrenRequest): Response<DictDataSimpleRespVO[]> {
+    return this.request({
+      url: `${prefix}/admin-api/system/dict-data/children`,
+      method: 'post',
+      data
+    })
+  }
+
   // 【模板配置】删除
   delTemplate(data: TemplateDelRequest): Response<boolean | null> {
     return this.request({
@@ -338,12 +351,13 @@ export class SystemAPI {
     })
   }
 
-  // // 【通用模板下载】根据业务大类+业务小类 下载
-  // templateImportResult(data: TemplateAddRequest): Response<boolean | null> {
-  //   return this.request({
-  //     url: `${prefix}/file/template/importResult`,
-  //     method: 'post',
-  //     data
-  //   })
-  // }
+  // 【通用模板下载】根据业务大类+业务小类 下载
+  templateImportResult(data: TemplateAddRequest): Promise<FileDownload> {
+    return this.request({
+      url: `${prefix}/admin-api/file/template/importResult`,
+      method: 'post',
+      responseType: 'blob',
+      data
+    })
+  }
 }
