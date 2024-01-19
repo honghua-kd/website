@@ -17,7 +17,9 @@
           <el-form-item
             label="快递单号"
             prop="expressNo"
-            :rules="[{ required: true, message: '快递单号不能为空' }]"
+            :rules="[
+              { required: true, message: '快递单号不能为空', trigger: 'blur' }
+            ]"
           >
             <el-input
               v-model="basicInfoForm.expressNo"
@@ -116,7 +118,8 @@
                   :rules="[
                     {
                       required: expressStatusFlag,
-                      message: '寄件人名称不能为空'
+                      message: '寄件人名称不能为空',
+                      trigger: 'blur'
                     },
                     {
                       max: 200,
@@ -145,7 +148,7 @@
                       message: '请输入正确的联系电话',
                       type: 'string',
                       pattern: /^1[3456789]\d{9}$/,
-                      trigger: 'blur'
+                      trigger: ['change', 'blur']
                     }
                   ]"
                 >
@@ -187,7 +190,8 @@
                     addAddressHandler(
                       basicInfoForm.sendUser,
                       basicInfoForm.sendPhone,
-                      basicInfoForm.sendAddress
+                      basicInfoForm.sendAddress,
+                      'sendPhone'
                     )
                   "
                   >设为常用地址</el-button
@@ -212,7 +216,8 @@
                   :rules="[
                     {
                       required: !expressStatusFlag,
-                      message: '收件人名称不能为空'
+                      message: '收件人名称不能为空',
+                      trigger: 'blur'
                     },
                     {
                       max: 200,
@@ -283,7 +288,8 @@
                     addAddressHandler(
                       basicInfoForm.receiveUser,
                       basicInfoForm.receivePhone,
-                      basicInfoForm.receiveAddress
+                      basicInfoForm.receiveAddress,
+                      'receivePhone'
                     )
                   "
                   >设为常用地址</el-button
@@ -636,7 +642,15 @@ const handleSelectRe = (item: Record<string, undefined>) => {
   basicInfoForm.receiveAddress = item.userAddress
 }
 
-const addAddressHandler = (user?: string, phone?: string, address?: string) => {
+const addAddressHandler = async (
+  user?: string,
+  phone?: string,
+  address?: string,
+  type?: string
+) => {
+  if (!basicInfoFormRef.value) return
+  const valid = await basicInfoFormRef.value.validateField(type)
+  if (!valid) return
   if (!user || !phone || !address) {
     ElMessage({
       type: 'error',
@@ -976,8 +990,10 @@ watch(
   (val) => {
     if (val === 0) {
       expressStatusFlag.value = false
+      basicInfoFormRef.value?.clearValidate('sendUser')
     } else if (val === 1) {
       expressStatusFlag.value = true
+      basicInfoFormRef.value?.clearValidate('receiveUser')
     }
   },
   {

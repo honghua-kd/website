@@ -76,10 +76,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row>
-
-        <el-row justify="end">
-          <el-col :span="6" class="btn-row">
+          <el-col :span="18" class="btn-row">
             <el-form-item>
               <el-button :icon="Search" type="primary" @click="searchHandler"
                 >查询</el-button
