@@ -20,7 +20,7 @@ export interface OptionItem {
 export interface BaseFormItemProps {
   type: ComponentsName // 组件类型
   slotName?: string // 插槽名称
-  options?: OptionItem[] // 选项数据，当type为select时必传
+  options?: OptionItem[] | Promise<OptionItem[]> // 选项数据，当type为select时必传
   label: string
   prop: string
   labelWidth?: string | number

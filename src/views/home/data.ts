@@ -1,4 +1,5 @@
 import type { DynamicFormDataItem } from '@/components/DynamicForm/type'
+import { useOptions } from '@/hooks'
 export const data: DynamicFormDataItem[] = [
   {
     prop: 'string1',
@@ -35,8 +36,9 @@ export const data: DynamicFormDataItem[] = [
   {
     label: '测试6',
     prop: 'string6',
-    placeholder: '请输入测试6',
-    type: 'el-input'
+    placeholder: '请选择测试6',
+    options: useOptions('CONTRACT_SUBJECT'),
+    type: 'el-select'
   },
   {
     label: '测试7',

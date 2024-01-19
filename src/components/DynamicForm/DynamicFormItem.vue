@@ -16,11 +16,11 @@
         style="width: 100%"
         v-bind="componentsProps"
         v-model="val"
-        :is="'el-input'"
+        :is="type"
       >
         <template v-if="type === 'el-select'">
           <el-option
-            v-for="({ label, value }, index) in options"
+            v-for="({ label, value }, index) in selectOptions"
             :key="index"
             :label="label"
             :value="value"
@@ -40,9 +40,9 @@ export default {
 </script>
 
 <script lang="ts" setup>
-import { watch, computed, ref } from 'vue'
+import { watch, computed, ref, reactive } from 'vue'
 import type { ComponentsProps, ComponentsName } from './components'
-import type { DynamicFormItemProps } from './type'
+import type { DynamicFormItemProps, OptionItem } from './type'
 
 const props = withDefaults(
   defineProps<DynamicFormItemProps & ComponentsProps[ComponentsName]>(),
@@ -76,6 +76,20 @@ const emit = defineEmits(['update:modelValue'])
 
 const val = ref(props.modelValue)
 
+const selectOptions = reactive<OptionItem[]>([])
+
+const getOptions = () => {
+  if (Array.isArray(props.options)) {
+    selectOptions.splice(0, selectOptions.length)
+    selectOptions.push(...(props.options as OptionItem[]))
+  } else {
+    props.options?.then((options) => {
+      selectOptions.splice(0, selectOptions.length)
+      selectOptions.push(...options)
+    })
+  }
+}
+
 watch(
   () => props.modelValue,
   (newVal) => {
@@ -93,6 +107,10 @@ watch(
     emit('update:modelValue', newVal)
   }
 )
+
+if (props.type === 'el-select') {
+  getOptions()
+}
 </script>
 
 <style lang="scss" scoped>
