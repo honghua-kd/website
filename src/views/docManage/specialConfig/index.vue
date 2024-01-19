@@ -352,7 +352,6 @@ const addHandler = () => {
 }
 // 获取二级来源系统
 const changeSystemContract = async (val: CascaderValue) => {
-  // const valClone = toRaw(val) as string[]
   const params: childrenRequest = {
     dictType: 'SOURCE_SYSTEM',
     parentValue: val + '',
@@ -398,18 +397,19 @@ const changeOriginalDoc = async (
     value: i || '',
     label: i || ''
   }))
-  const _data = arr as OptionType[]
-  if (type === 'original') {
-    originalDocumentSecondOptions.value = _data
-    if (!isshow) {
-      dialogQueryParams.originalDocumentNoSecond = ''
-      dialogQueryParams.originalDocumentNoThree = []
-    }
-  } else {
-    replaceDocumentSecondOptions.value = _data
-    if (!isshow) {
-      dialogQueryParams.replaceDocumentNoSecond = ''
-      dialogQueryParams.replaceDocumentNoThree = ''
+  if (arr) {
+    if (type === 'original') {
+      originalDocumentSecondOptions.value = arr
+      if (!isshow) {
+        dialogQueryParams.originalDocumentNoSecond = ''
+        dialogQueryParams.originalDocumentNoThree = []
+      }
+    } else {
+      replaceDocumentSecondOptions.value = arr
+      if (!isshow) {
+        dialogQueryParams.replaceDocumentNoSecond = ''
+        dialogQueryParams.replaceDocumentNoThree = ''
+      }
     }
   }
 }
@@ -438,14 +438,14 @@ const changeOriginalDocSecond = async (
       dialogQueryParams.replaceDocumentNofirst,
       val
     )
-    replaceDocumentThreeOptions.value = data?.map(
-      (i: Record<string, string | number>) => ({
-        value: i.documentNo || '',
-        label: i.documentVersion || ''
-      })
-    ) as OptionType[]
-    if (!isshow) {
-      dialogQueryParams.replaceDocumentNoThree = ''
+    if (data) {
+      replaceDocumentThreeOptions.value = data?.map((i) => ({
+        value: String(i.documentNo || ''),
+        label: String(i.documentVersion || '')
+      }))
+      if (!isshow) {
+        dialogQueryParams.replaceDocumentNoThree = ''
+      }
     }
   }
 }
