@@ -175,7 +175,7 @@ export class DocCheckAPI {
 
   // 配置文书参数
   paramConfig(
-    data: EditParamConfigRequest[]
+    data: EditParamConfigRequest
   ): Response<boolean | null | undefined> {
     return this.request({
       url: `${prefix}/admin-api/system-document/paramConfig`,

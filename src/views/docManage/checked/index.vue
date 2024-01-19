@@ -58,7 +58,7 @@
       <template #selection>
         <el-table-column
           type="selection"
-          :width="px2rem('40px')"
+          :width="40"
           :selectable="() => true"
           :fixed="true"
           align="center"
@@ -183,7 +183,7 @@ import type { StateType } from './type'
 import type { DocumentPageResponse } from '@/api/docCheck/types/response'
 import { Plus, Download, ArrowDown } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage, genFileId } from 'element-plus'
-import { px2rem, handleDownloadFile } from '@/utils'
+import { handleDownloadFile } from '@/utils'
 import { useDictStore } from '@/store/dict'
 import { CommonAPI, DocCheckAPI } from '@/api'
 import dayjs from 'dayjs'
