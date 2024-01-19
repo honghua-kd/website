@@ -93,6 +93,7 @@
                 clearable
                 placeholder="请选择"
                 style="width: 100%"
+                @change="changeType"
               >
                 <el-option
                   v-for="item in allocatonTypeOpts"
@@ -529,6 +530,10 @@ const submitForm = async () => {
         throw err
       })
   }
+}
+const changeType = () => {
+  alPerson.value = []
+  alEmployee.value = []
 }
 const sourceArr = ref<CascaderOption[]>([])
 const getDictsListData = async () => {

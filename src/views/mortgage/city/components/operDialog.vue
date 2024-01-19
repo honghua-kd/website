@@ -30,6 +30,7 @@
                 :props="props"
                 :options="casOption"
                 style="width: 100%"
+                @change="changeCity"
               />
             </el-form-item>
           </el-col>
@@ -54,7 +55,7 @@
                       v-for="item in carProOpts"
                       :key="item.value"
                       :label="item.label"
-                      :value="item.value"
+                      :value="item.label"
                     />
                   </el-select>
                 </el-form-item>
@@ -135,7 +136,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, Ref, watch } from 'vue'
+import { reactive, ref, Ref } from 'vue'
 import { ElForm, ElMessage } from 'element-plus'
 import { px2rem } from '@/utils'
 import type {
@@ -145,7 +146,7 @@ import type {
 } from '@/api'
 import { useDictStore } from '@/store/dict'
 import { CommonAPI, MortgageCityAPI } from '@/api'
-import type { CascaderProps, CascaderOption } from 'element-plus'
+import type { CascaderProps, CascaderOption, CascaderValue } from 'element-plus'
 const MortgageCityApi = new MortgageCityAPI()
 const CommonApi = new CommonAPI()
 const dialogTitle: Ref<string> = ref('新增')
@@ -322,17 +323,17 @@ const getDicts = () => {
   mortgageOpts.value = dictStore.dicts.YESNO
   releaseOpts.value = dictStore.dicts.YESNO
 }
-watch(
-  () => formParams.proandcity,
-  (val) => {
-    if (val && val.length) {
-      const province = dictStore.dicts.MORTGAGE_CITYCONFIG.find(
-        (o) => o.value === String(val[0])
-      )
-      carProOpts.value = province ? [province] : []
-    }
+const changeCity = (val: CascaderValue) => {
+  const val1 = val as string[]
+  if (val1 && val1.length) {
+    const province = dictStore.dicts.MORTGAGE_CITYCONFIG.find(
+      (o) => o.value === String(val1[0])
+    )
+    carProOpts.value = province ? [province] : []
+    formParams.carProvince = ''
+    formParams.carCode = []
   }
-)
+}
 const open = async (
   type: string,
   row: MortgageCityListResponse & { proandcity?: string[] | null }
