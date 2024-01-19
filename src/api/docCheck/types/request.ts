@@ -287,7 +287,7 @@ export interface SystemParamConfigRequest {
 }
 
 // 配置文书参数
-export interface EditParamConfigRequest {
+export interface EditParamConfigList {
   /**
    * 批量出具是否空白 1-空白 0-不空白
    */
@@ -305,10 +305,6 @@ export interface EditParamConfigRequest {
    */
   column: string
   /**
-   * 文书编号
-   */
-  documentNo: string
-  /**
    * 参数类型 0-普通字段属性 1-list
    */
   paramType: string
@@ -318,4 +314,12 @@ export interface EditParamConfigRequest {
   table: string
   // 自行添加
   tableAndColumn?: string[]
+}
+
+export interface EditParamConfigRequest {
+  /**
+   * 文书编号
+   */
+  documentNo: string
+  paramList: EditParamConfigList[]
 }

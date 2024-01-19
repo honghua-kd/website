@@ -109,8 +109,17 @@
         </el-table-column>
         <el-table-column label="操作" :width="80" align="center">
           <template #default="scope">
+            <!-- <el-button
+              v-if="
+                saveListForm.saveListInfo.length > 1 ||
+                props.paramsConfigDetail.length > 0
+              "
+              link
+              type="danger"
+              @click="removeTableItem(scope.$index, scope.row)"
+              >删除</el-button
+            > -->
             <el-button
-              v-if="saveListForm.saveListInfo.length > 1"
               link
               type="danger"
               @click="removeTableItem(scope.$index, scope.row)"
@@ -141,7 +150,7 @@ import type {
   DictListItem,
   SystemParamConfigResponse,
   ColumnList,
-  EditParamConfigRequest,
+  EditParamConfigList,
   GetDocumentParamResponse
 } from '@/api'
 import type { FormInstance, FormRules, CascaderOption } from 'element-plus'
@@ -177,7 +186,6 @@ const state = reactive<ConfigStateType>({
         bookmarkName: '',
         bookmarkParam: '',
         column: '',
-        documentNo: props.documentNo,
         paramType: '',
         table: '',
         tableAndColumn: []
@@ -193,10 +201,9 @@ watch(
   [
     () => props.configVisible,
     () => props.paramConfig,
-    () => props.documentNo,
     () => props.paramsConfigDetail
   ],
-  ([newVisible, newConfig, newDocumentNo, newConfigDetail]) => {
+  ([newVisible, newConfig, newConfigDetail]) => {
     state.dialogVisible = newVisible
     // 当前无配置
     if (newConfigDetail.length === 0) {
@@ -206,7 +213,6 @@ watch(
           bookmarkName: '',
           bookmarkParam: '',
           column: '',
-          documentNo: newDocumentNo,
           paramType: '',
           table: '',
           tableAndColumn: []
@@ -214,14 +220,13 @@ watch(
       ]
     } else {
       // 当前有配置
-      const list: EditParamConfigRequest[] = []
+      const list: EditParamConfigList[] = []
       newConfigDetail.forEach((i) => {
         list.push({
           batchBlank: `${i.batchBlank}` as string,
           bookmarkName: i.bookmarkName as string,
           bookmarkParam: i.bookmarkParam as string,
           column: i.column as string,
-          documentNo: i.documentNo as string,
           paramType: `${i.paramType}` as string,
           table: i.table as string,
           tableAndColumn: [i.table as string, i.column as string]
@@ -255,7 +260,6 @@ const addTableItem = () => {
     bookmarkName: '',
     bookmarkParam: '',
     column: '',
-    documentNo: props.documentNo,
     paramType: '',
     table: '',
     tableAndColumn: []
@@ -263,7 +267,7 @@ const addTableItem = () => {
 }
 
 // 移除表格项
-const removeTableItem = (index: number, row: EditParamConfigRequest) => {
+const removeTableItem = (index: number, row: EditParamConfigList) => {
   console.log(index, row)
   state.itemIndex = index
   const saveListInfoClone = JSON.parse(
@@ -356,19 +360,21 @@ const closeConfigModel = async (
     await formEl.validate(async (valid, fields) => {
       if (valid) {
         console.log(state.saveListForm.saveListInfo)
-        const params: EditParamConfigRequest[] = []
+        const params: EditParamConfigList[] = []
         state.saveListForm.saveListInfo.forEach((i) => {
           params.push({
             batchBlank: i.batchBlank,
             bookmarkName: i.bookmarkName,
             bookmarkParam: i.bookmarkParam,
             column: i.tableAndColumn ? i.tableAndColumn[1] : '',
-            documentNo: i.documentNo,
             paramType: i.paramType,
             table: i.tableAndColumn ? i.tableAndColumn[0] : ''
           })
         })
-        const res = await API.paramConfig(params)
+        const res = await API.paramConfig({
+          documentNo: props.documentNo,
+          paramList: params
+        })
         if (res && res.code === 200) {
           emit('closeModel', {
             type

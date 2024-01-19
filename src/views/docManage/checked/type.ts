@@ -1,7 +1,7 @@
 import type {
   DocumentPageRequest,
   SaveOrUpdateDocRequest,
-  EditParamConfigRequest
+  EditParamConfigList
 } from '@/api/docCheck/types/request'
 import type {
   DocumentPageResponse,
@@ -48,7 +48,7 @@ export type ConfigStateType = {
   dialogVisible: boolean
   configCascaderOptions: CascaderOption[]
   saveListForm: {
-    saveListInfo: EditParamConfigRequest[]
+    saveListInfo: EditParamConfigList[]
   }
   itemIndex: number
 }
