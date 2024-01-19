@@ -111,3 +111,24 @@ export interface ExportBySelectRequest {
    */
   selectParams: string
 }
+
+export interface DeptItem {
+  /**
+   * 子部门层级  -1：全部层级,0:  当前层级
+   */
+  childFloor?: number | null
+  /**
+   * 部门编号
+   */
+  orgCode?: null | string
+  /**
+   * 部门名称
+   */
+  orgName?: null | string
+}
+export interface DeptRequest {
+  /**
+   * org列表
+   */
+  orgList?: DeptItem[] | null
+}

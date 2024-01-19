@@ -1,4 +1,4 @@
-export interface DictDataSimpleRespVO {
+interface DictDataSimpleRespVO {
   colorType?: null | string
   cssClass?: null | string
   dictType?: null | string

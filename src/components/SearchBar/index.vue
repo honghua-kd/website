@@ -20,15 +20,15 @@
                     <!-- el-date-picker -->
                     <template v-if="item.compType === 'date-range-picker'">
                       <el-date-picker
-                        v-model="modelValue[(item as ISearchConfigTimer).propStart]"
+                        v-model="modelValue[(item as ISearchConfigTimer).propStart ] "
                         type="datetime"
-                        :placeholder="(item as ISearchConfigTimer).placeholderStart"
+                        :placeholder="(item as ISearchConfigTimer).placeholderStart || '请选择'"
                         style="margin-right: 4%; width: 48%"
                       />
                       <el-date-picker
                         v-model="modelValue[(item as ISearchConfigTimer).propEnd]"
                         type="datetime"
-                        :placeholder="(item as ISearchConfigTimer).placeholderEnd"
+                        :placeholder="(item as ISearchConfigTimer).placeholderEnd || '请选择'"
                         style="width: 48%"
                       />
                     </template>
@@ -37,8 +37,8 @@
                       <el-input
                         v-model="modelValue[(item as ISearchConfigCommon).prop]"
                         clearable
-                        :placeholder="item.placeholder"
-                        :maxlength="item.maxlength || 50"
+                        :maxlength="item.maxlength || 90"
+                        :placeholder="item.placeholder || '请输入'"
                       />
                     </template>
                     <!-- el-select -->
@@ -47,7 +47,7 @@
                         v-model="modelValue[(item as ISearchConfigCommon).prop]"
                         style="width: 100%"
                         clearable
-                        :placeholder="item.placeholder"
+                        :placeholder="item.placeholder || '请选择'"
                       >
                         <el-option
                           v-for="(cell, index) in dictObj[item.options as string]"
@@ -57,6 +57,13 @@
                         />
                       </el-select>
                     </template>
+                    <template v-else-if="item.compType === 'el-cascader'">
+                      <el-cascader
+                        v-model="modelValue[(item as ISearchConfigCascader).prop]"
+                        :props="(item as ISearchConfigCascader).cascaderProps"
+                        :placeholder="item.placeholder || '请选择'"
+                      />
+                    </template>
                   </slot>
                 </el-form-item>
               </el-col>
@@ -65,7 +72,7 @@
         </template>
       </div>
       <slot name="form-button">
-        <div class="search-btn">
+        <div class="search-btn" v-if="isSearchBtn">
           <el-button type="primary" :icon="Search" @click="search"
             >查询</el-button
           >
@@ -73,12 +80,14 @@
         </div>
       </slot>
     </el-form>
-    <div class="arrow" @click="expandHandler" v-if="showExpand">
-      <el-icon v-if="!expandFlag"><ArrowDownBold /></el-icon>
-      <el-icon v-if="expandFlag"><ArrowUpBold /></el-icon>
-      <span v-if="!expandFlag" style="margin-left: 4px"> 展开 </span>
-      <span v-if="expandFlag" style="margin-left: 4px"> 收回 </span>
-    </div>
+    <template v-if="isSearchBtn">
+      <div class="arrow" @click="expandHandler" v-if="showExpand">
+        <el-icon v-if="!expandFlag"><ArrowDownBold /></el-icon>
+        <el-icon v-if="expandFlag"><ArrowUpBold /></el-icon>
+        <span v-if="!expandFlag" style="margin-left: 4px"> 展开 </span>
+        <span v-if="expandFlag" style="margin-left: 4px"> 收回 </span>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -97,19 +106,21 @@ import {
   ArrowDownBold,
   ArrowUpBold
 } from '@element-plus/icons-vue'
-import { ElForm } from 'element-plus'
+import { ElForm, ElFormItem } from 'element-plus'
 import { useDictStore } from '@/store/dict'
 import type {
   IProps,
   dictState,
   ISearchConfigCommon,
-  ISearchConfigTimer
+  ISearchConfigTimer,
+  ISearchConfigCascader
 } from './type'
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
 
 const props = withDefaults(defineProps<IProps>(), {
   showExpand: false,
-  labelWidth: '90px'
+  labelWidth: '90px',
+  isSearchBtn: true
 })
 
 const emit = defineEmits(['search', 'reset', 'update:modelValue'])
@@ -165,6 +176,9 @@ watch(
 )
 
 const searchwidth = computed(() => {
+  if (!props.isSearchBtn) {
+    return
+  }
   let width = 'calc(100% - 216px)'
   if (props.searchConfig.length === 1) {
     const configRow = props.searchConfig[0]
