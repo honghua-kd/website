@@ -57,7 +57,7 @@ import SearchBar from '@/components/SearchBar/index.vue'
 import { MessageAPI, CommonAPI } from '@/api'
 const API = new MessageAPI()
 const CommonApi = new CommonAPI()
-const dictTypes = ['ARCHIVE_STATUS', 'OCR_STATUS']
+const dictTypes = ['SMS_SEND_STATUS']
 
 onMounted(() => {
   searchHandler()
