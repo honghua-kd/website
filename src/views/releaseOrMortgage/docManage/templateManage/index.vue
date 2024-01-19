@@ -54,6 +54,11 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     >
+      <template #default="{ row, prop }">
+        <span v-if="prop === 'applicableType'">{{
+          getLabel('DOCUMENT_TEMPLATE_APPLICABLE_TYPE', row.applicableType)
+        }}</span>
+      </template>
       <template #column-switch="{ row, prop }">
         <el-switch
           v-model="row[prop]"
@@ -120,6 +125,7 @@ import { handleDownloadFile } from '@/utils'
 import type { ISearchUnit } from '@/components/SearchBar/type'
 import SearchBar from '@/components/SearchBar/index.vue'
 import Table from '@/components/Table/index.vue'
+import { useDictStore } from '@/store/dict'
 
 const tableData = reactive<MortgageDocumentVO[]>([])
 const tableLoading: Ref<boolean> = ref(false)
@@ -135,6 +141,7 @@ const dictTypes = [
   'DOCUMENT_TEMPLATE_APPLICABLE_TYPE',
   'START_STOP_TASK_STATUS'
 ]
+const dictStore = useDictStore()
 
 onMounted(() => {
   getList()
@@ -345,6 +352,16 @@ const addHandler = () => {
 }
 const editHandler = (row: MortgageDocumentVO) => {
   operRef.value.open('edit', JSON.parse(JSON.stringify(row)))
+}
+const getLabel = (source: string, value: string) => {
+  let result = ''
+  const arr = dictStore.dicts[source] || []
+  arr.forEach((i) => {
+    if (i.value === value) {
+      result = i.label
+    }
+  })
+  return result
 }
 const searchConfig: ISearchUnit[] = [
   [

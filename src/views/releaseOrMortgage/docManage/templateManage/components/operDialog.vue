@@ -153,7 +153,7 @@ import type { SaveRequest } from '@/api/docCheck/types/request.ts'
 import { ElForm, ElMessage } from 'element-plus'
 import AreaCasder from '@/components/AreaCascader/index.vue'
 import { DocCheckAPI, CommonAPI } from '@/api'
-import docDialog from '@/views/docManage/templateManage/components/docDialog.vue'
+import docDialog from './docDialog.vue'
 import type { DictItem } from '@/api'
 
 const CommonApi = new CommonAPI()
