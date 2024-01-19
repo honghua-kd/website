@@ -5,6 +5,7 @@
         v-model="queryParams"
         :dictArray="dictTypes"
         :searchConfig="searchConfig"
+        :labelWidth="'120px'"
         @reset="reset"
         @search="searchHandler"
       >

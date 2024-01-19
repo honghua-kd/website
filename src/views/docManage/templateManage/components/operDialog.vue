@@ -93,6 +93,7 @@
                 v-model.trim="formParams.priority"
                 placeholder="数字越大优先级越高"
                 clearable
+                type="number"
               />
             </el-form-item>
           </el-col>
