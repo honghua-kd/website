@@ -1,5 +1,5 @@
 import type { DictItem } from '@/api'
-
+import type { CascaderProps } from 'element-plus'
 interface ISearchConfigBase {
   compType: string
   colSpan: number
@@ -7,6 +7,8 @@ interface ISearchConfigBase {
   placeholder?: string
   options?: string
   slotName?: string
+  maxlength?: number
+  multiple?: boolean
 }
 
 interface ISearchConfigCommon extends ISearchConfigBase {
@@ -19,8 +21,14 @@ interface ISearchConfigTimer extends ISearchConfigBase {
   placeholderStart?: string
   placeholderEnd?: string
 }
+interface ISearchConfigCascader extends ISearchConfigCommon {
+  cascaderProps: CascaderProps
+}
 
-type ISearchProps = ISearchConfigCommon | ISearchConfigTimer
+type ISearchProps =
+  | ISearchConfigCommon
+  | ISearchConfigTimer
+  | ISearchConfigCascader
 
 type ISearchUnit = ISearchProps[]
 
@@ -34,6 +42,7 @@ interface IProps {
   dictArray?: string[]
   showExpand?: boolean
   labelWidth?: string
+  isSearchBtn?: boolean
 }
 
 export {
@@ -42,5 +51,6 @@ export {
   queryState,
   ISearchConfigTimer,
   ISearchConfigCommon,
+  ISearchConfigCascader,
   ISearchUnit
 }

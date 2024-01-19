@@ -6,13 +6,14 @@ import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
 import type {
   MortgageSubjectListRequest,
-  MortgageSubjectAddRequest,
-  MortgageSubjectEditRequest,
-  MortgageSubjectDeleteRequest
+  MortgageSubjectAddEditRequest,
+  MortgageSubjectDeleteRequest,
+  MortgageSubjectDetailRequest
 } from './types/request'
 import type {
   MortgageSubjectListResponse,
-  ContractSubjectResponse
+  ContractSubjectResponse,
+  MortgageSubjectDetailResponse
 } from './types/response'
 
 const prefix = '/operations-mortgage'
@@ -34,9 +35,20 @@ export class MainPartAPI {
     })
   }
 
+  // 抵押主体-详情数据
+  getMortgageSubjectDetail(
+    data: MortgageSubjectDetailRequest
+  ): Response<MortgageSubjectDetailResponse> {
+    return this.request({
+      url: `${prefix}/admin-api/mortgageSubject/info`,
+      method: 'post',
+      data
+    })
+  }
+
   // 抵押主体-添加
   getMortgageSubjectAdd(
-    data: MortgageSubjectAddRequest
+    data: MortgageSubjectAddEditRequest
   ): Response<boolean | null | undefined> {
     return this.request({
       url: `${prefix}/admin-api/mortgageSubject/add`,
@@ -47,7 +59,7 @@ export class MainPartAPI {
 
   // 抵押主体-修改
   getMortgageSubjectModify(
-    data: MortgageSubjectEditRequest
+    data: MortgageSubjectAddEditRequest
   ): Response<boolean | null | undefined> {
     return this.request({
       url: `${prefix}/admin-api/mortgageSubject/modify`,

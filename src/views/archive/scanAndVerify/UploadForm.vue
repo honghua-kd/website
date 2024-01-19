@@ -25,7 +25,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-
         <el-form-item label="上传文件" prop="formParams.fileInfoList">
           <el-upload
             :show-file-list="false"
