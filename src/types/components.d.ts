@@ -48,6 +48,11 @@ declare module 'vue' {
     README: typeof import('./../components/Table/README.md')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SearchBar: typeof import('./../components/SearchBar/index.vue')['default']
+    SecondaryTitle: typeof import('./../components/SecondaryTitle/index.vue')['default']
+    SideTree: typeof import('./../components/SideTree/index.vue')['default']
+    SvgIcon: typeof import('./../components/SvgIcon/index.vue')['default']
+    Table: typeof import('./../components/Table/index.vue')['default']
   }
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']
