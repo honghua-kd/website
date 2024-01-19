@@ -100,7 +100,7 @@
                 v-for="item in originalDocumentOptions"
                 :key="item.value"
                 :label="item.label"
-                :value="(item.value as string)"
+                :value="item.value"
               />
             </el-select>
             <el-select
@@ -114,7 +114,7 @@
                 v-for="item in originalDocumentSecondOptions"
                 :key="item.value"
                 :label="item.label"
-                :value="(item.value as string)"
+                :value="item.value"
               />
             </el-select>
             <el-select
@@ -128,7 +128,7 @@
                 v-for="item in originalDocumentThreeOptions"
                 :key="item.value"
                 :label="item.label"
-                :value="(item.value as string)"
+                :value="item.value"
               />
             </el-select>
           </el-form-item>
@@ -158,7 +158,7 @@
                 v-for="item in replaceDocumentSecondOptions"
                 :key="item.value"
                 :label="item.label"
-                :value="(item.value as string)"
+                :value="item.value"
               />
             </el-select>
             <el-select
@@ -171,7 +171,7 @@
                 v-for="item in replaceDocumentThreeOptions"
                 :key="item.value"
                 :label="item.label"
-                :value="(item.value as string)"
+                :value="item.value"
               />
             </el-select>
           </el-form-item>
@@ -304,7 +304,7 @@ const editFormRules = {
   ]
 }
 const props: CascaderProps = {
-  expandTrigger: 'hover' as const,
+  expandTrigger: 'hover',
   lazy: true,
   multiple: true,
   async lazyLoad(node, resolve) {
@@ -424,12 +424,14 @@ const changeOriginalDocSecond = async (
       dialogQueryParams.originalDocumentNofirst,
       val
     )
-    originalDocumentThreeOptions.value = data?.map((i) => ({
-      value: i.documentNo || '',
-      label: i.documentVersion || ''
-    })) as OptionType[]
-    if (!isshow) {
-      dialogQueryParams.originalDocumentNoThree = []
+    if (data) {
+      originalDocumentThreeOptions.value = data?.map((i) => ({
+        value: String(i.documentNo || ''),
+        label: String(i.documentVersion || '')
+      }))
+      if (!isshow) {
+        dialogQueryParams.originalDocumentNoThree = []
+      }
     }
   } else {
     const { data } = await getOReplaceDocList(
