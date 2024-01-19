@@ -1,14 +1,5 @@
-import type { FormItemRule, FormRules, ElSelect, ElInput } from 'element-plus'
-import type { DynamicDatePickerProps } from './components/DynamicDatePicker/type'
-
-export type ElSelectProps = InstanceType<typeof ElSelect>['$props']
-export type ElInputProps = InstanceType<typeof ElInput>['$props']
-
-interface ComponentsProps {
-  'el-select': ElSelectProps
-  'el-input': ElInputProps
-  'dynamic-date-picker': DynamicDatePickerProps
-}
+import type { FormItemRule, FormRules } from 'element-plus'
+import { ComponentsProps, ComponentsName } from './components'
 
 export type BaseValueEnum = string | number | Date | boolean
 
@@ -17,12 +8,19 @@ export type FormModelValue = Record<
   BaseValueEnum | Array<BaseValueEnum>
 >
 
-type PickComponentProps<T extends keyof ComponentsProps> = ComponentsProps[T]
+// export type PickComponentProps<T> = T extends ComponentsName
+//   ? ComponentsProps[T]
+//   : never
+
+export interface OptionItem {
+  label?: string | number
+  value: string | number | boolean | Record<string, string | number | boolean>
+}
 
 export interface BaseFormItemProps {
-  type: keyof ComponentsProps // 组件类型
+  type: ComponentsName // 组件类型
   slotName?: string // 插槽名称
-  dicts?: string[] // 字典表字段
+  options?: OptionItem[] // 选项数据，当type为select时必传
   label: string
   prop: string
   labelWidth?: string | number
@@ -35,18 +33,20 @@ export interface BaseFormItemProps {
   validateStatus?: '' | 'error' | 'validating' | 'success'
 }
 
-export interface DynamicFormItemProps extends BaseFormItemProps {
-  modelValue: BaseValueEnum | Array<BaseValueEnum>
-}
+// export interface DynamicFormItemProps extends BaseFormItemProps {
+//   modelValue: BaseValueEnum | Array<BaseValueEnum>
+// }
 
-export interface ExtendsFormItemProps extends BaseFormItemProps {
+export interface DynamicFormItemProps extends BaseFormItemProps {
   rowSpan?: number // 跨越的行数，不能大于colNum列数
   row?: number // 所在行
   col?: number // 所在列
 }
 
-export type DynamicFormDataItem = ExtendsFormItemProps &
-  PickComponentProps<ExtendsFormItemProps['type']>
+export type DynamicFormDataItem = Omit<
+  DynamicFormItemProps & ComponentsProps[ComponentsName],
+  'modelValue'
+>
 
 export interface BaseFormProps {
   rules?: FormRules
@@ -66,6 +66,7 @@ export interface BaseFormProps {
 }
 
 export interface DynamicFormProps extends BaseFormProps {
+  // formItem的类型 与 组件类型 的集合
   data: DynamicFormDataItem[]
   modelValue: FormModelValue
   colNum?: number // 列数

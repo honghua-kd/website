@@ -16,7 +16,7 @@
     :size="size"
     :disabled="disabled"
     :scrollToError="scrollToError"
-    :model="modelValue"
+    :model="formValue"
   >
     <el-row
       :gutter="gutter || 20"
@@ -28,7 +28,10 @@
         v-for="dynamicItem in dynamicData.filter((item) => item.row === rowNum)"
         :key="dynamicItem.prop"
       >
-        {{ dynamicItem }}
+        <DynamicFormItem
+          v-bind="dynamicItem"
+          v-model="formValue[dynamicItem.prop]"
+        />
       </el-col>
     </el-row>
   </el-form>
@@ -44,7 +47,7 @@ export default {
 import { ref, watch, computed } from 'vue'
 import { px2rem } from '@/utils'
 import { ElForm } from 'element-plus'
-// import FormItem from '@/components/ElFormItem/index.vue'
+import DynamicFormItem from './DynamicFormItem.vue'
 import type { DynamicFormProps, DynamicFormDataItem } from './type'
 const dynamicFormRef = ref<InstanceType<typeof ElForm>>()
 
@@ -75,7 +78,6 @@ const dynamicData = computed(() => {
   for (let i = 0; i < itemLength.value; i++) {
     const rowSpan = props.data[i].rowSpan || 1
     defer = defer + rowSpan - 1
-    console.log(props.data[i].prop, (i + 1 + defer) / props.colNum)
     const row = Math.ceil((i + 1 + defer) / props.colNum)
     const col = rowSpan ? colSpan.value * rowSpan : colSpan.value
     data.push({
@@ -89,8 +91,21 @@ const dynamicData = computed(() => {
 
 const emit = defineEmits(['update:modelValue'])
 
+const formValue = ref(props.modelValue)
+
 watch(
   () => props.modelValue,
+  (newVal) => {
+    formValue.value = newVal
+  },
+  {
+    immediate: true,
+    deep: true
+  }
+)
+
+watch(
+  () => formValue.value,
   (newVal) => {
     emit('update:modelValue', newVal)
   },

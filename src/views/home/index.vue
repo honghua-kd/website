@@ -1,11 +1,11 @@
 <template>
-  <div class="home-container">
-    <!-- <div class="app-welcome">
+  <DynamicForm :data="data" v-model="query" />
+  <!-- <div class="home-container">
+    <div class="app-welcome">
       <h1>欢迎使用</h1>
       <h1>海通恒信运营中台系统</h1>
-    </div> -->
-    <DynamicForm :data="data" v-model="query" />
-  </div>
+    </div>
+  </div> -->
 </template>
 
 <script lang="ts">
@@ -17,13 +17,13 @@ export default {
 import { data } from './data'
 import { reactive } from 'vue'
 const query = reactive({
-  string1: '',
-  string2: '',
-  string3: '',
-  string4: '',
-  string5: '',
-  string6: '',
-  string7: ''
+  string1: '1',
+  string2: '2',
+  string3: '3',
+  string4: '4',
+  string5: '5',
+  string6: '6',
+  string7: '7'
 })
 </script>
 

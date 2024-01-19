@@ -9,6 +9,9 @@ declare module 'vue' {
   export interface GlobalComponents {
     AreaCascader: typeof import('./../components/AreaCascader/index.vue')['default']
     DataPermissonForm: typeof import('./../components/PermiForm/DataPermissonForm.vue')['default']
+    DynamicDatePicker: typeof import('./../components/DynamicForm/components/DynamicDatePicker/index.vue')['default']
+    DynamicForm: typeof import('./../components/DynamicForm/DynamicForm.vue')['default']
+    DynamicFormItem: typeof import('./../components/DynamicForm/DynamicFormItem.vue')['default']
     EditDialog: typeof import('./../components/EditDialog/index.vue')['default']
     ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
@@ -71,6 +74,7 @@ declare module 'vue' {
     MdEditor: typeof import('./../components/MdEditor/index.vue')['default']
     PermiListDialog: typeof import('./../components/PermiForm/PermiListDialog.vue')['default']
     Preview: typeof import('./../components/Preview/index.vue')['default']
+    README: typeof import('./../components/Table/README.md')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SearchBar: typeof import('./../components/SearchBar/index.vue')['default']
