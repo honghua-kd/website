@@ -86,7 +86,7 @@
 </template>
 <script lang="ts" setup>
 import { watch, toRefs, reactive, ref } from 'vue'
-import type { ModelStateType } from '@/views/mortgage/channelAddress/type'
+import type { ModelStateType } from './type'
 import type { AgencyAddressDetailResponse } from '@/api/channel/types/response'
 import type { FormInstance, FormRules, CascaderOption } from 'element-plus'
 import type { InternalRuleItem } from 'async-validator'
@@ -374,4 +374,3 @@ const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
   }
 }
 </style>
-@/views/releaseOrMortgage/mortgage/channelAddress/type

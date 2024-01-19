@@ -13,14 +13,18 @@
         <el-form ref="ruleFormRef" :model="docInfoForm" :rules="rules">
           <el-form-item label="文书名称" prop="documentName" required>
             <el-input
-              v-model="docInfoForm.documentName"
+              v-model.trim="docInfoForm.documentName"
               :maxlength="50"
               placeholder="请输入"
               clearable
             />
           </el-form-item>
           <el-form-item label="文书类型" prop="documentType" required>
-            <el-select v-model="docInfoForm.documentType" style="width: 100%">
+            <el-select
+              v-model="docInfoForm.documentType"
+              style="width: 100%"
+              clearable
+            >
               <el-option
                 v-for="item in documentTypeOptions"
                 :key="(item.value as string)"
@@ -40,7 +44,14 @@
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="用印类型" prop="sealType" required>
-            <el-select v-model="docInfoForm.sealType" style="width: 100%">
+            <el-select
+              v-model="docInfoForm.sealType"
+              multiple
+              collapse-tags
+              collapse-tags-tooltip
+              style="width: 100%"
+              clearable
+            >
               <el-option
                 v-for="item in sealOptions"
                 :key="(item.value as string)"
@@ -76,8 +87,13 @@
         @click="addTableItem"
         >新增</el-button
       >
-      <el-form ref="ruleSaveListForm" :model="saveListForm">
+      <el-form
+        ref="ruleSaveListForm"
+        :model="saveListForm"
+        :show-message="false"
+      >
         <el-table
+          class="save-list-table"
           :data="saveListForm.saveListInfo"
           :header-cell-style="{
             background: '#eef1f6',
@@ -87,7 +103,12 @@
           border
           :cell-style="{ borderRight: '1px solid #fff' }"
         >
-          <el-table-column type="index" width="50" align="center" />
+          <el-table-column
+            type="index"
+            label="序号"
+            width="50"
+            align="center"
+          />
           <el-table-column
             prop="documentName"
             label="文书名称"
@@ -110,8 +131,10 @@
                 :rules="ruleSaveListFormRules.documentVersion"
               >
                 <el-input
-                  placeholder="请输入版本"
-                  v-model="row.documentVersion"
+                  placeholder="请输入"
+                  v-model.trim="row.documentVersion"
+                  :maxlength="50"
+                  clearable
                 />
               </el-form-item>
             </template>
@@ -126,7 +149,14 @@
               <el-form-item
                 :prop="`saveListInfo.${$index}.fileCode`"
                 :rules="ruleSaveListFormRules.fileCode"
-                ><el-link
+              >
+                <el-text
+                  type="danger"
+                  v-if="!row.fileName || row.fileName === ''"
+                  >请上传附件</el-text
+                >
+                <el-link
+                  v-else
                   type="primary"
                   :underline="false"
                   @click="downloadFile(row.fileName, row.fileCode)"
@@ -148,7 +178,7 @@
                 v-if="detailData.approvalStatus !== 'APPROVED'"
                 link
                 type="primary"
-                @click="uploadTableFile(scope.$index, scope.row)"
+                @click="uploadTableFile(scope.$index)"
                 >上传</el-button
               >
             </template>
@@ -190,6 +220,7 @@
       >
         <template #trigger>
           <el-button>选择文件</el-button>
+          <el-text class="mx-1" type="danger">请上传 .docx格式文件</el-text>
         </template>
       </el-upload>
       <template #footer>
@@ -243,7 +274,7 @@ const state = reactive<ModelStateType>({
     documentName: '',
     documentType: '',
     sourceSystem1: [],
-    sealType: ''
+    sealType: ['COMMON']
   },
   saveListForm: {
     saveListInfo: []
@@ -272,7 +303,15 @@ watch(
       state.docInfoForm.documentType = newValue.documentType
         ? newValue.documentType
         : ''
-      state.docInfoForm.sealType = newValue.sealType ? newValue.sealType : ''
+      if (newValue.sealTypeDetail && newValue.sealTypeDetail.length > 0) {
+        const arr: string[] = []
+        newValue.sealTypeDetail.forEach((i) => {
+          arr.push(i.value as string)
+        })
+        state.docInfoForm.sealType = arr
+      } else {
+        state.docInfoForm.sealType = []
+      }
       const sysArr: string[] = []
       newValue.sourceSystemDetail?.forEach((i) => {
         const value: string = i.value as string
@@ -434,8 +473,8 @@ const removeTableItem = (index: number, row: SaveOrUpdateDocRequest) => {
 }
 
 // 表格单项上传文件
-const uploadTableFile = (index: number, row: SaveOrUpdateDocRequest) => {
-  console.log(row)
+const uploadTableFile = (index: number) => {
+  fileList.value = []
   state.uploadItemIndex = index
   state.importVisible = true
 }
@@ -445,7 +484,7 @@ const restForm = () => {
   state.docInfoForm.documentName = ''
   state.docInfoForm.documentType = ''
   state.docInfoForm.sourceSystem1 = []
-  state.docInfoForm.sealType = ''
+  state.docInfoForm.sealType = ['COMMON']
 }
 
 // 关闭表单弹窗
@@ -478,9 +517,6 @@ const closeFormModel = async (
             props.title === '新增' ? '' : (props.detailData.fileCode as string),
           fileName:
             props.title === '新增' ? '' : (props.detailData.fileName as string)
-          // documentVersion: '123',
-          // fileCode: 'qwe',
-          // fileName: 'ppppp'
         }
         if (props.title === '编辑') {
           obj.id = props.detailData.id as number
@@ -516,10 +552,11 @@ const closeTableModel = async (
       if (valid) {
         console.log(state.saveListForm.saveListInfo)
         await API.saveOrUpdateDocument(state.saveListForm.saveListInfo)
+        state.listDialogvisible = false
         emit('closeModel', {
           type
         })
-        state.listDialogvisible = false
+        restForm()
       } else {
         console.log('error submit!', fields)
       }
@@ -546,3 +583,10 @@ const handleTableClose = () => {
   restForm()
 }
 </script>
+<style lang="scss">
+.save-list-table {
+  .el-form-item {
+    margin-bottom: 0 !important;
+  }
+}
+</style>

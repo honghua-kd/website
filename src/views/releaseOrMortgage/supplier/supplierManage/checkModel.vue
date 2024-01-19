@@ -337,18 +337,10 @@
 <script lang="ts" setup>
 import { watch, toRefs, reactive, ref, Ref, computed } from 'vue'
 import { px2rem } from '@/utils'
-import type {
-  RecordType,
-  ModelStateType,
-  EditForm
-} from '@/views/supplier/supplierManage/type'
+import type { RecordType, ModelStateType, EditForm } from './type'
 import { Delete, Upload, Plus } from '@element-plus/icons-vue'
 import ImportForm from './ImportForm.vue'
-import {
-  PersonColumn,
-  AccountColumn,
-  SettlementColumn
-} from '@/views/supplier/supplierManage/data'
+import { PersonColumn, AccountColumn, SettlementColumn } from './data'
 import type { CascaderProps, CascaderOption } from 'element-plus'
 import Table from '@/components/Table/index.vue'
 import AccountForm from './accountForm.vue'

@@ -17,7 +17,7 @@
         :auto-upload="false"
         :on-exceed="handleExceed"
         action="#"
-        :limit="1"
+        multiple
         v-model:file-list="fileList"
       >
         上传文件: &nbsp;&nbsp;&nbsp;
@@ -64,10 +64,19 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
   upload.value!.handleStart(file)
 }
 const importHandler = () => {
+  if (!fileList.value.length) {
+    ElMessage({
+      type: 'error',
+      message: '请选择文件'
+    })
+    return
+  }
   dialogVisible.value = false
   const formData = new FormData()
-  formData.append('file', fileList.value[0].raw as File)
-  formData.append('bizType', '')
+  fileList.value.forEach((item) => {
+    formData.append('file', item.raw as File)
+  })
+  formData.append('bizType', 'MORTGAGE_TEMPLATE_ALLOCATION_RULE')
   CommonApi.getAsyncImport(formData)
     .then((res) => {
       if (res && res.code === 200) {

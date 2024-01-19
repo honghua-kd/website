@@ -435,7 +435,7 @@ import type {
   ModelStateType,
   AttachmentDetailDto,
   EditForm
-} from '@/views/supplier/supplierManage/type'
+} from './type'
 import type { DictDataTreeResponse, DictItem } from '@/api'
 import { Delete } from '@element-plus/icons-vue'
 import type {

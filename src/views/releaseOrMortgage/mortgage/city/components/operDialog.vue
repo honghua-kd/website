@@ -30,6 +30,7 @@
                 :props="props"
                 :options="casOption"
                 style="width: 100%"
+                @change="changeCity"
               />
             </el-form-item>
           </el-col>
@@ -42,7 +43,7 @@
                   label="车牌代码"
                   prop="carProvince"
                   :rules="[
-                    { required: true, message: '不能为空', trigger: 'change' }
+                    { required: true, message: '不能为空', trigger: 'blur' }
                   ]"
                 >
                   <el-select
@@ -54,7 +55,7 @@
                       v-for="item in carProOpts"
                       :key="item.value"
                       :label="item.label"
-                      :value="item.value"
+                      :value="item.label"
                     />
                   </el-select>
                 </el-form-item>
@@ -64,7 +65,7 @@
                   prop="carCode"
                   label-width="5px"
                   :rules="[
-                    { required: true, message: '不能为空', trigger: 'change' }
+                    { required: true, message: '不能为空', trigger: 'blur' }
                   ]"
                 >
                   <el-select
@@ -145,7 +146,7 @@ import type {
 } from '@/api'
 import { useDictStore } from '@/store/dict'
 import { CommonAPI, MortgageCityAPI } from '@/api'
-import type { CascaderProps, CascaderOption } from 'element-plus'
+import type { CascaderProps, CascaderOption, CascaderValue } from 'element-plus'
 const MortgageCityApi = new MortgageCityAPI()
 const CommonApi = new CommonAPI()
 const dialogTitle: Ref<string> = ref('新增')
@@ -317,10 +318,21 @@ const mortgageOpts: Ref<DictItem[]> = ref([])
 const releaseOpts: Ref<DictItem[]> = ref([])
 const dictStore = useDictStore()
 const getDicts = () => {
-  carProOpts.value = dictStore.dicts.MORTGAGE_CITYCONFIG
+  // carProOpts.value = dictStore.dicts.MORTGAGE_CITYCONFIG
   carNoOpts.value = dictStore.dicts.MORTGAGE_CITYCONFIG_NO
   mortgageOpts.value = dictStore.dicts.YESNO
   releaseOpts.value = dictStore.dicts.YESNO
+}
+const changeCity = (val: CascaderValue) => {
+  const val1 = val as string[]
+  if (val1 && val1.length) {
+    const province = dictStore.dicts.MORTGAGE_CITYCONFIG.find(
+      (o) => o.value === String(val1[0])
+    )
+    carProOpts.value = province ? [province] : []
+    formParams.carProvince = ''
+    formParams.carCode = []
+  }
 }
 const open = async (
   type: string,

@@ -1,7 +1,7 @@
 <template>
   <div class="user-container">
     <el-card class="tree-container">
-      <SideTree height="500px" @getSelect="getSelectNodeHandler" />
+      <SideTree @getSelect="getSelectNodeHandler" />
     </el-card>
     <el-card class="right-part">
       <!-- 搜索工作栏 -->

@@ -15,7 +15,8 @@ export const searchConfig: ISearchUnit[] = [
       label: '代理商/办事处',
       prop: 'agencyName',
       options: '',
-      placeholder: '请输入'
+      placeholder: '请输入',
+      maxlength: 50
     }
   ],
   []

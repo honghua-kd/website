@@ -6,8 +6,8 @@ import type { FileDownload } from '../common/types/response'
 
 import type {
   RoleDO,
-  DictListItem,
   DictDataItem,
+  DictListItem,
   DictDataDetail,
   RoleListPermission,
   UserListPermission,
@@ -19,7 +19,8 @@ import type {
   OrgStructure,
   StaffList,
   ExpDetail,
-  TemplateListItem
+  TemplateListItem,
+  DictDataSimpleRespVO
 } from './types/response'
 
 import type {
@@ -50,7 +51,8 @@ import type {
   TemplateListRequest,
   TemplateDelRequest,
   TemplateEditRequest,
-  TemplateAddRequest
+  TemplateAddRequest,
+  childrenRequest
 } from './types/request'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
@@ -308,6 +310,15 @@ export class SystemAPI {
   ): Response<PageList<TemplateListItem>> {
     return this.request({
       url: `${prefix}/admin-api/file/template/list`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 查询子级字典数据
+  getchildrenInfo(data: childrenRequest): Response<DictDataSimpleRespVO[]> {
+    return this.request({
+      url: `${prefix}/admin-api/system/dict-data/children`,
       method: 'post',
       data
     })

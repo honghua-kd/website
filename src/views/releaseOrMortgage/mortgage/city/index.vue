@@ -141,7 +141,7 @@ import {
 } from '@element-plus/icons-vue'
 import { reactive, ref, Ref, onMounted, computed } from 'vue'
 import { tableConfig } from './data'
-import OperDialog from '@/views/mortgage/city/components/operDialog.vue'
+import OperDialog from './components/operDialog.vue'
 import ImportForm from './ImportForm.vue'
 import { CommonAPI, MortgageCityAPI } from '@/api'
 import { handleDownloadFile } from '@/utils'

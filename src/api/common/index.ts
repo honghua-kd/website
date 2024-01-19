@@ -10,7 +10,8 @@ import type {
   ProvincesChildrenRequest,
   ExportBySelectRequest,
   CodeRequest,
-  DictTreeRequest
+  DictTreeRequest,
+  DeptRequest
 } from './types/request'
 import type {
   UploadFile,
@@ -23,7 +24,9 @@ import type {
   ProvincesChildrenResponse,
   DictDataTreeResponse,
   ExportBySelectResponse,
-  ProvinceResponse
+  ProvinceResponse,
+  DeptResponse,
+  ApprovalPathResponse
 } from './types/response'
 import type { RequestConfig } from '@toystory/lotso'
 import type { AxiosInstance } from 'axios'
@@ -226,6 +229,27 @@ export class CommonAPI {
       url: `${prefix}/admin-api/export/file/record/exportBySelect`,
       method: 'post',
       data
+    })
+  }
+
+  // 查询部门
+  getDeptByName(data: DeptRequest): Response<DeptResponse> {
+    return this.request({
+      url: `${prefix}/admin-api/ehr/orgstructure/getDept`,
+      method: 'post',
+      data
+    })
+  }
+
+  // 获取审批路径
+  getApprovalPath(data: FormData): Response<ApprovalPathResponse[]> {
+    return this.request({
+      url: `${prefix}/admin-api/tianshu/workflow/getApprovalPath`,
+      method: 'post',
+      data,
+      headers: {
+        'Content-Type': 'application/form-data'
+      }
     })
   }
 }

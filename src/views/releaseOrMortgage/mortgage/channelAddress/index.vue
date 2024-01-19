@@ -132,12 +132,14 @@
         ref="upload"
         v-model:file-list="fileList"
         class="upload-demo"
+        accept=".xlsx"
         :limit="1"
         :on-exceed="handleExceed"
         :auto-upload="false"
       >
         <template #trigger>
           <el-button>选择文件</el-button>
+          <el-text class="mx-1" type="danger">请上传 .xlsx格式文件</el-text>
         </template>
       </el-upload>
       <template #footer>
@@ -150,8 +152,8 @@
 <script setup lang="ts">
 import { reactive, toRefs, ref, computed, onMounted } from 'vue'
 import { searchConfig } from './data'
-import EditModel from '@/views/mortgage/channelAddress/editModel.vue'
-import type { StateType } from '@/views/mortgage/channelAddress/type'
+import EditModel from './editModel.vue'
+import type { StateType } from './type'
 import type {
   CascaderValue,
   CascaderOption,
@@ -261,7 +263,7 @@ const state = reactive<StateType>({
       width: '',
       minWidth: '100',
       fixed: false,
-      align: 'left'
+      align: 'center'
     },
     {
       label: '创建时间',
@@ -277,7 +279,7 @@ const state = reactive<StateType>({
       width: '',
       minWidth: '100',
       fixed: false,
-      align: 'left'
+      align: 'center'
     },
     {
       label: '更新时间',
@@ -595,6 +597,7 @@ const submitUpload = () => {
     })
 }
 const batchImport = () => {
+  fileList.value = []
   state.importVisible = true
 }
 
@@ -691,4 +694,3 @@ const actionTableItem = async (
   }
 }
 </style>
-@/views/releaseOrMortgage/mortgage/channelAddress/type
