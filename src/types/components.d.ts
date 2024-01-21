@@ -66,6 +66,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SearchBar: typeof import('./../components/SearchBar/index.vue')['default']
+    SearchBarV2: typeof import('./../components/SearchBarV2/index.vue')['default']
     SecondaryTitle: typeof import('./../components/SecondaryTitle/index.vue')['default']
     SideTree: typeof import('./../components/SideTree/index.vue')['default']
     SvgIcon: typeof import('./../components/SvgIcon/index.vue')['default']

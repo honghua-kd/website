@@ -1,5 +1,12 @@
 <template>
   <DynamicForm :data="data" v-model="query" />
+  <SearchBarV2
+    :data="data"
+    v-model="searchQuery"
+    :defaultShowRow="1"
+    @search="searchHandler"
+    @reset="resetHandler"
+  />
   <!-- <div class="home-container">
     <div class="app-welcome">
       <h1>欢迎使用</h1>
@@ -25,6 +32,22 @@ const query = reactive({
   string6: '6',
   string7: '7'
 })
+
+const searchQuery = reactive({
+  searchString1: '1',
+  searchString2: '2',
+  searchString3: '3',
+  searchString4: '4',
+  searchString5: '5',
+  searchString6: '6',
+  searchString7: '7'
+})
+
+const searchHandler = () => {
+  console.log('searchQuery', searchQuery)
+}
+
+const resetHandler = () => {}
 </script>
 
 <style lang="scss" scoped>

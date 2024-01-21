@@ -18,22 +18,27 @@
     :scrollToError="scrollToError"
     :model="formValue"
   >
-    <el-row
-      :gutter="gutter || 20"
-      v-for="rowNum in dynamicData.slice(-1)[0].row"
-      :key="rowNum"
-    >
-      <el-col
-        :span="dynamicItem.col"
-        v-for="dynamicItem in dynamicData.filter((item) => item.row === rowNum)"
-        :key="dynamicItem.prop"
+    <template v-for="rowNum in dynamicData.slice(-1)[0].row" :key="rowNum">
+      <el-row
+        :gutter="gutter || 20"
+        v-if="showExpand(rowNum)"
+        style="width: 100%"
       >
-        <DynamicFormItem
-          v-bind="dynamicItem"
-          v-model="formValue[dynamicItem.prop]"
-        />
-      </el-col>
-    </el-row>
+        <el-col
+          :span="dynamicItem.col"
+          v-for="dynamicItem in dynamicData.filter(
+            (item) => item.row === rowNum
+          )"
+          :key="dynamicItem.prop"
+          style="width: 100%"
+        >
+          <DynamicFormItem
+            v-bind="dynamicItem"
+            v-model="formValue[dynamicItem.prop]"
+          />
+        </el-col>
+      </el-row>
+    </template>
   </el-form>
 </template>
 
@@ -75,10 +80,12 @@ const colSpan = computed(() => {
 const dynamicData = computed(() => {
   const data: DynamicFormDataItem[] = []
   let defer = 0
+
   for (let i = 0; i < itemLength.value; i++) {
     const rowSpan = props.data[i].rowSpan || 1
     defer = defer + rowSpan - 1
     const row = Math.ceil((i + 1 + defer) / props.colNum)
+
     const col = rowSpan ? colSpan.value * rowSpan : colSpan.value
     data.push({
       ...props.data[i],
@@ -86,10 +93,28 @@ const dynamicData = computed(() => {
       col
     })
   }
+  emit('getRowAndCol', data)
   return data
 })
 
-const emit = defineEmits(['update:modelValue'])
+// 是否展开收回
+const showExpand = (rowNum: number) => {
+  let flag: boolean
+  if (!props.defaultShowRow) {
+    return true
+  }
+  if (props.defaultShowRow === -1) {
+    flag = true
+  } else if (rowNum <= props.defaultShowRow) {
+    flag = true
+  } else {
+    flag = false
+  }
+
+  return flag
+}
+
+const emit = defineEmits(['update:modelValue', 'getRowAndCol'])
 
 const formValue = ref(props.modelValue)
 

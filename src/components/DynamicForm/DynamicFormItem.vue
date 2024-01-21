@@ -10,6 +10,7 @@
     :inlineMessage="inlineMessage"
     :size="size"
     :validateStatus="validateStatus"
+    style="width: 100%"
   >
     <slot :name="slotName || 'default'">
       <component
