@@ -1,7 +1,7 @@
 <template>
   <div class="channel-container">
     <!-- filter -->
-    <div class="channel-search-container" :ref="searchBoxRef">
+    <div class="channel-search-container">
       <el-form
         :inline="true"
         :model="queryParams"
