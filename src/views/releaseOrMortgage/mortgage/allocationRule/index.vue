@@ -112,7 +112,7 @@
           </el-col>
           <el-col :span="1.5">
             <el-button type="primary" @click="importHandler" :icon="Upload">
-              批量导入
+              导入
             </el-button>
           </el-col>
           <el-col :span="1.5">
@@ -248,6 +248,7 @@ const tableLoading: Ref<boolean> = ref(false)
 const tableData = reactive<RuleItemResponse[]>([])
 const searchBoxRef = ref()
 const tableHeight = computed(() => {
+  console.log(document.documentElement.clientHeight)
   if (searchBoxRef.value?.clientHeight) {
     const height = Number(
       document.documentElement.clientHeight -
@@ -575,9 +576,9 @@ watch(
   }
 )
 onMounted(() => {
-  getList()
   getDictsListData()
   getDicts()
+  getList()
 })
 </script>
 
