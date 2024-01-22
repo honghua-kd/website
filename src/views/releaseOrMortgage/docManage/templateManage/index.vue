@@ -5,6 +5,7 @@
         v-model="queryParams"
         :dictArray="dictTypes"
         :searchConfig="searchConfig"
+        :labelWidth="'120px'"
         @reset="reset"
         @search="searchHandler"
       >
@@ -309,8 +310,16 @@ const handleDelect = () => {
 }
 const downloadTemplate = () => {
   const params = {
-    selectParams: JSON.stringify(queryParams),
+    selectParams: '' as string,
     bizType: 'MORTGAGE_DOCUMENT_TEMPLATE_EXPORT'
+  }
+  if (selectData.value.length > 0) {
+    const ids = selectData.value.map((el) => {
+      return el.id
+    })
+    params.selectParams = JSON.stringify({ ids: ids })
+  } else {
+    params.selectParams = JSON.stringify(queryParams)
   }
   downBtmLoading.value = true
   CommonApi.exportBySelect(params)
