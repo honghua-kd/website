@@ -44,6 +44,7 @@
     </div>
   </div>
   <el-table
+    ref="tableRef"
     :data="data"
     v-loading="loading"
     :header-cell-style="{
@@ -129,7 +130,7 @@ export default {
 </script>
 
 <script lang="ts" setup>
-import { reactive, toRefs, watch } from 'vue'
+import { reactive, toRefs, watch, ref } from 'vue'
 import { Setting } from '@element-plus/icons-vue'
 import { useRoute } from '@toystory/lotso'
 import { formatDate, px2rem } from '@/utils'
@@ -259,6 +260,14 @@ watch(
     deep: true
   }
 )
+const tableRef = ref()
+const toggleRowSelection = (row: string, selected: boolean) => {
+  tableRef.value.toggleRowSelection(row, selected)
+}
+const clearSelection = () => {
+  tableRef.value.clearSelection()
+}
+defineExpose({ toggleRowSelection, clearSelection })
 </script>
 
 <style lang="scss" scoped>
