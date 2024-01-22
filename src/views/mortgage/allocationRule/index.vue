@@ -183,6 +183,14 @@
       :visible="openVisible"
       @success="getList"
     />
+    <EditDialog
+      ref="editRef"
+      :formValue="formEditValue"
+      :title="formEditTitle"
+      @closeModel="closeEditModel"
+      :visible="editVisible"
+      @success="getList"
+    />
     <ImportForm ref="importFormRef" />
   </div>
 </template>
@@ -190,7 +198,8 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted, Ref, computed, watch } from 'vue'
 import OperDialog from './components/operDialog.vue'
-import { RuleAPI, CommonAPI } from '@/api'
+import EditDialog from './components/editDialog.vue'
+import { RuleAPI, CommonAPI, SystemAPI } from '@/api'
 import { tableConfig } from './data'
 import Table from '@/components/Table/index.vue'
 import ImportForm from './ImportForm.vue'
@@ -209,6 +218,7 @@ import {
 } from '@element-plus/icons-vue'
 const CommonApi = new CommonAPI()
 const RuleApi = new RuleAPI()
+const SystemApi = new SystemAPI()
 import { useDictStore } from '@/store/dict'
 import type {
   RuleListRequest,
@@ -281,7 +291,8 @@ const reset = () => {
   queryParams.sourceSystem = []
   getList()
 }
-const getList = async () => {
+const getList = () => {
+  tableLoading.value = true
   queryParams.provinceCode = selCity.value ? selCity.value[0] : ''
   queryParams.cityCode = selCity.value ? selCity.value[1] : ''
   const params = { ...queryParams }
@@ -308,13 +319,20 @@ const addHandler = () => {
   formTitle.value = '新增任务分配规则'
   openVisible.value = true
 }
+const editRef = ref()
+let formEditValue = reactive({})
+const formEditTitle = ref('')
+const editVisible = ref(false)
 const editHandler = (val: RuleItemResponse) => {
-  formTitle.value = '编辑任务分配规则'
-  formValue = val
-  openVisible.value = true
+  formEditTitle.value = '编辑任务分配规则'
+  formEditValue = val
+  editVisible.value = true
 }
 const closeModel = () => {
   openVisible.value = false
+}
+const closeEditModel = () => {
+  editVisible.value = false
 }
 const importFormRef = ref()
 const importHandler = () => {
@@ -323,9 +341,10 @@ const importHandler = () => {
 // 下载模板
 const downloadTemplate = () => {
   const params = {
-    bizType: 'MORTGAGE_TEMPLATE_ALLOCATION_RULE'
+    businessCategory: 'MORTGAGE_TEMPLATE',
+    businessSubcategory: 'MORTGAGE_TEMPLATE_ALLOCATION_RULE'
   }
-  CommonApi.getDownLoadTemplate(params)
+  SystemApi.templateImportResult(params)
     .then((res) => {
       handleDownloadFile(res)
     })
@@ -371,8 +390,9 @@ const downloadHandler = () => {
   let param
   if (selectIds.value.length) {
     param = JSON.stringify({
-      ids: ids,
-      ...queryParams
+      // ids: ids,
+      // ...queryParams
+      allocationRuleCodes: ids
     })
   } else {
     param = JSON.stringify({
