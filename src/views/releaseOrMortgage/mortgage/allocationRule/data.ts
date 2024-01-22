@@ -5,7 +5,8 @@ export const tableConfig: ITableConfigProps[] = [
     prop: 'allocationRuleName',
     width: '150',
     align: 'center',
-    fixed: true
+    fixed: true,
+    showOverflowTooltip: true
   },
   {
     label: '任务类型',
@@ -16,8 +17,9 @@ export const tableConfig: ITableConfigProps[] = [
   {
     label: '数据来源',
     prop: 'sourceSystem2',
-    width: '120',
-    align: 'center'
+    minWidth: '160',
+    align: 'center',
+    showOverflowTooltip: true
   },
   {
     label: '省份',
