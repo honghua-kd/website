@@ -7,10 +7,10 @@
       :close-on-press-escape="false"
       width="60%"
     >
-      <div class="routes-list" v-loading="loading">
+      <div class="routes-list" v-loading="loading" v-if="routes.traces">
         <el-timeline>
           <el-timeline-item
-            v-for="(activity, index) in routes.traces.reverse()"
+            v-for="(activity, index) in routes.traces"
             :key="index"
             :timestamp="
               activity.acceptTime + '&nbsp  ' + activity.acceptStation
@@ -61,10 +61,15 @@ const getLogisticsInfo = (id: string) => {
   }
   API.getLogisticsInfo(params)
     .then((res) => {
-      if (res && res.code === 200 && res?.data?.traces) {
+      if (
+        res &&
+        res.code === 200 &&
+        res?.data?.traces &&
+        res?.data?.traces.length
+      ) {
         dialogVisible.value = true
         loading.value = false
-        routes.traces = res?.data?.traces || []
+        routes.traces = res?.data?.traces.reverse()
       } else {
         dialogVisible.value = false
         ElMessage({

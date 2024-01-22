@@ -62,7 +62,8 @@ export const tableConfig: ITableConfigProps[] = [
     label: '短信模版',
     prop: 'smsTemplateCode',
     width: '150',
-    align: 'center'
+    align: 'center',
+    showOverflowTooltip: true
   },
   {
     label: '状态',
