@@ -66,7 +66,6 @@
                 @change="selectSourceSystem"
                 v-model="sourceSystem"
                 style="width: 100%"
-                :props="{ multiple: true }"
               />
             </el-form-item>
           </el-col>
@@ -357,7 +356,7 @@ const props = defineProps({
 })
 interface ExtraParam {
   areaCode: string[]
-  sourceSystem: string[][]
+  sourceSystem: string[]
 }
 type RuleItem = RuleItemResponse & ExtraParam
 interface State {
@@ -382,7 +381,7 @@ const state = reactive<State>({
     provinceCode: '',
     provinceName: '',
     areaCode: [],
-    sourceSystem: [[]]
+    sourceSystem: []
   }
 })
 const { formParams } = toRefs(state)
@@ -485,53 +484,32 @@ const submitForm = async () => {
     })
     state.formParams.allocationUserCode = empIds.join(',')
   }
-  const sys2: string[] = []
-  sourceSystem.value.forEach((item) => {
-    sys2.push(item[1])
-  })
-  state.formParams.sourceSystem1 = sourceSystem.value[0][0]
-  state.formParams.sourceSystem2 = sys2.join(',')
+  state.formParams.sourceSystem1 = sourceSystem.value[0]
+  state.formParams.sourceSystem2 = sourceSystem.value[1]
   state.formParams.provinceName =
     cascader.value.getCheckedNodes()[0]?.pathLabels[0] || ''
   state.formParams.cityName =
     cascader.value.getCheckedNodes()[0]?.pathLabels[1] || ''
-  if (props.title === '新增任务分配规则') {
-    const params = { ...state.formParams }
-    params.provinceCode = String(selCity.value[0])
-    params.cityCode = String(selCity.value[1])
-    RuleApi.addRule(params)
-      .then((res) => {
-        if (res && res.code === 200) {
-          ElMessage({
-            type: 'success',
-            message: '新增成功'
-          })
-          emit('success')
-          emit('closeModel', { visible: false })
-        }
-      })
-      .catch((err: Error) => {
-        throw err
-      })
-  } else {
-    const params = { ...state.formParams }
-    params.provinceCode = String(selCity.value[0])
-    params.cityCode = String(selCity.value[1])
-    RuleApi.editRule(params)
-      .then((res) => {
-        if (res && res.code === 200) {
-          ElMessage({
-            type: 'success',
-            message: '更新成功'
-          })
-          emit('success')
-          emit('closeModel', { visible: false })
-        }
-      })
-      .catch((err: Error) => {
-        throw err
-      })
-  }
+
+  const params = { ...state.formParams }
+  params.provinceCode = String(selCity.value[0])
+  params.cityCode = String(selCity.value[1])
+  console.error(params)
+
+  RuleApi.editRule(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        ElMessage({
+          type: 'success',
+          message: '更新成功'
+        })
+        emit('success')
+        emit('closeModel', { visible: false })
+      }
+    })
+    .catch((err: Error) => {
+      throw err
+    })
 }
 const changeType = () => {
   alPerson.value = []
@@ -565,21 +543,13 @@ const getDictsListData = async () => {
   }
 }
 const selectSourceSystem = (value: CascaderValue) => {
-  const value1 = value as string[][]
-  if (value1 && value1.length) {
-    state.formParams.sourceSystem = value1 as string[][]
-    const last = value1[value1.length - 1] as string[]
-    if (sourceSystem.value[0][0] !== last[0]) {
-      sourceSystem.value = [last]
-      state.formParams.sourceSystem = [last]
-    }
-    state.formParams.sourceSystem1 = value1[0][0].toString()
-    const arr: string[] = []
-    sourceSystem.value.forEach((option) => {
-      arr.push(option[1] as string)
-    })
-    state.formParams.sourceSystem2 = arr.join(',')
+  value = value as string[]
+  if (value) {
+    state.formParams.sourceSystem1 = String(value[0])
+    state.formParams.sourceSystem2 = String(value[1])
+    state.formParams.sourceSystem = [String(value[0]), String(value[1])]
   } else {
+    sourceSystem.value = []
     state.formParams.sourceSystem = []
   }
 }
@@ -619,39 +589,31 @@ const cityProps: CascaderProps = {
     resolve(nodes) // 回调
   }
 }
-const sourceSystem = ref<string[][]>([[]])
+const sourceSystem = ref<string[]>([])
 const selCity = ref<string[] | number[]>([])
 const initOptions = async () => {
-  if (props.title === '编辑任务分配规则') {
-    sourceSystem.value = []
-    state.formParams.sourceSystem = []
-    const sys2Arr = state.formParams.sourceSystem2.split(',')
-    sys2Arr.forEach((item) => {
-      sourceSystem.value.push([state.formParams.sourceSystem1, item])
-      state.formParams.sourceSystem.push([state.formParams.sourceSystem1, item])
-    })
-
-    selCity.value = [
-      Number(state.formParams.provinceCode),
-      Number(state.formParams.cityCode)
-    ]
-    state.formParams.areaCode = [
-      state.formParams.provinceCode,
-      state.formParams.cityCode
-    ]
-    alPerson.value = state.formParams.allocationUserName
-      ? state.formParams.allocationUserName.split(',')
-      : []
-    alEmployee.value = state.formParams.allocationUserName
-      ? state.formParams.allocationUserName.split(',')
-      : []
-  } else {
-    state.formParams.sourceSystem = []
-    sourceSystem.value = []
-    selCity.value = []
-    alPerson.value = []
-    alEmployee.value = []
-  }
+  sourceSystem.value = [
+    state.formParams.sourceSystem1,
+    state.formParams.sourceSystem2
+  ]
+  state.formParams.sourceSystem = [
+    state.formParams.sourceSystem1,
+    state.formParams.sourceSystem2
+  ]
+  selCity.value = [
+    Number(state.formParams.provinceCode),
+    Number(state.formParams.cityCode)
+  ]
+  state.formParams.areaCode = [
+    state.formParams.provinceCode,
+    state.formParams.cityCode
+  ]
+  alPerson.value = state.formParams.allocationUserName
+    ? state.formParams.allocationUserName.split(',')
+    : []
+  alEmployee.value = state.formParams.allocationUserName
+    ? state.formParams.allocationUserName.split(',')
+    : []
 }
 watch(
   [() => props.visible, () => props.formValue],
@@ -674,26 +636,19 @@ const smsTemplateCodeOpts = ref<Option[]>([])
 watch(
   () => sourceSystem,
   (val) => {
-    if (val && val.value.length && val.value[0]) {
+    if (val && val.value) {
       let sName1 = ''
-      const sName2: Option[] = []
-      const sys2List = state.formParams.sourceSystem2.split(',')
+      let sName2 = ''
       sourceArr.value.forEach((option) => {
         option.children?.forEach((item) => {
-          sys2List.forEach((i) => {
-            if (i === item.value) {
-              sName2.push({
-                label: item.label as string,
-                value: i
-              })
-            }
-          })
+          if (item.value === state.formParams.sourceSystem1) {
+            sName2 = option.label as string
+          }
         })
         if (option.value === state.formParams.sourceSystem1) {
           sName1 = option.label as string
         }
       })
-
       const params: SmsTemplateRequest = {
         pageNo: 1,
         pageSize: 10,
@@ -706,15 +661,14 @@ watch(
         {
           label: sName1,
           value: state.formParams.sourceSystem1,
-          children: []
+          children: [
+            {
+              label: sName2,
+              value: state.formParams.sourceSystem2
+            }
+          ]
         }
       ]
-      sName2.forEach((item) => {
-        params.sourceSystem12List[0].children.push({
-          label: item.label,
-          value: item.value
-        })
-      })
       MessageApi.getSmsTemplatePage(params).then((res) => {
         if (res && res.code === 200) {
           smsTemplateCodeOpts.value = res?.data?.list.map((o) => {
@@ -812,7 +766,7 @@ const querySupplierParams = reactive<queryForm>({
 const getSupplier = () => {
   const params: queryForm = {
     supplierName: querySupplierParams.supplierName,
-    belongCompany: sourceSystem.value[0] ? sourceSystem.value[0][0] : '',
+    belongCompany: sourceSystem.value ? sourceSystem.value[0] : '',
     provinceCode: '',
     cityCode: '',
     countyCode: '',
