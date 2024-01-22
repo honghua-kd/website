@@ -7,6 +7,9 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AreaCascader: typeof import('./../components/AreaCascader/index.vue')['default']
+    DataPermissonForm: typeof import('./../components/PermiForm/DataPermissonForm.vue')['default']
+    EditDialog: typeof import('./../components/EditDialog/index.vue')['default']
     ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCard: typeof import('element-plus/es')['ElCard']
@@ -44,9 +47,20 @@ declare module 'vue' {
     ElTimelineItem: typeof import('element-plus/es')['ElTimelineItem']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElUpload: typeof import('element-plus/es')['ElUpload']
+    ErrorPage: typeof import('./../components/ErrorPage/index.vue')['default']
+    Icon: typeof import('./../components/Icon/index.vue')['default']
+    MdEditor: typeof import('./../components/MdEditor/index.vue')['default']
     PageBuilding: typeof import('./../components/PageBuilding/index.vue')['default']
+    PermiListDialog: typeof import('./../components/PermiForm/PermiListDialog.vue')['default']
+    Preview: typeof import('./../components/Preview/index.vue')['default']
+    README: typeof import('./../components/Table/README.md')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SearchBar: typeof import('./../components/SearchBar/index.vue')['default']
+    SecondaryTitle: typeof import('./../components/SecondaryTitle/index.vue')['default']
+    SideTree: typeof import('./../components/SideTree/index.vue')['default']
+    SvgIcon: typeof import('./../components/SvgIcon/index.vue')['default']
+    Table: typeof import('./../components/Table/index.vue')['default']
   }
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']
