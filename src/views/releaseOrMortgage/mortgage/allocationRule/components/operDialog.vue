@@ -844,15 +844,21 @@ const visibleType = () => {
     selectRef.value.blur()
   })
 }
-// const tableSupplierRef = ref()
-// watch(isSupplier, (val) => {
-//   if (val) {
-//     nextTick(() => {
-//       console.error(tableSupplierRef.value)
-//       console.error(tableSupplierRef.value.toggleRowSelection(1, true))
-//     })
-//   }
-// })
+const tableSupplierRef = ref()
+watch(isSupplier, (val) => {
+  if (val) {
+    nextTick(() => {
+      tableSupplierRef!.value.clearSelection()
+      tableSupplierData.forEach((row) => {
+        alPerson.value.forEach((item) => {
+          if (row.supplierName === item) {
+            tableSupplierRef!.value.toggleRowSelection(row, true)
+          }
+        })
+      })
+    })
+  }
+})
 const alEmployee = ref<string[]>([])
 const selectDeptRef = ref()
 const isEmployee = ref(false)
