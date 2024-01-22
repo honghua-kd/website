@@ -173,6 +173,7 @@ import type {
   SortParamsRequest,
   CardListItem
 } from '@/api'
+
 import TableSlotItem from './components/TableSlotItem.vue'
 import { ARCHIVE_STATUS, VERIFY_RESULTS } from '@/constants'
 import { useUserStore } from '@toystory/lotso'
