@@ -14,7 +14,7 @@ const frameSetting: FrameSetting = {
   // default language
   lang: 'zh-cn',
   // 标题
-  title: '海通恒信运营中台系统',
+  title: '运营平台',
   // 系统名称
   systemName: 'HTHX-ADMIN',
   // 版权信息

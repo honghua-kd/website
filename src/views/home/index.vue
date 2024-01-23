@@ -2,7 +2,7 @@
   <div class="home-container">
     <div class="app-welcome">
       <h1>欢迎使用</h1>
-      <h1>海通恒信运营中台系统</h1>
+      <h1>海通恒信运营平台系统</h1>
     </div>
   </div>
 </template>
