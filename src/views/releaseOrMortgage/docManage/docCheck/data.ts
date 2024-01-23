@@ -68,18 +68,19 @@ export const tableColumn: ITableConfigProps[] = [
     showOverflowTooltip: true
   },
   {
-    label: '文件类型',
+    label: '文书类型',
     prop: 'documentType',
     minWidth: 120,
     fixed: false,
     align: 'center'
   },
   {
-    label: '文件版本',
+    label: '文书版本',
     prop: 'documentVersion',
-    minWidth: 120,
+    width: 120,
     fixed: false,
-    align: 'center'
+    align: 'center',
+    showOverflowTooltip: true
   },
   {
     label: '适用部门',
