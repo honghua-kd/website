@@ -88,8 +88,9 @@
       </el-form>
     </div>
     <el-divider border-style="dashed" />
-
+    <div>{{ tableData }}</div>
     <Table
+      v-if="tableLoading"
       :data="tableData"
       :loading="tableLoading"
       :columnConfig="tableConfig"
@@ -304,6 +305,7 @@ const getList = () => {
         tableLoading.value = false
         tableData.splice(0, tableData.length)
         tableData.push(...(res?.data?.list || []))
+
         pageTotal.value = res?.data?.total || 0
       }
     })
@@ -576,6 +578,7 @@ watch(
   }
 )
 onMounted(() => {
+  debugger
   getDictsListData()
   getDicts()
   getList()
