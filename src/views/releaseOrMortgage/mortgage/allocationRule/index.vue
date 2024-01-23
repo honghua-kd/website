@@ -88,9 +88,8 @@
       </el-form>
     </div>
     <el-divider border-style="dashed" />
-    <div>{{ tableData }}</div>
+
     <Table
-      v-if="tableLoading"
       :data="tableData"
       :loading="tableLoading"
       :columnConfig="tableConfig"
@@ -305,7 +304,6 @@ const getList = () => {
         tableLoading.value = false
         tableData.splice(0, tableData.length)
         tableData.push(...(res?.data?.list || []))
-
         pageTotal.value = res?.data?.total || 0
       }
     })
@@ -540,7 +538,7 @@ const getDicts = () => {
   isUsedOpts.value = dictStore.dicts.ENABLE_DISABLE_STATUS
 }
 const getTaskType = (val: string) => {
-  const option = taskTypeOpts.value.find((o) => o.value === val) as DictItem
+  const option = taskTypeOpts.value?.find((o) => o.value === val) as DictItem
   if (option) {
     return option.label
   } else {
@@ -548,7 +546,7 @@ const getTaskType = (val: string) => {
   }
 }
 const getAllocationType = (val: string) => {
-  const option = allocatonTypeOpts.value.find(
+  const option = allocatonTypeOpts.value?.find(
     (o) => o.value === val
   ) as DictItem
   if (option) {
@@ -559,7 +557,7 @@ const getAllocationType = (val: string) => {
 }
 const getSourceSystem = (val: string) => {
   let label = ''
-  sourceArr.value.forEach((option) => {
+  sourceArr.value?.forEach((option) => {
     option.children?.forEach((item) => {
       if (val === item.value) {
         label = item.label as string
@@ -577,10 +575,9 @@ watch(
     }
   }
 )
-onMounted(() => {
-  debugger
-  getDictsListData()
-  getDicts()
+onMounted(async () => {
+  await getDictsListData()
+  await getDicts()
   getList()
 })
 </script>
