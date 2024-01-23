@@ -686,9 +686,6 @@ const actionTableItem = async (
       justify-content: flex-end;
     }
   }
-  .action {
-    margin: 10px 0;
-  }
   .list {
     margin-bottom: 20px;
   }
