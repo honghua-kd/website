@@ -495,43 +495,37 @@ const submitForm = async () => {
     cascader.value.getCheckedNodes()[0]?.pathLabels[0] || ''
   state.formParams.cityName =
     cascader.value.getCheckedNodes()[0]?.pathLabels[1] || ''
-  if (props.title === '新增任务分配规则') {
-    const params = { ...state.formParams }
-    params.provinceCode = String(selCity.value[0])
-    params.cityCode = String(selCity.value[1])
-    RuleApi.addRule(params)
-      .then((res) => {
-        if (res && res.code === 200) {
-          ElMessage({
-            type: 'success',
-            message: '新增成功'
-          })
-          emit('success')
-          emit('closeModel', { visible: false })
-        }
-      })
-      .catch((err: Error) => {
-        throw err
-      })
-  } else {
-    const params = { ...state.formParams }
-    params.provinceCode = String(selCity.value[0])
-    params.cityCode = String(selCity.value[1])
-    RuleApi.editRule(params)
-      .then((res) => {
-        if (res && res.code === 200) {
-          ElMessage({
-            type: 'success',
-            message: '更新成功'
-          })
-          emit('success')
-          emit('closeModel', { visible: false })
-        }
-      })
-      .catch((err: Error) => {
-        throw err
-      })
+  const params = {
+    allocationRuleName: state.formParams.allocationRuleName,
+    taskType: state.formParams.taskType,
+    sourceSystem1: state.formParams.sourceSystem1,
+    sourceSystem2: state.formParams.sourceSystem2,
+    cityCode: String(selCity.value[1]),
+    cityName: state.formParams.cityName,
+    allocationType: state.formParams.allocationType || '',
+    allocationUserCode: state.formParams.allocationUserCode,
+    allocationUserName: state.formParams.allocationUserName,
+    isAutoAllocation: state.formParams.isAutoAllocation,
+    isSendSms: state.formParams.isSendSms,
+    smsTemplateCode: state.formParams.smsTemplateCode,
+    isUsed: 0,
+    provinceCode: String(selCity.value[0]),
+    provinceName: state.formParams.provinceName
   }
+  RuleApi.addRule(params)
+    .then((res) => {
+      if (res && res.code === 200) {
+        ElMessage({
+          type: 'success',
+          message: '新增成功'
+        })
+        emit('success')
+        emit('closeModel', { visible: false })
+      }
+    })
+    .catch((err: Error) => {
+      throw err
+    })
 }
 const changeType = () => {
   alPerson.value = []
@@ -720,7 +714,7 @@ watch(
           smsTemplateCodeOpts.value = res?.data?.list.map((o) => {
             return {
               label: o.templateName,
-              value: o.templateName
+              value: o.templateCode
             }
           }) as Option[]
         }
