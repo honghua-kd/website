@@ -62,21 +62,7 @@
         <el-button :icon="Refresh" @click="reset">重置</el-button>
       </div>
     </el-form>
-    <el-row :gutter="8" style="margin: 10px 0">
-      <el-tooltip content="新增" placement="top-start">
-        <el-button type="primary" :icon="Plus" @click="addHandler">
-          新增
-        </el-button>
-      </el-tooltip>
-      <el-tooltip content="导入" placement="top-start">
-        <el-button :icon="Setting" @click="handleStop"> 停用 </el-button>
-      </el-tooltip>
-      <el-tooltip content="批量导入" placement="top-start">
-        <el-button type="primary" :icon="Download" style="display: none">
-          批量导入
-        </el-button>
-      </el-tooltip>
-    </el-row>
+    <el-divider border-style="dashed" />
     <Table
       :data="tableData"
       :loading="tableLoading"
@@ -84,6 +70,7 @@
       :isSelected="true"
       :page-total="pageTotal"
       :setColumnEnable="true"
+      :height="tableHeight"
       row-key="id"
       :tree-props="{ children: 'target' }"
       v-model:pageSize="queryParams.pageSize"
@@ -92,6 +79,23 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     >
+      <template #btnsBox>
+        <el-tooltip content="新增" placement="top-start">
+          <el-button type="primary" :icon="Plus" @click="addHandler">
+            新增
+          </el-button>
+        </el-tooltip>
+        <el-tooltip content="导入" placement="top-start">
+          <el-button type="primary" :icon="Setting" @click="handleStop">
+            停用
+          </el-button>
+        </el-tooltip>
+        <el-tooltip content="批量导入" placement="top-start">
+          <el-button type="primary" :icon="Download" style="display: none">
+            批量导入
+          </el-button>
+        </el-tooltip>
+      </template>
       <template #default="{ row, prop }">
         <span v-if="prop === 'sourceSystem1Str'">
           {{ row.sourceSystem1Str + ' ' + row.sourceSystem2Str }}
@@ -163,7 +167,7 @@ import {
 import { ElMessageBox, ElMessage } from 'element-plus'
 import type { CascaderOption } from 'element-plus'
 import OperDialog from './components/operDialog.vue'
-import { reactive, ref, Ref, onMounted } from 'vue'
+import { reactive, ref, Ref, onMounted, computed } from 'vue'
 const tableLoading: Ref<boolean> = ref(false)
 import { MessageAPI, CommonAPI } from '@/api'
 import type { List } from '@/api/message/types/response.ts'
@@ -179,6 +183,23 @@ onMounted(() => {
   getDicts()
   getList()
 })
+
+// 表格最大高度
+const searchBoxRef = ref()
+const tableHeight = computed(() => {
+  if (searchBoxRef.value?.clientHeight) {
+    const height = Number(
+      document.documentElement.clientHeight -
+        200 -
+        searchBoxRef.value?.clientHeight
+    )
+    return height
+  } else {
+    const height = Number(document.documentElement.clientHeight - 200)
+    return height
+  }
+})
+
 const sourceSystemOptions = ref<CascaderOption[]>()
 const tableConfig: ITableConfigProps[] = [
   {
@@ -506,6 +527,7 @@ const editHandler = (row: List) => {
 .scan-form {
   display: flex;
   align-items: flex-end;
+  margin-bottom: 20px;
   width: 100%;
 }
 .scan-search-bar {

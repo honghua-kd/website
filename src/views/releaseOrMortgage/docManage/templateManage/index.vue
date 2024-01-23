@@ -14,40 +14,13 @@
         </template>
       </SearchBar>
     </div>
-    <el-row :gutter="8" style="margin: 10px 0">
-      <el-tooltip content="新增" placement="top-start">
-        <el-button type="primary" :icon="Plus" @click="addHandler">
-          新增
-        </el-button>
-      </el-tooltip>
-      <el-tooltip content="删除" placement="top-start">
-        <el-button :icon="Delete" @click="handleDelect"> 删除 </el-button>
-      </el-tooltip>
-      <el-tooltip content="下载" placement="top-start">
-        <el-button
-          :icon="Download"
-          @click="downloadTemplate"
-          :loading="downBtmLoading"
-        >
-          下载
-        </el-button>
-      </el-tooltip>
-      <el-tooltip content="导入" placement="top-start">
-        <el-button type="primary" :icon="Download" @click="handleExpost">
-          导入
-        </el-button>
-      </el-tooltip>
-      <el-tooltip content="下载导入模版" placement="top-start">
-        <el-button type="primary" :icon="Download" @click="downTemplate">
-          下载导入模版
-        </el-button>
-      </el-tooltip>
-    </el-row>
+    <el-divider border-style="dashed" />
     <Table
       :data="tableData"
       :loading="tableLoading"
       :columnConfig="tableConfig"
       :isSelected="true"
+      :height="tableHeight"
       :page-total="pageTotal"
       v-model:pageSize="queryParams.pageSize"
       v-model:pageNo="queryParams.pageNo"
@@ -55,6 +28,38 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     >
+      <template #btnsBox>
+        <el-tooltip content="新增" placement="top-start">
+          <el-button type="primary" :icon="Plus" @click="addHandler">
+            新增
+          </el-button>
+        </el-tooltip>
+        <el-tooltip content="删除" placement="top-start">
+          <el-button type="primary" :icon="Delete" @click="handleDelect">
+            删除
+          </el-button>
+        </el-tooltip>
+        <el-tooltip content="下载" placement="top-start">
+          <el-button
+            :icon="Download"
+            @click="downloadTemplate"
+            :loading="downBtmLoading"
+            type="primary"
+          >
+            下载
+          </el-button>
+        </el-tooltip>
+        <el-tooltip content="导入" placement="top-start">
+          <el-button type="primary" :icon="Download" @click="handleExpost">
+            导入
+          </el-button>
+        </el-tooltip>
+        <el-tooltip content="下载导入模版" placement="top-start">
+          <el-button type="primary" :icon="Download" @click="downTemplate">
+            下载导入模版
+          </el-button>
+        </el-tooltip>
+      </template>
       <template #default="{ row, prop }">
         <span v-if="prop === 'applicableType'">{{
           getLabel('DOCUMENT_TEMPLATE_APPLICABLE_TYPE', row.applicableType)
@@ -107,7 +112,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, Ref, onMounted } from 'vue'
+import { reactive, ref, Ref, onMounted, computed } from 'vue'
 import { Plus, Download, Delete } from '@element-plus/icons-vue'
 import type {
   UploadInstance,
@@ -173,6 +178,23 @@ const reset = () => {
   cityForm.value = []
   getList()
 }
+
+// 表格最大高度
+const searchBoxRef = ref()
+const tableHeight = computed(() => {
+  if (searchBoxRef.value?.clientHeight) {
+    const height = Number(
+      document.documentElement.clientHeight -
+        200 -
+        searchBoxRef.value?.clientHeight
+    )
+    return height
+  } else {
+    const height = Number(document.documentElement.clientHeight - 200)
+    return height
+  }
+})
+
 const getList = async () => {
   API.getDocumentTemplatePage(queryParams).then((res) => {
     if (res.code === 200 && res.data) {
