@@ -538,22 +538,10 @@ const getDicts = () => {
   isUsedOpts.value = dictStore.dicts.ENABLE_DISABLE_STATUS
 }
 const getTaskType = (val: string) => {
-  const option = taskTypeOpts.value?.find((o) => o.value === val) as DictItem
-  if (option) {
-    return option.label
-  } else {
-    return ''
-  }
+  return taskTypeOpts.value?.find((o) => o.value === val)?.label
 }
 const getAllocationType = (val: string) => {
-  const option = allocatonTypeOpts.value?.find(
-    (o) => o.value === val
-  ) as DictItem
-  if (option) {
-    return option.label
-  } else {
-    return ''
-  }
+  return allocatonTypeOpts.value?.find((o) => o.value === val)?.label
 }
 const getSourceSystem = (val: string) => {
   let label = ''

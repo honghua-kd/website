@@ -491,11 +491,24 @@ const submitForm = async () => {
   state.formParams.cityName =
     cascader.value.getCheckedNodes()[0]?.pathLabels[1] || ''
 
-  const params = { ...state.formParams }
-  params.provinceCode = String(selCity.value[0])
-  params.cityCode = String(selCity.value[1])
-  console.error(params)
-
+  const params = {
+    allocationRuleCode: state.formParams.allocationRuleCode,
+    allocationRuleName: state.formParams.allocationRuleName,
+    taskType: state.formParams.taskType,
+    sourceSystem1: state.formParams.sourceSystem1,
+    sourceSystem2: state.formParams.sourceSystem2,
+    cityCode: String(selCity.value[1]),
+    cityName: state.formParams.cityName,
+    allocationType: state.formParams.allocationType || '',
+    allocationUserCode: state.formParams.allocationUserCode,
+    allocationUserName: state.formParams.allocationUserName,
+    isAutoAllocation: state.formParams.isAutoAllocation,
+    isSendSms: state.formParams.isSendSms,
+    smsTemplateCode: state.formParams.smsTemplateCode,
+    isUsed: state.formParams.isUsed,
+    provinceCode: String(selCity.value[0]),
+    provinceName: state.formParams.provinceName
+  }
   RuleApi.editRule(params)
     .then((res) => {
       if (res && res.code === 200) {
@@ -674,7 +687,7 @@ watch(
           smsTemplateCodeOpts.value = res?.data?.list.map((o) => {
             return {
               label: o.templateName,
-              value: o.templateName
+              value: o.templateCode
             }
           }) as Option[]
         }
