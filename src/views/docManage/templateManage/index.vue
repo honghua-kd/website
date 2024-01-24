@@ -523,7 +523,6 @@ const tableConfig: ITableConfigProps[] = [
   {
     label: '状态',
     prop: 'status',
-    width: 120,
     align: 'center',
     showOverflowTooltip: true,
     fixed: false,

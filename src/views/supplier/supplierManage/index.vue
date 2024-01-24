@@ -545,7 +545,6 @@ const downloadHandler = () => {
               })
             })
             .catch((err: Error) => {
-              tableLoading.value = false
               throw err
             })
         } else if (res?.data?.sync === 0) {

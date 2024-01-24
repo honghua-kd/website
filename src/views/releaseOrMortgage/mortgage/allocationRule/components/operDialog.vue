@@ -28,6 +28,7 @@
                 v-model="formParams.allocationRuleName"
                 placeholder="请输入"
                 clearable
+                maxlength="50"
               />
             </el-form-item>
           </el-col>
@@ -59,8 +60,6 @@
               <el-cascader
                 popper-class="first-no-check-cascader"
                 :options="sourceArr"
-                collapse-tags
-                collapse-tags-tooltip
                 clearable
                 placeholder="请选择"
                 @change="selectSourceSystem"
@@ -88,7 +87,12 @@
         <div class="second-title">分配规则</div>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="分配类型" prop="allocationType" align="center">
+            <el-form-item
+              label="分配类型"
+              prop="allocationType"
+              align="center"
+              :rules="[{ required: true, message: '分配类型不能为空' }]"
+            >
               <el-select
                 v-model="formParams.allocationType"
                 clearable
@@ -106,7 +110,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12" v-if="supOrDept">
-            <el-form-item label="分配人员" align="center">
+            <el-form-item label="分配人员" align="center" prop="alPerson">
               <el-select
                 ref="selectRef"
                 v-model="alPerson"
@@ -176,7 +180,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12" v-if="!supOrDept">
-            <el-form-item label="分配人员" align="center">
+            <el-form-item label="分配人员" align="center" prop="alEmployee">
               <el-select
                 ref="selectDeptRef"
                 v-model="alEmployee"
@@ -243,6 +247,7 @@
               label="是否自动分配"
               prop="isAutoAllocation"
               align="center"
+              :rules="[{ required: true, message: '是否自动分配不能为空' }]"
             >
               <el-select
                 v-model="formParams.isAutoAllocation"
@@ -260,7 +265,12 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="是否发送短信" prop="isSendSms" align="center">
+            <el-form-item
+              label="是否发送短信"
+              prop="isSendSms"
+              align="center"
+              :rules="[{ required: true, message: '是否发送短信不能为空' }]"
+            >
               <el-select
                 v-model="formParams.isSendSms"
                 clearable
@@ -283,6 +293,7 @@
               label="短信模版"
               prop="smsTemplateCode"
               align="center"
+              :rules="[{ required: smsTemplate, message: '短信模版不能为空' }]"
             >
               <el-select
                 v-model="formParams.smsTemplateCode"
@@ -358,6 +369,8 @@ const props = defineProps({
 interface ExtraParam {
   areaCode: string[]
   sourceSystem: string[][]
+  alPerson: string[]
+  alEmployee: string[]
 }
 type RuleItem = RuleItemResponse & ExtraParam
 interface State {
@@ -382,7 +395,9 @@ const state = reactive<State>({
     provinceCode: '',
     provinceName: '',
     areaCode: [],
-    sourceSystem: [[]]
+    sourceSystem: [[]],
+    alPerson: [],
+    alEmployee: []
   }
 })
 const { formParams } = toRefs(state)
@@ -415,6 +430,40 @@ const rules = reactive<FormRules<typeof formParams>>({
           callback()
         } else {
           callback(new Error('请选择数据来源'))
+        }
+      },
+      trigger: 'change',
+      required: true
+    }
+  ],
+  alPerson: [
+    {
+      validator: (
+        rule: InternalRuleItem,
+        value: string[] | undefined,
+        callback: (error?: string | Error | undefined) => void
+      ) => {
+        if (value && value?.length) {
+          callback()
+        } else {
+          callback(new Error('请选择分配人员'))
+        }
+      },
+      trigger: 'change',
+      required: true
+    }
+  ],
+  alEmployee: [
+    {
+      validator: (
+        rule: InternalRuleItem,
+        value: string[] | undefined,
+        callback: (error?: string | Error | undefined) => void
+      ) => {
+        if (value && value?.length) {
+          callback()
+        } else {
+          callback(new Error('请选择分配人员'))
         }
       },
       trigger: 'change',
@@ -507,7 +556,7 @@ const submitForm = async () => {
     allocationUserName: state.formParams.allocationUserName,
     isAutoAllocation: state.formParams.isAutoAllocation,
     isSendSms: state.formParams.isSendSms,
-    smsTemplateCode: state.formParams.smsTemplateCode,
+    smsTemplateCode: state.formParams.smsTemplateCode || '',
     isUsed: 0,
     provinceCode: String(selCity.value[0]),
     provinceName: state.formParams.provinceName
@@ -616,36 +665,11 @@ const cityProps: CascaderProps = {
 const sourceSystem = ref<string[][]>([[]])
 const selCity = ref<string[] | number[]>([])
 const initOptions = async () => {
-  if (props.title === '编辑任务分配规则') {
-    sourceSystem.value = []
-    state.formParams.sourceSystem = []
-    const sys2Arr = state.formParams.sourceSystem2.split(',')
-    sys2Arr.forEach((item) => {
-      sourceSystem.value.push([state.formParams.sourceSystem1, item])
-      state.formParams.sourceSystem.push([state.formParams.sourceSystem1, item])
-    })
-
-    selCity.value = [
-      Number(state.formParams.provinceCode),
-      Number(state.formParams.cityCode)
-    ]
-    state.formParams.areaCode = [
-      state.formParams.provinceCode,
-      state.formParams.cityCode
-    ]
-    alPerson.value = state.formParams.allocationUserName
-      ? state.formParams.allocationUserName.split(',')
-      : []
-    alEmployee.value = state.formParams.allocationUserName
-      ? state.formParams.allocationUserName.split(',')
-      : []
-  } else {
-    state.formParams.sourceSystem = []
-    sourceSystem.value = []
-    selCity.value = []
-    alPerson.value = []
-    alEmployee.value = []
-  }
+  state.formParams.sourceSystem = []
+  sourceSystem.value = []
+  selCity.value = []
+  alPerson.value = []
+  alEmployee.value = []
 }
 watch(
   [() => props.visible, () => props.formValue],
@@ -862,6 +886,31 @@ const visibleDept = () => {
     selectDeptRef.value.blur()
   })
 }
+const smsTemplate = ref<boolean>(true)
+watch(
+  () => state.formParams.isSendSms,
+  (val) => {
+    smsTemplate.value = Boolean(val)
+  }
+)
+watch(
+  () => alPerson,
+  (val) => {
+    state.formParams.alPerson = [...val.value]
+  },
+  {
+    deep: true
+  }
+)
+watch(
+  () => alEmployee,
+  (val) => {
+    state.formParams.alEmployee = [...val.value]
+  },
+  {
+    deep: true
+  }
+)
 const getStatus = (val: string) => {
   let label = ''
   if (supplierDetailStatus.value) {

@@ -1,91 +1,35 @@
 <template>
   <div class="channel-container">
-    <!-- filter -->
-    <div class="channel-search-container">
-      <el-form
-        :inline="true"
-        :model="queryParams"
-        class="filter-form"
-        :label-width="px2rem('110px')"
+    <div :ref="searchBoxRef">
+      <SearchBar
+        v-model="queryParams"
+        :searchConfig="searchConfig"
+        :labelWidth="'110px'"
+        :dictArray="dictTypes"
+        @reset="reset"
+        @search="searchHandler"
       >
-        <el-row>
-          <el-col :span="6">
-            <el-form-item label="来源系统" style="width: 100%">
-              <el-cascader
-                :options="sourceArr"
-                collapse-tags
-                collapse-tags-tooltip
-                clearable
-                placeholder="请选择"
-                @change="selectSourceSystem"
-                v-model="queryParams.sourceSystem"
-                style="width: 100%"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="规则名称" style="width: 100%">
-              <el-input
-                placeholder="请输入"
-                v-model="queryParams.allocationRuleName"
-                clearable
-                :maxlength="50"
-              /> </el-form-item
-          ></el-col>
-          <el-col :span="6">
-            <el-form-item label="任务类型" style="width: 100%">
-              <el-select
-                v-model="queryParams.taskType"
-                style="width: 100%"
-                placeholder=""
-                clearable
-              >
-                <el-option
-                  v-for="item in taskTypeOpts"
-                  :key="(item.value as string)"
-                  :label="(item.label as string)"
-                  :value="(item.value as string)"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="省市" style="width: 100%">
-              <el-cascader
-                v-model="selCity"
-                clearable
-                :props="props"
-                style="width: 100%"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="规则状态" style="width: 100%">
-              <el-select
-                v-model="queryParams.isUsed"
-                style="width: 100%"
-                placeholder=""
-                clearable
-              >
-                <el-option
-                  v-for="item in isUsedOpts"
-                  :key="(item.value as string)"
-                  :label="(item.label as string)"
-                  :value="(item.value as string)"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="18" class="btn-row">
-            <el-form-item>
-              <el-button :icon="Search" type="primary" @click="searchHandler"
-                >查询</el-button
-              >
-              <el-button :icon="Refresh" @click="reset">重置</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
+        <template #sourceSystem>
+          <el-cascader
+            :options="sourceArr"
+            collapse-tags
+            collapse-tags-tooltip
+            clearable
+            placeholder="请选择"
+            @change="selectSourceSystem"
+            v-model="queryParams.sourceSystem"
+            style="width: 100%"
+          />
+        </template>
+        <template #area>
+          <el-cascader
+            v-model="selCity"
+            clearable
+            :props="props"
+            style="width: 100%"
+          />
+        </template>
+      </SearchBar>
     </div>
     <el-divider border-style="dashed" />
 
@@ -130,22 +74,24 @@
             </el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button
-              type="primary"
-              :icon="Delete"
-              @click="delHandler(selectIds)"
+            <el-tooltip content="需勾选下方条目，方可操作" placement="top"
+              ><el-button
+                type="primary"
+                :icon="Delete"
+                @click="delHandler(selectIds)"
+              >
+                删除
+              </el-button></el-tooltip
             >
-              删除
-            </el-button>
           </el-col>
         </el-row>
       </template>
       <template #default="{ row, prop }">
         <span v-if="prop === 'taskType'">
-          {{ getTaskType(row[prop]) }}
+          {{ filterDictLabel('MORTGAGE_TASK_TYPE', row[prop]) }}
         </span>
         <span v-if="prop === 'allocationType'">
-          {{ getAllocationType(row[prop]) }}
+          {{ filterDictLabel('MORTGAGE_ALLOCATION_TYPE', row[prop]) }}
         </span>
         <span v-if="prop === 'sourceSystem2'">
           {{ getSourceSystem(row[prop]) }}
@@ -200,22 +146,15 @@ import { reactive, ref, onMounted, Ref, computed, watch } from 'vue'
 import OperDialog from './components/operDialog.vue'
 import EditDialog from './components/editDialog.vue'
 import { RuleAPI, CommonAPI, SystemAPI } from '@/api'
-import { tableConfig } from './data'
+import { tableConfig, searchConfig } from './data'
 import Table from '@/components/Table/index.vue'
 import ImportForm from './ImportForm.vue'
-import { px2rem, handleDownloadFile } from '@/utils'
+import SearchBar from '@/components/SearchBar/index.vue'
+import { handleDownloadFile } from '@/utils'
 import type { CascaderValue, CascaderOption, CascaderProps } from 'element-plus'
-import fileDownload from 'js-file-download'
 import dayjs from 'dayjs'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import {
-  Refresh,
-  Search,
-  Plus,
-  Delete,
-  Download,
-  Upload
-} from '@element-plus/icons-vue'
+import { Plus, Delete, Download, Upload } from '@element-plus/icons-vue'
 const CommonApi = new CommonAPI()
 const RuleApi = new RuleAPI()
 const SystemApi = new SystemAPI()
@@ -224,8 +163,7 @@ import type {
   RuleListRequest,
   PageRequest,
   RuleItemResponse,
-  DictDataTreeResponse,
-  DictItem
+  DictDataTreeResponse
 } from '@/api'
 type QueryParams = RuleListRequest & PageRequest
 interface ExtraParam {
@@ -411,20 +349,14 @@ const downloadHandler = () => {
           const params = {
             fileCode: res?.data?.fileCode as string
           }
-          CommonApi.downLoadFiles(params)
-            .then((res) => {
-              const fileStream = res?.data
-              const fileName = `分配规则${dayjs().format('YYYYMMDD')}.xlsx`
-              fileDownload(fileStream, fileName)
-              ElMessage({
-                type: 'success',
-                message: '操作成功'
-              })
+          CommonApi.downLoadFiles(params).then((res) => {
+            const fileName = `分配规则${dayjs().format('YYYYMMDD')}.xlsx`
+            handleDownloadFile(res, fileName)
+            ElMessage({
+              type: 'success',
+              message: '操作成功'
             })
-            .catch((err: Error) => {
-              tableLoading.value = false
-              throw err
-            })
+          })
         } else if (res?.data?.sync === 0) {
           ElMessage({
             type: 'success',
@@ -529,19 +461,10 @@ const props: CascaderProps = {
   }
 }
 const dictStore = useDictStore()
-const taskTypeOpts: Ref<DictItem[]> = ref([])
-const allocatonTypeOpts: Ref<DictItem[]> = ref([])
-const isUsedOpts: Ref<DictItem[]> = ref([])
-const getDicts = () => {
-  taskTypeOpts.value = dictStore.dicts.MORTGAGE_TASK_TYPE
-  allocatonTypeOpts.value = dictStore.dicts.MORTGAGE_ALLOCATION_TYPE
-  isUsedOpts.value = dictStore.dicts.ENABLE_DISABLE_STATUS
-}
-const getTaskType = (val: string) => {
-  return taskTypeOpts.value?.find((o) => o.value === val)?.label
-}
-const getAllocationType = (val: string) => {
-  return allocatonTypeOpts.value?.find((o) => o.value === val)?.label
+const dictTypes = ['MORTGAGE_TASK_TYPE', 'ENABLE_DISABLE_STATUS']
+const filterDictLabel = (dictCode: string, value: string | number) => {
+  return dictStore.dicts[dictCode]?.find((item) => item.value === String(value))
+    ?.label
 }
 const getSourceSystem = (val: string) => {
   let label = ''
@@ -565,7 +488,6 @@ watch(
 )
 onMounted(async () => {
   await getDictsListData()
-  await getDicts()
   getList()
 })
 </script>
