@@ -11,13 +11,7 @@
         @search="searchHandler"
       >
         <template #sourceSystem1>
-          <el-select
-            v-model="queryParams.sourceSystem1"
-            multiple
-            collapse-tags
-            collapse-tags-tooltip
-            clearable
-          >
+          <el-select v-model="queryParams.sourceSystem1" multiple clearable>
             <el-option
               v-for="i in systemOptions"
               :key="(i.label as string)"
