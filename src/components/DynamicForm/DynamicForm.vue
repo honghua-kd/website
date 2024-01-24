@@ -82,7 +82,7 @@ const dynamicData = computed(() => {
   let defer = 0
 
   for (let i = 0; i < itemLength.value; i++) {
-    const rowSpan = props.data[i].rowSpan || 1
+    const rowSpan = props.data[i].colSpan || 1
     defer = defer + rowSpan - 1
     const row = Math.ceil((i + 1 + defer) / props.colNum)
 
@@ -93,8 +93,14 @@ const dynamicData = computed(() => {
       col
     })
   }
-  emit('getRowAndCol', data)
   return data
+})
+
+const getRowNum = () => {
+  return dynamicData.value.slice(-1)[0].row
+}
+defineExpose({
+  getRowNum
 })
 
 // 是否展开收回
@@ -114,7 +120,7 @@ const showExpand = (rowNum: number) => {
   return flag
 }
 
-const emit = defineEmits(['update:modelValue', 'getRowAndCol'])
+const emit = defineEmits(['update:modelValue'])
 
 const formValue = ref(props.modelValue)
 

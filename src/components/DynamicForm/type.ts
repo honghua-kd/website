@@ -38,7 +38,7 @@ export interface BaseFormItemProps {
 // }
 
 export interface DynamicFormItemProps extends BaseFormItemProps {
-  rowSpan?: number // 跨越的行数，不能大于colNum列数
+  colSpan?: number // 跨越的列数，不能大于colNum列数
   row?: number // 所在行
   col?: number // 所在列
 }

@@ -1,27 +1,31 @@
 <template>
   <div style="width: 100%">
-    <div class="search-form">
-      <DynamicForm
-        :data="data"
-        v-model="searchQuery"
-        @getRowAndCol="getRowAndCol"
-        :defaultShowRow="defaultShowRow"
-        :gutter="20"
-      />
-    </div>
-    <slot name="form-button">
-      <div class="search-btn">
-        <el-button type="primary" :icon="Search" @click="search"
-          >查询</el-button
-        >
-        <el-button :icon="Refresh" @click="reset">重置</el-button>
+    <div class="form-container">
+      <div class="search-form">
+        <DynamicForm
+          ref="dynamicFormRef"
+          :data="data"
+          v-model="searchQuery"
+          :colNum="colNum"
+          :defaultShowRow="showRow"
+          :gutter="20"
+        />
       </div>
-    </slot>
+
+      <div class="search-btn">
+        <slot name="form-button">
+          <el-button type="primary" :icon="Search" @click="search"
+            >查询</el-button
+          >
+          <el-button :icon="Refresh" @click="reset">重置</el-button>
+        </slot>
+      </div>
+    </div>
 
     <div
       class="arrow"
       @click="expandHandler"
-      v-if="defaultShowRow && row !== 1"
+      v-if="defaultShowRow <= row && defaultShowRow !== -1"
     >
       <el-icon v-if="!expandFlag"><ArrowDownBold /></el-icon>
       <el-icon v-if="expandFlag"><ArrowUpBold /></el-icon>
@@ -37,7 +41,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import {
   Refresh,
   Search,
@@ -45,42 +49,26 @@ import {
   ArrowUpBold
 } from '@element-plus/icons-vue'
 import type { SearchBarProps } from './type'
-
 const emit = defineEmits(['update:modelValue', 'search', 'reset'])
-const props = withDefaults(defineProps<SearchBarProps>(), {})
+const props = withDefaults(defineProps<SearchBarProps>(), {
+  defaultShowRow: -1,
+  colNum: 4
+})
 
 // 展开-收回处理
 const expandFlag = ref<boolean>(false)
-const defaultShowRow = ref(props.defaultShowRow)
-const expandHandler = (): boolean => {
+const showRow = ref(props.defaultShowRow)
+const colNum = ref(props.colNum)
+const expandHandler = () => {
   expandFlag.value = !expandFlag.value
-  defaultShowRow.value = expandFlag.value ? -1 : props.defaultShowRow
+  if (expandFlag.value) {
+    showRow.value = -1
+  } else {
+    showRow.value = props.defaultShowRow
+  }
 }
+
 const searchQuery = ref(props.modelValue)
-
-// 获取排列行和列数据
-const row = ref(0)
-const colLength = ref(0)
-const getRowAndCol = (data) => {
-  row.value = data.slice(-1)[0].row
-  if (row.value === 1) {
-    data.forEach((item) => {
-      colLength.value += item.col
-    })
-  }
-  console.log('row-colLent', row.value, colLength.value)
-}
-
-// 计算form 宽度
-const searchwidth = computed(() => {
-  let width = 'calc(100% - 216px)'
-  if (row.value === 1) {
-    if (colLength.value < 24) {
-      width = `calc((100% - 216px) * ${colLength.value} / 24)`
-    }
-  }
-  return width
-})
 
 // 查询
 const search = () => {
@@ -91,6 +79,13 @@ const search = () => {
 const reset = () => {
   emit('reset')
 }
+// 获取排列行
+const row = ref(0)
+const dynamicFormRef = ref()
+onMounted(() => {
+  row.value = dynamicFormRef.value.getRowNum()
+})
+
 watch(
   () => props.modelValue,
   (newVal) => {
@@ -115,7 +110,10 @@ watch(
 </script>
 
 <style lang="scss" scoped>
-$searchbarwidth: v-bind(searchwidth);
+.form-container {
+  display: flex;
+  align-items: flex-end;
+}
 .arrow {
   margin-bottom: 10px;
   text-align: center;
@@ -123,13 +121,12 @@ $searchbarwidth: v-bind(searchwidth);
   cursor: pointer;
 }
 .search-btn {
-  display: inline-block;
   padding: 6px 10px;
+  width: 220px;
   height: 44px;
 }
 .search-form {
-  display: inline-block;
+  flex: 1;
   padding: 6px 10px;
-  width: $searchbarwidth;
 }
 </style>

@@ -1,5 +1,8 @@
-import type { DynamicFormProps } from '@/components/DynamicForm/type'
+import type {
+  DynamicFormProps,
+  DynamicFormDataItem
+} from '@/components/DynamicForm/type'
 
 type SearchBarProps = DynamicFormProps
 
-export { SearchBarProps }
+export { SearchBarProps, DynamicFormDataItem }

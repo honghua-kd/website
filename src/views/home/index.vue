@@ -1,9 +1,10 @@
 <template>
   <DynamicForm :data="data" v-model="query" />
   <SearchBarV2
-    :data="data"
+    :data="searchData"
     v-model="searchQuery"
-    :defaultShowRow="1"
+    :defaultShowRow="2"
+    :colNum="4"
     @search="searchHandler"
     @reset="resetHandler"
   />
@@ -21,7 +22,7 @@ export default {
 }
 </script>
 <script setup lang="ts">
-import { data } from './data'
+import { data, searchData } from './data'
 import { reactive } from 'vue'
 const query = reactive({
   string1: '1',
@@ -34,7 +35,7 @@ const query = reactive({
 })
 
 const searchQuery = reactive({
-  searchString1: '1',
+  searchString1: [new Date(), new Date()],
   searchString2: '2',
   searchString3: '3',
   searchString4: '4',
