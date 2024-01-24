@@ -55,8 +55,6 @@
             placeholder="请选择"
             v-model="editForm.contractSubject"
             multiple
-            collapse-tags
-            collapse-tags-tooltip
             style="width: 100%"
             clearable
           >
@@ -78,8 +76,6 @@
             placeholder="请选择"
             v-model="editForm.capitalInfo"
             multiple
-            collapse-tags
-            collapse-tags-tooltip
             style="width: 100%"
             clearable
           >

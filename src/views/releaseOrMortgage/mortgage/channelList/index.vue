@@ -14,8 +14,6 @@
             v-model="formModel.sourceSystem12List"
             :options="sourceArr"
             :props="{ multiple: true }"
-            collapse-tags
-            collapse-tags-tooltip
             clearable
             placeholder="请选择"
             style="width: 100%"
