@@ -81,9 +81,7 @@
               style="width: 550px"
               check-strictly
               :props="props"
-              collapse-tags
               clearable
-              collapse-tags-tooltip
               v-model="dialogQueryParams.systemContractStatus"
               :options="systemContractStatusOptions"
             />

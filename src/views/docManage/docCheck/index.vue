@@ -11,7 +11,12 @@
         @search="searchHandler"
       >
         <template #sourceSystem1>
-          <el-select v-model="queryParams.sourceSystem1" multiple clearable>
+          <el-select
+            v-model="queryParams.sourceSystem1"
+            multiple
+            clearable
+            style="width: 100%"
+          >
             <el-option
               v-for="i in systemOptions"
               :key="(i.label as string)"
@@ -40,7 +45,6 @@
     >
       <template #btnsBox>
         <el-button :icon="Plus" type="primary" @click="add">新增</el-button>
-        <el-button :icon="Select" type="primary">审核</el-button>
         <el-button :icon="Select" type="primary" @click="approval"
           >发起审核</el-button
         >
@@ -82,8 +86,7 @@
         <el-button
           v-if="
             row.approvalStatus === 'TO_BE_SUBMITTED' ||
-            row.approvalStatus === 'APPROVAL_REJECTION' ||
-            row.approvalStatus === 'APPROVED'
+            row.approvalStatus === 'APPROVAL_REJECTION'
           "
           link
           type="primary"
@@ -104,17 +107,12 @@
         <el-button
           v-if="
             row.approvalStatus === 'APPROVED' ||
-            row.approvalStatus === 'IN_APPROVAL'
+            row.approvalStatus === 'IN_APPROVAL' ||
+            row.approvalStatus === 'APPROVAL_REJECTION'
           "
           link
           type="primary"
           >查看审核记录</el-button
-        >
-        <el-button
-          v-if="row.approvalStatus === 'APPROVAL_REJECTION'"
-          link
-          type="primary"
-          >查看拒绝原因</el-button
         >
       </template>
     </Table>
