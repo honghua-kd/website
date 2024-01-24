@@ -81,9 +81,7 @@
               style="width: 550px"
               check-strictly
               :props="props"
-              collapse-tags
               clearable
-              collapse-tags-tooltip
               v-model="dialogQueryParams.systemContractStatus"
               :options="systemContractStatusOptions"
             />
@@ -92,7 +90,7 @@
             <el-select
               v-model="dialogQueryParams.originalDocumentNofirst"
               class="m-2"
-              placeholder="请选择"
+              placeholder="请选择文书类型"
               style="margin-right: 5px; width: 180px"
               @change="changeOriginalDoc($event, 'original')"
             >
@@ -106,7 +104,7 @@
             <el-select
               v-model="dialogQueryParams.originalDocumentNoSecond"
               class="m-2"
-              placeholder="请选择"
+              placeholder="请选择文书名称"
               style="margin-right: 5px; width: 180px"
               @change="changeOriginalDocSecond($event, 'original')"
             >
@@ -121,7 +119,7 @@
               v-model="dialogQueryParams.originalDocumentNoThree"
               multiple
               class="m-2"
-              placeholder="请选择"
+              placeholder="请选择文书版本"
               style="width: 180px"
             >
               <el-option
@@ -136,7 +134,7 @@
             <el-select
               v-model="dialogQueryParams.replaceDocumentNofirst"
               class="m-2"
-              placeholder="请选择"
+              placeholder="请选择文书类型"
               style="margin-right: 5px; width: 180px"
               @change="changeOriginalDoc($event, 'replace')"
             >
@@ -150,7 +148,7 @@
             <el-select
               v-model="dialogQueryParams.replaceDocumentNoSecond"
               class="m-2"
-              placeholder="请选择"
+              placeholder="请选择文书名称"
               style="margin-right: 5px; width: 180px"
               @change="changeOriginalDocSecond($event, 'replace')"
             >
@@ -164,7 +162,7 @@
             <el-select
               v-model="dialogQueryParams.replaceDocumentNoThree"
               class="m-2"
-              placeholder="请选择"
+              placeholder="请选择文书版本"
               style="width: 180px"
             >
               <el-option
