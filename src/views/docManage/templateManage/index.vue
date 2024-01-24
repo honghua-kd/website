@@ -67,10 +67,10 @@
       </template>
       <template #column-switch="{ row, prop }">
         <el-switch
-          v-model="row[prop]"
+          :value="row[prop]"
           :active-value="1"
           :inactive-value="0"
-          @click="switchHandler(row.id, row[prop])"
+          @click="switchHandler(row.id, row)"
         />
       </template>
       <template #action="scope">
@@ -90,12 +90,14 @@
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       destroy-on-close
+      @open="handleFile"
     >
       <el-upload
         ref="upload"
         v-model:file-list="fileList"
         class="upload-demo"
         :limit="1"
+        accept=".xlsx"
         :on-exceed="handleExceed"
         :auto-upload="false"
       >
@@ -196,12 +198,14 @@ const tableHeight = computed(() => {
 })
 
 const getList = async () => {
+  tableLoading.value = true
   API.getDocumentTemplatePage(queryParams).then((res) => {
     if (res.code === 200 && res.data) {
       tableData.splice(0, tableData.length)
       tableData.push(...(res?.data?.list || []))
       // tableData.value = res.data.list
       pageTotal.value = res?.data?.total || 0
+      tableLoading.value = false
     }
   })
 }
@@ -241,6 +245,9 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
   file.uid = genFileId()
   upload.value!.handleStart(file)
 }
+const handleFile = () => {
+  fileList.value = [] as UploadUserFile[]
+}
 const submitUpload = () => {
   if (fileList.value.length === 0) {
     ElMessage({
@@ -249,6 +256,15 @@ const submitUpload = () => {
     })
     return
   }
+  if (fileList.value[0].size === 0) {
+    ElMessage({
+      type: 'error',
+      message: '不许上传空文件'
+    })
+    return
+  }
+
+  console.log(fileList.value)
   const formData = new FormData()
   fileList.value.forEach((item) => {
     formData.append('file', item.raw as File)
@@ -287,19 +303,12 @@ const changeAreaData = ({
     cityForm.value = [provinceCode, cityCode]
   }
 }
-const switchHandler = (id: string, status: string) => {
+const switchHandler = async (id: string, row: MortgageDocumentVO) => {
   const formData = new FormData()
   formData.append('id', id)
-  formData.append('status', status)
-  API.updateDocumentTemplateStatus(formData).then((res) => {
-    if (res.code === 200) {
-      ElMessage({
-        type: 'success',
-        message: '操作成功'
-      })
-      getList()
-    }
-  })
+  formData.append('status', row.status === 1 ? '0' : '1')
+  await API.updateDocumentTemplateStatus(formData)
+  getList()
 }
 const handleDelect = () => {
   if (selectData.value.length === 0) {
