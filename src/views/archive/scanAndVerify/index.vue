@@ -156,12 +156,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, Ref, computed, onMounted } from 'vue'
-import { ElMessageBox, ElMessage } from 'element-plus'
+import { ref, reactive, Ref, computed, onMounted, h } from 'vue'
+import { ElMessageBox, ElMessage, ElNotification, ElLink } from 'element-plus'
 import { openLink, isPdf, handleDownloadFile, px2rem } from '@/utils'
 import EditForm from './EditForm.vue'
 import UploadForm from './UploadForm.vue'
-import { MortageAPI } from '@/api'
+import { MortageAPI, CommonAPI } from '@/api'
 import Table from '@/components/Table/index.vue'
 
 import type { TableColumnCtx } from 'element-plus'
@@ -184,7 +184,7 @@ import { tableConfig, searchConfig } from './data'
 import SearchBar from '@/components/SearchBar/index.vue'
 
 const API = new MortageAPI()
-
+const ComAPI = new CommonAPI()
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
 
 const tableLoading = ref<boolean>(false)
@@ -479,7 +479,7 @@ const exportHandler = async () => {
   const { pageNo, pageSize, startVerifyTime, endVerifyTime, ...others } =
     queryParams
   console.log(pageNo, pageSize)
-  const params = {
+  const param = {
     startVerifyTime: startVerifyTime
       ? dayjs(startVerifyTime).format('YYYY-MM-DD HH:mm:ss')
       : '',
@@ -488,16 +488,48 @@ const exportHandler = async () => {
       : '',
     ...others
   }
-
-  API.downLoadFiles(params)
-    .then(async (res) => {
-      if (res) {
-        handleDownloadFile(res)
+  const params = {
+    selectParams: JSON.stringify(param),
+    bizType: 'ARCHIVE_REGISTER_VERIFY_TASK_EXPORT'
+  }
+  ComAPI.exportBySelect(params).then((res) => {
+    if (res.code === 200) {
+      if (res?.data?.sync === 1) {
+        const params = {
+          fileCode: res?.data?.fileCode || ''
+        }
+        const fileName = res?.data?.fileName || ''
+        ComAPI.downLoadFiles(params)
+          .then(async (res) => {
+            if (res) {
+              handleDownloadFile(res, fileName)
+            }
+          })
+          .catch((err: Error) => {
+            throw err
+          })
+      } else if (res?.data?.sync === 0) {
+        ElNotification({
+          title: '通知',
+          type: 'success',
+          dangerouslyUseHTMLString: true,
+          message: h('div', null, [
+            h('span', null, '导出任务已经产生，前面有任务待处理，请至'),
+            h(
+              ElLink,
+              {
+                type: 'primary',
+                href: '/recordUpload/index',
+                target: '_parent'
+              },
+              '我的下载'
+            ),
+            h('span', null, '中查看')
+          ])
+        })
       }
-    })
-    .catch((err: Error) => {
-      throw err
-    })
+    }
+  })
 }
 
 // 重置

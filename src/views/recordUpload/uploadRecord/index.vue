@@ -49,7 +49,7 @@
       ></el-table-column>
       <el-table-column prop="fileName" label="上传文件">
         <template v-slot="scope">
-          <el-button @click="downUploadFile(scope.row)" type="text">{{
+          <el-button @click="downUploadFile(scope.row)" link>{{
             scope.row.fileName
           }}</el-button>
         </template>
@@ -69,7 +69,7 @@
           <el-button
             v-if="scope.row.status == 2"
             @click="errDown(scope.row)"
-            type="text"
+            link
             >下载</el-button
           >
         </template>

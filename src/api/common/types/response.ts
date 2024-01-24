@@ -233,6 +233,10 @@ export interface ExportBySelectResponse {
    * 0异步 1同步
    */
   sync?: number
+  /**
+   * 文件名
+   */
+  fileName?: string
 }
 export interface ProvincesChildrenResponse {
   /**
