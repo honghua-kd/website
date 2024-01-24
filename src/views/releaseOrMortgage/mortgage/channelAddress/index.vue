@@ -573,6 +573,13 @@ const submitUpload = () => {
     })
     return
   }
+  if (fileList.value[0].size === 0) {
+    ElMessage({
+      type: 'error',
+      message: '不允许上传空文件'
+    })
+    return
+  }
   const formData = new FormData()
   fileList.value.forEach((item) => {
     formData.append('file', item.raw as File)
