@@ -642,9 +642,6 @@ const changeSwitch = async (row: AgencyListResponse, type: string) => {
       justify-content: flex-end;
     }
   }
-  .action {
-    margin: 10px 0;
-  }
   .list {
     margin-bottom: 20px;
   }

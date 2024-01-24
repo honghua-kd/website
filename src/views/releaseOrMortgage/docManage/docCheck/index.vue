@@ -46,8 +46,10 @@
     >
       <template #btnsBox>
         <el-button :icon="Plus" type="primary" @click="add">新增</el-button>
-        <el-button type="primary">审核</el-button>
-        <el-button type="primary" @click="approval">发起审核</el-button>
+        <el-button :icon="Select" type="primary">审核</el-button>
+        <el-button :icon="Select" type="primary" @click="approval"
+          >发起审核</el-button
+        >
         <el-button :icon="Download" type="primary" @click="downloadData"
           >下载</el-button
         >
@@ -179,7 +181,7 @@ import EditModel from './editModel.vue'
 import { searchConfig, tableColumn } from './data'
 import type { StateType } from './type'
 import type { DocumentPageResponse } from '@/api/docCheck/types/response'
-import { Plus, Download } from '@element-plus/icons-vue'
+import { Plus, Download, Select } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage, genFileId } from 'element-plus'
 import { handleDownloadFile } from '@/utils'
 import { useDictStore } from '@/store/dict'
@@ -257,7 +259,7 @@ const tableHeight = computed(() => {
 
 const getLabel = (source: string, value: string) => {
   let result = ''
-  const arr = dictStore.dicts[source]
+  const arr = dictStore.dicts[source] || []
   arr.forEach((i) => {
     if (i.value === value) {
       result = i.label
