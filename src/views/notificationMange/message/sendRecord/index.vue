@@ -6,30 +6,31 @@
         :dictArray="dictTypes"
         :searchConfig="searchConfig"
         :showExpand="true"
+        :labelWidth="'120px'"
         @reset="reset"
         @search="searchHandler"
       />
     </div>
-    <el-row>
-      <el-col>
-        <el-tooltip content="导出" placement="top-start">
-          <el-button type="primary" :icon="Download" @click="handleSendExport">
-            导出
-          </el-button>
-        </el-tooltip>
-      </el-col>
-    </el-row>
+    <el-divider border-style="dashed" />
     <Table
       :data="tableData"
       :loading="tableLoading"
       :columnConfig="tableConfig"
       :isSelected="true"
+      :height="tableHeight"
       :page-total="pageTotal"
       v-model:pageSize="queryParams.pageSize"
       v-model:pageNo="queryParams.pageNo"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     >
+      <template #btnsBox>
+        <el-tooltip content="导出" placement="top-start">
+          <el-button type="primary" :icon="Download" @click="handleSendExport">
+            导出
+          </el-button>
+        </el-tooltip>
+      </template>
       <template #default="{ row, prop }">
         <span v-if="prop === 'sourceSystem1Str'">
           {{ row.sourceSystem1Str + ' ' + row.sourceSystem2Str }}
@@ -45,7 +46,7 @@ import Table from '@/components/Table/index.vue'
 import type { ITableConfigProps } from '@/components/Table/type'
 import type { ISearchUnit } from '@/components/SearchBar/type'
 import { ElMessage } from 'element-plus'
-import { reactive, ref, Ref, onMounted } from 'vue'
+import { reactive, ref, Ref, onMounted, computed } from 'vue'
 import type { SendMessageList } from '@/api/message/types/response.ts'
 import type {
   SendMessageRequest,
@@ -87,6 +88,23 @@ const exportParams = reactive<ExportSendRequest>({
   sendTimeStart: '',
   sendTimeEnd: ''
 })
+
+// 表格最大高度
+const searchBoxRef = ref()
+const tableHeight = computed(() => {
+  if (searchBoxRef.value?.clientHeight) {
+    const height = Number(
+      document.documentElement.clientHeight -
+        200 -
+        searchBoxRef.value?.clientHeight
+    )
+    return height
+  } else {
+    const height = Number(document.documentElement.clientHeight - 200)
+    return height
+  }
+})
+
 const searchHandler = async () => {
   API.getSendPageRecord(queryParams).then((res) => {
     if (res.code === 200 && res.data) {
