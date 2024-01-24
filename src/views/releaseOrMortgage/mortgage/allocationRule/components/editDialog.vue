@@ -86,7 +86,12 @@
         <div class="second-title">分配规则</div>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="分配类型" prop="allocationType" align="center">
+            <el-form-item
+              label="分配类型"
+              prop="allocationType"
+              align="center"
+              :rules="[{ required: true, message: '分配类型不能为空' }]"
+            >
               <el-select
                 v-model="formParams.allocationType"
                 clearable
@@ -104,7 +109,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12" v-if="supOrDept">
-            <el-form-item label="分配人员" align="center">
+            <el-form-item label="分配人员" align="center" prop="alPerson">
               <el-select
                 ref="selectRef"
                 v-model="alPerson"
@@ -174,7 +179,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12" v-if="!supOrDept">
-            <el-form-item label="分配人员" align="center">
+            <el-form-item label="分配人员" align="center" prop="alEmployee">
               <el-select
                 ref="selectDeptRef"
                 v-model="alEmployee"
@@ -241,6 +246,7 @@
               label="是否自动分配"
               prop="isAutoAllocation"
               align="center"
+              :rules="[{ required: true, message: '是否自动分配不能为空' }]"
             >
               <el-select
                 v-model="formParams.isAutoAllocation"
@@ -258,7 +264,12 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="是否发送短信" prop="isSendSms" align="center">
+            <el-form-item
+              label="是否发送短信"
+              prop="isSendSms"
+              align="center"
+              :rules="[{ required: true, message: '是否发送短信不能为空' }]"
+            >
               <el-select
                 v-model="formParams.isSendSms"
                 clearable
@@ -281,6 +292,7 @@
               label="短信模版"
               prop="smsTemplateCode"
               align="center"
+              :rules="[{ required: smsTemplate, message: '短信模版不能为空' }]"
             >
               <el-select
                 v-model="formParams.smsTemplateCode"
@@ -356,6 +368,8 @@ const props = defineProps({
 interface ExtraParam {
   areaCode: string[]
   sourceSystem: string[]
+  alPerson: string[]
+  alEmployee: string[]
 }
 type RuleItem = RuleItemResponse & ExtraParam
 interface State {
@@ -380,7 +394,9 @@ const state = reactive<State>({
     provinceCode: '',
     provinceName: '',
     areaCode: [],
-    sourceSystem: []
+    sourceSystem: [],
+    alPerson: [],
+    alEmployee: []
   }
 })
 const { formParams } = toRefs(state)
@@ -413,6 +429,40 @@ const rules = reactive<FormRules<typeof formParams>>({
           callback()
         } else {
           callback(new Error('请选择数据来源'))
+        }
+      },
+      trigger: 'change',
+      required: true
+    }
+  ],
+  alPerson: [
+    {
+      validator: (
+        rule: InternalRuleItem,
+        value: string[] | undefined,
+        callback: (error?: string | Error | undefined) => void
+      ) => {
+        if (value && value?.length) {
+          callback()
+        } else {
+          callback(new Error('请选择分配人员'))
+        }
+      },
+      trigger: 'change',
+      required: true
+    }
+  ],
+  alEmployee: [
+    {
+      validator: (
+        rule: InternalRuleItem,
+        value: string[] | undefined,
+        callback: (error?: string | Error | undefined) => void
+      ) => {
+        if (value && value?.length) {
+          callback()
+        } else {
+          callback(new Error('请选择分配人员'))
         }
       },
       trigger: 'change',
@@ -467,7 +517,9 @@ const submitForm = async () => {
         }
       })
     })
-    state.formParams.allocationUserCode = codeArr.join(',')
+    state.formParams.allocationUserCode = codeArr.length
+      ? codeArr.join(',')
+      : alPersonCode.value.join(',')
   } else {
     // 业务运营部
     state.formParams.allocationUserName = alEmployee.value?.length
@@ -481,7 +533,9 @@ const submitForm = async () => {
         }
       })
     })
-    state.formParams.allocationUserCode = empIds.join(',')
+    state.formParams.allocationUserCode = empIds.length
+      ? empIds.join(',')
+      : alEmployeeCode.value.join(',')
   }
   state.formParams.sourceSystem1 = sourceSystem.value[0]
   state.formParams.sourceSystem2 = sourceSystem.value[1]
@@ -503,7 +557,7 @@ const submitForm = async () => {
     allocationUserName: state.formParams.allocationUserName,
     isAutoAllocation: state.formParams.isAutoAllocation,
     isSendSms: state.formParams.isSendSms,
-    smsTemplateCode: state.formParams.smsTemplateCode,
+    smsTemplateCode: state.formParams.smsTemplateCode || '',
     isUsed: state.formParams.isUsed,
     provinceCode: String(selCity.value[0]),
     provinceName: state.formParams.provinceName
@@ -603,6 +657,8 @@ const cityProps: CascaderProps = {
 }
 const sourceSystem = ref<string[]>([])
 const selCity = ref<string[] | number[]>([])
+const alPersonCode = ref<string[]>([])
+const alEmployeeCode = ref<string[]>([])
 const initOptions = async () => {
   sourceSystem.value = [
     state.formParams.sourceSystem1,
@@ -623,8 +679,14 @@ const initOptions = async () => {
   alPerson.value = state.formParams.allocationUserName
     ? state.formParams.allocationUserName.split(',')
     : []
+  alPersonCode.value = state.formParams.allocationUserName
+    ? state.formParams.allocationUserCode.split(',')
+    : []
   alEmployee.value = state.formParams.allocationUserName
     ? state.formParams.allocationUserName.split(',')
+    : []
+  alEmployeeCode.value = state.formParams.allocationUserName
+    ? state.formParams.allocationUserCode.split(',')
     : []
 }
 watch(
@@ -834,6 +896,34 @@ const visibleDept = () => {
     selectDeptRef.value.blur()
   })
 }
+const smsTemplate = ref<boolean>(true)
+watch(
+  () => state.formParams.isSendSms,
+  (val) => {
+    smsTemplate.value = Boolean(val)
+  },
+  {
+    immediate: true
+  }
+)
+watch(
+  () => alPerson,
+  (val) => {
+    state.formParams.alPerson = [...val.value]
+  },
+  {
+    deep: true
+  }
+)
+watch(
+  () => alEmployee,
+  (val) => {
+    state.formParams.alEmployee = [...val.value]
+  },
+  {
+    deep: true
+  }
+)
 const getStatus = (val: string) => {
   let label = ''
   if (supplierDetailStatus.value) {
