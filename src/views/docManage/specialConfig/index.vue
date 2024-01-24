@@ -37,7 +37,7 @@
       </template>
       <template #column-switch="{ row, prop }">
         <el-switch
-          v-model="row[prop]"
+          :value="row[prop]"
           @click="switchHandler(row.batchNo, row[prop])"
           :active-value="1"
           :inactive-value="0"
@@ -192,6 +192,7 @@ import type { CascaderValue, CascaderProps } from 'element-plus'
 import { SpecialConfigAPI, SystemAPI } from '@/api'
 import type {
   SpecialListItem,
+  ListCell,
   SpecialListRequest,
   EditRequest,
   DictListRequest,
@@ -571,9 +572,14 @@ const delHandler = (batchNo: string) => {
 const switchHandler = (batchNo: string, status: string) => {
   const formData = new FormData()
   formData.append('batchNo', batchNo)
-  formData.append('status', status)
+  formData.append('status', String(Number(!status)))
   API.changeStatus(formData).then((res) => {
     if (res && res.code === 200) {
+      tableData.forEach((i: ListCell) => {
+        if (i.batchNo === batchNo) {
+          i.status = Number(!status)
+        }
+      })
       getList()
     }
   })
