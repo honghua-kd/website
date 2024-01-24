@@ -48,12 +48,12 @@
         <el-button :icon="Download" type="primary" @click="downloadData"
           >下载</el-button
         >
-        <el-button :icon="Plus" type="primary" @click="batchImport"
+        <!-- <el-button :icon="Plus" type="primary" @click="batchImport"
           >导入</el-button
         >
         <el-button :icon="Download" type="primary" @click="downloadTemplate"
           >下载导入模版</el-button
-        >
+        > -->
       </template>
       <template #selection>
         <el-table-column
@@ -181,7 +181,7 @@ import ConfigModel from './configModel.vue'
 import { searchConfig, tableColumn } from './data'
 import type { StateType } from './type'
 import type { DocumentPageResponse } from '@/api/docCheck/types/response'
-import { Plus, Download, ArrowDown } from '@element-plus/icons-vue'
+import { Download, ArrowDown } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage, genFileId } from 'element-plus'
 import { handleDownloadFile } from '@/utils'
 import { useDictStore } from '@/store/dict'
@@ -266,7 +266,7 @@ const tableHeight = computed(() => {
 
 const getLabel = (source: string, value: string) => {
   let result = ''
-  const arr = dictStore.dicts[source]
+  const arr = dictStore.dicts[source] || []
   arr.forEach((i) => {
     if (i.value === value) {
       result = i.label
@@ -360,14 +360,14 @@ const downloadData = async () => {
 }
 
 // 下载导入模版
-const downloadTemplate = () => {
-  const params = {
-    bizType: 'DOCUMENT'
-  }
-  COMMONAPI.getDownLoadTemplate(params).then((res) => {
-    handleDownloadFile(res)
-  })
-}
+// const downloadTemplate = () => {
+//   const params = {
+//     bizType: 'DOCUMENT'
+//   }
+//   COMMONAPI.getDownLoadTemplate(params).then((res) => {
+//     handleDownloadFile(res)
+//   })
+// }
 
 const fileList = ref<UploadUserFile[]>([])
 const upload = ref<UploadInstance>()
@@ -406,10 +406,10 @@ const submitUpload = () => {
       throw err
     })
 }
-const batchImport = () => {
-  fileList.value = []
-  state.importVisible = true
-}
+// const batchImport = () => {
+//   fileList.value = []
+//   state.importVisible = true
+// }
 
 // 关闭修改弹窗回调
 const closeModel = ({ type }: { type: string }) => {

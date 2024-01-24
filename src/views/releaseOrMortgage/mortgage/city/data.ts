@@ -73,3 +73,25 @@ export const tableConfig: ITableConfigProps[] = [
     fixed: 'right'
   }
 ]
+import type { ISearchUnit } from '@/components/SearchBar/type'
+export const searchConfig: ISearchUnit[] = [
+  [
+    {
+      compType: '',
+      colSpan: 12,
+      label: '省市',
+      prop: '',
+      placeholder: '请输入',
+      slotName: 'area'
+    },
+    {
+      compType: 'el-input',
+      colSpan: 12,
+      label: '车牌代码',
+      prop: 'licensePlateCode',
+      options: '',
+      placeholder: '请输入',
+      maxlength: 50
+    }
+  ]
+]

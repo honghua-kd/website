@@ -28,6 +28,7 @@
                 v-model="formParams.allocationRuleName"
                 placeholder="请输入"
                 clearable
+                maxlength="50"
               />
             </el-form-item>
           </el-col>
@@ -59,8 +60,6 @@
               <el-cascader
                 popper-class="first-no-check-cascader"
                 :options="sourceArr"
-                collapse-tags
-                collapse-tags-tooltip
                 clearable
                 placeholder="请选择"
                 @change="selectSourceSystem"
