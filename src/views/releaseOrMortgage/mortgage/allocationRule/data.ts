@@ -1,4 +1,5 @@
 import type { ITableConfigProps } from '@/components/Table/type'
+import type { ISearchUnit } from '@/components/SearchBar/type'
 export const tableConfig: ITableConfigProps[] = [
   {
     label: '规则名称',
@@ -169,4 +170,52 @@ export const tableSupplierConfig: ITableConfigProps[] = [
     prop: 'expireDate',
     align: 'center'
   }
+]
+export const searchConfig: ISearchUnit[] = [
+  [
+    {
+      compType: '',
+      colSpan: 6,
+      label: '来源系统',
+      prop: '',
+      placeholder: '请输入',
+      slotName: 'sourceSystem'
+    },
+    {
+      compType: 'el-input',
+      colSpan: 6,
+      label: '规则名称',
+      prop: 'allocationRuleName',
+      options: '',
+      placeholder: '请输入',
+      maxlength: 50
+    },
+    {
+      compType: 'el-select',
+      colSpan: 6,
+      label: '任务类型',
+      prop: 'taskType',
+      options: 'MORTGAGE_TASK_TYPE',
+      placeholder: '请选择'
+    },
+    {
+      compType: '',
+      colSpan: 6,
+      label: '省市',
+      prop: '',
+      options: '',
+      placeholder: '请选择',
+      slotName: 'area'
+    }
+  ],
+  [
+    {
+      compType: 'el-select',
+      colSpan: 6,
+      label: '规则状态',
+      prop: 'isUsed',
+      options: 'ENABLE_DISABLE_STATUS',
+      placeholder: '请选择'
+    }
+  ]
 ]
