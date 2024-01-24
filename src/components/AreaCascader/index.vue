@@ -6,8 +6,6 @@
     placeholder="请选择"
     :props="areaProps"
     :options="areaOption"
-    collapse-tags
-    collapse-tags-tooltip
     clearable
     @change="changeArea"
   />

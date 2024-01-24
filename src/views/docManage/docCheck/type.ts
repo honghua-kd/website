@@ -25,14 +25,11 @@ export type EditDocInfo = {
   documentType: string
   sourceSystem1: string[]
   sealType: string[]
+  saveListInfo: SaveOrUpdateDocRequest[]
 }
 export type ModelStateType = {
   dialogVisible: boolean
   docInfoForm: EditDocInfo
-  saveListForm: {
-    saveListInfo: SaveOrUpdateDocRequest[]
-  }
-  listDialogvisible: boolean
   importVisible: boolean
   uploadItemIndex: number
 }
