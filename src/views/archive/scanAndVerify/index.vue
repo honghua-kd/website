@@ -156,8 +156,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, Ref, computed, onMounted } from 'vue'
-import { ElMessageBox, ElMessage } from 'element-plus'
+import { ref, reactive, Ref, computed, onMounted, h } from 'vue'
+import { ElMessageBox, ElMessage, ElNotification, ElLink } from 'element-plus'
 import { openLink, isPdf, handleDownloadFile, px2rem } from '@/utils'
 import EditForm from './EditForm.vue'
 import UploadForm from './UploadForm.vue'
@@ -493,24 +493,39 @@ const exportHandler = async () => {
     bizType: 'ARCHIVE_REGISTER_VERIFY_TASK_EXPORT'
   }
   ComAPI.exportBySelect(params).then((res) => {
-    if (res && res.code === 200) {
+    if (res.code === 200) {
       if (res?.data?.sync === 1) {
         const params = {
-          fileCode: res?.data?.fileCode as string
+          fileCode: res?.data?.fileCode || ''
         }
+        const fileName = res?.data?.fileName || ''
         ComAPI.downLoadFiles(params)
           .then(async (res) => {
             if (res) {
-              handleDownloadFile(res)
+              handleDownloadFile(res, fileName)
             }
           })
           .catch((err: Error) => {
             throw err
           })
       } else if (res?.data?.sync === 0) {
-        ElMessage({
+        ElNotification({
+          title: '通知',
           type: 'success',
-          message: '导出任务已经产生，前面有任务待处理，请至我的下载中查看'
+          dangerouslyUseHTMLString: true,
+          message: h('div', null, [
+            h('span', null, '导出任务已经产生，前面有任务待处理，请至'),
+            h(
+              ElLink,
+              {
+                type: 'primary',
+                href: '/recordUpload/index',
+                target: '_parent'
+              },
+              '我的下载'
+            ),
+            h('span', null, '中查看')
+          ])
         })
       }
     }
