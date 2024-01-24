@@ -8,7 +8,7 @@ export const searchConfig: ISearchUnit[] = [
       colSpan: 10,
       label: '原始文书类型',
       prop: 'originalDocumentType',
-      placeholder: '请选择原始文书类型',
+      placeholder: '请选择',
       options: 'SYSTEM_DOCUMENT_TYPE'
     },
     {
@@ -16,7 +16,7 @@ export const searchConfig: ISearchUnit[] = [
       colSpan: 10,
       label: '替换文书类型',
       prop: 'replaceDocumentType',
-      placeholder: '请选择替换文书类型',
+      placeholder: '请选择',
       options: 'SYSTEM_DOCUMENT_TYPE'
     }
   ]

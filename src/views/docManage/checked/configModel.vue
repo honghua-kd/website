@@ -8,108 +8,130 @@
     destroy-on-close
     :before-close="handleClose"
   >
-    <el-button
-      style="margin-bottom: 10px"
-      :icon="Plus"
-      type="primary"
-      @click="addTableItem"
-      >新增</el-button
-    >
-    <el-form ref="ruleSaveListForm" :model="saveListForm" :show-message="false">
-      <el-table
-        class="save-list-table"
-        :data="saveListForm.saveListInfo"
-        :header-cell-style="{
-          background: '#eef1f6',
-          color: '#606266',
-          textAlign: 'center'
-        }"
-        border
-        :cell-style="{ borderRight: '1px solid #fff' }"
+    <div class="config-dialog-container">
+      <el-button
+        style="margin-bottom: 10px"
+        :icon="Plus"
+        type="primary"
+        @click="addTableItem"
+        >新增</el-button
       >
-        <el-table-column type="index" label="序号" width="50" align="center" />
-        <el-table-column prop="bookmarkName" label="书签名称">
-          <template #default="{ row, $index }">
-            <el-form-item
-              :prop="`saveListInfo.${$index}.bookmarkName`"
-              :rules="ruleSaveListFormRules.bookmarkName"
-            >
-              <el-input
-                placeholder="请输入"
-                v-model.trim="row.bookmarkName"
-                :maxlength="50"
-                clearable
-              />
-            </el-form-item>
-          </template>
-        </el-table-column>
-        <el-table-column prop="bookmarkParam" label="书签参数">
-          <template #default="{ row, $index }">
-            <el-form-item
-              :prop="`saveListInfo.${$index}.bookmarkParam`"
-              :rules="ruleSaveListFormRules.bookmarkParam"
-            >
-              <el-input
-                placeholder="请输入"
-                v-model.trim="row.bookmarkParam"
-                :maxlength="50"
-                clearable
-              />
-            </el-form-item>
-          </template>
-        </el-table-column>
-        <el-table-column prop="tableAndColumn" label="变量表达式" :width="200">
-          <template #default="{ row, $index }">
-            <el-form-item
-              :prop="`saveListInfo.${$index}.tableAndColumn`"
-              :rules="ruleSaveListFormRules.tableAndColumn"
-            >
-              <el-cascader
-                v-model="row.tableAndColumn"
-                :options="configCascaderOptions"
-                filterable
-                clearable
-              />
-            </el-form-item>
-          </template>
-        </el-table-column>
-        <el-table-column prop="paramType" label="参数类型" :width="150">
-          <template #default="{ row, $index }">
-            <el-form-item
-              :prop="`saveListInfo.${$index}.paramType`"
-              :rules="ruleSaveListFormRules.paramType"
-            >
-              <el-select v-model="row.paramType" style="width: 100%" clearable>
-                <el-option
-                  v-for="item in paramTypeOptions"
-                  :key="(item.value as string)"
-                  :label="(item.label as string)"
-                  :value="(item.value as string)"
+      <el-form
+        ref="ruleSaveListForm"
+        :model="saveListForm"
+        :show-message="false"
+      >
+        <el-table
+          class="save-list-table"
+          :data="saveListForm.saveListInfo"
+          :header-cell-style="{
+            background: '#eef1f6',
+            color: '#606266',
+            textAlign: 'center'
+          }"
+          border
+          :cell-style="{ borderRight: '1px solid #fff' }"
+        >
+          <el-table-column
+            type="index"
+            label="序号"
+            width="50"
+            align="center"
+          />
+          <el-table-column prop="bookmarkName" label="书签名称">
+            <template #default="{ row, $index }">
+              <el-form-item
+                :prop="`saveListInfo.${$index}.bookmarkName`"
+                :rules="ruleSaveListFormRules.bookmarkName"
+              >
+                <el-input
+                  placeholder="请输入"
+                  v-model.trim="row.bookmarkName"
+                  :maxlength="50"
+                  clearable
                 />
-              </el-select>
-            </el-form-item>
-          </template>
-        </el-table-column>
-        <el-table-column prop="batchBlank" label="批量出具是否空白">
-          <template #default="{ row, $index }">
-            <el-form-item
-              :prop="`saveListInfo.${$index}.batchBlank`"
-              :rules="ruleSaveListFormRules.batchBlank"
-            >
-              <el-select v-model="row.batchBlank" style="width: 100%" clearable>
-                <el-option
-                  v-for="item in yesOrNoOptions"
-                  :key="(item.value as string)"
-                  :label="(item.label as string)"
-                  :value="(item.value as string)"
+              </el-form-item>
+            </template>
+          </el-table-column>
+          <el-table-column prop="bookmarkParam" label="书签参数">
+            <template #default="{ row, $index }">
+              <el-form-item
+                :prop="`saveListInfo.${$index}.bookmarkParam`"
+                :rules="ruleSaveListFormRules.bookmarkParam"
+              >
+                <el-input
+                  placeholder="请输入"
+                  v-model.trim="row.bookmarkParam"
+                  :maxlength="50"
+                  clearable
                 />
-              </el-select>
-            </el-form-item>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" :width="80" align="center">
-          <template #default="scope">
-            <!-- <el-button
+              </el-form-item>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="tableAndColumn"
+            label="变量表达式"
+            :width="200"
+          >
+            <template #default="{ row, $index }">
+              <el-form-item
+                :prop="`saveListInfo.${$index}.tableAndColumn`"
+                :rules="ruleSaveListFormRules.tableAndColumn"
+              >
+                <el-cascader
+                  v-model="row.tableAndColumn"
+                  :options="configCascaderOptions"
+                  filterable
+                  clearable
+                />
+              </el-form-item>
+            </template>
+          </el-table-column>
+          <el-table-column prop="paramType" label="参数类型" :width="150">
+            <template #default="{ row, $index }">
+              <el-form-item
+                :prop="`saveListInfo.${$index}.paramType`"
+                :rules="ruleSaveListFormRules.paramType"
+              >
+                <el-select
+                  v-model="row.paramType"
+                  style="width: 100%"
+                  clearable
+                >
+                  <el-option
+                    v-for="item in paramTypeOptions"
+                    :key="(item.value as string)"
+                    :label="(item.label as string)"
+                    :value="(item.value as string)"
+                  />
+                </el-select>
+              </el-form-item>
+            </template>
+          </el-table-column>
+          <el-table-column prop="batchBlank" label="批量出具是否通用">
+            <template #default="{ row, $index }">
+              <el-form-item
+                :prop="`saveListInfo.${$index}.batchBlank`"
+                :rules="ruleSaveListFormRules.batchBlank"
+              >
+                <el-select
+                  v-model="row.batchBlank"
+                  style="width: 100%"
+                  clearable
+                >
+                  <el-option
+                    v-for="item in yesOrNoOptions"
+                    :key="(item.value as string)"
+                    :label="(item.label as string)"
+                    :value="(item.value as string)"
+                  />
+                </el-select>
+              </el-form-item>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" :width="80" align="center">
+            <template #default="scope">
+              <!-- <el-button
               v-if="
                 saveListForm.saveListInfo.length > 1 ||
                 props.paramsConfigDetail.length > 0
@@ -119,16 +141,17 @@
               @click="removeTableItem(scope.$index, scope.row)"
               >删除</el-button
             > -->
-            <el-button
-              link
-              type="danger"
-              @click="removeTableItem(scope.$index, scope.row)"
-              >删除</el-button
-            >
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-form>
+              <el-button
+                link
+                type="danger"
+                @click="removeTableItem(scope.$index, scope.row)"
+                >删除</el-button
+              >
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-form>
+    </div>
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="closeConfigModel(ruleSaveListForm, 'click-close')"
@@ -388,6 +411,10 @@ const closeConfigModel = async (
 }
 </script>
 <style lang="scss">
+.config-dialog-container {
+  overflow-y: scroll;
+  max-height: 600px;
+}
 .save-list-table {
   .el-form-item {
     margin-bottom: 0 !important;
