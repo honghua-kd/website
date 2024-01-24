@@ -1,7 +1,7 @@
 export default {
   hidden: false,
   title: '合同管理',
-  icon: 'contractManage',
+  icon: 'contractManage2',
   name: 'contractManage',
   sort: 1
 }
