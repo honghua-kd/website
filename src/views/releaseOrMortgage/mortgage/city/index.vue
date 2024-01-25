@@ -1,37 +1,23 @@
 <template>
   <div>
-    <el-card>
-      <el-form :model="queryParams" ref="formRef">
-        <el-row :gutter="20">
-          <el-col :span="6">
-            <el-form-item label="省市:" prop="city">
-              <el-cascader
-                v-model="selCity"
-                clearable
-                :props="props"
-                style="width: 100%"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="车牌代码:" prop="licensePlateCode">
-              <el-input
-                v-model="queryParams.licensePlateCode"
-                placeholder="请输入"
-                clearable
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-button type="primary" @click="searchHandler" :icon="Search">
-              查询
-            </el-button>
-            <el-button @click="reset" :icon="Refresh"> 重置 </el-button>
-          </el-col>
-        </el-row>
-      </el-form>
-    </el-card>
-
+    <div :ref="searchBoxRef">
+      <SearchBar
+        v-model="queryParams"
+        :searchConfig="searchConfig"
+        @reset="reset"
+        @search="searchHandler"
+      >
+        <template #area>
+          <el-cascader
+            v-model="selCity"
+            clearable
+            :props="props"
+            style="width: 100%"
+          />
+        </template>
+      </SearchBar>
+    </div>
+    <el-divider border-style="dashed" />
     <!-- table 组件引入 -->
     <Table
       :data="tableData"
@@ -131,21 +117,15 @@
 </template>
 
 <script setup lang="ts">
-import {
-  Plus,
-  Delete,
-  Upload,
-  Download,
-  Search,
-  Refresh
-} from '@element-plus/icons-vue'
+import { Plus, Delete, Upload, Download, Search } from '@element-plus/icons-vue'
 import { reactive, ref, Ref, onMounted, computed } from 'vue'
-import { tableConfig } from './data'
+import { tableConfig, searchConfig } from './data'
 import OperDialog from './components/operDialog.vue'
 import ImportForm from './ImportForm.vue'
 import { CommonAPI, MortgageCityAPI } from '@/api'
 import { handleDownloadFile } from '@/utils'
-import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
+import SearchBar from '@/components/SearchBar/index.vue'
+import { ElMessageBox, ElMessage } from 'element-plus'
 import Table from '@/components/Table/index.vue'
 import { useRouter } from '@toystory/lotso'
 import dayjs from 'dayjs'

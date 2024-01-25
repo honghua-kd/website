@@ -47,6 +47,7 @@ export interface List {
    */
   updateTime: string
   sourceSystem12List?: System12List[] | null
+  templateCode: string
 }
 export interface Data {
   /**

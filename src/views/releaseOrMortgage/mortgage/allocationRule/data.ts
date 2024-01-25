@@ -1,11 +1,13 @@
 import type { ITableConfigProps } from '@/components/Table/type'
+import type { ISearchUnit } from '@/components/SearchBar/type'
 export const tableConfig: ITableConfigProps[] = [
   {
     label: '规则名称',
     prop: 'allocationRuleName',
     width: '150',
     align: 'center',
-    fixed: true
+    fixed: true,
+    showOverflowTooltip: true
   },
   {
     label: '任务类型',
@@ -16,8 +18,9 @@ export const tableConfig: ITableConfigProps[] = [
   {
     label: '数据来源',
     prop: 'sourceSystem2',
-    width: '120',
-    align: 'center'
+    minWidth: '160',
+    align: 'center',
+    showOverflowTooltip: true
   },
   {
     label: '省份',
@@ -58,9 +61,10 @@ export const tableConfig: ITableConfigProps[] = [
   },
   {
     label: '短信模版',
-    prop: 'smsTemplateCode',
+    prop: 'smsTemplateName',
     width: '150',
-    align: 'center'
+    align: 'center',
+    showOverflowTooltip: true
   },
   {
     label: '状态',
@@ -166,4 +170,52 @@ export const tableSupplierConfig: ITableConfigProps[] = [
     prop: 'expireDate',
     align: 'center'
   }
+]
+export const searchConfig: ISearchUnit[] = [
+  [
+    {
+      compType: '',
+      colSpan: 6,
+      label: '来源系统',
+      prop: '',
+      placeholder: '请输入',
+      slotName: 'sourceSystem'
+    },
+    {
+      compType: 'el-input',
+      colSpan: 6,
+      label: '规则名称',
+      prop: 'allocationRuleName',
+      options: '',
+      placeholder: '请输入',
+      maxlength: 50
+    },
+    {
+      compType: 'el-select',
+      colSpan: 6,
+      label: '任务类型',
+      prop: 'taskType',
+      options: 'MORTGAGE_TASK_TYPE',
+      placeholder: '请选择'
+    },
+    {
+      compType: '',
+      colSpan: 6,
+      label: '省市',
+      prop: '',
+      options: '',
+      placeholder: '请选择',
+      slotName: 'area'
+    }
+  ],
+  [
+    {
+      compType: 'el-select',
+      colSpan: 6,
+      label: '规则状态',
+      prop: 'isUsed',
+      options: 'ENABLE_DISABLE_STATUS',
+      placeholder: '请选择'
+    }
+  ]
 ]

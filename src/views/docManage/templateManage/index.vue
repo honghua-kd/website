@@ -5,6 +5,7 @@
         v-model="queryParams"
         :dictArray="dictTypes"
         :searchConfig="searchConfig"
+        :labelWidth="'120px'"
         @reset="reset"
         @search="searchHandler"
       >
@@ -13,40 +14,13 @@
         </template>
       </SearchBar>
     </div>
-    <el-row :gutter="8" style="margin: 10px 0">
-      <el-tooltip content="新增" placement="top-start">
-        <el-button type="primary" :icon="Plus" @click="addHandler">
-          新增
-        </el-button>
-      </el-tooltip>
-      <el-tooltip content="删除" placement="top-start">
-        <el-button :icon="Delete" @click="handleDelect"> 删除 </el-button>
-      </el-tooltip>
-      <el-tooltip content="下载" placement="top-start">
-        <el-button
-          :icon="Download"
-          @click="downloadTemplate"
-          :loading="downBtmLoading"
-        >
-          下载
-        </el-button>
-      </el-tooltip>
-      <el-tooltip content="导入" placement="top-start">
-        <el-button type="primary" :icon="Download" @click="handleExpost">
-          导入
-        </el-button>
-      </el-tooltip>
-      <el-tooltip content="下载导入模版" placement="top-start">
-        <el-button type="primary" :icon="Download" @click="downTemplate">
-          下载导入模版
-        </el-button>
-      </el-tooltip>
-    </el-row>
+    <el-divider border-style="dashed" />
     <Table
       :data="tableData"
       :loading="tableLoading"
       :columnConfig="tableConfig"
       :isSelected="true"
+      :height="tableHeight"
       :page-total="pageTotal"
       v-model:pageSize="queryParams.pageSize"
       v-model:pageNo="queryParams.pageNo"
@@ -54,6 +28,48 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     >
+      <template #btnsBox>
+        <el-tooltip content="新增" placement="top-start">
+          <el-button type="primary" :icon="Plus" @click="addHandler">
+            新增
+          </el-button>
+        </el-tooltip>
+        <el-tooltip content="删除" placement="top-start">
+          <el-button
+            type="primary"
+            :loading="delLoading"
+            :icon="Delete"
+            @click="handleDelect"
+          >
+            删除
+          </el-button>
+        </el-tooltip>
+        <el-tooltip content="下载" placement="top-start">
+          <el-button
+            :icon="Download"
+            @click="downloadTemplate"
+            :loading="downBtmLoading"
+            type="primary"
+          >
+            下载
+          </el-button>
+        </el-tooltip>
+        <el-tooltip content="导入" placement="top-start">
+          <el-button type="primary" :icon="Download" @click="handleExpost">
+            导入
+          </el-button>
+        </el-tooltip>
+        <el-tooltip content="下载导入模版" placement="top-start">
+          <el-button
+            type="primary"
+            :loading="dwonlLoading"
+            :icon="Download"
+            @click="downTemplate"
+          >
+            下载导入模版
+          </el-button>
+        </el-tooltip>
+      </template>
       <template #default="{ row, prop }">
         <span v-if="prop === 'applicableType'">{{
           getLabel('DOCUMENT_TEMPLATE_APPLICABLE_TYPE', row.applicableType)
@@ -61,10 +77,10 @@
       </template>
       <template #column-switch="{ row, prop }">
         <el-switch
-          v-model="row[prop]"
+          :value="row[prop]"
           :active-value="1"
           :inactive-value="0"
-          @click="switchHandler(row.id, row[prop])"
+          @click="switchHandler(row.id, row)"
         />
       </template>
       <template #action="scope">
@@ -84,12 +100,14 @@
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       destroy-on-close
+      @open="handleFile"
     >
       <el-upload
         ref="upload"
         v-model:file-list="fileList"
         class="upload-demo"
         :limit="1"
+        accept=".xlsx"
         :on-exceed="handleExceed"
         :auto-upload="false"
       >
@@ -98,7 +116,9 @@
         </template>
       </el-upload>
       <template #footer>
-        <el-button type="primary" @click="submitUpload">导入</el-button>
+        <el-button type="primary" :loading="expLoading" @click="submitUpload"
+          >导入</el-button
+        >
       </template>
     </el-dialog>
     <OperDialog ref="operRef" @getList="getList" />
@@ -106,7 +126,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, Ref, onMounted } from 'vue'
+import { reactive, ref, Ref, onMounted, computed } from 'vue'
 import { Plus, Download, Delete } from '@element-plus/icons-vue'
 import type {
   UploadInstance,
@@ -141,6 +161,9 @@ const dictTypes = [
   'DOCUMENT_TEMPLATE_APPLICABLE_TYPE',
   'START_STOP_TASK_STATUS'
 ]
+const delLoading: Ref<boolean> = ref(false)
+const dwonlLoading: Ref<boolean> = ref(false)
+const expLoading: Ref<boolean> = ref(false)
 const dictStore = useDictStore()
 
 onMounted(() => {
@@ -172,13 +195,32 @@ const reset = () => {
   cityForm.value = []
   getList()
 }
+
+// 表格最大高度
+const searchBoxRef = ref()
+const tableHeight = computed(() => {
+  if (searchBoxRef.value?.clientHeight) {
+    const height = Number(
+      document.documentElement.clientHeight -
+        200 -
+        searchBoxRef.value?.clientHeight
+    )
+    return height
+  } else {
+    const height = Number(document.documentElement.clientHeight - 200)
+    return height
+  }
+})
+
 const getList = async () => {
+  tableLoading.value = true
   API.getDocumentTemplatePage(queryParams).then((res) => {
     if (res.code === 200 && res.data) {
       tableData.splice(0, tableData.length)
       tableData.push(...(res?.data?.list || []))
       // tableData.value = res.data.list
       pageTotal.value = res?.data?.total || 0
+      tableLoading.value = false
     }
   })
 }
@@ -200,11 +242,14 @@ const downTemplate = () => {
   const params = {
     bizType: 'DOCUMENT_TEMPLATE'
   }
+  dwonlLoading.value = true
   CommonApi.getDownLoadTemplate(params)
     .then((res) => {
+      dwonlLoading.value = false
       handleDownloadFile(res)
     })
     .catch((err: Error) => {
+      dwonlLoading.value = false
       throw err
     })
 }
@@ -218,6 +263,9 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
   file.uid = genFileId()
   upload.value!.handleStart(file)
 }
+const handleFile = () => {
+  fileList.value = [] as UploadUserFile[]
+}
 const submitUpload = () => {
   if (fileList.value.length === 0) {
     ElMessage({
@@ -226,11 +274,20 @@ const submitUpload = () => {
     })
     return
   }
+  if (fileList.value[0].size === 0) {
+    ElMessage({
+      type: 'error',
+      message: '不许上传空文件'
+    })
+    return
+  }
+  console.log(fileList.value)
   const formData = new FormData()
   fileList.value.forEach((item) => {
     formData.append('file', item.raw as File)
   })
   formData.append('bizType', 'DOCUMENT_TEMPLATE')
+  expLoading.value = true
   CommonApi.getAsyncImport(formData)
     .then((res) => {
       if (res && res.code === 200) {
@@ -242,8 +299,11 @@ const submitUpload = () => {
       upload.value!.clearFiles()
       getList()
       importVisible.value = false
+      expLoading.value = false
     })
     .catch((err: Error) => {
+      expLoading.value = false
+      importVisible.value = false
       throw err
     })
 }
@@ -264,19 +324,12 @@ const changeAreaData = ({
     cityForm.value = [provinceCode, cityCode]
   }
 }
-const switchHandler = (id: string, status: string) => {
+const switchHandler = async (id: string, row: MortgageDocumentVO) => {
   const formData = new FormData()
   formData.append('id', id)
-  formData.append('status', status)
-  API.updateDocumentTemplateStatus(formData).then((res) => {
-    if (res.code === 200) {
-      ElMessage({
-        type: 'success',
-        message: '操作成功'
-      })
-      getList()
-    }
-  })
+  formData.append('status', row.status === 1 ? '0' : '1')
+  await API.updateDocumentTemplateStatus(formData)
+  getList()
 }
 const handleDelect = () => {
   if (selectData.value.length === 0) {
@@ -295,22 +348,36 @@ const handleDelect = () => {
       const ids = selectData.value.map((el: MortgageDocumentVO) => {
         return el.id
       })
+      delLoading.value = true
       API.editDocumentTemplateDelete(ids).then((res) => {
         if (res.code === 200) {
+          delLoading.value = false
           ElMessage({
             type: 'success',
             message: '操作成功'
           })
           getList()
+        } else {
+          delLoading.value = false
         }
       })
     })
-    .catch(() => {})
+    .catch(() => {
+      delLoading.value = false
+    })
 }
 const downloadTemplate = () => {
   const params = {
-    selectParams: JSON.stringify(queryParams),
+    selectParams: '' as string,
     bizType: 'MORTGAGE_DOCUMENT_TEMPLATE_EXPORT'
+  }
+  if (selectData.value.length > 0) {
+    const ids = selectData.value.map((el) => {
+      return el.id
+    })
+    params.selectParams = JSON.stringify({ ids: ids })
+  } else {
+    params.selectParams = JSON.stringify(queryParams)
   }
   downBtmLoading.value = true
   CommonApi.exportBySelect(params)
@@ -343,6 +410,7 @@ const downloadTemplate = () => {
       }
     })
     .catch((err: Error) => {
+      downBtmLoading.value = false
       throw err
     })
 }
@@ -370,6 +438,7 @@ const searchConfig: ISearchUnit[] = [
       colSpan: 6,
       label: '材料模版名称',
       prop: 'templateName',
+      maxlength: 50,
       placeholder: '请输入材料模版名称'
     },
     {
@@ -393,6 +462,7 @@ const searchConfig: ISearchUnit[] = [
       colSpan: 6,
       label: '文书模版编号',
       prop: 'templateCode',
+      maxlength: 50,
       placeholder: '请输入文书模版编号'
     }
   ],
@@ -492,7 +562,6 @@ const tableConfig: ITableConfigProps[] = [
   {
     label: '状态',
     prop: 'status',
-    width: 120,
     align: 'center',
     showOverflowTooltip: true,
     fixed: false,

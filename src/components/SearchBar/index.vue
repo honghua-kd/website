@@ -40,7 +40,7 @@
 
                     <template v-else-if="item.compType === 'el-input'">
                       <el-input
-                        v-model="modelValue[(item as ISearchConfigCommon).prop]"
+                        v-model.trim="modelValue[(item as ISearchConfigCommon).prop]"
                         clearable
                         :maxlength="item.maxlength || 90"
                         :placeholder="item.placeholder || '请输入'"

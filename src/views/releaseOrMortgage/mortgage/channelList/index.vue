@@ -14,8 +14,6 @@
             v-model="formModel.sourceSystem12List"
             :options="sourceArr"
             :props="{ multiple: true }"
-            collapse-tags
-            collapse-tags-tooltip
             clearable
             placeholder="请选择"
             style="width: 100%"
@@ -513,6 +511,13 @@ const submitUpload = () => {
     })
     return
   }
+  if (fileList.value[0].size === 0) {
+    ElMessage({
+      type: 'error',
+      message: '不允许上传空文件'
+    })
+    return
+  }
   const formData = new FormData()
   fileList.value.forEach((item) => {
     formData.append('file', item.raw as File)
@@ -641,9 +646,6 @@ const changeSwitch = async (row: AgencyListResponse, type: string) => {
       display: flex;
       justify-content: flex-end;
     }
-  }
-  .action {
-    margin: 10px 0;
   }
   .list {
     margin-bottom: 20px;

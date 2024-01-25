@@ -1,91 +1,35 @@
 <template>
   <div class="channel-container">
-    <!-- filter -->
-    <div class="channel-search-container" :ref="searchBoxRef">
-      <el-form
-        :inline="true"
-        :model="queryParams"
-        class="filter-form"
-        :label-width="px2rem('110px')"
+    <div :ref="searchBoxRef">
+      <SearchBar
+        v-model="queryParams"
+        :searchConfig="searchConfig"
+        :labelWidth="'110px'"
+        :dictArray="dictTypes"
+        @reset="reset"
+        @search="searchHandler"
       >
-        <el-row>
-          <el-col :span="6">
-            <el-form-item label="来源系统" style="width: 100%">
-              <el-cascader
-                :options="sourceArr"
-                collapse-tags
-                collapse-tags-tooltip
-                clearable
-                placeholder="请选择"
-                @change="selectSourceSystem"
-                v-model="queryParams.sourceSystem"
-                style="width: 100%"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="规则名称" style="width: 100%">
-              <el-input
-                placeholder="请输入"
-                v-model="queryParams.allocationRuleName"
-                clearable
-                :maxlength="50"
-              /> </el-form-item
-          ></el-col>
-          <el-col :span="6">
-            <el-form-item label="任务类型" style="width: 100%">
-              <el-select
-                v-model="queryParams.taskType"
-                style="width: 100%"
-                placeholder=""
-                clearable
-              >
-                <el-option
-                  v-for="item in taskTypeOpts"
-                  :key="(item.value as string)"
-                  :label="(item.label as string)"
-                  :value="(item.value as string)"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="省市" style="width: 100%">
-              <el-cascader
-                v-model="selCity"
-                clearable
-                :props="props"
-                style="width: 100%"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="规则状态" style="width: 100%">
-              <el-select
-                v-model="queryParams.isUsed"
-                style="width: 100%"
-                placeholder=""
-                clearable
-              >
-                <el-option
-                  v-for="item in isUsedOpts"
-                  :key="(item.value as string)"
-                  :label="(item.label as string)"
-                  :value="(item.value as string)"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="18" class="btn-row">
-            <el-form-item>
-              <el-button :icon="Search" type="primary" @click="searchHandler"
-                >查询</el-button
-              >
-              <el-button :icon="Refresh" @click="reset">重置</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
+        <template #sourceSystem>
+          <el-cascader
+            :options="sourceArr"
+            collapse-tags
+            collapse-tags-tooltip
+            clearable
+            placeholder="请选择"
+            @change="selectSourceSystem"
+            v-model="queryParams.sourceSystem"
+            style="width: 100%"
+          />
+        </template>
+        <template #area>
+          <el-cascader
+            v-model="selCity"
+            clearable
+            :props="props"
+            style="width: 100%"
+          />
+        </template>
+      </SearchBar>
     </div>
     <el-divider border-style="dashed" />
 
@@ -112,7 +56,7 @@
           </el-col>
           <el-col :span="1.5">
             <el-button type="primary" @click="importHandler" :icon="Upload">
-              批量导入
+              导入
             </el-button>
           </el-col>
           <el-col :span="1.5">
@@ -130,22 +74,24 @@
             </el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button
-              type="primary"
-              :icon="Delete"
-              @click="delHandler(selectIds)"
+            <el-tooltip content="需勾选下方条目，方可操作" placement="top"
+              ><el-button
+                type="primary"
+                :icon="Delete"
+                @click="delHandler(selectIds)"
+              >
+                删除
+              </el-button></el-tooltip
             >
-              删除
-            </el-button>
           </el-col>
         </el-row>
       </template>
       <template #default="{ row, prop }">
         <span v-if="prop === 'taskType'">
-          {{ getTaskType(row[prop]) }}
+          {{ filterDictLabel('MORTGAGE_TASK_TYPE', row[prop]) }}
         </span>
         <span v-if="prop === 'allocationType'">
-          {{ getAllocationType(row[prop]) }}
+          {{ filterDictLabel('MORTGAGE_ALLOCATION_TYPE', row[prop]) }}
         </span>
         <span v-if="prop === 'sourceSystem2'">
           {{ getSourceSystem(row[prop]) }}
@@ -183,6 +129,14 @@
       :visible="openVisible"
       @success="getList"
     />
+    <EditDialog
+      ref="editRef"
+      :formValue="formEditValue"
+      :title="formEditTitle"
+      @closeModel="closeEditModel"
+      :visible="editVisible"
+      @success="getList"
+    />
     <ImportForm ref="importFormRef" />
   </div>
 </template>
@@ -190,32 +144,26 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted, Ref, computed, watch } from 'vue'
 import OperDialog from './components/operDialog.vue'
-import { RuleAPI, CommonAPI } from '@/api'
-import { tableConfig } from './data'
+import EditDialog from './components/editDialog.vue'
+import { RuleAPI, CommonAPI, SystemAPI } from '@/api'
+import { tableConfig, searchConfig } from './data'
 import Table from '@/components/Table/index.vue'
 import ImportForm from './ImportForm.vue'
-import { px2rem, handleDownloadFile } from '@/utils'
+import SearchBar from '@/components/SearchBar/index.vue'
+import { handleDownloadFile } from '@/utils'
 import type { CascaderValue, CascaderOption, CascaderProps } from 'element-plus'
-import fileDownload from 'js-file-download'
 import dayjs from 'dayjs'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import {
-  Refresh,
-  Search,
-  Plus,
-  Delete,
-  Download,
-  Upload
-} from '@element-plus/icons-vue'
+import { Plus, Delete, Download, Upload } from '@element-plus/icons-vue'
 const CommonApi = new CommonAPI()
 const RuleApi = new RuleAPI()
+const SystemApi = new SystemAPI()
 import { useDictStore } from '@/store/dict'
 import type {
   RuleListRequest,
   PageRequest,
   RuleItemResponse,
-  DictDataTreeResponse,
-  DictItem
+  DictDataTreeResponse
 } from '@/api'
 type QueryParams = RuleListRequest & PageRequest
 interface ExtraParam {
@@ -238,6 +186,7 @@ const tableLoading: Ref<boolean> = ref(false)
 const tableData = reactive<RuleItemResponse[]>([])
 const searchBoxRef = ref()
 const tableHeight = computed(() => {
+  console.log(document.documentElement.clientHeight)
   if (searchBoxRef.value?.clientHeight) {
     const height = Number(
       document.documentElement.clientHeight -
@@ -281,7 +230,8 @@ const reset = () => {
   queryParams.sourceSystem = []
   getList()
 }
-const getList = async () => {
+const getList = () => {
+  tableLoading.value = true
   queryParams.provinceCode = selCity.value ? selCity.value[0] : ''
   queryParams.cityCode = selCity.value ? selCity.value[1] : ''
   const params = { ...queryParams }
@@ -308,13 +258,20 @@ const addHandler = () => {
   formTitle.value = '新增任务分配规则'
   openVisible.value = true
 }
+const editRef = ref()
+let formEditValue = reactive({})
+const formEditTitle = ref('')
+const editVisible = ref(false)
 const editHandler = (val: RuleItemResponse) => {
-  formTitle.value = '编辑任务分配规则'
-  formValue = val
-  openVisible.value = true
+  formEditTitle.value = '编辑任务分配规则'
+  formEditValue = val
+  editVisible.value = true
 }
 const closeModel = () => {
   openVisible.value = false
+}
+const closeEditModel = () => {
+  editVisible.value = false
 }
 const importFormRef = ref()
 const importHandler = () => {
@@ -323,9 +280,10 @@ const importHandler = () => {
 // 下载模板
 const downloadTemplate = () => {
   const params = {
-    bizType: 'MORTGAGE_TEMPLATE_ALLOCATION_RULE'
+    businessCategory: 'MORTGAGE_TEMPLATE',
+    businessSubcategory: 'MORTGAGE_TEMPLATE_ALLOCATION_RULE'
   }
-  CommonApi.getDownLoadTemplate(params)
+  SystemApi.templateImportResult(params)
     .then((res) => {
       handleDownloadFile(res)
     })
@@ -371,8 +329,9 @@ const downloadHandler = () => {
   let param
   if (selectIds.value.length) {
     param = JSON.stringify({
-      ids: ids,
-      ...queryParams
+      // ids: ids,
+      // ...queryParams
+      allocationRuleCodes: ids
     })
   } else {
     param = JSON.stringify({
@@ -390,20 +349,14 @@ const downloadHandler = () => {
           const params = {
             fileCode: res?.data?.fileCode as string
           }
-          CommonApi.downLoadFiles(params)
-            .then((res) => {
-              const fileStream = res?.data
-              const fileName = `分配规则${dayjs().format('YYYYMMDD')}.xlsx`
-              fileDownload(fileStream, fileName)
-              ElMessage({
-                type: 'success',
-                message: '操作成功'
-              })
+          CommonApi.downLoadFiles(params).then((res) => {
+            const fileName = `分配规则${dayjs().format('YYYYMMDD')}.xlsx`
+            handleDownloadFile(res, fileName)
+            ElMessage({
+              type: 'success',
+              message: '操作成功'
             })
-            .catch((err: Error) => {
-              tableLoading.value = false
-              throw err
-            })
+          })
         } else if (res?.data?.sync === 0) {
           ElMessage({
             type: 'success',
@@ -508,35 +461,14 @@ const props: CascaderProps = {
   }
 }
 const dictStore = useDictStore()
-const taskTypeOpts: Ref<DictItem[]> = ref([])
-const allocatonTypeOpts: Ref<DictItem[]> = ref([])
-const isUsedOpts: Ref<DictItem[]> = ref([])
-const getDicts = () => {
-  taskTypeOpts.value = dictStore.dicts.MORTGAGE_TASK_TYPE
-  allocatonTypeOpts.value = dictStore.dicts.MORTGAGE_ALLOCATION_TYPE
-  isUsedOpts.value = dictStore.dicts.ENABLE_DISABLE_STATUS
-}
-const getTaskType = (val: string) => {
-  const option = taskTypeOpts.value.find((o) => o.value === val) as DictItem
-  if (option) {
-    return option.label
-  } else {
-    return ''
-  }
-}
-const getAllocationType = (val: string) => {
-  const option = allocatonTypeOpts.value.find(
-    (o) => o.value === val
-  ) as DictItem
-  if (option) {
-    return option.label
-  } else {
-    return ''
-  }
+const dictTypes = ['MORTGAGE_TASK_TYPE', 'ENABLE_DISABLE_STATUS']
+const filterDictLabel = (dictCode: string, value: string | number) => {
+  return dictStore.dicts[dictCode]?.find((item) => item.value === String(value))
+    ?.label
 }
 const getSourceSystem = (val: string) => {
   let label = ''
-  sourceArr.value.forEach((option) => {
+  sourceArr.value?.forEach((option) => {
     option.children?.forEach((item) => {
       if (val === item.value) {
         label = item.label as string
@@ -554,10 +486,9 @@ watch(
     }
   }
 )
-onMounted(() => {
+onMounted(async () => {
+  await getDictsListData()
   getList()
-  getDictsListData()
-  getDicts()
 })
 </script>
 

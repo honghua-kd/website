@@ -59,4 +59,44 @@ mitt.on('logout', () => {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+// .admin-container {
+//   .el-menu {
+//     /* logo */
+//     .sidebar-logo-container {
+//       .sidebar-title {
+//         color: #000000 !important;
+//       }
+//       .sidebar-logo {
+//         width: 29px;
+//         height: 29px;
+//       }
+//     }
+//     .el-menu-item,
+//     .el-sub-menu__title {
+//       height: 40px;
+//       font-size: 14px !important;
+//       line-height: 40px;
+//       color: #4e5969 !important;
+//       .menu-icon {
+//         margin-right: 8px;
+//         height: 40px !important;
+//       }
+//       .svg-icon {
+//         color: #4e5969 !important;
+//       }
+//       &:hover {
+//         background: #f2f3f5 !important;
+//       }
+//     }
+//     .el-menu-item.is-active {
+//       background: #f2f3f5 !important;
+//       .title {
+//         color: $base-color-primary !important;
+//       }
+//       .svg-icon {
+//         color: $base-color-primary !important;
+//       }
+//     }
+//   }
+// }
 </style>

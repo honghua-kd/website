@@ -1,7 +1,7 @@
 export default {
   hidden: false,
   title: '网银回笼',
-  icon: 'withDrawal',
+  icon: 'withDrawal2',
   name: 'withDrawal',
   sort: 2
 }
