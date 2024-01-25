@@ -25,7 +25,7 @@
           <el-input
             :maxlength="50"
             placeholder="请输入"
-            v-model="editForm.mortgageSubjectName"
+            v-model.trim="editForm.mortgageSubjectName"
             clearable
           />
         </el-form-item>
@@ -55,8 +55,6 @@
             placeholder="请选择"
             v-model="editForm.contractSubject"
             multiple
-            collapse-tags
-            collapse-tags-tooltip
             style="width: 100%"
             clearable
           >
@@ -78,8 +76,6 @@
             placeholder="请选择"
             v-model="editForm.capitalInfo"
             multiple
-            collapse-tags
-            collapse-tags-tooltip
             style="width: 100%"
             clearable
           >
@@ -95,7 +91,7 @@
           <el-input
             :maxlength="50"
             placeholder="请输入"
-            v-model="editForm.organizationCode"
+            v-model.trim="editForm.organizationCode"
             clearable
           />
         </el-form-item>
@@ -103,7 +99,7 @@
           <el-input
             :maxlength="50"
             placeholder="请输入"
-            v-model="editForm.mortgageSubjectAllName"
+            v-model.trim="editForm.mortgageSubjectAllName"
             clearable
           />
         </el-form-item>
@@ -111,7 +107,7 @@
           <el-input
             :maxlength="100"
             placeholder="请输入"
-            v-model="editForm.registeredAddress"
+            v-model.trim="editForm.registeredAddress"
             clearable
           />
         </el-form-item>
@@ -123,7 +119,7 @@
           <el-input
             :maxlength="100"
             placeholder="请输入"
-            v-model="editForm.contactAddressDetail"
+            v-model.trim="editForm.contactAddressDetail"
             clearable
           />
         </el-form-item>
@@ -133,7 +129,7 @@
               <el-input
                 :maxlength="50"
                 placeholder="请输入"
-                v-model="editForm.contactName"
+                v-model.trim="editForm.contactName"
                 clearable
               />
             </el-form-item>
@@ -151,7 +147,7 @@
               <el-input
                 :maxlength="50"
                 placeholder="请输入"
-                v-model="editForm.contactPhone"
+                v-model.trim="editForm.contactPhone"
                 clearable
               />
             </el-form-item>
@@ -161,13 +157,13 @@
     </div>
     <template #footer>
       <span class="dialog-footer">
+        <Button
+          ref="okRef"
+          name="确 定"
+          @onButtonFn="onCloseModel(ruleFormRef, 'update-close')"
+        />
         <el-button @click="onCloseModel(ruleFormRef, 'click-close')"
-          >取消</el-button
-        >
-        <el-button
-          type="primary"
-          @click="onCloseModel(ruleFormRef, 'update-close')"
-          >确认</el-button
+          >取 消</el-button
         >
       </span>
     </template>
@@ -219,6 +215,7 @@ const state = reactive<ModelStateType>({
   areaCode: []
 })
 const { dialogVisible, editForm, dialogTitle, areaCode } = toRefs(state)
+const okRef = ref()
 watch(
   [() => props.visible, () => props.formValue, () => props.title],
   ([newVisible, newValue, newTitle]) => {
@@ -399,9 +396,10 @@ const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
     return
   }
   if (!formEl) return
-  await formEl.validate(async (valid, fields) => {
+  await formEl.validate((valid, fields) => {
     if (valid) {
       if (type === 'update-close') {
+        okRef.value.changeLoading(true)
         addOrEditparams.mortgageSubjectAllName =
           state.editForm.mortgageSubjectAllName
         addOrEditparams.mortgageSubjectName = state.editForm.mortgageSubjectName
@@ -438,15 +436,31 @@ const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
         if (state.dialogTitle === '新增') {
           const paramsClone = JSON.parse(JSON.stringify(addOrEditparams))
           delete paramsClone.id
-          await API.getMortgageSubjectAdd(paramsClone)
+          API.getMortgageSubjectAdd(paramsClone)
+            .then(() => {
+              okRef.value.changeLoading(false)
+              emit('closeModel', {
+                visible: false,
+                type
+              })
+            })
+            .catch(() => {
+              okRef.value.changeLoading(false)
+            })
         } else {
           addOrEditparams.id = state.editForm.id
-          await API.getMortgageSubjectModify(addOrEditparams)
+          API.getMortgageSubjectModify(addOrEditparams)
+            .then(() => {
+              okRef.value.changeLoading(false)
+              emit('closeModel', {
+                visible: false,
+                type
+              })
+            })
+            .catch(() => {
+              okRef.value.changeLoading(false)
+            })
         }
-        emit('closeModel', {
-          visible: false,
-          type
-        })
       }
     } else {
       console.log('error submit!', fields)

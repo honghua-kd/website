@@ -7,6 +7,7 @@ export interface ImportTableItem {
   creatorName?: string
   createTime?: string
   msg?: string
+  indexStr?: number
 }
 export interface ExportTableItem {
   fileName?: string
@@ -15,4 +16,5 @@ export interface ExportTableItem {
   status?: number
   creatorName?: string
   createTime?: string
+  indexStr?: number
 }

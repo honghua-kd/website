@@ -14,8 +14,6 @@
             v-model="formModel.sourceSystem12List"
             :options="sourceArr"
             :props="{ multiple: true }"
-            collapse-tags
-            collapse-tags-tooltip
             clearable
             placeholder="请选择"
             style="width: 100%"
@@ -510,6 +508,13 @@ const submitUpload = () => {
     ElMessage({
       type: 'error',
       message: '请先选择文件'
+    })
+    return
+  }
+  if (fileList.value[0].size === 0) {
+    ElMessage({
+      type: 'error',
+      message: '不允许上传空文件'
     })
     return
   }
