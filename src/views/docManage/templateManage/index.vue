@@ -453,7 +453,7 @@ const searchConfig: ISearchUnit[] = [
       compType: 'el-select',
       colSpan: 6,
       label: '适用业务类型',
-      prop: 'sendStatus',
+      prop: 'applicableType',
       placeholder: '请选适用业务类型',
       options: 'DOCUMENT_TEMPLATE_APPLICABLE_TYPE'
     },
