@@ -42,7 +42,7 @@
               clearable
             >
               <el-option
-                v-for="(item, index) in expressCompanyOpts"
+                v-for="(item, index) in dictStore.dicts.EXPRESS_COMPANY"
                 :key="index"
                 :label="item.label"
                 :value="(item.label as string)"
@@ -70,10 +70,10 @@
               placeholder="请选择寄送/接收"
             >
               <el-option
-                v-for="(item, index) in expressTypeOpts"
+                v-for="(item, index) in dictStore.dicts.EXPRESS_TYPE"
                 :key="index"
                 :label="item.label"
-                :value="item.value"
+                :value="Number(item.value)"
               />
             </el-select>
           </el-form-item>
@@ -314,10 +314,10 @@
               placeholder="请选择快递状态"
             >
               <el-option
-                v-for="(item, index) in expressStatusOpts"
+                v-for="(item, index) in dictStore.dicts.EXPRESS_STATUS"
                 :key="index"
                 :label="item.label"
-                :value="item.value"
+                :value="Number(item.value)"
               />
             </el-select>
           </el-form-item>
@@ -518,8 +518,8 @@ import EditExpressForm from './components/EditExpressForm.vue'
 import ImportContent from './components/ImportContent.vue'
 import ImportOtherFile from './components/ImportOtherFile.vue'
 import { Delete } from '@element-plus/icons-vue'
+import { useDictStore } from '@/store/dict'
 import type {
-  ExpressDictItem,
   ExpressListItem,
   ExpressContentList,
   OtherFileList,
@@ -530,11 +530,12 @@ import type {
 import { px2rem } from '@/utils'
 import { ElMessageBox, ElMessage, ElForm, dayjs } from 'element-plus'
 import type { AutocompleteFetchSuggestionsCallback } from 'element-plus'
-import { ref, reactive, Ref, watch } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import { CommonAPI, ExpressAPI } from '@/api'
 import { useUserStore } from '@toystory/lotso'
 const API = new ExpressAPI()
 const CommonApi = new CommonAPI()
+const dictStore = useDictStore()
 const dialogExpressTitle = ref<string>('')
 const dialogVisible = ref<boolean>(false)
 const disFlag = ref<boolean>(false)
@@ -761,7 +762,6 @@ const getOtherContentList = () => {
 /** 打开弹窗 */
 const open = async (row?: ExpressListItem) => {
   dialogVisible.value = true
-  getDicts()
   init(row)
 }
 const limitWords = (val: string) => {
@@ -825,26 +825,7 @@ const init = (row?: ExpressListItem) => {
     basicInfoForm.otherFileList = []
   }
 }
-const expressCompanyOpts: Ref<ExpressDictItem[]> = ref([])
-const expressTypeOpts: Ref<ExpressDictItem[]> = ref([])
-const expressStatusOpts: Ref<ExpressDictItem[]> = ref([])
-const getDicts = () => {
-  expressCompanyOpts.value = JSON.parse(
-    localStorage.getItem('EXPRESS_COMPANY') as string
-  )
-  expressTypeOpts.value = JSON.parse(
-    localStorage.getItem('EXPRESS_TYPE') as string
-  )
-  expressTypeOpts.value.forEach((item) => {
-    item.value = Number(item.value)
-  })
-  expressStatusOpts.value = JSON.parse(
-    localStorage.getItem('EXPRESS_STATUS') as string
-  )
-  expressStatusOpts.value.forEach((item) => {
-    item.value = Number(item.value)
-  })
-}
+
 defineExpose({ open })
 const emit = defineEmits(['success'])
 const updateHandler = async () => {
