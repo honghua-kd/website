@@ -21,7 +21,7 @@
     <template v-for="rowNum in dynamicData.slice(-1)[0].row" :key="rowNum">
       <el-row
         :gutter="gutter || 20"
-        v-if="showExpand(rowNum)"
+        v-if="rowNum <= showRows"
         style="width: 100%"
       >
         <el-col
@@ -40,6 +40,24 @@
       </el-row>
     </template>
   </el-form>
+  <div class="exand" v-if="visibleRows && visibleRows < maxRow">
+    <el-link
+      v-if="showRows < maxRow"
+      type="primary"
+      :icon="ArrowDownBold"
+      :underline="false"
+      @click="showRows = maxRow"
+      >展开</el-link
+    >
+    <el-link
+      v-if="showRows === maxRow"
+      type="primary"
+      :icon="ArrowUpBold"
+      :underline="false"
+      @click="showRows = visibleRows"
+      >收起</el-link
+    >
+  </div>
 </template>
 
 <script lang="ts">
@@ -52,8 +70,11 @@ export default {
 import { ref, watch, computed } from 'vue'
 import { px2rem } from '@/utils'
 import { ElForm } from 'element-plus'
+import type { FormValidateCallback, FormValidationResult } from 'element-plus'
+import { ArrowDownBold, ArrowUpBold } from '@element-plus/icons-vue'
 import DynamicFormItem from './DynamicFormItem.vue'
 import type { DynamicFormProps, DynamicFormDataItem } from './type'
+
 const dynamicFormRef = ref<InstanceType<typeof ElForm>>()
 
 const props = withDefaults(defineProps<DynamicFormProps>(), {
@@ -61,6 +82,10 @@ const props = withDefaults(defineProps<DynamicFormProps>(), {
   colNum: 4,
   gutter: 20
 })
+
+if (props.visibleRows !== undefined && props.visibleRows <= 0) {
+  throw new Error('visibleRows不支持小于0的值')
+}
 
 const formLabelWidth = computed(() => {
   if (typeof props.labelWidth === 'number') {
@@ -73,7 +98,7 @@ const itemLength = computed(() => {
   return props.data.length
 })
 
-const colSpan = computed(() => {
+const span = computed(() => {
   return Math.floor(24 / props.colNum)
 })
 
@@ -82,11 +107,11 @@ const dynamicData = computed(() => {
   let defer = 0
 
   for (let i = 0; i < itemLength.value; i++) {
-    const rowSpan = props.data[i].colSpan || 1
-    defer = defer + rowSpan - 1
+    const colspan = props.data[i].colspan || 1
+    defer = defer + colspan - 1
     const row = Math.ceil((i + 1 + defer) / props.colNum)
 
-    const col = rowSpan ? colSpan.value * rowSpan : colSpan.value
+    const col = colspan ? span.value * colspan : span.value
     data.push({
       ...props.data[i],
       row,
@@ -96,28 +121,13 @@ const dynamicData = computed(() => {
   return data
 })
 
-const getRowNum = () => {
-  return dynamicData.value.slice(-1)[0].row
-}
-defineExpose({
-  getRowNum
+const maxRow = computed(() => {
+  return dynamicData.value.slice(-1)[0].row || 0
 })
 
-// 是否展开收回
-const showExpand = (rowNum: number) => {
-  let flag: boolean
-  if (!props.defaultShowRow) {
-    return true
-  }
-  if (props.defaultShowRow === -1) {
-    flag = true
-  } else if (rowNum <= props.defaultShowRow) {
-    flag = true
-  } else {
-    flag = false
-  }
-
-  return flag
+const showRows = ref<number>(props.visibleRows || 0)
+if (props.visibleRows === undefined || props.visibleRows >= maxRow.value) {
+  showRows.value = maxRow.value
 }
 
 const emit = defineEmits(['update:modelValue'])
@@ -145,9 +155,41 @@ watch(
     deep: true
   }
 )
+
+const validate = (callback?: FormValidateCallback): FormValidationResult => {
+  return new Promise((resolve) => {
+    dynamicFormRef.value
+      ?.validate((valid, invalidFields) => {
+        callback && callback(valid, invalidFields)
+      })
+      .then((res) => {
+        resolve(res)
+      })
+      .catch((err: Error) => {
+        console.error(err)
+      })
+  })
+}
+
+const resetFields = () => {
+  dynamicFormRef.value?.resetFields()
+}
+
+const clearValidate = () => {
+  dynamicFormRef.value?.clearValidate()
+}
+
+defineExpose({ validate, resetFields, clearValidate })
 </script>
 
 <style lang="scss" scoped>
-// .dynamic-form {
-// }
+.exand {
+  height: 18px;
+  text-align: center;
+  cursor: pointer;
+  line-height: 18px;
+  :deep(.el-icon) {
+    margin-right: 6px;
+  }
+}
 </style>

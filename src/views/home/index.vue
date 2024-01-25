@@ -3,7 +3,7 @@
   <SearchBarV2
     :data="searchData"
     v-model="searchQuery"
-    :defaultShowRow="2"
+    :visibleRows="2"
     :colNum="4"
     @search="searchHandler"
     @reset="resetHandler"

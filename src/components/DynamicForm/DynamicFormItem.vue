@@ -65,7 +65,7 @@ const componentsProps = computed(() => {
     inlineMessage,
     size,
     validateStatus,
-    rowSpan,
+    colspan,
     row,
     col,
     ...restProps

@@ -38,7 +38,7 @@ export interface BaseFormItemProps {
 // }
 
 export interface DynamicFormItemProps extends BaseFormItemProps {
-  colSpan?: number // 跨越的列数，不能大于colNum列数
+  colspan?: number // 跨越的列数，不能大于colNum列数
   row?: number // 所在行
   col?: number // 所在列
 }
@@ -71,5 +71,5 @@ export interface DynamicFormProps extends BaseFormProps {
   modelValue: FormModelValue
   colNum?: number // 列数
   gutter?: number // 间隔距离
-  defaultShowRow?: number // 默认显示行数，-1为不显示高级搜索
+  visibleRows?: number // 高级搜索默认显示行数，不传为全部展示
 }

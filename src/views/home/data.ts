@@ -1,5 +1,4 @@
 import type { DynamicFormDataItem } from '@/components/DynamicForm/type'
-import type { DynamicDatePickerProps } from '@/components/DynamicForm/components/type'
 import { useOptions } from '@/hooks'
 export const data: DynamicFormDataItem[] = [
   {
@@ -13,7 +12,7 @@ export const data: DynamicFormDataItem[] = [
     label: '测试2',
     type: 'el-input',
     placeholder: '请输入测试2',
-    colSpan: 2
+    colspan: 2
   },
   {
     label: '测试3',
@@ -26,7 +25,7 @@ export const data: DynamicFormDataItem[] = [
     prop: 'string4',
     type: 'el-input',
     placeholder: '请输入测试4',
-    colSpan: 2
+    colspan: 2
   },
   {
     label: '测试5',
@@ -48,24 +47,23 @@ export const data: DynamicFormDataItem[] = [
     type: 'el-input'
   }
 ]
-type SearchDataProps = DynamicDatePickerProps & DynamicFormDataItem
+type SearchDataProps = DynamicFormDataItem
 export const searchData: SearchDataProps[] = [
   {
     prop: 'searchString1',
     label: '测试1',
-    placeholder: ['请选择时间', '请选择时间'],
+    placeholder: ['请选择开始时间', '请选择结束时间'],
     type: 'dynamic-date-picker',
-    editable: [true, true],
     disabled: [false, false],
-    colSpan: 2,
-    readonly: [false, false]
+    clearable: true,
+    colspan: 2
   },
   {
     prop: 'searchString2',
     label: '测试2',
     type: 'el-input',
     placeholder: '请输入测试2',
-    colSpan: 2
+    colspan: 2
   },
   {
     label: '测试3',
@@ -97,6 +95,6 @@ export const searchData: SearchDataProps[] = [
     prop: 'searchString7',
     placeholder: '请输入测试7',
     type: 'el-input',
-    colSpan: 2
+    colspan: 2
   }
 ]
