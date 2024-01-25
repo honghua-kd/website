@@ -142,11 +142,8 @@
 
 <script setup lang="ts">
 import { reactive, toRefs } from 'vue'
-import BasicData from '@/views/supplier/settleAccounts/data'
-import type {
-  StateType,
-  RecordType
-} from '@/views/supplier/settleAccounts/type.ts'
+import BasicData from './data'
+import type { StateType, RecordType } from './type.ts'
 import completeSvg from '@/assets/common/complete.svg'
 const state = reactive<StateType>({
   formModel: {
@@ -284,3 +281,4 @@ const handleClose = (done: () => void) => {
   }
 }
 </style>
+@/views/releaseOrMortgage/supplier/settleAccounts/data@/views/releaseOrMortgage/supplier/settleAccounts/type

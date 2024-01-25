@@ -214,14 +214,11 @@ import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
 import { px2rem } from '@/utils'
 import { reactive, toRefs, ref, onMounted, Ref, computed, watch } from 'vue'
 import { tableConfig } from './data'
-import AddModel from '@/views/supplier/supplierManage/addModel.vue'
-import EditModel from '@/views/supplier/supplierManage/editModel.vue'
-import CheckModel from '@/views/supplier/supplierManage/checkModel.vue'
+import AddModel from './addModel.vue'
+import EditModel from './editModel.vue'
+import CheckModel from './checkModel.vue'
 import ImportForm from './ImportForm.vue'
-import type {
-  StateType,
-  queryForm
-} from '@/views/supplier/supplierManage/type.ts'
+import type { StateType, queryForm } from './type.ts'
 import type {
   SupplierDetailResponse,
   DictItem,
@@ -548,7 +545,6 @@ const downloadHandler = () => {
               })
             })
             .catch((err: Error) => {
-              tableLoading.value = false
               throw err
             })
         } else if (res?.data?.sync === 0) {
@@ -621,3 +617,4 @@ watch(
   }
 }
 </style>
+@/views/releaseOrMortgage/supplier/supplierManage/type

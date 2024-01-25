@@ -14,9 +14,8 @@
           <el-select
             v-model="queryParams.sourceSystem1"
             multiple
-            collapse-tags
-            collapse-tags-tooltip
             clearable
+            style="width: 100%"
           >
             <el-option
               v-for="i in systemOptions"
@@ -46,8 +45,9 @@
     >
       <template #btnsBox>
         <el-button :icon="Plus" type="primary" @click="add">新增</el-button>
-        <el-button type="primary">审核</el-button>
-        <el-button type="primary" @click="approval">发起审核</el-button>
+        <el-button :icon="Select" type="primary" @click="approval"
+          >发起审核</el-button
+        >
         <el-button :icon="Download" type="primary" @click="downloadData"
           >下载</el-button
         >
@@ -61,7 +61,7 @@
       <template #selection>
         <el-table-column
           type="selection"
-          :width="px2rem('40px')"
+          :width="40"
           :selectable="() => true"
           :fixed="true"
           align="center"
@@ -86,8 +86,7 @@
         <el-button
           v-if="
             row.approvalStatus === 'TO_BE_SUBMITTED' ||
-            row.approvalStatus === 'APPROVAL_REJECTION' ||
-            row.approvalStatus === 'APPROVED'
+            row.approvalStatus === 'APPROVAL_REJECTION'
           "
           link
           type="primary"
@@ -108,17 +107,12 @@
         <el-button
           v-if="
             row.approvalStatus === 'APPROVED' ||
-            row.approvalStatus === 'IN_APPROVAL'
+            row.approvalStatus === 'IN_APPROVAL' ||
+            row.approvalStatus === 'APPROVAL_REJECTION'
           "
           link
           type="primary"
           >查看审核记录</el-button
-        >
-        <el-button
-          v-if="row.approvalStatus === 'APPROVAL_REJECTION'"
-          link
-          type="primary"
-          >查看拒绝原因</el-button
         >
       </template>
     </Table>
@@ -179,9 +173,9 @@ import EditModel from './editModel.vue'
 import { searchConfig, tableColumn } from './data'
 import type { StateType } from './type'
 import type { DocumentPageResponse } from '@/api/docCheck/types/response'
-import { Plus, Download } from '@element-plus/icons-vue'
+import { Plus, Download, Select } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage, genFileId } from 'element-plus'
-import { px2rem, handleDownloadFile } from '@/utils'
+import { handleDownloadFile } from '@/utils'
 import { useDictStore } from '@/store/dict'
 import { CommonAPI, DocCheckAPI } from '@/api'
 import dayjs from 'dayjs'
@@ -257,7 +251,7 @@ const tableHeight = computed(() => {
 
 const getLabel = (source: string, value: string) => {
   let result = ''
-  const arr = dictStore.dicts[source]
+  const arr = dictStore.dicts[source] || []
   arr.forEach((i) => {
     if (i.value === value) {
       result = i.label
@@ -373,6 +367,13 @@ const submitUpload = () => {
     ElMessage({
       type: 'error',
       message: '请先选择文件'
+    })
+    return
+  }
+  if (fileList.value[0].size === 0) {
+    ElMessage({
+      type: 'error',
+      message: '不允许上传空文件'
     })
     return
   }

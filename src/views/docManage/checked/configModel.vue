@@ -8,118 +8,150 @@
     destroy-on-close
     :before-close="handleClose"
   >
-    <el-button
-      style="margin-bottom: 10px"
-      :icon="Plus"
-      type="primary"
-      @click="addTableItem"
-      >新增</el-button
-    >
-    <el-form ref="ruleSaveListForm" :model="saveListForm" :show-message="false">
-      <el-table
-        class="save-list-table"
-        :data="saveListForm.saveListInfo"
-        :header-cell-style="{
-          background: '#eef1f6',
-          color: '#606266',
-          textAlign: 'center'
-        }"
-        border
-        :cell-style="{ borderRight: '1px solid #fff' }"
+    <div class="config-dialog-container">
+      <el-button
+        style="margin-bottom: 10px"
+        :icon="Plus"
+        type="primary"
+        @click="addTableItem"
+        >新增</el-button
       >
-        <el-table-column type="index" label="序号" width="50" align="center" />
-        <el-table-column prop="bookmarkName" label="书签名称">
-          <template #default="{ row, $index }">
-            <el-form-item
-              :prop="`saveListInfo.${$index}.bookmarkName`"
-              :rules="ruleSaveListFormRules.bookmarkName"
-            >
-              <el-input
-                placeholder="请输入"
-                v-model.trim="row.bookmarkName"
-                :maxlength="50"
-                clearable
-              />
-            </el-form-item>
-          </template>
-        </el-table-column>
-        <el-table-column prop="bookmarkParam" label="书签参数">
-          <template #default="{ row, $index }">
-            <el-form-item
-              :prop="`saveListInfo.${$index}.bookmarkParam`"
-              :rules="ruleSaveListFormRules.bookmarkParam"
-            >
-              <el-input
-                placeholder="请输入"
-                v-model.trim="row.bookmarkParam"
-                :maxlength="50"
-                clearable
-              />
-            </el-form-item>
-          </template>
-        </el-table-column>
-        <el-table-column prop="tableAndColumn" label="变量表达式" :width="200">
-          <template #default="{ row, $index }">
-            <el-form-item
-              :prop="`saveListInfo.${$index}.tableAndColumn`"
-              :rules="ruleSaveListFormRules.tableAndColumn"
-            >
-              <el-cascader
-                v-model="row.tableAndColumn"
-                :options="configCascaderOptions"
-                filterable
-                clearable
-              />
-            </el-form-item>
-          </template>
-        </el-table-column>
-        <el-table-column prop="paramType" label="参数类型" :width="150">
-          <template #default="{ row, $index }">
-            <el-form-item
-              :prop="`saveListInfo.${$index}.paramType`"
-              :rules="ruleSaveListFormRules.paramType"
-            >
-              <el-select v-model="row.paramType" style="width: 100%" clearable>
-                <el-option
-                  v-for="item in paramTypeOptions"
-                  :key="(item.value as string)"
-                  :label="(item.label as string)"
-                  :value="(item.value as string)"
+      <el-form
+        ref="ruleSaveListForm"
+        :model="saveListForm"
+        :show-message="false"
+      >
+        <el-table
+          class="save-list-table"
+          :data="saveListForm.saveListInfo"
+          :header-cell-style="{
+            background: '#eef1f6',
+            color: '#606266',
+            textAlign: 'center'
+          }"
+          border
+          :cell-style="{ borderRight: '1px solid #fff' }"
+        >
+          <el-table-column
+            type="index"
+            label="序号"
+            width="50"
+            align="center"
+          />
+          <el-table-column prop="bookmarkName" label="书签名称">
+            <template #default="{ row, $index }">
+              <el-form-item
+                :prop="`saveListInfo.${$index}.bookmarkName`"
+                :rules="ruleSaveListFormRules.bookmarkName"
+              >
+                <el-input
+                  placeholder="请输入"
+                  v-model.trim="row.bookmarkName"
+                  :maxlength="50"
+                  clearable
                 />
-              </el-select>
-            </el-form-item>
-          </template>
-        </el-table-column>
-        <el-table-column prop="batchBlank" label="批量出具是否空白">
-          <template #default="{ row, $index }">
-            <el-form-item
-              :prop="`saveListInfo.${$index}.batchBlank`"
-              :rules="ruleSaveListFormRules.batchBlank"
-            >
-              <el-select v-model="row.batchBlank" style="width: 100%" clearable>
-                <el-option
-                  v-for="item in yesOrNoOptions"
-                  :key="(item.value as string)"
-                  :label="(item.label as string)"
-                  :value="(item.value as string)"
+              </el-form-item>
+            </template>
+          </el-table-column>
+          <el-table-column prop="bookmarkParam" label="书签参数">
+            <template #default="{ row, $index }">
+              <el-form-item
+                :prop="`saveListInfo.${$index}.bookmarkParam`"
+                :rules="ruleSaveListFormRules.bookmarkParam"
+              >
+                <el-input
+                  placeholder="请输入"
+                  v-model.trim="row.bookmarkParam"
+                  :maxlength="50"
+                  clearable
                 />
-              </el-select>
-            </el-form-item>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" :width="80" align="center">
-          <template #default="scope">
-            <el-button
-              v-if="saveListForm.saveListInfo.length > 1"
+              </el-form-item>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="tableAndColumn"
+            label="变量表达式"
+            :width="200"
+          >
+            <template #default="{ row, $index }">
+              <el-form-item
+                :prop="`saveListInfo.${$index}.tableAndColumn`"
+                :rules="ruleSaveListFormRules.tableAndColumn"
+              >
+                <el-cascader
+                  v-model="row.tableAndColumn"
+                  :options="configCascaderOptions"
+                  filterable
+                  clearable
+                />
+              </el-form-item>
+            </template>
+          </el-table-column>
+          <el-table-column prop="paramType" label="参数类型" :width="150">
+            <template #default="{ row, $index }">
+              <el-form-item
+                :prop="`saveListInfo.${$index}.paramType`"
+                :rules="ruleSaveListFormRules.paramType"
+              >
+                <el-select
+                  v-model="row.paramType"
+                  style="width: 100%"
+                  clearable
+                >
+                  <el-option
+                    v-for="item in paramTypeOptions"
+                    :key="(item.value as string)"
+                    :label="(item.label as string)"
+                    :value="(item.value as string)"
+                  />
+                </el-select>
+              </el-form-item>
+            </template>
+          </el-table-column>
+          <el-table-column prop="batchBlank" label="批量出具是否通用">
+            <template #default="{ row, $index }">
+              <el-form-item
+                :prop="`saveListInfo.${$index}.batchBlank`"
+                :rules="ruleSaveListFormRules.batchBlank"
+              >
+                <el-select
+                  v-model="row.batchBlank"
+                  style="width: 100%"
+                  clearable
+                >
+                  <el-option
+                    v-for="item in yesOrNoOptions"
+                    :key="(item.value as string)"
+                    :label="(item.label as string)"
+                    :value="(item.value as string)"
+                  />
+                </el-select>
+              </el-form-item>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" :width="80" align="center">
+            <template #default="scope">
+              <!-- <el-button
+              v-if="
+                saveListForm.saveListInfo.length > 1 ||
+                props.paramsConfigDetail.length > 0
+              "
               link
               type="danger"
               @click="removeTableItem(scope.$index, scope.row)"
               >删除</el-button
-            >
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-form>
+            > -->
+              <el-button
+                link
+                type="danger"
+                @click="removeTableItem(scope.$index, scope.row)"
+                >删除</el-button
+              >
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-form>
+    </div>
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="closeConfigModel(ruleSaveListForm, 'click-close')"
@@ -141,7 +173,7 @@ import type {
   DictListItem,
   SystemParamConfigResponse,
   ColumnList,
-  EditParamConfigRequest,
+  EditParamConfigList,
   GetDocumentParamResponse
 } from '@/api'
 import type { FormInstance, FormRules, CascaderOption } from 'element-plus'
@@ -177,7 +209,6 @@ const state = reactive<ConfigStateType>({
         bookmarkName: '',
         bookmarkParam: '',
         column: '',
-        documentNo: props.documentNo,
         paramType: '',
         table: '',
         tableAndColumn: []
@@ -193,10 +224,9 @@ watch(
   [
     () => props.configVisible,
     () => props.paramConfig,
-    () => props.documentNo,
     () => props.paramsConfigDetail
   ],
-  ([newVisible, newConfig, newDocumentNo, newConfigDetail]) => {
+  ([newVisible, newConfig, newConfigDetail]) => {
     state.dialogVisible = newVisible
     // 当前无配置
     if (newConfigDetail.length === 0) {
@@ -206,7 +236,6 @@ watch(
           bookmarkName: '',
           bookmarkParam: '',
           column: '',
-          documentNo: newDocumentNo,
           paramType: '',
           table: '',
           tableAndColumn: []
@@ -214,14 +243,13 @@ watch(
       ]
     } else {
       // 当前有配置
-      const list: EditParamConfigRequest[] = []
+      const list: EditParamConfigList[] = []
       newConfigDetail.forEach((i) => {
         list.push({
           batchBlank: `${i.batchBlank}` as string,
           bookmarkName: i.bookmarkName as string,
           bookmarkParam: i.bookmarkParam as string,
           column: i.column as string,
-          documentNo: i.documentNo as string,
           paramType: `${i.paramType}` as string,
           table: i.table as string,
           tableAndColumn: [i.table as string, i.column as string]
@@ -255,7 +283,6 @@ const addTableItem = () => {
     bookmarkName: '',
     bookmarkParam: '',
     column: '',
-    documentNo: props.documentNo,
     paramType: '',
     table: '',
     tableAndColumn: []
@@ -263,7 +290,7 @@ const addTableItem = () => {
 }
 
 // 移除表格项
-const removeTableItem = (index: number, row: EditParamConfigRequest) => {
+const removeTableItem = (index: number, row: EditParamConfigList) => {
   console.log(index, row)
   state.itemIndex = index
   const saveListInfoClone = JSON.parse(
@@ -356,19 +383,21 @@ const closeConfigModel = async (
     await formEl.validate(async (valid, fields) => {
       if (valid) {
         console.log(state.saveListForm.saveListInfo)
-        const params: EditParamConfigRequest[] = []
+        const params: EditParamConfigList[] = []
         state.saveListForm.saveListInfo.forEach((i) => {
           params.push({
             batchBlank: i.batchBlank,
             bookmarkName: i.bookmarkName,
             bookmarkParam: i.bookmarkParam,
             column: i.tableAndColumn ? i.tableAndColumn[1] : '',
-            documentNo: i.documentNo,
             paramType: i.paramType,
             table: i.tableAndColumn ? i.tableAndColumn[0] : ''
           })
         })
-        const res = await API.paramConfig(params)
+        const res = await API.paramConfig({
+          documentNo: props.documentNo,
+          paramList: params
+        })
         if (res && res.code === 200) {
           emit('closeModel', {
             type
@@ -382,6 +411,10 @@ const closeConfigModel = async (
 }
 </script>
 <style lang="scss">
+.config-dialog-container {
+  overflow-y: scroll;
+  max-height: 600px;
+}
 .save-list-table {
   .el-form-item {
     margin-bottom: 0 !important;

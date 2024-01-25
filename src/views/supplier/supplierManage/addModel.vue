@@ -565,13 +565,10 @@ import type {
   ModelStateType,
   AttachmentDetailDto,
   EditForm
-} from '@/views/supplier/supplierManage/type'
+} from './type'
 import { Plus, Delete } from '@element-plus/icons-vue'
 import ImportForm from './ImportForm.vue'
-import {
-  PersonColumn,
-  SettlementColumn
-} from '@/views/supplier/supplierManage/data'
+import { PersonColumn, SettlementColumn } from './data'
 import dayjs from 'dayjs'
 import Table from '@/components/Table/index.vue'
 import ImportAttachment from './attachmentForm.vue'
@@ -1204,3 +1201,4 @@ const delOtherFile = (code: string) => {
   }
 }
 </style>
+@/views/releaseOrMortgage/supplier/supplierManage/type@/views/releaseOrMortgage/supplier/supplierManage/data

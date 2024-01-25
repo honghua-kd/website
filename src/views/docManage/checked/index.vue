@@ -14,9 +14,8 @@
           <el-select
             v-model="queryParams.sourceSystem1"
             multiple
-            collapse-tags
-            collapse-tags-tooltip
             clearable
+            style="width: 100%"
           >
             <el-option
               v-for="i in systemOptions"
@@ -48,17 +47,17 @@
         <el-button :icon="Download" type="primary" @click="downloadData"
           >下载</el-button
         >
-        <el-button :icon="Plus" type="primary" @click="batchImport"
+        <!-- <el-button :icon="Plus" type="primary" @click="batchImport"
           >导入</el-button
         >
         <el-button :icon="Download" type="primary" @click="downloadTemplate"
           >下载导入模版</el-button
-        >
+        > -->
       </template>
       <template #selection>
         <el-table-column
           type="selection"
-          :width="px2rem('40px')"
+          :width="40"
           :selectable="() => true"
           :fixed="true"
           align="center"
@@ -85,7 +84,6 @@
       </template>
       <template #action="{ row }">
         <div class="opera-context">
-          <el-button link type="primary" @click="editItem(row)">修改</el-button>
           <el-button link type="primary" @click="oconfigItem(row.documentNo)"
             >配置</el-button
           >
@@ -120,17 +118,6 @@
         </div>
       </template>
     </Table>
-    <!-- 修改文书弹窗 -->
-    <EditModel
-      :visible="editModelVisible"
-      :title="editModelTitle"
-      :detailData="detailData"
-      :documentTypeOptions="dictStore.dicts['SYSTEM_DOCUMENT_TYPE']"
-      :systemOptions="systemOptions"
-      :sealOptions="dictStore.dicts['SEAL_TYPE']"
-      @closeModel="closeModel"
-    />
-
     <!-- 配置参数弹窗 -->
     <ConfigModel
       :configVisible="configVisible"
@@ -141,34 +128,6 @@
       :paramsConfigDetail="paramsConfigDetail"
       @closeModel="closeConfigModel"
     />
-
-    <!-- 导入 -->
-    <el-dialog
-      class="import-model"
-      v-model="importVisible"
-      title="批量导入"
-      width="550px"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      destroy-on-close
-    >
-      <el-upload
-        ref="upload"
-        v-model:file-list="fileList"
-        class="upload-demo"
-        accept=".xlsx"
-        :limit="1"
-        :on-exceed="handleExceed"
-        :auto-upload="false"
-      >
-        <template #trigger>
-          <el-button>选择文件</el-button>
-        </template>
-      </el-upload>
-      <template #footer>
-        <el-button type="primary" @click="submitUpload">导入</el-button>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
@@ -176,23 +135,16 @@
 import { ref, computed, reactive, toRefs, onMounted } from 'vue'
 import SearchBar from '@/components/SearchBar/index.vue'
 import Table from '@/components/Table/index.vue'
-import EditModel from './editModel.vue'
 import ConfigModel from './configModel.vue'
 import { searchConfig, tableColumn } from './data'
 import type { StateType } from './type'
 import type { DocumentPageResponse } from '@/api/docCheck/types/response'
-import { Plus, Download, ArrowDown } from '@element-plus/icons-vue'
-import { ElMessageBox, ElMessage, genFileId } from 'element-plus'
-import { px2rem, handleDownloadFile } from '@/utils'
+import { Download, ArrowDown } from '@element-plus/icons-vue'
+import { ElMessageBox, ElMessage } from 'element-plus'
+import { handleDownloadFile } from '@/utils'
 import { useDictStore } from '@/store/dict'
 import { CommonAPI, DocCheckAPI } from '@/api'
 import dayjs from 'dayjs'
-import type {
-  UploadInstance,
-  UploadProps,
-  UploadRawFile,
-  UploadUserFile
-} from 'element-plus'
 
 const API = new DocCheckAPI()
 const COMMONAPI = new CommonAPI()
@@ -212,8 +164,6 @@ const state = reactive<StateType>({
     documentType: '',
     status: null,
     sourceSystem1: [],
-    // createTimeStart: '',
-    // createTimeEnd: ''
     createTimeStart: dayjs().startOf('day').toString(),
     createTimeEnd: dayjs().endOf('day').toString()
   },
@@ -221,11 +171,7 @@ const state = reactive<StateType>({
   tableData: [],
   tableLoading: false,
   selectIdsArr: [],
-  editModelVisible: false,
-  editModelTitle: '',
   systemOptions: [],
-  detailData: {},
-  importVisible: false,
   configVisible: false,
   paramConfig: [],
   documentNo: '',
@@ -237,11 +183,7 @@ const {
   tableData,
   tableLoading,
   selectIdsArr,
-  editModelVisible,
-  editModelTitle,
   systemOptions,
-  detailData,
-  importVisible,
   configVisible,
   paramConfig,
   documentNo,
@@ -266,7 +208,7 @@ const tableHeight = computed(() => {
 
 const getLabel = (source: string, value: string) => {
   let result = ''
-  const arr = dictStore.dicts[source]
+  const arr = dictStore.dicts[source] || []
   arr.forEach((i) => {
     if (i.value === value) {
       result = i.label
@@ -359,67 +301,6 @@ const downloadData = async () => {
   state.tableLoading = false
 }
 
-// 下载导入模版
-const downloadTemplate = () => {
-  const params = {
-    bizType: 'DOCUMENT'
-  }
-  COMMONAPI.getDownLoadTemplate(params).then((res) => {
-    handleDownloadFile(res)
-  })
-}
-
-const fileList = ref<UploadUserFile[]>([])
-const upload = ref<UploadInstance>()
-const handleExceed: UploadProps['onExceed'] = (files) => {
-  upload.value!.clearFiles()
-  const file = files[0] as UploadRawFile
-  file.uid = genFileId()
-  upload.value!.handleStart(file)
-}
-const submitUpload = () => {
-  if (fileList.value.length === 0) {
-    ElMessage({
-      type: 'error',
-      message: '请先选择文件'
-    })
-    return
-  }
-  const formData = new FormData()
-  fileList.value.forEach((item) => {
-    formData.append('file', item.raw as File)
-  })
-  formData.append('bizType', 'DOCUMENT')
-  COMMONAPI.getAsyncImport(formData)
-    .then((res) => {
-      if (res && res.code === 200) {
-        ElMessage({
-          type: 'success',
-          message: '导入成功'
-        })
-      }
-      upload.value!.clearFiles()
-      getListData()
-      state.importVisible = false
-    })
-    .catch((err: Error) => {
-      throw err
-    })
-}
-const batchImport = () => {
-  fileList.value = []
-  state.importVisible = true
-}
-
-// 关闭修改弹窗回调
-const closeModel = ({ type }: { type: string }) => {
-  state.editModelTitle = ''
-  state.editModelVisible = false
-  if (type === 'update-close') {
-    getListData()
-  }
-}
-
 // 关闭配置弹窗回调
 const closeConfigModel = ({ type }: { type: string }) => {
   state.configVisible = false
@@ -473,13 +354,6 @@ const getListData = async () => {
     state.tableData = res.data ? res.data.list : []
     state.pageTotal = res.data && res.data.total ? res.data.total : 0
   }
-}
-
-// 编辑
-const editItem = (row: DocumentPageResponse) => {
-  state.detailData = row
-  state.editModelVisible = true
-  state.editModelTitle = '编辑'
 }
 
 // 删除
