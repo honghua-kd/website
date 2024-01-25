@@ -24,7 +24,7 @@ export interface Document {
   documentVersion?: string | null
 }
 
-interface ListCell {
+export interface ListCell {
   /**
    * 批次号
    */
