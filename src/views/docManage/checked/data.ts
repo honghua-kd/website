@@ -147,7 +147,7 @@ export const tableColumn: ITableConfigProps[] = [
     type: 'action',
     label: '操作',
     prop: 'action',
-    width: '160',
+    width: '140',
     minWidth: '',
     fixed: 'right',
     align: 'center'
