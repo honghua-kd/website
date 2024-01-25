@@ -1,4 +1,5 @@
 import type { ITableConfigProps } from '@/components/Table/type'
+import type { ISearchUnit } from '@/components/SearchBar/type'
 export const tableConfig: ITableConfigProps[] = [
   {
     label: '联系人名称',
@@ -45,4 +46,27 @@ export const tableConfig: ITableConfigProps[] = [
     align: 'center',
     fixed: 'right'
   }
+]
+export const searchConfig: ISearchUnit[] = [
+  [
+    {
+      compType: 'el-input',
+      colSpan: 6,
+      label: '联系人名称',
+      prop: 'userName',
+      options: '',
+      placeholder: '请输入联系人名称',
+      maxlength: 50
+    },
+    {
+      compType: 'el-input',
+      colSpan: 6,
+      label: '联系电话',
+      prop: 'userPhone',
+      options: '',
+      placeholder: '请输入联系电话',
+      maxlength: 50
+    }
+  ],
+  []
 ]

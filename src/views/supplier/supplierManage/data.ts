@@ -1,18 +1,20 @@
 import type { ITableConfigProps } from '@/components/Table/type'
+import type { ISearchUnit } from '@/components/SearchBar/type'
 export const tableConfig: ITableConfigProps[] = [
   {
     label: '公司名称',
     prop: 'supplierName',
     width: '150',
     minWidth: '',
-    fixed: true
+    fixed: true,
+    showOverflowTooltip: true
   },
   {
     label: '类型',
     prop: 'supplierTypeName',
-    width: '120',
-    minWidth: '',
-    fixed: false
+    minWidth: '120',
+    fixed: false,
+    showOverflowTooltip: true
   },
   {
     label: '归属公司',
@@ -223,4 +225,71 @@ export const SettlementColumn: ITableConfigProps[] = [
     align: 'center',
     fixed: 'right'
   }
+]
+export const searchConfig: ISearchUnit[] = [
+  [
+    {
+      compType: 'el-input',
+      colSpan: 6,
+      label: '公司名称',
+      prop: 'supplierName',
+      options: '',
+      placeholder: '请输入公司名称',
+      maxlength: 50
+    },
+    {
+      compType: '',
+      colSpan: 6,
+      label: '归属公司',
+      prop: '',
+      options: '',
+      placeholder: '请选择',
+      slotName: 'company'
+    },
+    {
+      compType: '',
+      colSpan: 6,
+      label: '区域',
+      prop: '',
+      options: '',
+      placeholder: '请选择',
+      slotName: 'area'
+    },
+    {
+      compType: 'el-select',
+      colSpan: 6,
+      label: '状态',
+      prop: 'status',
+      options: 'SUPPLIER_DETAIL_STATUS',
+      placeholder: '请选择'
+    }
+  ],
+  [
+    {
+      compType: 'el-select',
+      colSpan: 6,
+      label: '类型',
+      prop: 'supplierType',
+      options: 'SUPPLIER_DETAIL_TYPE',
+      placeholder: '请选择'
+    },
+    {
+      compType: '',
+      colSpan: 12,
+      label: '开始时间',
+      prop: '',
+      options: '',
+      placeholder: '请选择',
+      slotName: 'date'
+    },
+    {
+      compType: 'el-input',
+      colSpan: 6,
+      label: '内部对接人',
+      prop: 'innerInterfaceStaffCode',
+      options: '',
+      placeholder: '请输入工号',
+      maxlength: 50
+    }
+  ]
 ]

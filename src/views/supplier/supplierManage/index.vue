@@ -1,119 +1,60 @@
 <template>
   <div class="supplier-container">
-    <el-form :model="formModel" class="scan-form" :label-width="px2rem('90px')">
-      <div class="scan-search-bar">
-        <el-row :gutter="25">
-          <el-col :span="6">
-            <el-form-item label="公司名称">
-              <el-input
-                v-model="queryFormList.supplierName"
-                placeholder="请输入公司名称"
-                clearable
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="归属公司" style="width: 100%">
-              <el-select
-                v-model="queryFormList.belongCompany"
-                style="width: 100%"
-                placeholder=""
-                clearable
-              >
-                <el-option
-                  v-for="item in belongCompanyStatus"
-                  :key="(item.value as string)"
-                  :label="(item.label as string)"
-                  :value="(item.value as string)"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="区域">
-              <el-cascader
-                v-model="selCity"
-                clearable
-                :props="props"
-                style="width: 100%"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="状态">
-              <el-select
-                v-model="queryFormList.status"
-                clearable
-                style="width: 100%"
-              >
-                <el-option
-                  v-for="item in supplierDetailStatus"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="25">
-          <el-col :span="6">
-            <el-form-item label="类型">
-              <el-select
-                v-model="queryFormList.supplierType"
-                clearable
-                style="width: 100%"
-              >
-                <el-option
-                  v-for="item in supplierDetailType"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="开始时间">
-              <el-date-picker
-                v-model="queryFormList.expireDateStart"
-                type="date"
-                placeholder="开始时间"
-                format="YYYY-MM-DD"
-                value-format="YYYY-MM-DD"
-                style="margin-right: 4%; width: 48%"
-                clearable
-              />
-              <el-date-picker
-                v-model="queryFormList.expireDateEnd"
-                type="date"
-                placeholder="结束时间"
-                format="YYYY-MM-DD"
-                value-format="YYYY-MM-DD"
-                style="width: 48%"
-                clearable
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="内部对接人">
-              <el-input
-                v-model="queryFormList.innerInterfaceStaffCode"
-                placeholder="请输入工号"
-                clearable
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </div>
-      <div class="search-btn">
-        <el-button type="primary" :icon="Search" @click="searchHandler"
-          >查询</el-button
-        >
-        <el-button :icon="Refresh" @click="reset">重置</el-button>
-      </div>
-    </el-form>
-
+    <div :ref="searchBoxRef">
+      <SearchBar
+        v-model="queryFormList"
+        :searchConfig="searchConfig"
+        :labelWidth="'100px'"
+        :dictArray="dictTypes"
+        @reset="reset"
+        @search="searchHandler"
+      >
+        <template #company>
+          <el-select
+            v-model="queryFormList.belongCompany"
+            style="width: 100%"
+            placeholder=""
+            clearable
+          >
+            <el-option
+              v-for="item in belongCompanyStatus"
+              :key="(item.value as string)"
+              :label="(item.label as string)"
+              :value="(item.value as string)"
+            />
+          </el-select>
+        </template>
+        <template #area>
+          <el-cascader
+            v-model="selCity"
+            clearable
+            :props="props"
+            style="width: 100%"
+          />
+        </template>
+        <template #date>
+          <el-date-picker
+            v-model="queryFormList.expireDateStart"
+            type="date"
+            placeholder="开始时间"
+            format="YYYY-MM-DD"
+            value-format="YYYY-MM-DD"
+            style="margin-right: 4%; width: 48%"
+            clearable
+          />
+          <el-date-picker
+            v-model="queryFormList.expireDateEnd"
+            type="date"
+            placeholder="结束时间"
+            format="YYYY-MM-DD"
+            value-format="YYYY-MM-DD"
+            style="width: 48%"
+            clearable
+          />
+        </template>
+      </SearchBar>
+    </div>
+    <el-divider border-style="dashed" />
     <div class="action"></div>
     <Table
       :data="tableData"
@@ -148,7 +89,7 @@
           }}
         </span>
         <span v-if="prop === 'status'">
-          {{ getStatus(row.status) }}
+          {{ filterDictLabel('SUPPLIER_DETAIL_STATUS', row.status) }}
         </span>
       </template>
       <template #action="scope">
@@ -202,18 +143,13 @@
 </template>
 
 <script setup lang="ts">
-import {
-  Download,
-  Plus,
-  Upload,
-  Refresh,
-  Search
-} from '@element-plus/icons-vue'
+import { Download, Plus, Upload } from '@element-plus/icons-vue'
 import { useRoute } from '@toystory/lotso'
-import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
+import { ElMessageBox, ElMessage } from 'element-plus'
 import { px2rem } from '@/utils'
-import { reactive, toRefs, ref, onMounted, Ref, computed, watch } from 'vue'
-import { tableConfig } from './data'
+import { reactive, toRefs, ref, onMounted, computed, watch } from 'vue'
+import SearchBar from '@/components/SearchBar/index.vue'
+import { tableConfig, searchConfig } from './data'
 import AddModel from './addModel.vue'
 import EditModel from './editModel.vue'
 import CheckModel from './checkModel.vue'
@@ -221,7 +157,6 @@ import ImportForm from './ImportForm.vue'
 import type { StateType, queryForm } from './type.ts'
 import type {
   SupplierDetailResponse,
-  DictItem,
   SupplierListResponse,
   DictDataTreeResponse
 } from '@/api'
@@ -291,7 +226,7 @@ const state = reactive<StateType>({
   // 供应商弹窗
   editModelVisible: false
 })
-const { formModel, tableData, pageTotal, editModelVisible } = toRefs(state)
+const { tableData, pageTotal, editModelVisible } = toRefs(state)
 // 表格最大高度
 const searchBoxRef = ref()
 const tableHeight = computed(() => {
@@ -311,11 +246,13 @@ onMounted(() => {
   getDicts()
   getList()
 })
-const supplierDetailStatus: Ref<DictItem[]> = ref([])
-const supplierDetailType: Ref<DictItem[]> = ref([])
 const dictStore = useDictStore()
-
+const filterDictLabel = (dictCode: string, value: string | number) => {
+  return dictStore.dicts[dictCode]?.find((item) => item.value === String(value))
+    ?.label
+}
 const belongCompanyStatus = ref<DictDataTreeResponse[]>([])
+const dictTypes = ['SUPPLIER_DETAIL_STATUS', 'SUPPLIER_DETAIL_TYPE']
 const getDicts = () => {
   const params = {
     dictType: 'SOURCE_SYSTEM'
@@ -334,8 +271,6 @@ const getDicts = () => {
     .catch((err) => {
       console.log(err)
     })
-  supplierDetailStatus.value = dictStore.dicts.SUPPLIER_DETAIL_STATUS
-  supplierDetailType.value = dictStore.dicts.SUPPLIER_DETAIL_TYPE
 }
 // 获取列表数据
 const getList = async () => {
@@ -483,18 +418,6 @@ const bizType = ref('')
 const importHandler = () => {
   bizType.value = 'SUPPLIER_DETAIL'
   importFormRef.value.open()
-}
-const getStatus = (val: string) => {
-  let label = ''
-  if (supplierDetailStatus.value) {
-    supplierDetailStatus.value.forEach((item) => {
-      if (item.value === val) {
-        label = item.label
-      }
-    })
-  }
-
-  return label
 }
 const selectData = ref<SupplierListResponse[]>([])
 // 选择的数据

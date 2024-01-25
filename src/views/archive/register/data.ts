@@ -1,4 +1,5 @@
 import type { ITableConfigProps } from '@/components/Table/type'
+import type { ISearchUnit } from '@/components/SearchBar/type'
 export const tableConfig: ITableConfigProps[] = [
   {
     label: '快递状态',
@@ -109,4 +110,61 @@ export const tableConfig: ITableConfigProps[] = [
     align: 'center',
     fixed: 'right'
   }
+]
+export const searchConfig: ISearchUnit[] = [
+  [
+    {
+      compType: 'el-input',
+      colSpan: 6,
+      label: '快递单号',
+      prop: 'expressNo',
+      options: '',
+      placeholder: '请输入快递单号',
+      maxlength: 50
+    },
+    {
+      compType: 'el-select',
+      colSpan: 6,
+      label: '快递公司',
+      prop: 'expressCompany',
+      options: 'EXPRESS_COMPANY',
+      placeholder: '请选择快递公司'
+    },
+    {
+      compType: '',
+      colSpan: 6,
+      label: '登记时间',
+      prop: '',
+      options: '',
+      placeholder: '请选择登记时间',
+      slotName: 'date'
+    },
+    {
+      compType: 'el-select',
+      colSpan: 6,
+      label: '寄送/接收',
+      prop: 'expressType',
+      options: 'EXPRESS_TYPE',
+      placeholder: '请选择寄送/接收'
+    }
+  ],
+  [
+    {
+      compType: 'el-select',
+      colSpan: 6,
+      label: '快递内容',
+      prop: 'expressContent',
+      options: 'EXPRESS_CONTENT',
+      placeholder: '请选择快递内容'
+    },
+    {
+      compType: 'el-input',
+      colSpan: 6,
+      label: '快递备注',
+      prop: 'expressContentRemark',
+      options: '',
+      placeholder: '请输入快递备注',
+      maxlength: 50
+    }
+  ]
 ]

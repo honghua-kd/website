@@ -1,44 +1,16 @@
 <template>
   <div>
-    <div class="search-container">
-      <el-form
-        ref="queryFormRef"
-        :model="queryParams"
-        class="search-bar"
-        :label-width="px2rem('90px')"
+    <div :ref="searchBoxRef">
+      <SearchBar
+        v-model="queryParams"
+        :searchConfig="searchConfig"
+        :labelWidth="'110px'"
+        @reset="reset"
+        @search="searchHandler"
       >
-        <el-row :gutter="20">
-          <el-col :span="6">
-            <el-form-item label="联系人名称:" prop="userName">
-              <el-input
-                v-model="queryParams.userName"
-                clearable
-                placeholder="请输入联系人名称"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="联系电话:" prop="userPhone">
-              <el-input
-                v-model="queryParams.userPhone"
-                clearable
-                placeholder="请输入联系电话"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row justify="end">
-          <el-col :span="10" class="btn-row">
-            <el-form-item>
-              <el-button type="primary" @click="searchHandler" :icon="Search"
-                >查询</el-button
-              >
-              <el-button @click="reset" :icon="Refresh">重置</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
+      </SearchBar>
     </div>
+    <el-divider border-style="dashed" />
 
     <Table
       :data="tableData"
@@ -77,19 +49,18 @@
 
 <script lang="ts" setup>
 import { ref, reactive, Ref, computed } from 'vue'
-import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
-import { Plus, Search, Refresh } from '@element-plus/icons-vue'
+import { ElMessageBox, ElMessage } from 'element-plus'
+import { Plus } from '@element-plus/icons-vue'
 import type { UsualAddressListItem } from '@/api'
 import { ExpressAPI } from '@/api'
-import { px2rem } from '@/utils'
+import SearchBar from '@/components/SearchBar/index.vue'
 const API = new ExpressAPI()
 import Table from '@/components/Table/index.vue'
-import { tableConfig } from './data'
+import { tableConfig, searchConfig } from './data'
 import EditForm from './EditForm.vue'
 const tableLoading = ref<boolean>(false)
 const dialogTitle = ref<string>('')
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
-const queryFormRef = ref()
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
@@ -117,6 +88,7 @@ const reset = () => {
   queryParams.pageSize = 10
   queryParams.userName = ''
   queryParams.userPhone = ''
+  getList()
 }
 const editFormRef = ref()
 const editHandler = (row: string) => {
