@@ -1,85 +1,47 @@
 <template>
   <div>
-    <el-form :model="queryForm" ref="formRef">
-      <el-row :gutter="20">
-        <el-col :span="6">
-          <el-form-item label="开始时间：">
-            <el-date-picker
-              v-model="queryForm.startCreateTime"
-              type="date"
-              style="width: 100%"
-              placeholder="开始日期"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="结束时间：">
-            <el-date-picker
-              v-model="queryForm.endCreateTime"
-              type="date"
-              placeholder="结束日期"
-              style="width: 100%"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-button type="primary" @click="getList()" :icon="Search">
-            搜索
-          </el-button>
-          <el-button @click="resetForm()" :icon="Refresh">重置</el-button>
-        </el-col>
-      </el-row>
-    </el-form>
-    <el-table
+    <div class="scan-search-container" ref="searchBoxRef">
+      <SearchBar
+        v-model="queryForm"
+        :searchConfig="searchConfig"
+        @reset="resetForm"
+        @search="getList"
+      >
+      </SearchBar>
+    </div>
+    <el-divider border-style="dashed" />
+    <Table
       :data="tableData"
-      :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
-      border
-      v-loading="tableLoading"
+      :loading="tableLoading"
+      :columnConfig="tableConfig"
+      :height="tableHeight"
+      :page-total="pageTotal"
+      :isSelected="false"
+      v-model:pageSize="queryForm.pageSize"
+      v-model:pageNo="queryForm.pageNo"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
     >
-      <el-table-column type="index" width="80" label="序号" align="center" />
-      <el-table-column prop="creatorName" label="下载人"></el-table-column>
-      <el-table-column prop="createTime" label="下载时间"></el-table-column>
-      <el-table-column prop="statusName" label="状态"></el-table-column>
-      <el-table-column
-        prop="downloadTypeName"
-        label="下载类型"
-      ></el-table-column>
-      <el-table-column label="操作" align="center">
-        <template v-slot="scope">
+      <template #action="scope">
+        <div class="opera-context">
           <el-button link type="primary" @click="handleDwon(scope.row)">
             下载
           </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <!-- 分页 -->
-    <el-pagination
-      v-if="pageTotal"
-      background
-      layout="total,sizes,prev, pager, next"
-      :page-sizes="[10, 20, 50, 100]"
-      :total="pageTotal"
-      class="table-page"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    />
+        </div>
+      </template>
+    </Table>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, Ref, onMounted } from 'vue'
+import { ref, reactive, Ref, onMounted, computed } from 'vue'
 import dayjs from 'dayjs'
-import { Refresh, Search } from '@element-plus/icons-vue'
 import { RecordAPI, ExportTableItem } from '@/api'
-import {
-  ElForm,
-  ElFormItem,
-  ElButton,
-  ElDatePicker,
-  ElTable,
-  ElTableColumn,
-  ElMessage
-} from 'element-plus'
+import type { ITableConfigProps } from '@/components/Table/type'
+import type { ISearchUnit } from '@/components/SearchBar/type'
+import SearchBar from '@/components/SearchBar/index.vue'
+import Table from '@/components/Table/index.vue'
+import { ElButton, ElMessage } from 'element-plus'
 import { handleDownloadFile } from '@/utils'
 const API = new RecordAPI()
 onMounted(() => {
@@ -87,7 +49,6 @@ onMounted(() => {
 })
 const tableLoading = ref<boolean>(false)
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
-const formRef = ref<InstanceType<typeof ElForm>>()
 
 interface DownloadForm {
   pageNo: number
@@ -101,7 +62,21 @@ const queryForm = reactive<DownloadForm>({
   startCreateTime: '',
   endCreateTime: ''
 })
-
+// 表格最大高度
+const searchBoxRef = ref()
+const tableHeight = computed(() => {
+  if (searchBoxRef.value?.clientHeight) {
+    const height = Number(
+      document.documentElement.clientHeight -
+        200 -
+        searchBoxRef.value?.clientHeight
+    )
+    return height
+  } else {
+    const height = Number(document.documentElement.clientHeight - 200)
+    return height
+  }
+})
 const getList = () => {
   // 在这里执行搜索逻辑，例如发送一个 API 请求。
   const parm = {
@@ -121,7 +96,11 @@ const getList = () => {
     .then((res) => {
       if (res && res.code === 200) {
         tableLoading.value = false
-        tableData.value = res?.data?.list || []
+        res?.data?.list.forEach((el, index) => {
+          el.indexStr = index + 1
+        })
+        tableData.splice(0, tableData.length)
+        tableData.push(...(res?.data?.list || []))
         pageTotal.value = res?.data?.total || 0
       } else {
         tableLoading.value = false
@@ -141,7 +120,7 @@ const resetForm = () => {
   getList()
 }
 
-const tableData: Ref<ExportTableItem[]> = ref([])
+const tableData = reactive<ExportTableItem[]>([])
 
 // 分页
 const handleCurrentChange = (val: number) => {
@@ -169,4 +148,74 @@ const handleDwon = (row: ExportTableItem) => {
       throw err
     })
 }
+const searchConfig: ISearchUnit[] = [
+  [
+    {
+      compType: 'date-range-picker',
+      colSpan: 12,
+      label: '时间范围',
+      propStart: 'startCreateTime',
+      propEnd: 'endCreateTime',
+      placeholderStart: '开始时间',
+      placeholderEnd: '结束时间'
+    }
+  ],
+  []
+]
+const tableConfig: ITableConfigProps[] = [
+  {
+    label: '序号',
+    prop: 'indexStr',
+    width: 60,
+    align: 'center',
+    showOverflowTooltip: true,
+    fixed: false,
+    forbiddenEdit: true
+  },
+  {
+    label: '下载人',
+    prop: 'creatorName',
+    minWidth: 160,
+    align: 'center',
+    showOverflowTooltip: true,
+    fixed: false,
+    forbiddenEdit: true
+  },
+  {
+    label: '下载时间',
+    prop: 'createTime',
+    minWidth: 160,
+    align: 'center',
+    showOverflowTooltip: true,
+    fixed: false,
+    forbiddenEdit: false
+  },
+  {
+    label: '状态',
+    prop: 'statusName',
+    minWidth: 160,
+    align: 'center',
+    showOverflowTooltip: true,
+    fixed: false,
+    forbiddenEdit: false
+  },
+  {
+    label: '下载类型',
+    prop: 'downloadTypeName',
+    minWidth: 160,
+    align: 'center',
+    showOverflowTooltip: true,
+    fixed: false,
+    forbiddenEdit: false
+  },
+  {
+    type: 'action',
+    label: '操作',
+    prop: 'action',
+    width: '120',
+    minWidth: '',
+    fixed: 'right',
+    align: 'center'
+  }
+]
 </script>

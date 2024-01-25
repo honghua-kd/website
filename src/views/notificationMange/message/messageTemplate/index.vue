@@ -85,8 +85,13 @@
             新增
           </el-button>
         </el-tooltip>
-        <el-tooltip content="导入" placement="top-start">
-          <el-button type="primary" :icon="Setting" @click="handleStop">
+        <el-tooltip content="停用" placement="top-start">
+          <el-button
+            type="primary"
+            :loading="stopLoading"
+            :icon="Setting"
+            @click="handleStop"
+          >
             停用
           </el-button>
         </el-tooltip>
@@ -178,6 +183,7 @@ const API = new MessageAPI()
 const smsBizType: Ref<DictItem[]> = ref([])
 const smsTemplteType: Ref<DictItem[]> = ref([])
 const smsContactorType: Ref<DictItem[]> = ref([])
+const stopLoading: Ref<boolean> = ref(false)
 
 onMounted(() => {
   getDicts()
@@ -468,6 +474,7 @@ const handleStop = () => {
   const ids = selectData.value.map((el) => {
     return el.id
   })
+  stopLoading.value = true
   changeStatus(ids.join(','), 0)
 }
 const changeStatus = (data: string, type: number) => {
@@ -475,20 +482,25 @@ const changeStatus = (data: string, type: number) => {
     id: data,
     status: type
   }
-  API.updateChangeStatus(parm).then((res) => {
-    if (res.code === 200) {
-      ElMessage({
-        type: 'success',
-        message: '操作成功'
-      })
-      getList()
-    } else {
-      ElMessage({
-        type: 'error',
-        message: '操作失败'
-      })
-    }
-  })
+  API.updateChangeStatus(parm)
+    .then((res) => {
+      if (res.code === 200) {
+        ElMessage({
+          type: 'success',
+          message: '操作成功'
+        })
+        getList()
+      } else {
+        ElMessage({
+          type: 'error',
+          message: '操作失败'
+        })
+      }
+      stopLoading.value = false
+    })
+    .catch(() => {
+      stopLoading.value = false
+    })
 }
 const deleteHandler = (id: string) => {
   ElMessageBox.confirm('确认要删除该模板吗?', 'Warning', {
