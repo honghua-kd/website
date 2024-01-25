@@ -59,11 +59,11 @@
     </div>
     <template #footer>
       <span class="dialog-footer">
-        <el-button
-          type="primary"
-          @click="onCloseModel(ruleFormRef, 'update-close')"
-          >确 定</el-button
-        >
+        <Button
+          ref="okRef"
+          name="确 定"
+          @onButtonFn="onCloseModel(ruleFormRef, 'update-close')"
+        />
         <el-button @click="onCloseModel(ruleFormRef, 'click-close')"
           >取 消</el-button
         >
@@ -102,6 +102,7 @@ const state = reactive<ModelStateType>({
   systemSourceArr: []
 })
 const { dialogVisible, editForm, dialogTitle, systemSourceArr } = toRefs(state)
+const okRef = ref()
 watch(
   [
     () => props.visible,
@@ -187,9 +188,10 @@ const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
     return
   }
   if (!formEl) return
-  await formEl.validate(async (valid, fields) => {
+  await formEl.validate((valid, fields) => {
     if (valid) {
       if (type === 'update-close') {
+        okRef.value.startLoading()
         if (dialogTitle.value === '编辑') {
           const params = {
             agencyName: editForm.value.agencyName,
@@ -203,7 +205,17 @@ const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
             unpaidNeedApproveFlag: editForm.value.unpaidNeedApproveFlag,
             createGatherFlag: editForm.value.createGatherFlag
           }
-          await API.getAgencyEdit(params)
+          API.getAgencyEdit(params)
+            .then(() => {
+              okRef.value.cancelLoading()
+              emit('closeModel', {
+                visible: false,
+                type
+              })
+            })
+            .catch(() => {
+              okRef.value.cancelLoading()
+            })
         }
         if (dialogTitle.value === '新增') {
           const params = {
@@ -217,12 +229,18 @@ const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
             unpaidNeedApproveFlag: editForm.value.unpaidNeedApproveFlag,
             createGatherFlag: editForm.value.createGatherFlag
           }
-          await API.getAgencySave(params)
+          API.getAgencySave(params)
+            .then(() => {
+              okRef.value.cancelLoading()
+              emit('closeModel', {
+                visible: false,
+                type
+              })
+            })
+            .catch(() => {
+              okRef.value.cancelLoading()
+            })
         }
-        emit('closeModel', {
-          visible: false,
-          type
-        })
       }
     } else {
       console.log('error submit!', fields)

@@ -131,16 +131,6 @@
           </el-table-column>
           <el-table-column label="操作" :width="80" align="center">
             <template #default="scope">
-              <!-- <el-button
-              v-if="
-                saveListForm.saveListInfo.length > 1 ||
-                props.paramsConfigDetail.length > 0
-              "
-              link
-              type="danger"
-              @click="removeTableItem(scope.$index, scope.row)"
-              >删除</el-button
-            > -->
               <el-button
                 link
                 type="danger"
@@ -154,11 +144,11 @@
     </div>
     <template #footer>
       <span class="dialog-footer">
-        <el-button
-          type="primary"
-          @click="closeConfigModel(ruleSaveListForm, 'update-close')"
-          >确 定</el-button
-        >
+        <Button
+          ref="okRef"
+          name="确 定"
+          @onButtonFn="closeConfigModel(ruleSaveListForm, 'update-close')"
+        />
         <el-button @click="closeConfigModel(ruleSaveListForm, 'click-close')"
           >取 消</el-button
         >
@@ -219,6 +209,8 @@ const state = reactive<ConfigStateType>({
 })
 
 const { dialogVisible, configCascaderOptions, saveListForm } = toRefs(state)
+
+const okRef = ref()
 
 watch(
   [
@@ -382,7 +374,7 @@ const closeConfigModel = async (
   if (type === 'update-close') {
     await formEl.validate(async (valid, fields) => {
       if (valid) {
-        console.log(state.saveListForm.saveListInfo)
+        okRef.value.startLoading()
         const params: EditParamConfigList[] = []
         state.saveListForm.saveListInfo.forEach((i) => {
           params.push({
@@ -394,15 +386,19 @@ const closeConfigModel = async (
             table: i.tableAndColumn ? i.tableAndColumn[0] : ''
           })
         })
-        const res = await API.paramConfig({
+        API.paramConfig({
           documentNo: props.documentNo,
           paramList: params
         })
-        if (res && res.code === 200) {
-          emit('closeModel', {
-            type
+          .then(() => {
+            okRef.value.cancelLoading()
+            emit('closeModel', {
+              type
+            })
           })
-        }
+          .catch(() => {
+            okRef.value.cancelLoading()
+          })
       } else {
         console.log('error submit!', fields)
       }

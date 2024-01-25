@@ -37,11 +37,6 @@
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <!-- <el-button
-          type="primary"
-          @click="closeModel(ruleFormRef, 'update-close')"
-          >确 定</el-button
-        > -->
         <Button
           ref="okRef"
           name="确 定"
@@ -116,17 +111,22 @@ const closeModel = async (formEl: FormInstance | undefined, type: string) => {
   }
   if (!formEl) return
   if (type === 'update-close') {
-    await formEl.validate(async (valid, fields) => {
+    await formEl.validate((valid, fields) => {
       if (valid) {
-        await API.initiateApproval(formData)
-        okRef.value.cancelLoading()
-        emit('closeApprovalModel', {
-          type
-        })
-        formData.approvalPath = ''
-        formData.remark = ''
+        okRef.value.startLoading()
+        API.initiateApproval(formData)
+          .then(() => {
+            okRef.value.cancelLoading()
+            emit('closeApprovalModel', {
+              type
+            })
+            formData.approvalPath = ''
+            formData.remark = ''
+          })
+          .catch(() => {
+            okRef.value.cancelLoading()
+          })
       } else {
-        okRef.value.cancelLoading()
         console.log('error submit!', fields)
       }
     })

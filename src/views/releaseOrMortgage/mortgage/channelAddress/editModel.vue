@@ -72,11 +72,11 @@
     </div>
     <template #footer>
       <span class="dialog-footer">
-        <el-button
-          type="primary"
-          @click="onCloseModel(ruleFormRef, 'update-close')"
-          >确 定</el-button
-        >
+        <Button
+          ref="okRef"
+          name="确 定"
+          @onButtonFn="onCloseModel(ruleFormRef, 'update-close')"
+        />
         <el-button @click="onCloseModel(ruleFormRef, 'click-close')"
           >取 消</el-button
         >
@@ -159,6 +159,9 @@ const editParams = reactive<ParamsType>({
   contact: '',
   phone: ''
 })
+
+const okRef = ref()
+
 watch(
   [
     () => props.visible,
@@ -300,9 +303,10 @@ const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
     return
   }
   if (!formEl) return
-  await formEl.validate(async (valid, fields) => {
+  await formEl.validate((valid, fields) => {
     if (valid) {
       if (type === 'update-close') {
+        okRef.value.startLoading()
         editParams.address = editForm.value.address
         editParams.agencyName = editForm.value.agencyName
         editParams.contact = editForm.value.contact
@@ -315,16 +319,32 @@ const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
           : ''
         if (dialogTitle.value === '编辑') {
           editParams.id = editForm.value.id
-          await API.getAgencyAddressEdit(editParams)
+          API.getAgencyAddressEdit(editParams)
+            .then(() => {
+              okRef.value.cancelLoading()
+              emit('closeModel', {
+                visible: false,
+                type
+              })
+            })
+            .catch(() => {
+              okRef.value.cancelLoading()
+            })
         }
         if (dialogTitle.value === '新增') {
           editParams.id = ''
-          await API.getAgencyAddressSave(editParams)
+          API.getAgencyAddressSave(editParams)
+            .then(() => {
+              okRef.value.cancelLoading()
+              emit('closeModel', {
+                visible: false,
+                type
+              })
+            })
+            .catch(() => {
+              okRef.value.cancelLoading()
+            })
         }
-        emit('closeModel', {
-          visible: false,
-          type
-        })
       }
     } else {
       console.log('error submit!', fields)

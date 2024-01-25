@@ -157,11 +157,11 @@
     </div>
     <template #footer>
       <span class="dialog-footer">
-        <el-button
-          type="primary"
-          @click="onCloseModel(ruleFormRef, 'update-close')"
-          >确 定</el-button
-        >
+        <Button
+          ref="okRef"
+          name="确 定"
+          @onButtonFn="onCloseModel(ruleFormRef, 'update-close')"
+        />
         <el-button @click="onCloseModel(ruleFormRef, 'click-close')"
           >取 消</el-button
         >
@@ -215,6 +215,7 @@ const state = reactive<ModelStateType>({
   areaCode: []
 })
 const { dialogVisible, editForm, dialogTitle, areaCode } = toRefs(state)
+const okRef = ref()
 watch(
   [() => props.visible, () => props.formValue, () => props.title],
   ([newVisible, newValue, newTitle]) => {
@@ -395,9 +396,10 @@ const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
     return
   }
   if (!formEl) return
-  await formEl.validate(async (valid, fields) => {
+  await formEl.validate((valid, fields) => {
     if (valid) {
       if (type === 'update-close') {
+        okRef.value.startLoading()
         addOrEditparams.mortgageSubjectAllName =
           state.editForm.mortgageSubjectAllName
         addOrEditparams.mortgageSubjectName = state.editForm.mortgageSubjectName
@@ -434,15 +436,31 @@ const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
         if (state.dialogTitle === '新增') {
           const paramsClone = JSON.parse(JSON.stringify(addOrEditparams))
           delete paramsClone.id
-          await API.getMortgageSubjectAdd(paramsClone)
+          API.getMortgageSubjectAdd(paramsClone)
+            .then(() => {
+              okRef.value.cancelLoading()
+              emit('closeModel', {
+                visible: false,
+                type
+              })
+            })
+            .catch(() => {
+              okRef.value.cancelLoading()
+            })
         } else {
           addOrEditparams.id = state.editForm.id
-          await API.getMortgageSubjectModify(addOrEditparams)
+          API.getMortgageSubjectModify(addOrEditparams)
+            .then(() => {
+              okRef.value.cancelLoading()
+              emit('closeModel', {
+                visible: false,
+                type
+              })
+            })
+            .catch(() => {
+              okRef.value.cancelLoading()
+            })
         }
-        emit('closeModel', {
-          visible: false,
-          type
-        })
       }
     } else {
       console.log('error submit!', fields)

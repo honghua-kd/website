@@ -10,6 +10,7 @@
   >
     <slot name="icon"></slot>
     {{ name || 'Button' }}
+    <slot></slot>
   </el-button>
 </template>
 
@@ -24,11 +25,13 @@ const emit = defineEmits<{
 }>()
 defineProps<BtnProps>()
 const clickButton = debounce(() => {
-  loading.value = true
   emit('onButtonFn')
 }, 300)
+const startLoading = () => {
+  loading.value = true
+}
 const cancelLoading = () => {
   loading.value = false
 }
-defineExpose({ cancelLoading })
+defineExpose({ startLoading, cancelLoading })
 </script>
