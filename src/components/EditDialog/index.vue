@@ -24,6 +24,11 @@
     </el-dialog>
   </div>
 </template>
+<script lang="ts">
+export default {
+  name: 'EditDialog'
+}
+</script>
 
 <script lang="ts" setup>
 import { ref, watch } from 'vue'

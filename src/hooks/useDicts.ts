@@ -2,7 +2,7 @@ import { CommonAPI } from '@/api'
 import { useDictStore } from '@/store/dict'
 import { ElMessageBox } from 'element-plus'
 
-export const useDicts = (dictTypes: string[]) => {
+export const useDicts = async (dictTypes: string[]) => {
   const API = new CommonAPI()
   const params = {
     dictTypes
@@ -13,7 +13,7 @@ export const useDicts = (dictTypes: string[]) => {
   //   background: 'rgba(0, 0, 0, 0.1)'
   // })
   const dictStore = useDictStore()
-  API.getDictsList(params)
+  await API.getDictsList(params)
     .then((res) => {
       // loading.close()
       if (res && res.code === 200) {

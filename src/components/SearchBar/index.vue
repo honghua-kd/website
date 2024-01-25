@@ -12,6 +12,11 @@
           <el-row :gutter="20" v-if="index > 1 ? expandFlag : true">
             <template v-for="item in unit" :key="item.prop">
               <el-col :span="item.colSpan">
+                <!-- <FormItem
+                  :form-item="item"
+                  v-model="modelValue[item.prop]"
+                  :dictArray="dictArray"
+                /> -->
                 <el-form-item
                   :label="item.label"
                   :prop="[(item as ISearchConfigCommon).prop]"
@@ -32,16 +37,16 @@
                         style="width: 48%"
                       />
                     </template>
-                    <!-- el-input -->
+
                     <template v-else-if="item.compType === 'el-input'">
                       <el-input
-                        v-model="modelValue[(item as ISearchConfigCommon).prop]"
+                        v-model.trim="modelValue[(item as ISearchConfigCommon).prop]"
                         clearable
                         :maxlength="item.maxlength || 90"
                         :placeholder="item.placeholder || '请输入'"
                       />
                     </template>
-                    <!-- el-select -->
+
                     <template v-else-if="item.compType === 'el-select'">
                       <el-select
                         v-model="modelValue[(item as ISearchConfigCommon).prop]"
@@ -108,6 +113,7 @@ import {
 } from '@element-plus/icons-vue'
 import { ElForm, ElFormItem } from 'element-plus'
 import { useDictStore } from '@/store/dict'
+// import FormItem from '@/components/ElFormItem/index.vue'
 import type {
   IProps,
   dictState,

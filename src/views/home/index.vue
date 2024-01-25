@@ -1,4 +1,12 @@
 <template>
+  <!-- <DynamicForm :data="data" v-model="query" />
+  <SearchBarV2
+    :data="searchData"
+    v-model="searchQuery"
+    :visibleRows="2"
+    :colNum="4"
+    @search="searchHandler"
+  /> -->
   <div class="home-container">
     <div class="app-welcome">
       <h1>欢迎使用</h1>
@@ -11,6 +19,33 @@
 export default {
   name: 'Home'
 }
+</script>
+<script setup lang="ts">
+// import { data, searchData } from './data'
+// import { reactive } from 'vue'
+// const query = reactive({
+//   string1: '1',
+//   string2: '2',
+//   string3: '3',
+//   string4: '4',
+//   string5: '5',
+//   string6: '6',
+//   string7: '7'
+// })
+
+// const searchQuery = reactive({
+//   searchString1: [new Date(), new Date()],
+//   searchString2: '2',
+//   searchString3: '3',
+//   searchString4: '4',
+//   searchString5: '5',
+//   searchString6: '6',
+//   searchString7: '7'
+// })
+
+// const searchHandler = () => {
+//   console.log('searchQuery', searchQuery)
+// }
 </script>
 
 <style lang="scss" scoped>

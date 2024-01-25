@@ -22,6 +22,7 @@
               <el-input
                 v-model.trim="formParams.templateName"
                 placeholder="请输入"
+                maxlength="50"
                 clearable
               />
             </el-form-item>
@@ -101,7 +102,11 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="备注" prop="remark">
-              <el-input v-model.trim="formParams.remark" clearable />
+              <el-input
+                v-model.trim="formParams.remark"
+                clearable
+                maxlength="1000"
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -116,11 +121,13 @@
                   style="margin-right: 10px; margin-bottom: 8px"
                   @close="deleteOverdue(index)"
                 >
-                  {{
-                    (item.documentName || '') +
-                    ' ' +
-                    (item.documentVersion || '')
-                  }}
+                  <div class="max-tag">
+                    {{
+                      (item.documentName || '') +
+                      ' ' +
+                      (item.documentVersion || '')
+                    }}
+                  </div>
                 </el-tag>
               </el-row>
               <el-row>
@@ -258,17 +265,23 @@ const submitForm = async () => {
     return el.documentNo
   })
   formParams.documentNo = dNo
-  API.saveOrUpdateDocumentTemplate(formParams).then((res) => {
-    if (res && res.code === 200 && res?.data) {
-      ElMessage({
-        type: 'success',
-        message: '操作成功'
-      })
+  API.saveOrUpdateDocumentTemplate(formParams)
+    .then((res) => {
+      if (res && res.code === 200 && res?.data) {
+        ElMessage({
+          type: 'success',
+          message: '操作成功'
+        })
+        formLoading.value = false
+        dialogVisible.value = false
+        emit('getList')
+      } else {
+        formLoading.value = false
+      }
+    })
+    .catch(() => {
       formLoading.value = false
-      dialogVisible.value = false
-      emit('getList')
-    }
-  })
+    })
 }
 const handleSuccess = (ids: string, version: string, name: string) => {
   formParams.documents?.push({
@@ -324,4 +337,9 @@ const open = (type: string, row: MortgageDocumentVO) => {
 defineExpose({ open })
 </script>
 
-<style scoped></style>
+<style scoped>
+.max-tag {
+  overflow: hidden;
+  max-width: 450px;
+}
+</style>
