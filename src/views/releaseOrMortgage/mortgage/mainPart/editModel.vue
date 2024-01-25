@@ -25,7 +25,7 @@
           <el-input
             :maxlength="50"
             placeholder="请输入"
-            v-model="editForm.mortgageSubjectName"
+            v-model.trim="editForm.mortgageSubjectName"
             clearable
           />
         </el-form-item>
@@ -91,7 +91,7 @@
           <el-input
             :maxlength="50"
             placeholder="请输入"
-            v-model="editForm.organizationCode"
+            v-model.trim="editForm.organizationCode"
             clearable
           />
         </el-form-item>
@@ -99,7 +99,7 @@
           <el-input
             :maxlength="50"
             placeholder="请输入"
-            v-model="editForm.mortgageSubjectAllName"
+            v-model.trim="editForm.mortgageSubjectAllName"
             clearable
           />
         </el-form-item>
@@ -107,7 +107,7 @@
           <el-input
             :maxlength="100"
             placeholder="请输入"
-            v-model="editForm.registeredAddress"
+            v-model.trim="editForm.registeredAddress"
             clearable
           />
         </el-form-item>
@@ -119,7 +119,7 @@
           <el-input
             :maxlength="100"
             placeholder="请输入"
-            v-model="editForm.contactAddressDetail"
+            v-model.trim="editForm.contactAddressDetail"
             clearable
           />
         </el-form-item>
@@ -129,7 +129,7 @@
               <el-input
                 :maxlength="50"
                 placeholder="请输入"
-                v-model="editForm.contactName"
+                v-model.trim="editForm.contactName"
                 clearable
               />
             </el-form-item>
@@ -147,7 +147,7 @@
               <el-input
                 :maxlength="50"
                 placeholder="请输入"
-                v-model="editForm.contactPhone"
+                v-model.trim="editForm.contactPhone"
                 clearable
               />
             </el-form-item>

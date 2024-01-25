@@ -26,7 +26,7 @@
         </el-form-item>
         <el-form-item label="渠道商/办事处" prop="agencyName" required>
           <el-input
-            v-model="editForm.agencyName"
+            v-model.trim="editForm.agencyName"
             :maxlength="50"
             placeholder="请输入"
             clearable

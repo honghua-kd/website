@@ -26,7 +26,7 @@
         </el-form-item>
         <el-form-item label="渠道商/办事处" prop="agencyName" required>
           <el-input
-            v-model="editForm.agencyName"
+            v-model.trim="editForm.agencyName"
             :maxlength="50"
             placeholder="请输入"
             clearable
@@ -40,7 +40,7 @@
         </el-form-item>
         <el-form-item label="详细地址" prop="address">
           <el-input
-            v-model="editForm.address"
+            v-model.trim="editForm.address"
             placeholder="请输入"
             :maxlength="100"
             clearable
@@ -50,7 +50,7 @@
           <el-col :span="11"
             ><el-form-item label="联系人" prop="contact">
               <el-input
-                v-model="editForm.contact"
+                v-model.trim="editForm.contact"
                 :maxlength="50"
                 placeholder="请输入"
                 clearable
@@ -62,7 +62,7 @@
               <el-input
                 type="number"
                 onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
-                v-model="editForm.phone"
+                v-model.trim="editForm.phone"
                 placeholder="请输入"
                 clearable
               /> </el-form-item

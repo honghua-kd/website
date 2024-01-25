@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AreaCascader: typeof import('./../components/AreaCascader/index.vue')['default']
+    Button: typeof import('./../components/Button/index.vue')['default']
     DataPermissonForm: typeof import('./../components/PermiForm/DataPermissonForm.vue')['default']
     EditDialog: typeof import('./../components/EditDialog/index.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']

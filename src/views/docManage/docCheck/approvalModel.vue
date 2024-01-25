@@ -26,7 +26,7 @@
       </el-form-item>
       <el-form-item label="备注" prop="remark">
         <el-input
-          v-model="formData.remark"
+          v-model.trim="formData.remark"
           :rows="4"
           :maxlength="500"
           :show-word-limit="true"
@@ -37,11 +37,16 @@
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button
+        <!-- <el-button
           type="primary"
           @click="closeModel(ruleFormRef, 'update-close')"
           >确 定</el-button
-        >
+        > -->
+        <Button
+          ref="okRef"
+          name="确 定"
+          @onButtonFn="closeModel(ruleFormRef, 'update-close')"
+        />
         <el-button @click="closeModel(ruleFormRef, 'click-close')"
           >取 消</el-button
         >
@@ -83,6 +88,8 @@ watch(
   }
 )
 
+const okRef = ref()
+
 const ruleFormRef = ref<FormInstance>()
 const rules = reactive<FormRules<typeof formData>>({
   approvalPath: [
@@ -112,12 +119,14 @@ const closeModel = async (formEl: FormInstance | undefined, type: string) => {
     await formEl.validate(async (valid, fields) => {
       if (valid) {
         await API.initiateApproval(formData)
+        okRef.value.cancelLoading()
         emit('closeApprovalModel', {
           type
         })
         formData.approvalPath = ''
         formData.remark = ''
       } else {
+        okRef.value.cancelLoading()
         console.log('error submit!', fields)
       }
     })
