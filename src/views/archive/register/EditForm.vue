@@ -498,7 +498,9 @@
       </el-row>
     </el-form>
     <template #footer>
-      <el-button type="primary" @click="updateHandler"> 保 存 </el-button>
+      <el-button type="primary" @click="updateHandler" :loading="btnLoading">
+        保 存
+      </el-button>
       <el-button type="primary" @click="dialogVisible = false">
         关 闭
       </el-button>
@@ -828,6 +830,7 @@ const init = (row?: ExpressListItem) => {
 
 defineExpose({ open })
 const emit = defineEmits(['success'])
+const btnLoading = ref<boolean>(false)
 const updateHandler = async () => {
   // 校验
   if (!basicInfoFormRef.value) return
@@ -839,6 +842,7 @@ const updateHandler = async () => {
   basicInfoForm.receiveTime = basicInfoForm.receiveTime
     ? basicInfoForm.receiveTime.slice(0, 10)
     : ''
+  btnLoading.value = true
   if (!basicInfoForm.expressContentList?.length) {
     ElMessage({
       type: 'error',
@@ -872,11 +876,13 @@ const updateHandler = async () => {
                     type: 'success',
                     message: '新增成功'
                   })
+                  btnLoading.value = false
                   dialogVisible.value = false
                   emit('success')
                 }
               })
               .catch((err: Error) => {
+                btnLoading.value = false
                 console.log(err)
               })
           }
@@ -893,11 +899,13 @@ const updateHandler = async () => {
               type: 'success',
               message: '修改成功'
             })
+            btnLoading.value = false
             dialogVisible.value = false
             emit('success')
           }
         })
         .catch((err: Error) => {
+          btnLoading.value = false
           console.log(err)
         })
     }

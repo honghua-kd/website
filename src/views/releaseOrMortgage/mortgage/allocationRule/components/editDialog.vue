@@ -313,7 +313,12 @@
       </el-form>
       <template #footer>
         <el-button @click="handleClose">取 消</el-button>
-        <el-button :disabled="formLoading" type="primary" @click="submitForm">
+        <el-button
+          :disabled="formLoading"
+          type="primary"
+          @click="submitForm"
+          :loading="btnLoading"
+        >
           确 定
         </el-button>
       </template>
@@ -500,6 +505,7 @@ const isSendSmsOpts = ref([
   }
 ])
 const cascader = ref()
+const btnLoading = ref<boolean>(false)
 const submitForm = async () => {
   if (!formRef.value) return
   const valid = await formRef.value.validate()
@@ -562,6 +568,7 @@ const submitForm = async () => {
     provinceCode: String(selCity.value[0]),
     provinceName: state.formParams.provinceName
   }
+  btnLoading.value = true
   RuleApi.editRule(params)
     .then((res) => {
       if (res && res.code === 200) {
@@ -569,11 +576,13 @@ const submitForm = async () => {
           type: 'success',
           message: '更新成功'
         })
+        btnLoading.value = false
         emit('success')
         emit('closeModel', { visible: false })
       }
     })
     .catch((err: Error) => {
+      btnLoading.value = false
       throw err
     })
 }
