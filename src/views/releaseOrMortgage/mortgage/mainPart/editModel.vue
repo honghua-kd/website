@@ -399,7 +399,7 @@ const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
   await formEl.validate((valid, fields) => {
     if (valid) {
       if (type === 'update-close') {
-        okRef.value.startLoading()
+        okRef.value.changeLoading(true)
         addOrEditparams.mortgageSubjectAllName =
           state.editForm.mortgageSubjectAllName
         addOrEditparams.mortgageSubjectName = state.editForm.mortgageSubjectName
@@ -438,27 +438,27 @@ const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
           delete paramsClone.id
           API.getMortgageSubjectAdd(paramsClone)
             .then(() => {
-              okRef.value.cancelLoading()
+              okRef.value.changeLoading(false)
               emit('closeModel', {
                 visible: false,
                 type
               })
             })
             .catch(() => {
-              okRef.value.cancelLoading()
+              okRef.value.changeLoading(false)
             })
         } else {
           addOrEditparams.id = state.editForm.id
           API.getMortgageSubjectModify(addOrEditparams)
             .then(() => {
-              okRef.value.cancelLoading()
+              okRef.value.changeLoading(false)
               emit('closeModel', {
                 visible: false,
                 type
               })
             })
             .catch(() => {
-              okRef.value.cancelLoading()
+              okRef.value.changeLoading(false)
             })
         }
       }

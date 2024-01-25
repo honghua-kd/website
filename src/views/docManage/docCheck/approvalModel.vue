@@ -113,10 +113,10 @@ const closeModel = async (formEl: FormInstance | undefined, type: string) => {
   if (type === 'update-close') {
     await formEl.validate((valid, fields) => {
       if (valid) {
-        okRef.value.startLoading()
+        okRef.value.changeLoading(true)
         API.initiateApproval(formData)
           .then(() => {
-            okRef.value.cancelLoading()
+            okRef.value.changeLoading(false)
             emit('closeApprovalModel', {
               type
             })
@@ -124,7 +124,7 @@ const closeModel = async (formEl: FormInstance | undefined, type: string) => {
             formData.remark = ''
           })
           .catch(() => {
-            okRef.value.cancelLoading()
+            okRef.value.changeLoading(false)
           })
       } else {
         console.log('error submit!', fields)

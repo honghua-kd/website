@@ -306,7 +306,7 @@ const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
   await formEl.validate((valid, fields) => {
     if (valid) {
       if (type === 'update-close') {
-        okRef.value.startLoading()
+        okRef.value.changeLoading(true)
         editParams.address = editForm.value.address
         editParams.agencyName = editForm.value.agencyName
         editParams.contact = editForm.value.contact
@@ -321,28 +321,28 @@ const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
           editParams.id = editForm.value.id
           API.getAgencyAddressEdit(editParams)
             .then(() => {
-              okRef.value.cancelLoading()
+              okRef.value.changeLoading(false)
               emit('closeModel', {
                 visible: false,
                 type
               })
             })
             .catch(() => {
-              okRef.value.cancelLoading()
+              okRef.value.changeLoading(false)
             })
         }
         if (dialogTitle.value === '新增') {
           editParams.id = ''
           API.getAgencyAddressSave(editParams)
             .then(() => {
-              okRef.value.cancelLoading()
+              okRef.value.changeLoading(false)
               emit('closeModel', {
                 visible: false,
                 type
               })
             })
             .catch(() => {
-              okRef.value.cancelLoading()
+              okRef.value.changeLoading(false)
             })
         }
       }

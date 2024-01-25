@@ -374,7 +374,7 @@ const closeConfigModel = async (
   if (type === 'update-close') {
     await formEl.validate(async (valid, fields) => {
       if (valid) {
-        okRef.value.startLoading()
+        okRef.value.changeLoading(true)
         const params: EditParamConfigList[] = []
         state.saveListForm.saveListInfo.forEach((i) => {
           params.push({
@@ -391,13 +391,13 @@ const closeConfigModel = async (
           paramList: params
         })
           .then(() => {
-            okRef.value.cancelLoading()
+            okRef.value.changeLoading(false)
             emit('closeModel', {
               type
             })
           })
           .catch(() => {
-            okRef.value.cancelLoading()
+            okRef.value.changeLoading(false)
           })
       } else {
         console.log('error submit!', fields)

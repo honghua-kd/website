@@ -27,11 +27,8 @@ defineProps<BtnProps>()
 const clickButton = debounce(() => {
   emit('onButtonFn')
 }, 300)
-const startLoading = () => {
-  loading.value = true
+const changeLoading = (status: boolean) => {
+  loading.value = status
 }
-const cancelLoading = () => {
-  loading.value = false
-}
-defineExpose({ startLoading, cancelLoading })
+defineExpose({ changeLoading })
 </script>

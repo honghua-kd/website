@@ -477,7 +477,7 @@ const closeFormModel = async (
   if (!formEl) return
   await formEl.validate(async (valid, fields) => {
     if (valid) {
-      okRef.value.startLoading()
+      okRef.value.changeLoading(true)
       const params = JSON.parse(JSON.stringify(state.docInfoForm.saveListInfo))
       params.forEach((i: SaveOrUpdateDocRequest) => {
         i.documentName = state.docInfoForm.documentName
@@ -488,14 +488,14 @@ const closeFormModel = async (
 
       API.saveOrUpdateDocument(params)
         .then(() => {
-          okRef.value.cancelLoading()
+          okRef.value.changeLoading(false)
           emit('closeModel', {
             type
           })
           restForm()
         })
         .catch(() => {
-          okRef.value.cancelLoading()
+          okRef.value.changeLoading(false)
         })
     } else {
       console.log('error submit!', fields)
