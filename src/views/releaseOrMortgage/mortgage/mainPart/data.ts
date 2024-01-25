@@ -4,7 +4,7 @@ export const searchConfig: ISearchUnit[] = [
   [
     {
       compType: 'el-input',
-      colSpan: 6,
+      colSpan: 12,
       label: '抵押主体名称',
       prop: 'mortgageSubjectName',
       placeholder: '请输入',
@@ -12,15 +12,14 @@ export const searchConfig: ISearchUnit[] = [
     },
     {
       compType: 'el-select',
-      colSpan: 6,
+      colSpan: 12,
       label: '城市',
       prop: '',
       options: '',
       placeholder: '请选择',
       slotName: 'area'
     }
-  ],
-  []
+  ]
 ]
 export const tableColumn: ITableConfigProps[] = [
   {

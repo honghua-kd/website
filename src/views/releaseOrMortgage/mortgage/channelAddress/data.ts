@@ -3,7 +3,7 @@ export const searchConfig: ISearchUnit[] = [
   [
     {
       compType: '',
-      colSpan: 6,
+      colSpan: 8,
       label: '来源系统',
       prop: '',
       placeholder: '请输入',
@@ -11,7 +11,7 @@ export const searchConfig: ISearchUnit[] = [
     },
     {
       compType: 'el-input',
-      colSpan: 6,
+      colSpan: 8,
       label: '代理商/办事处',
       prop: 'agencyName',
       options: '',
@@ -20,13 +20,12 @@ export const searchConfig: ISearchUnit[] = [
     },
     {
       compType: '',
-      colSpan: 6,
+      colSpan: 8,
       label: '城市',
       prop: '',
       options: '',
       placeholder: '请选择',
       slotName: 'area'
     }
-  ],
-  []
+  ]
 ]
