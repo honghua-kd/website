@@ -26,7 +26,7 @@ export const tableColumn: ITableConfigProps[] = [
   {
     label: '抵押主体名称',
     prop: 'mortgageSubjectName',
-    width: 120,
+    minWidth: 120,
     align: 'left',
     forbiddenEdit: true,
     showOverflowTooltip: true

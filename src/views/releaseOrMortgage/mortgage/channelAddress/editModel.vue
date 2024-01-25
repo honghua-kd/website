@@ -72,13 +72,13 @@
     </div>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="onCloseModel(ruleFormRef, 'click-close')"
-          >取消</el-button
-        >
         <el-button
           type="primary"
           @click="onCloseModel(ruleFormRef, 'update-close')"
-          >确认</el-button
+          >确 定</el-button
+        >
+        <el-button @click="onCloseModel(ruleFormRef, 'click-close')"
+          >取 消</el-button
         >
       </span>
     </template>
