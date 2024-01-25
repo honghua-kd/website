@@ -26,7 +26,7 @@
         </el-form-item>
         <el-form-item label="渠道商/办事处" prop="agencyName" required>
           <el-input
-            v-model="editForm.agencyName"
+            v-model.trim="editForm.agencyName"
             :maxlength="50"
             placeholder="请输入"
             clearable
@@ -40,7 +40,7 @@
         </el-form-item>
         <el-form-item label="详细地址" prop="address">
           <el-input
-            v-model="editForm.address"
+            v-model.trim="editForm.address"
             placeholder="请输入"
             :maxlength="100"
             clearable
@@ -50,7 +50,7 @@
           <el-col :span="11"
             ><el-form-item label="联系人" prop="contact">
               <el-input
-                v-model="editForm.contact"
+                v-model.trim="editForm.contact"
                 :maxlength="50"
                 placeholder="请输入"
                 clearable
@@ -62,7 +62,7 @@
               <el-input
                 type="number"
                 onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
-                v-model="editForm.phone"
+                v-model.trim="editForm.phone"
                 placeholder="请输入"
                 clearable
               /> </el-form-item
@@ -72,13 +72,13 @@
     </div>
     <template #footer>
       <span class="dialog-footer">
+        <Button
+          ref="okRef"
+          name="确 定"
+          @onButtonFn="onCloseModel(ruleFormRef, 'update-close')"
+        />
         <el-button @click="onCloseModel(ruleFormRef, 'click-close')"
-          >取消</el-button
-        >
-        <el-button
-          type="primary"
-          @click="onCloseModel(ruleFormRef, 'update-close')"
-          >确认</el-button
+          >取 消</el-button
         >
       </span>
     </template>
@@ -159,6 +159,9 @@ const editParams = reactive<ParamsType>({
   contact: '',
   phone: ''
 })
+
+const okRef = ref()
+
 watch(
   [
     () => props.visible,
@@ -300,9 +303,10 @@ const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
     return
   }
   if (!formEl) return
-  await formEl.validate(async (valid, fields) => {
+  await formEl.validate((valid, fields) => {
     if (valid) {
       if (type === 'update-close') {
+        okRef.value.changeLoading(true)
         editParams.address = editForm.value.address
         editParams.agencyName = editForm.value.agencyName
         editParams.contact = editForm.value.contact
@@ -315,16 +319,32 @@ const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
           : ''
         if (dialogTitle.value === '编辑') {
           editParams.id = editForm.value.id
-          await API.getAgencyAddressEdit(editParams)
+          API.getAgencyAddressEdit(editParams)
+            .then(() => {
+              okRef.value.changeLoading(false)
+              emit('closeModel', {
+                visible: false,
+                type
+              })
+            })
+            .catch(() => {
+              okRef.value.changeLoading(false)
+            })
         }
         if (dialogTitle.value === '新增') {
           editParams.id = ''
-          await API.getAgencyAddressSave(editParams)
+          API.getAgencyAddressSave(editParams)
+            .then(() => {
+              okRef.value.changeLoading(false)
+              emit('closeModel', {
+                visible: false,
+                type
+              })
+            })
+            .catch(() => {
+              okRef.value.changeLoading(false)
+            })
         }
-        emit('closeModel', {
-          visible: false,
-          type
-        })
       }
     } else {
       console.log('error submit!', fields)

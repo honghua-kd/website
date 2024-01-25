@@ -47,12 +47,6 @@
         <el-button :icon="Download" type="primary" @click="downloadData"
           >下载</el-button
         >
-        <!-- <el-button :icon="Plus" type="primary" @click="batchImport"
-          >导入</el-button
-        >
-        <el-button :icon="Download" type="primary" @click="downloadTemplate"
-          >下载导入模版</el-button
-        > -->
       </template>
       <template #selection>
         <el-table-column
@@ -83,39 +77,18 @@
         /></span>
       </template>
       <template #action="{ row }">
-        <div class="opera-context">
-          <el-button link type="primary" @click="oconfigItem(row.documentNo)"
-            >配置</el-button
-          >
-          <el-dropdown>
-            <span class="el-dropdown-link">
-              更多
-              <el-icon class="el-icon--right">
-                <arrow-down />
-              </el-icon>
-            </span>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item>
-                  <el-button
-                    link
-                    type="primary"
-                    @click="testItem(row.documentNo)"
-                    >测试</el-button
-                  >
-                </el-dropdown-item>
-                <el-dropdown-item>
-                  <el-button
-                    link
-                    type="danger"
-                    @click="deleteItem(row.id, row.hasAssociateData)"
-                    >删除</el-button
-                  >
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </div>
+        <el-button link type="primary" @click="oconfigItem(row.documentNo)"
+          >配置</el-button
+        >
+        <el-button link type="primary" @click="testItem(row.documentNo)"
+          >测试</el-button
+        >
+        <el-button
+          link
+          type="danger"
+          @click="deleteItem(row.id, row.hasAssociateData)"
+          >删除</el-button
+        >
       </template>
     </Table>
     <!-- 配置参数弹窗 -->
@@ -139,7 +112,7 @@ import ConfigModel from './configModel.vue'
 import { searchConfig, tableColumn } from './data'
 import type { StateType } from './type'
 import type { DocumentPageResponse } from '@/api/docCheck/types/response'
-import { Download, ArrowDown } from '@element-plus/icons-vue'
+import { Download } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { handleDownloadFile } from '@/utils'
 import { useDictStore } from '@/store/dict'
@@ -449,19 +422,4 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss" scoped>
-.opera-context {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  > .el-dropdown {
-    cursor: pointer;
-  }
-}
-.el-dropdown-link {
-  display: flex;
-  align-items: center;
-  color: var(--el-color-primary);
-  cursor: pointer;
-}
-</style>
+<style lang="scss" scoped></style>

@@ -26,7 +26,7 @@
         </el-form-item>
         <el-form-item label="渠道商/办事处" prop="agencyName" required>
           <el-input
-            v-model="editForm.agencyName"
+            v-model.trim="editForm.agencyName"
             :maxlength="50"
             placeholder="请输入"
             clearable
@@ -59,13 +59,13 @@
     </div>
     <template #footer>
       <span class="dialog-footer">
+        <Button
+          ref="okRef"
+          name="确 定"
+          @onButtonFn="onCloseModel(ruleFormRef, 'update-close')"
+        />
         <el-button @click="onCloseModel(ruleFormRef, 'click-close')"
-          >取消</el-button
-        >
-        <el-button
-          type="primary"
-          @click="onCloseModel(ruleFormRef, 'update-close')"
-          >确认</el-button
+          >取 消</el-button
         >
       </span>
     </template>
@@ -102,6 +102,7 @@ const state = reactive<ModelStateType>({
   systemSourceArr: []
 })
 const { dialogVisible, editForm, dialogTitle, systemSourceArr } = toRefs(state)
+const okRef = ref()
 watch(
   [
     () => props.visible,
@@ -187,9 +188,10 @@ const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
     return
   }
   if (!formEl) return
-  await formEl.validate(async (valid, fields) => {
+  await formEl.validate((valid, fields) => {
     if (valid) {
       if (type === 'update-close') {
+        okRef.value.changeLoading(true)
         if (dialogTitle.value === '编辑') {
           const params = {
             agencyName: editForm.value.agencyName,
@@ -203,7 +205,17 @@ const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
             unpaidNeedApproveFlag: editForm.value.unpaidNeedApproveFlag,
             createGatherFlag: editForm.value.createGatherFlag
           }
-          await API.getAgencyEdit(params)
+          API.getAgencyEdit(params)
+            .then(() => {
+              okRef.value.changeLoading(false)
+              emit('closeModel', {
+                visible: false,
+                type
+              })
+            })
+            .catch(() => {
+              okRef.value.changeLoading(false)
+            })
         }
         if (dialogTitle.value === '新增') {
           const params = {
@@ -217,12 +229,18 @@ const onCloseModel = async (formEl: FormInstance | undefined, type: string) => {
             unpaidNeedApproveFlag: editForm.value.unpaidNeedApproveFlag,
             createGatherFlag: editForm.value.createGatherFlag
           }
-          await API.getAgencySave(params)
+          API.getAgencySave(params)
+            .then(() => {
+              okRef.value.changeLoading(false)
+              emit('closeModel', {
+                visible: false,
+                type
+              })
+            })
+            .catch(() => {
+              okRef.value.changeLoading(false)
+            })
         }
-        emit('closeModel', {
-          visible: false,
-          type
-        })
       }
     } else {
       console.log('error submit!', fields)

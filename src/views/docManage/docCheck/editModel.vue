@@ -149,13 +149,13 @@
       </div>
       <template #footer>
         <span class="dialog-footer">
+          <Button
+            ref="okRef"
+            name="确 定"
+            @onButtonFn="closeFormModel(ruleFormRef, 'update-close')"
+          />
           <el-button @click="closeFormModel(ruleFormRef, 'click-close')"
-            >取消</el-button
-          >
-          <el-button
-            type="primary"
-            @click="closeFormModel(ruleFormRef, 'update-close')"
-            >确认</el-button
+            >取 消</el-button
           >
         </span>
       </template>
@@ -243,6 +243,8 @@ const state = reactive<ModelStateType>({
   uploadItemIndex: -1
 })
 const { dialogVisible, docInfoForm, importVisible } = toRefs(state)
+
+const okRef = ref()
 
 watch(
   [() => props.visible, () => props.title, () => props.detailData],
@@ -475,6 +477,7 @@ const closeFormModel = async (
   if (!formEl) return
   await formEl.validate(async (valid, fields) => {
     if (valid) {
+      okRef.value.changeLoading(true)
       const params = JSON.parse(JSON.stringify(state.docInfoForm.saveListInfo))
       params.forEach((i: SaveOrUpdateDocRequest) => {
         i.documentName = state.docInfoForm.documentName
@@ -483,12 +486,17 @@ const closeFormModel = async (
         i.sealType = state.docInfoForm.sealType
       })
 
-      API.saveOrUpdateDocument(params).then(() => {
-        emit('closeModel', {
-          type
+      API.saveOrUpdateDocument(params)
+        .then(() => {
+          okRef.value.changeLoading(false)
+          emit('closeModel', {
+            type
+          })
+          restForm()
         })
-        restForm()
-      })
+        .catch(() => {
+          okRef.value.changeLoading(false)
+        })
     } else {
       console.log('error submit!', fields)
     }

@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AreaCascader: typeof import('./../components/AreaCascader/index.vue')['default']
+    Button: typeof import('./../components/Button/index.vue')['default']
     DataPermissonForm: typeof import('./../components/PermiForm/DataPermissonForm.vue')['default']
     DynamicDatePicker: typeof import('./../components/DynamicForm/components/DynamicDatePicker/index.vue')['default']
     DynamicForm: typeof import('./../components/DynamicForm/DynamicForm.vue')['default']
