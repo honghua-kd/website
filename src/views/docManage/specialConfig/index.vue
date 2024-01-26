@@ -63,7 +63,7 @@
     </Table>
     <EditDialog
       @triggerChildMethod="triggerChildMethod"
-      @closeEditDialog="closeEditDialog"
+      @closeEditDialog="closeEditDialog(formRef)"
       :title="dialogTitle"
       v-model="dialogVisible"
       :dialog-content-config="dialogContentConfig"
@@ -76,7 +76,11 @@
           :label-width="px2rem('80px')"
           :rules="editFormRules"
         >
-          <el-form-item label="来源系统" prop="systemContractStatus">
+          <el-form-item
+            label="来源系统"
+            prop="systemContractStatus"
+            class="show_start"
+          >
             <el-cascader
               style="width: 550px"
               check-strictly
@@ -86,7 +90,11 @@
               :options="systemContractStatusOptions"
             />
           </el-form-item>
-          <el-form-item label="原始文书" prop="originalDocument">
+          <el-form-item
+            label="原始文书"
+            prop="originalDocument"
+            class="show_start"
+          >
             <el-select
               v-model="dialogQueryParams.originalDocumentNofirst"
               class="m-2"
@@ -130,7 +138,11 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="替换文书" prop="replaceDocument">
+          <el-form-item
+            label="替换文书"
+            prop="replaceDocument"
+            class="show_start"
+          >
             <el-select
               v-model="dialogQueryParams.replaceDocumentNofirst"
               class="m-2"
@@ -186,8 +198,9 @@ import EditDialog from '@/components/EditDialog/index.vue'
 import { searchConfig, tableConfig, dialogContentConfig } from './data'
 import { Plus } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage, ElForm, ElFormItem } from 'element-plus'
-import type { CascaderValue, CascaderProps } from 'element-plus'
+import type { CascaderValue, CascaderProps, FormInstance } from 'element-plus'
 import { SpecialConfigAPI, SystemAPI } from '@/api'
+import type { InternalRuleItem } from 'async-validator'
 import type {
   SpecialListItem,
   ListCell,
@@ -291,15 +304,72 @@ const systemAPI = new SystemAPI()
 const dialogTitle = ref<string>('')
 const dialogVisible = ref<boolean>(false)
 const formRef = ref<InstanceType<typeof ElForm>>()
+const validateOriginalDocument = (
+  rule: InternalRuleItem,
+  value: string[] | undefined,
+  callback: (error?: string | Error | undefined) => void
+) => {
+  if (
+    !(
+      dialogQueryParams.originalDocumentNofirst &&
+      dialogQueryParams.originalDocumentNoSecond &&
+      dialogQueryParams.originalDocumentNoThree.length
+    )
+  ) {
+    callback(new Error('请填写所有的原始文书'))
+  } else {
+    callback()
+  }
+}
+const validaterePlaceDocument = (
+  rule: InternalRuleItem,
+  value: string[] | undefined,
+  callback: (error?: string | Error | undefined) => void
+) => {
+  if (
+    !(
+      dialogQueryParams.replaceDocumentNofirst &&
+      dialogQueryParams.replaceDocumentNoSecond &&
+      dialogQueryParams.replaceDocumentNoThree
+    )
+  ) {
+    callback(new Error('请填写所有的替换文书'))
+  } else {
+    callback()
+  }
+}
+
 const editFormRules = {
   systemContractStatus: [
-    { required: true, message: '数据标签不能为空', trigger: 'blur' }
+    {
+      required: true,
+      validator: (
+        rule: InternalRuleItem,
+        value: string[] | undefined,
+        callback: (error?: string | Error | undefined) => void
+      ) => {
+        if (!value || !value.length || !value[0].length) {
+          callback(new Error('来源系统不能为空'))
+        } else {
+          callback()
+        }
+      },
+      trigger: ['blur', 'change']
+    }
   ],
   originalDocument: [
-    { required: true, message: '数据标签不能为空', trigger: 'blur' }
+    {
+      required: true,
+      validator: validateOriginalDocument,
+      trigger: ['blur', 'change']
+    }
   ],
   replaceDocument: [
-    { required: true, message: '数据标签不能为空', trigger: 'blur' }
+    {
+      required: true,
+      validator: validaterePlaceDocument,
+      trigger: ['blur', 'change']
+    }
   ]
 }
 const props: CascaderProps = {
@@ -504,41 +574,29 @@ const editHandler = async (id: string) => {
 }
 // 编辑新增保存
 const triggerChildMethod = async () => {
-  console.log(dialogQueryParams.originalDocumentNoThree)
-
-  if (
-    !(
-      !isEmpty(dialogQueryParams.systemContractStatus) &&
-      dialogQueryParams.replaceDocumentNoThree &&
-      dialogQueryParams.originalDocumentNoThree
-    )
-  )
-    return ElMessage({
-      type: 'warning',
-      message: '请填写完整数据'
-    })
-  const params = {
-    batchNo: dialogQueryParams.batchNo,
-    replaceDocumentNo: dialogQueryParams.replaceDocumentNoThree,
-    systemContractStatus: dialogQueryParams.systemContractStatus,
-    originalDocumentNo: dialogQueryParams.originalDocumentNoThree
+  const form = formRef.value
+  if (!form) {
+    return
   }
-  console.log(params)
-  await API.saveOrUpdate(params)
-  dialogVisible.value = false
-  ElMessage({
-    type: 'success',
-    message: '新增成功'
+  await form.validate(async (valid) => {
+    if (valid) {
+      const params = {
+        batchNo: dialogQueryParams.batchNo,
+        replaceDocumentNo: dialogQueryParams.replaceDocumentNoThree,
+        systemContractStatus: dialogQueryParams.systemContractStatus,
+        originalDocumentNo: dialogQueryParams.originalDocumentNoThree
+      }
+      await API.saveOrUpdate(params)
+      dialogVisible.value = false
+      ElMessage({
+        type: 'success',
+        message: '新增成功'
+      })
+      getList()
+    } else {
+      console.log('错误')
+    }
   })
-  getList()
-}
-// 判断来源系统为空
-const isEmpty = (matrix: string[][]) => {
-  if (matrix.length === 0 || matrix[0].length === 0) {
-    return true
-  } else {
-    return false
-  }
 }
 // 删除
 const delHandler = (batchNo: string) => {
@@ -576,6 +634,10 @@ const switchHandler = (batchNo: string, status: string) => {
       tableData.forEach((i: ListCell) => {
         if (i.batchNo === batchNo) {
           i.status = Number(!status)
+          ElMessage({
+            type: 'success',
+            message: '操作成功'
+          })
         }
       })
       getList()
@@ -583,17 +645,19 @@ const switchHandler = (batchNo: string, status: string) => {
   })
 }
 // 关闭弹窗
-const closeEditDialog = () => {
+const closeEditDialog = (formEl: FormInstance | undefined) => {
   dialogQueryParams.batchNo = ''
   dialogQueryParams.originalDocumentNo = []
   dialogQueryParams.replaceDocumentNo = []
-  dialogQueryParams.systemContractStatus = [[]]
+  // dialogQueryParams.systemContractStatus = [[]]
   dialogQueryParams.originalDocumentNofirst = ''
   dialogQueryParams.originalDocumentNoSecond = ''
   dialogQueryParams.originalDocumentNoThree = []
   dialogQueryParams.replaceDocumentNofirst = ''
   dialogQueryParams.replaceDocumentNoSecond = ''
   dialogQueryParams.replaceDocumentNoThree = ''
+  if (!formEl) return
+  formEl.resetFields()
 }
 const getLabel = (source: string, value: string) => {
   let result = ''
@@ -605,6 +669,16 @@ const getLabel = (source: string, value: string) => {
   })
   return result
 }
+// 页面条数改变
+// const handleSizeChange = (val: number) => {
+//   queryParams.pageSize = val
+//   getList()
+// }
+// // 分页
+// const handleCurrentChange = (val: number) => {
+//   queryParams.pageNo = val
+//   getList()
+// }
 
 const init = () => {
   searchHandler()
@@ -612,4 +686,13 @@ const init = () => {
 init()
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+// .show_start {
+//   position: relative;
+//   .el-form-item__label::before {
+//     margin-right: 4px;
+//     color: #f56c6c;
+//     content: '*';
+//   }
+// }
+</style>
