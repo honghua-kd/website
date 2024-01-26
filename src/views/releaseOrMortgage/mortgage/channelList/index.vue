@@ -624,6 +624,10 @@ const changeSwitch = async (row: AgencyListResponse, type: string) => {
   }
   try {
     await API.getAgencyEdit(params)
+    ElMessage({
+      type: 'success',
+      message: '更新成功'
+    })
     getListData()
   } catch {
     getListData()
