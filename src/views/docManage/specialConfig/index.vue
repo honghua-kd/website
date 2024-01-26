@@ -83,11 +83,10 @@
           >
             <el-cascader
               style="width: 550px"
-              check-strictly
               :props="props"
               clearable
-              @change="changeType"
               ref="cascader"
+              @change="changeType"
               v-model="dialogQueryParams.systemContractStatus"
               :options="systemContractStatusOptions"
             />
@@ -194,13 +193,13 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, Ref, computed, nextTick, onMounted } from 'vue'
+import { reactive, ref, Ref, computed, nextTick } from 'vue'
 import SearchBar from '@/components/SearchBar/index.vue'
 import EditDialog from '@/components/EditDialog/index.vue'
 import { searchConfig, tableConfig, dialogContentConfig } from './data'
 import { Plus } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage, ElForm, ElFormItem } from 'element-plus'
-import type { FormInstance } from 'element-plus'
+import type { FormInstance, CascaderValue } from 'element-plus'
 import { SpecialConfigAPI, SystemAPI } from '@/api'
 import type { InternalRuleItem } from 'async-validator'
 import type {
@@ -289,11 +288,12 @@ const getList = () => {
     }
   })
 }
-type OptionType = {
+interface OptionType {
   label: string
   value: string
+  children?: OptionType[]
 }
-
+const props = { multiple: true }
 const systemContractStatusOptions = ref<OptionType[]>([])
 const originalDocumentOptions = ref<OptionType[]>([])
 const originalDocumentSecondOptions = ref<OptionType[]>([])
@@ -374,96 +374,59 @@ const editFormRules = {
     }
   ]
 }
-// const props: CascaderProps = {
-//   expandTrigger: 'hover',
-//   lazy: true,
-//   multiple: true,
-//   async lazyLoad(node, resolve) {
-//     const { value, root, level } = node
-//     if (root) {
-//       const params: DictListRequest = {
-//         dictType: 'SOURCE_SYSTEM_1',
-//         status: 1
-//       }
-//       const { data } = await systemAPI.getSingleDict(params)
-//       systemContractStatusOptions.value = data as OptionType[]
-//       const nodes = data?.map((item) => ({
-//         value: item.value || '',
-//         label: item.label || ''
-//       }))
-//       resolve(nodes)
-//     } else if (level === 1) {
-//       const { code, data } = await changeSystemContract(value)
-//       if (code === 200 && data) {
-//         const nodes = data.map((item) => ({
-//           value: item.value || '',
-//           label: item.label || ''
-//         }))
-//         resolve(nodes)
-//       }
-//     } else {
-//       const params: DictListRequest = {
-//         dictType: 'CONTRACT_STATUS',
-//         status: 1
-//       }
-//       const { data } = await systemAPI.getSingleDict(params)
-//       const nodes = data?.map((item) => ({
-//         value: item.value || '',
-//         label: item.label || '',
-//         leaf: level >= 2
-//       }))
-//       resolve(nodes)
-//     }
-//   }
-// }
 
 const addHandler = () => {
   dialogVisible.value = true
   dialogTitle.value = '新增文书'
 }
-// 获取一级来源系统
-const SystemContractFirstList = async () => {
-  // const params: DictListRequest = {
-  //   dictType: 'SOURCE_SYSTEM_1',
-  //   status: 1
-  // }
-  // const { data } = await systemAPI.getSingleDict(params)
-  // const options = await fetchAndAddChildren(data)
-  // systemContractStatusOptions.value = options
-  // console.log(systemContractStatusOptions.value)
+
+const getContractStatus = async () => {
+  const params: DictListRequest = {
+    dictType: 'CONTRACT_STATUS',
+    status: 1
+  }
+  const { data } = await systemAPI.getSingleDict(params)
+  return data?.map((item) => ({
+    value: item.value || '',
+    label: item.label || '',
+    leaf: true
+  }))
 }
-// 获取二级来源系统
-// const changeSystemContract = async (val: CascaderValue) => {
-//   const params: childrenRequest = {
-//     dictType: 'SOURCE_SYSTEM',
-//     parentValue: val + '',
-//     status: null
-//   }
-//   return await systemAPI.getchildrenInfo(params)
-// }
-// 重新组装来源系统数据
-// const fetchAndAddChildren = async (arr) => {
-//   for (const item of arr) {
-//     debugger
-//     const value = item.value
-//     if (!item.children) {
-//       const { data: SystemContractSecond } = await changeSystemContract(value)
-//       item.children = SystemContractSecond
-// const params: DictListRequest = {
-//   dictType: 'CONTRACT_STATUS',
-//   status: 1
-// }
-// for (const child of SystemContractSecond) {
-//   const { data: SystemContractThree } = await systemAPI.getSingleDict(params)
-// child.children = SystemContractThree
-// }
-//     }
-//     return arr
-//   }
-// }
-onMounted(() => {
-  SystemContractFirstList()
-})
+
+const getSourceSystemContractOptions = async () => {
+  const contractStatus = await getContractStatus()
+  const params: DictListRequest = {
+    dictType: 'SOURCE_SYSTEM_1',
+    status: 1
+  }
+  const { data } = await systemAPI.getSingleDict(params)
+  systemContractStatusOptions.value = await Promise.all(
+    (data || []).map(async (item) => {
+      const params = {
+        dictType: 'SOURCE_SYSTEM',
+        parentValue: item.value + '',
+        status: null
+      }
+      const { data } = await systemAPI.getchildrenInfo(params)
+      const children = await Promise.all(
+        (data || []).map(async (item) => ({
+          value: item.value || '',
+          label: item.label || '',
+          children: contractStatus
+        }))
+      )
+
+      return {
+        value: item.value || '',
+        label: item.label || '',
+        children
+      }
+    })
+  )
+}
+
+getSourceSystemContractOptions()
+
 const getOriginalDocList = async (val: string) => {
   const formData = new FormData()
   formData.append('documentType', val)
@@ -710,8 +673,8 @@ const getLabel = (source: string, value: string) => {
 }
 
 const cascader = ref()
-const changeType = (val: string[]) => {
-  if (!val.length) {
+const changeType = (val: CascaderValue) => {
+  if (Array.isArray(val) && !val.length) {
     nextTick(() => {
       cascader.value.$el.nextSibling.getElementsByClassName(
         'el-input el-input--suffix'
