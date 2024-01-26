@@ -35,7 +35,12 @@
           </el-button>
         </el-tooltip>
         <el-tooltip content="删除" placement="top-start">
-          <el-button type="primary" :icon="Delete" @click="handleDelect">
+          <el-button
+            type="primary"
+            :loading="delLoading"
+            :icon="Delete"
+            @click="handleDelect"
+          >
             删除
           </el-button>
         </el-tooltip>
@@ -55,7 +60,12 @@
           </el-button>
         </el-tooltip>
         <el-tooltip content="下载导入模版" placement="top-start">
-          <el-button type="primary" :icon="Download" @click="downTemplate">
+          <el-button
+            type="primary"
+            :loading="dwonlLoading"
+            :icon="Download"
+            @click="downTemplate"
+          >
             下载导入模版
           </el-button>
         </el-tooltip>
@@ -106,7 +116,9 @@
         </template>
       </el-upload>
       <template #footer>
-        <el-button type="primary" @click="submitUpload">导入</el-button>
+        <el-button type="primary" :loading="expLoading" @click="submitUpload"
+          >导入</el-button
+        >
       </template>
     </el-dialog>
     <OperDialog ref="operRef" @getList="getList" />
@@ -149,6 +161,9 @@ const dictTypes = [
   'DOCUMENT_TEMPLATE_APPLICABLE_TYPE',
   'START_STOP_TASK_STATUS'
 ]
+const delLoading: Ref<boolean> = ref(false)
+const dwonlLoading: Ref<boolean> = ref(false)
+const expLoading: Ref<boolean> = ref(false)
 const dictStore = useDictStore()
 
 onMounted(() => {
@@ -227,11 +242,14 @@ const downTemplate = () => {
   const params = {
     bizType: 'DOCUMENT_TEMPLATE'
   }
+  dwonlLoading.value = true
   CommonApi.getDownLoadTemplate(params)
     .then((res) => {
+      dwonlLoading.value = false
       handleDownloadFile(res)
     })
     .catch((err: Error) => {
+      dwonlLoading.value = false
       throw err
     })
 }
@@ -263,13 +281,13 @@ const submitUpload = () => {
     })
     return
   }
-
   console.log(fileList.value)
   const formData = new FormData()
   fileList.value.forEach((item) => {
     formData.append('file', item.raw as File)
   })
   formData.append('bizType', 'DOCUMENT_TEMPLATE')
+  expLoading.value = true
   CommonApi.getAsyncImport(formData)
     .then((res) => {
       if (res && res.code === 200) {
@@ -281,8 +299,11 @@ const submitUpload = () => {
       upload.value!.clearFiles()
       getList()
       importVisible.value = false
+      expLoading.value = false
     })
     .catch((err: Error) => {
+      expLoading.value = false
+      importVisible.value = false
       throw err
     })
 }
@@ -327,17 +348,23 @@ const handleDelect = () => {
       const ids = selectData.value.map((el: MortgageDocumentVO) => {
         return el.id
       })
+      delLoading.value = true
       API.editDocumentTemplateDelete(ids).then((res) => {
         if (res.code === 200) {
+          delLoading.value = false
           ElMessage({
             type: 'success',
             message: '操作成功'
           })
           getList()
+        } else {
+          delLoading.value = false
         }
       })
     })
-    .catch(() => {})
+    .catch(() => {
+      delLoading.value = false
+    })
 }
 const downloadTemplate = () => {
   const params = {
@@ -383,6 +410,7 @@ const downloadTemplate = () => {
       }
     })
     .catch((err: Error) => {
+      downBtmLoading.value = false
       throw err
     })
 }
@@ -410,6 +438,7 @@ const searchConfig: ISearchUnit[] = [
       colSpan: 6,
       label: '材料模版名称',
       prop: 'templateName',
+      maxlength: 50,
       placeholder: '请输入材料模版名称'
     },
     {
@@ -424,7 +453,7 @@ const searchConfig: ISearchUnit[] = [
       compType: 'el-select',
       colSpan: 6,
       label: '适用业务类型',
-      prop: 'sendStatus',
+      prop: 'applicableType',
       placeholder: '请选适用业务类型',
       options: 'DOCUMENT_TEMPLATE_APPLICABLE_TYPE'
     },
@@ -433,6 +462,7 @@ const searchConfig: ISearchUnit[] = [
       colSpan: 6,
       label: '文书模版编号',
       prop: 'templateCode',
+      maxlength: 50,
       placeholder: '请输入文书模版编号'
     }
   ],

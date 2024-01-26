@@ -420,7 +420,9 @@
     <!--  -->
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="submitForm" type="primary">确定</el-button>
+        <el-button @click="submitForm" type="primary" :loading="btnLoading"
+          >确定</el-button
+        >
         <el-button @click="clickButton">关闭</el-button>
       </span>
     </template>
@@ -690,6 +692,7 @@ const clickButton = async () => {
 }
 const cascaderArea = ref()
 const basicInfoFormRef = ref<InstanceType<typeof ElForm>>()
+const btnLoading = ref<boolean>(false)
 const submitForm = async () => {
   // 校验
   if (!basicInfoFormRef.value) return
@@ -736,6 +739,7 @@ const submitForm = async () => {
       cascaderArea.value[0].getCheckedNodes()[0].pathLabels[2],
     files: filesArr
   }
+  btnLoading.value = true
   SupplierApi.editSupplier(sparams)
     .then((res) => {
       if (res && res.code === 200) {
@@ -743,6 +747,7 @@ const submitForm = async () => {
           type: 'success',
           message: '修改成功'
         })
+        btnLoading.value = false
         emit('closeModel', {
           visible: false,
           type: 'click-close'
@@ -750,6 +755,7 @@ const submitForm = async () => {
       }
     })
     .catch((err: Error) => {
+      btnLoading.value = false
       throw err
     })
 }

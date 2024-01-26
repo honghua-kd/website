@@ -127,7 +127,12 @@
       </el-form>
       <template #footer>
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button :disabled="formLoading" type="primary" @click="submitForm">
+        <el-button
+          :disabled="formLoading"
+          type="primary"
+          :loading="btnLoading"
+          @click="submitForm"
+        >
           确 定
         </el-button>
       </template>
@@ -253,6 +258,7 @@ const formParams = reactive<EditMortgageCityRequest & ExtendParams>({
 const formRef = ref<InstanceType<typeof ElForm>>()
 
 const emit = defineEmits(['success'])
+const btnLoading = ref<boolean>(false)
 const submitForm = async () => {
   if (!formRef.value) return
   const valid = await formRef.value.validate()
@@ -279,6 +285,7 @@ const submitForm = async () => {
     applyMortgage: formParams.mortgageName === '是' ? 1 : 0,
     applyDischarge: formParams.dischargeName === '是' ? 1 : 0
   }
+  btnLoading.value = true
   if (dialogTitle.value === '新增') {
     MortgageCityApi.addMortgageCity(params)
       .then((res) => {
@@ -288,10 +295,12 @@ const submitForm = async () => {
             message: '新增成功'
           })
           dialogVisible.value = false
+          btnLoading.value = false
           emit('success')
         }
       })
       .catch((err: Error) => {
+        btnLoading.value = false
         throw err
       })
   } else {
@@ -302,11 +311,13 @@ const submitForm = async () => {
             type: 'success',
             message: '修改成功'
           })
+          btnLoading.value = false
           dialogVisible.value = false
           emit('success')
         }
       })
       .catch((err: Error) => {
+        btnLoading.value = false
         throw err
       })
   }

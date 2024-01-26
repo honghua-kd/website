@@ -416,9 +416,9 @@ export const setDomFontSize = () => {
   document.getElementsByTagName('html')[0].style.fontSize = fontsize
 }
 
-export function px2rem(pxUnit: string) {
+export function px2rem(pxUnit?: string) {
   const htmlSize = document.documentElement.style.fontSize
-  const pxNum = Number(pxUnit.split('px')[0])
+  const pxNum = pxUnit ? Number(pxUnit.split('px')[0]) : 0
   if (htmlSize && remRootValue) {
     return `${pxNum / remRootValue}rem`
   } else {
