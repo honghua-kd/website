@@ -408,14 +408,11 @@ const getSourceSystemContractOptions = async () => {
         status: null
       }
       const { data } = await systemAPI.getchildrenInfo(params)
-      const children = await Promise.all(
-        (data || []).map(async (item) => ({
-          value: item.value || '',
-          label: item.label || '',
-          children: contractStatus
-        }))
-      )
-
+      const children = (data || []).map((item) => ({
+        value: item.value || '',
+        label: item.label || '',
+        children: contractStatus
+      }))
       return {
         value: item.value || '',
         label: item.label || '',
