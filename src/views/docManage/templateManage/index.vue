@@ -329,6 +329,10 @@ const switchHandler = async (id: string, row: MortgageDocumentVO) => {
   formData.append('id', id)
   formData.append('status', row.status === 1 ? '0' : '1')
   await API.updateDocumentTemplateStatus(formData)
+  ElMessage({
+    type: 'success',
+    message: '更新成功'
+  })
   getList()
 }
 const handleDelect = () => {
@@ -452,9 +456,9 @@ const searchConfig: ISearchUnit[] = [
     {
       compType: 'el-select',
       colSpan: 6,
-      label: '适用业务类型',
+      label: '适用任务类型',
       prop: 'applicableType',
-      placeholder: '请选适用业务类型',
+      placeholder: '请选适用任务类型',
       options: 'DOCUMENT_TEMPLATE_APPLICABLE_TYPE'
     },
     {
