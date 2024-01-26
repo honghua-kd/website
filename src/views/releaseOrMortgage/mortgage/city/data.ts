@@ -78,7 +78,7 @@ export const searchConfig: ISearchUnit[] = [
   [
     {
       compType: '',
-      colSpan: 12,
+      colSpan: 6,
       label: '省市',
       prop: '',
       placeholder: '请输入',
@@ -86,12 +86,13 @@ export const searchConfig: ISearchUnit[] = [
     },
     {
       compType: 'el-input',
-      colSpan: 12,
+      colSpan: 6,
       label: '车牌代码',
       prop: 'licensePlateCode',
       options: '',
       placeholder: '请输入',
       maxlength: 50
     }
-  ]
+  ],
+  []
 ]

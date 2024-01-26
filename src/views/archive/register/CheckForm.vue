@@ -36,7 +36,7 @@
               disabled
             >
               <el-option
-                v-for="(item, index) in expressCompanyOpts"
+                v-for="(item, index) in dictStore.dicts.EXPRESS_COMPANY"
                 :key="index"
                 :label="item.label"
                 :value="(item.label as string)"
@@ -62,10 +62,10 @@
               placeholder="请选择寄送/接收"
             >
               <el-option
-                v-for="(item, index) in expressTypeOpts"
+                v-for="(item, index) in dictStore.dicts.EXPRESS_TYPE"
                 :key="index"
                 :label="item.label"
-                :value="item.value"
+                :value="Number(item.value)"
               />
             </el-select>
           </el-form-item>
@@ -201,10 +201,10 @@
               placeholder="请选择快递状态"
             >
               <el-option
-                v-for="(item, index) in expressStatusOpts"
+                v-for="(item, index) in dictStore.dicts.EXPRESS_STATUS"
                 :key="index"
                 :label="item.label"
-                :value="item.value"
+                :value="Number(item.value)"
               />
             </el-select>
           </el-form-item>
@@ -333,7 +333,8 @@
 
 <script setup lang="ts">
 import { ref, reactive, Ref, watch, computed } from 'vue'
-import type { ExpressDictItem, ExpressListItem, OtherFileList } from '@/api'
+import type { ExpressListItem, OtherFileList } from '@/api'
+import { useDictStore } from '@/store/dict'
 import fileDownload from 'js-file-download'
 import { CommonAPI, ExpressAPI } from '@/api'
 import {
@@ -348,6 +349,7 @@ import {
 import { px2rem } from '@/utils'
 const API = new ExpressAPI()
 const CommonApi = new CommonAPI()
+const dictStore = useDictStore()
 const dialogTitle = ref<string>('邮寄信息登记详情')
 const dialogVisible = ref<boolean>(false)
 const basicInfoForm = reactive<ExpressListItem>({
@@ -422,26 +424,6 @@ const getList = (id: string) => {
     .catch((err: Error) => {
       throw err
     })
-}
-const expressCompanyOpts: Ref<ExpressDictItem[]> = ref([])
-const expressTypeOpts: Ref<ExpressDictItem[]> = ref([])
-const expressStatusOpts: Ref<ExpressDictItem[]> = ref([])
-const getDicts = () => {
-  expressCompanyOpts.value = JSON.parse(
-    localStorage.getItem('EXPRESS_COMPANY') as string
-  )
-  expressTypeOpts.value = JSON.parse(
-    localStorage.getItem('EXPRESS_TYPE') as string
-  )
-  expressTypeOpts.value.forEach((item) => {
-    item.value = Number(item.value)
-  })
-  expressStatusOpts.value = JSON.parse(
-    localStorage.getItem('EXPRESS_STATUS') as string
-  )
-  expressStatusOpts.value.forEach((item) => {
-    item.value = Number(item.value)
-  })
 }
 const getOtherContentList = (id: string) => {
   const params = {
@@ -535,7 +517,6 @@ const open = async (id: string) => {
   dialogVisible.value = true
   init()
   getList(id)
-  await getDicts()
   await getOtherContentList(id)
 }
 

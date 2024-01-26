@@ -1,109 +1,27 @@
 <template>
   <div>
-    <div class="search-container">
-      <el-form
-        ref="queryFormRef"
-        :model="queryParams"
-        class="search-bar"
-        label-width="90px"
+    <div :ref="searchBoxRef">
+      <SearchBar
+        v-model="queryParams"
+        :searchConfig="searchConfig"
+        :labelWidth="'110px'"
+        :dictArray="dictTypes"
+        @reset="reset"
+        @search="searchHandler"
       >
-        <el-row :gutter="20">
-          <el-col :span="6">
-            <el-form-item label="快递单号" prop="expressNo">
-              <el-input
-                v-model="queryParams.expressNo"
-                clearable
-                placeholder="请输入快递单号"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="快递公司" prop="expressCompany">
-              <el-select
-                v-model="queryParams.expressCompany"
-                style="width: 100%"
-                clearable
-                placeholder="请选择快递公司"
-              >
-                <el-option
-                  v-for="(item, index) in expressCompanyOpts"
-                  :key="index"
-                  :label="item.label"
-                  :value="item.label"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="登记时间" prop="createTime">
-              <el-date-picker
-                v-model="queryParams.createTime"
-                type="date"
-                :default-value="new Date()"
-                format="YYYY-MM-DD"
-                style="width: 100%"
-                value-format="YYYY-MM-DD"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="6">
-            <el-form-item label="寄送/接收" prop="expressType">
-              <el-select
-                v-model="queryParams.expressType"
-                style="width: 100%"
-                clearable
-                placeholder="请选择寄送/接收"
-              >
-                <el-option
-                  v-for="(item, index) in expressTypeOpts"
-                  :key="index"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="快递内容" prop="expressContent">
-              <el-select
-                v-model="queryParams.expressContent"
-                style="width: 100%"
-                clearable
-                placeholder="请选择快递内容"
-              >
-                <el-option
-                  v-for="(item, index) in expressContentOpts"
-                  :key="index"
-                  :label="item.label"
-                  :value="item.label"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="快递备注" prop="expressContentRemark">
-              <el-input
-                v-model="queryParams.expressContentRemark"
-                clearable
-                placeholder="请输入快递备注"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row justify="end">
-          <el-col :span="6" class="btn-row">
-            <el-form-item>
-              <el-button type="primary" @click="searchHandler" :icon="Search"
-                >查询</el-button
-              >
-              <el-button @click="reset" :icon="Refresh">重置</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
+        <template #date>
+          <el-date-picker
+            v-model="queryParams.createTime"
+            type="date"
+            :default-value="new Date()"
+            format="YYYY-MM-DD"
+            style="width: 100%"
+            value-format="YYYY-MM-DD"
+          />
+        </template>
+      </SearchBar>
     </div>
+    <el-divider border-style="dashed" />
     <div>
       <Table
         :data="tableData"
@@ -170,26 +88,26 @@
         <template #default="{ row, prop }">
           <!-- 快递状态 -->
           <span v-if="prop === 'expressStatus'">
-            {{ getExpressStatus(row.expressStatus) }}
+            {{ filterDictLabel('EXPRESS_STATUS', row.expressStatus) }}
           </span>
           <!-- 寄送/接收 -->
-          <span v-else-if="prop === 'expressType'">
-            {{ getExpressType(row.expressType) }}
+          <span v-if="prop === 'expressType'">
+            {{ filterDictLabel('EXPRESS_TYPE', row.expressType) }}
           </span>
           <!-- 寄送日期/接收日期 -->
-          <span v-else-if="prop === 'sendTime'">
+          <span v-if="prop === 'sendTime'">
             {{ getRealTime(row.expressType, row.sendTime, row.receiveTime) }}
           </span>
           <!-- 快递主要内容 -->
-          <span v-else-if="prop === 'expressContentList'">
+          <span v-if="prop === 'expressContentList'">
             {{ getContentList(row.expressContentList) }}
           </span>
           <!-- 登记时间 -->
-          <span v-else-if="prop === 'createTime'">
+          <span v-if="prop === 'createTime'">
             {{ getDate(row.createTime) }}
           </span>
           <!-- 更新时间 -->
-          <span v-else-if="prop === 'updateTime'">
+          <span v-if="prop === 'updateTime'">
             {{ getDate(row.updateTime) }}
           </span>
         </template>
@@ -236,9 +154,9 @@ import { ref, reactive, Ref, computed, onMounted } from 'vue'
 import { useRouter } from '@toystory/lotso'
 import dayjs from 'dayjs'
 import Table from '@/components/Table/index.vue'
-import { tableConfig } from './data'
-// import { px2rem } from '@/utils'
-import { ElMessageBox, ElMessage, ElForm } from 'element-plus'
+import { tableConfig, searchConfig } from './data'
+import SearchBar from '@/components/SearchBar/index.vue'
+import { ElMessageBox, ElMessage } from 'element-plus'
 import { CommonAPI, ExpressAPI } from '@/api'
 import {
   Plus,
@@ -246,8 +164,7 @@ import {
   Upload,
   Download,
   Check,
-  Search,
-  Refresh
+  Search
 } from '@element-plus/icons-vue'
 import EditForm from './EditForm.vue'
 import LogisticsInfoForm from './LogisticsInfoForm.vue'
@@ -256,16 +173,15 @@ import ImportForm from './ImportForm.vue'
 import type {
   PageRequest,
   ExpressInfoCardListRequest,
-  DictItem,
   ExpressListItem,
   ExpressContentList
 } from '@/api'
 const { router } = useRouter()
+import { useDictStore } from '@/store/dict'
 import fileDownload from 'js-file-download'
 type QueryParams = ExpressInfoCardListRequest & PageRequest
 const API = new ExpressAPI()
 const CommonApi = new CommonAPI()
-const queryFormRef = ref<InstanceType<typeof ElForm>>()
 const dialogTitle = ref<string>('')
 const tableLoading = ref<boolean>(false)
 const pageTotal: Ref<number> = ref(0) // 列表的总页数
@@ -281,7 +197,12 @@ const queryParams = reactive<QueryParams>({
 })
 const tableData = reactive<ExpressListItem[]>([])
 const selectData: Ref<ExpressListItem[]> = ref([])
-
+const dictTypes = [
+  'EXPRESS_STATUS',
+  'EXPRESS_CONTENT',
+  'EXPRESS_COMPANY',
+  'EXPRESS_TYPE'
+]
 // 表格最大高度
 const searchBoxRef = ref()
 const tableHeight = computed(() => {
@@ -328,6 +249,7 @@ const reset = () => {
   queryParams.expressType = ''
   queryParams.expressContent = ''
   queryParams.expressContentRemark = ''
+  getList()
 }
 // 获取列表
 const getList = () => {
@@ -519,73 +441,12 @@ const importResultHandler = () => {
     }
   })
 }
-
-// 批量获取数据字典
-const expressCompanyOpts: Ref<DictItem[]> = ref([])
-const expressTypeOpts: Ref<DictItem[]> = ref([])
-const expressContentOpts: Ref<DictItem[]> = ref([])
-const getDicts = () => {
-  const dictTypes = [
-    'EXPRESS_STATUS',
-    'EXPRESS_CONTENT',
-    'EXPRESS_COMPANY',
-    'EXPRESS_TYPE'
-  ]
-  const params = {
-    dictTypes
-  }
-  CommonApi.getDictsList(params)
-    .then((res) => {
-      if (res && res.code === 200) {
-        expressCompanyOpts.value = res?.data?.EXPRESS_COMPANY as DictItem[]
-        expressTypeOpts.value = res?.data?.EXPRESS_TYPE as DictItem[]
-        expressContentOpts.value = res?.data?.EXPRESS_CONTENT as DictItem[]
-        const expressStatus = res?.data?.EXPRESS_STATUS as DictItem[]
-        window.localStorage.setItem(
-          'EXPRESS_STATUS',
-          JSON.stringify(expressStatus)
-        )
-        window.localStorage.setItem(
-          'EXPRESS_CONTENT',
-          JSON.stringify(expressContentOpts.value)
-        )
-        window.localStorage.setItem(
-          'EXPRESS_COMPANY',
-          JSON.stringify(expressCompanyOpts.value)
-        )
-        window.localStorage.setItem(
-          'EXPRESS_TYPE',
-          JSON.stringify(expressTypeOpts.value)
-        )
-      }
-    })
-    .catch((err: Error) => {
-      throw err
-    })
-}
-// 快递状态处理
-const getExpressStatus = (status: number) => {
-  let topic = ''
-  if (status === 0) {
-    topic = '未接收'
-  } else if (status === 1) {
-    topic = '已接收'
-  } else if (status === 2) {
-    topic = '问题件'
-  }
-  return topic
+const dictStore = useDictStore()
+const filterDictLabel = (dictCode: string, value: string | number) => {
+  return dictStore.dicts[dictCode]?.find((item) => item.value === String(value))
+    ?.label
 }
 
-// 寄送接收状态
-const getExpressType = (status: number) => {
-  let topic = ''
-  if (status === 1) {
-    topic = '接收'
-  } else if (status === 0) {
-    topic = '寄送'
-  }
-  return topic
-}
 const getRealTime = (type: number, stime: string, rtime: string) => {
   if (type === 0) {
     return stime ? stime.slice(0, 10) : ''
@@ -601,7 +462,7 @@ const getDate = (datetime: string) => {
 
 const init = () => {
   getList()
-  getDicts()
+  // getDicts()
 }
 onMounted(() => {
   init()

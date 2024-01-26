@@ -96,7 +96,9 @@
         </el-row>
       </el-form>
       <template #footer>
-        <el-button type="primary" @click="addHandler"> 保 存 </el-button>
+        <el-button type="primary" @click="addHandler" :loading="btnLoading">
+          保 存
+        </el-button>
         <el-button type="primary" @click="dialogVisible = false">
           取 消
         </el-button>
@@ -132,17 +134,21 @@ const basicInfoForm = reactive<UsualAddressListItem>({
   value: ''
 })
 const emit = defineEmits(['success'])
+const btnLoading = ref<boolean>(false)
 const addHandler = async () => {
   if (!formRef.value) return
   const valid = await formRef.value.validate()
   if (!valid) return
+  const params = {
+    userName: basicInfoForm.userName,
+    userPhone: basicInfoForm.userPhone,
+    userMail: basicInfoForm.userMail,
+    userAddress: basicInfoForm.userAddress,
+    id: basicInfoForm.id
+  }
+  btnLoading.value = true
   if (props.title === '新增联系人信息') {
-    const params = {
-      userName: basicInfoForm.userName,
-      userPhone: basicInfoForm.userPhone,
-      userMail: basicInfoForm.userMail,
-      userAddress: basicInfoForm.userAddress
-    }
+    delete params.id
     API.addUsualAddress(params)
       .then((res) => {
         if (res && res.code === 200) {
@@ -150,21 +156,16 @@ const addHandler = async () => {
             type: 'success',
             message: '新增成功'
           })
+          btnLoading.value = false
           dialogVisible.value = false
           emit('success')
         }
       })
       .catch((err: Error) => {
+        btnLoading.value = false
         console.log(err)
       })
   } else {
-    const params = {
-      userName: basicInfoForm.userName,
-      userPhone: basicInfoForm.userPhone,
-      userMail: basicInfoForm.userMail,
-      userAddress: basicInfoForm.userAddress,
-      id: basicInfoForm.id
-    }
     API.editUsualAddress(params)
       .then((res) => {
         if (res && res.code === 200) {
@@ -172,11 +173,13 @@ const addHandler = async () => {
             type: 'success',
             message: '修改成功'
           })
+          btnLoading.value = false
           dialogVisible.value = false
           emit('success')
         }
       })
       .catch((err: Error) => {
+        btnLoading.value = false
         console.log(err)
       })
   }
