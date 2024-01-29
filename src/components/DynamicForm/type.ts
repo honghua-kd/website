@@ -18,7 +18,7 @@ export interface OptionItem {
 }
 
 export interface BaseFormItemProps {
-  type: ComponentsName // 组件类型
+  type?: ComponentsName // 组件类型
   slotName?: string // 插槽名称
   options?: OptionItem[] | Promise<OptionItem[]> // 选项数据，当type为select时必传
   label: string
@@ -69,6 +69,7 @@ export interface DynamicFormProps extends BaseFormProps {
   // formItem的类型 与 组件类型 的集合
   data: DynamicFormDataItem[]
   modelValue: FormModelValue
+  class?: string
   colNum?: number // 列数
   gutter?: number // 间隔距离
   visibleRows?: number // 高级搜索默认显示行数，不传为全部展示

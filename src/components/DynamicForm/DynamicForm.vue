@@ -1,62 +1,73 @@
 <template>
-  <el-form
-    class="dynamic-form"
-    ref="dynamicFormRef"
-    :rules="rules"
-    :inline="inline"
-    :labelPosition="labelPosition"
-    :labelWidth="formLabelWidth"
-    :labelSuffix="labelSuffix"
-    :hideRequiredAsterisk="hideRequiredAsterisk"
-    :requireAsteriskPosition="requireAsteriskPosition"
-    :showMessage="showMessage"
-    :inlineMessage="inlineMessage"
-    :statusIcon="statusIcon"
-    :validateOnRuleChange="validateOnRuleChange"
-    :size="size"
-    :disabled="disabled"
-    :scrollToError="scrollToError"
-    :model="formValue"
+  <div
+    :class="{
+      [`${props.class || ''}`]: !!props.class,
+      'has-expand': visibleRows && visibleRows < maxRow
+    }"
   >
-    <template v-for="rowNum in dynamicData.slice(-1)[0].row" :key="rowNum">
-      <el-row
-        :gutter="gutter || 20"
-        v-if="rowNum <= showRows"
-        style="width: 100%"
-      >
-        <el-col
-          :span="dynamicItem.col"
-          v-for="dynamicItem in dynamicData.filter(
-            (item) => item.row === rowNum
-          )"
-          :key="dynamicItem.prop"
+    <el-form
+      class="dynamic-form"
+      ref="dynamicFormRef"
+      :rules="rules"
+      :inline="inline"
+      :labelPosition="labelPosition"
+      :labelWidth="formLabelWidth"
+      :labelSuffix="labelSuffix"
+      :hideRequiredAsterisk="hideRequiredAsterisk"
+      :requireAsteriskPosition="requireAsteriskPosition"
+      :showMessage="showMessage"
+      :inlineMessage="inlineMessage"
+      :statusIcon="statusIcon"
+      :validateOnRuleChange="validateOnRuleChange"
+      :size="size"
+      :disabled="disabled"
+      :scrollToError="scrollToError"
+      :model="formValue"
+    >
+      <template v-for="rowNum in dynamicData.slice(-1)[0].row" :key="rowNum">
+        <el-row
+          :gutter="gutter || 20"
+          v-if="rowNum <= showRows"
           style="width: 100%"
         >
-          <DynamicFormItem
-            v-bind="dynamicItem"
-            v-model="formValue[dynamicItem.prop]"
-          />
-        </el-col>
-      </el-row>
-    </template>
-  </el-form>
-  <div class="exand" v-if="visibleRows && visibleRows < maxRow">
-    <el-link
-      v-if="showRows < maxRow"
-      type="primary"
-      :icon="ArrowDownBold"
-      :underline="false"
-      @click="showRows = maxRow"
-      >展开</el-link
-    >
-    <el-link
-      v-if="showRows === maxRow"
-      type="primary"
-      :icon="ArrowUpBold"
-      :underline="false"
-      @click="showRows = visibleRows"
-      >收起</el-link
-    >
+          <el-col
+            :span="dynamicItem.col"
+            v-for="dynamicItem in dynamicData.filter(
+              (item) => item.row === rowNum
+            )"
+            :key="dynamicItem.prop"
+            style="width: 100%"
+          >
+            <DynamicFormItem
+              v-bind="dynamicItem"
+              v-model="formValue[dynamicItem.prop]"
+            >
+              <template v-if="dynamicItem.slotName" #[dynamicItem.slotName]>
+                <slot :name="dynamicItem.slotName" />
+              </template>
+            </DynamicFormItem>
+          </el-col>
+        </el-row>
+      </template>
+    </el-form>
+    <div class="exand" v-if="visibleRows && visibleRows < maxRow">
+      <el-link
+        v-if="showRows < maxRow"
+        type="primary"
+        :icon="ArrowDownBold"
+        :underline="false"
+        @click="showRows = maxRow"
+        >展开</el-link
+      >
+      <el-link
+        v-if="showRows === maxRow"
+        type="primary"
+        :icon="ArrowUpBold"
+        :underline="false"
+        @click="showRows = visibleRows"
+        >收起</el-link
+      >
+    </div>
   </div>
 </template>
 
