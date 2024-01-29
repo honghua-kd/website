@@ -83,9 +83,10 @@
           >
             <el-cascader
               style="width: 550px"
-              check-strictly
               :props="props"
               clearable
+              ref="cascader"
+              @change="changeType"
               v-model="dialogQueryParams.systemContractStatus"
               :options="systemContractStatusOptions"
             />
@@ -198,7 +199,7 @@ import EditDialog from '@/components/EditDialog/index.vue'
 import { searchConfig, tableConfig, dialogContentConfig } from './data'
 import { Plus } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage, ElForm, ElFormItem } from 'element-plus'
-import type { CascaderValue, CascaderProps, FormInstance } from 'element-plus'
+import type { FormInstance, CascaderValue } from 'element-plus'
 import { SpecialConfigAPI, SystemAPI } from '@/api'
 import type { InternalRuleItem } from 'async-validator'
 import type {
@@ -206,8 +207,8 @@ import type {
   ListCell,
   SpecialListRequest,
   EditRequest,
-  DictListRequest,
-  childrenRequest
+  DictListRequest
+  // childrenRequest
 } from '@/api'
 import { px2rem } from '@/utils'
 import { useDictStore } from '@/store/dict'
@@ -287,11 +288,12 @@ const getList = () => {
     }
   })
 }
-type OptionType = {
+interface OptionType {
   label: string
   value: string
+  children?: OptionType[]
 }
-
+const props = { multiple: true }
 const systemContractStatusOptions = ref<OptionType[]>([])
 const originalDocumentOptions = ref<OptionType[]>([])
 const originalDocumentSecondOptions = ref<OptionType[]>([])
@@ -372,62 +374,55 @@ const editFormRules = {
     }
   ]
 }
-const props: CascaderProps = {
-  expandTrigger: 'hover',
-  lazy: true,
-  multiple: true,
-  async lazyLoad(node, resolve) {
-    const { value, root, level } = node
-    if (root) {
-      const params: DictListRequest = {
-        dictType: 'SOURCE_SYSTEM_1',
-        status: 1
-      }
-      const { data } = await systemAPI.getSingleDict(params)
-      systemContractStatusOptions.value = data as OptionType[]
-      const nodes = data?.map((item) => ({
-        value: item.value || '',
-        label: item.label || ''
-      }))
-      resolve(nodes)
-    } else if (level === 1) {
-      const { code, data } = await changeSystemContract(value)
-      if (code === 200 && data) {
-        const nodes = data.map((item) => ({
-          value: item.value || '',
-          label: item.label || ''
-        }))
-        resolve(nodes)
-      }
-    } else {
-      const params: DictListRequest = {
-        dictType: 'CONTRACT_STATUS',
-        status: 1
-      }
-      const { data } = await systemAPI.getSingleDict(params)
-      const nodes = data?.map((item) => ({
-        value: item.value || '',
-        label: item.label || '',
-        leaf: level >= 2
-      }))
-      resolve(nodes)
-    }
-  }
-}
 
 const addHandler = () => {
   dialogVisible.value = true
   dialogTitle.value = '新增文书'
 }
-// 获取二级来源系统
-const changeSystemContract = async (val: CascaderValue) => {
-  const params: childrenRequest = {
-    dictType: 'SOURCE_SYSTEM',
-    parentValue: val + '',
-    status: null
+
+const getContractStatus = async () => {
+  const params: DictListRequest = {
+    dictType: 'CONTRACT_STATUS',
+    status: 1
   }
-  return await systemAPI.getchildrenInfo(params)
+  const { data } = await systemAPI.getSingleDict(params)
+  return data?.map((item) => ({
+    value: item.value || '',
+    label: item.label || '',
+    leaf: true
+  }))
 }
+
+const getSourceSystemContractOptions = async () => {
+  const contractStatus = await getContractStatus()
+  const params: DictListRequest = {
+    dictType: 'SOURCE_SYSTEM_1',
+    status: 1
+  }
+  const { data } = await systemAPI.getSingleDict(params)
+  systemContractStatusOptions.value = await Promise.all(
+    (data || []).map(async (item) => {
+      const params = {
+        dictType: 'SOURCE_SYSTEM',
+        parentValue: item.value + '',
+        status: null
+      }
+      const { data } = await systemAPI.getchildrenInfo(params)
+      const children = (data || []).map((item) => ({
+        value: item.value || '',
+        label: item.label || '',
+        children: contractStatus
+      }))
+      return {
+        value: item.value || '',
+        label: item.label || '',
+        children
+      }
+    })
+  )
+}
+
+getSourceSystemContractOptions()
 
 const getOriginalDocList = async (val: string) => {
   const formData = new FormData()
@@ -468,16 +463,20 @@ const changeOriginalDoc = async (
   }))
   if (arr) {
     if (type === 'original') {
+      // 切换原始文书类型
       originalDocumentSecondOptions.value = arr
       if (!isshow) {
         dialogQueryParams.originalDocumentNoSecond = ''
         dialogQueryParams.originalDocumentNoThree = []
+        originalDocumentThreeOptions.value = []
       }
     } else {
+      // 切换替换文书类型
       replaceDocumentSecondOptions.value = arr
       if (!isshow) {
         dialogQueryParams.replaceDocumentNoSecond = ''
         dialogQueryParams.replaceDocumentNoThree = ''
+        replaceDocumentThreeOptions.value = []
       }
     }
   }
@@ -649,15 +648,24 @@ const closeEditDialog = (formEl: FormInstance | undefined) => {
   dialogQueryParams.batchNo = ''
   dialogQueryParams.originalDocumentNo = []
   dialogQueryParams.replaceDocumentNo = []
-  // dialogQueryParams.systemContractStatus = [[]]
   dialogQueryParams.originalDocumentNofirst = ''
   dialogQueryParams.originalDocumentNoSecond = ''
   dialogQueryParams.originalDocumentNoThree = []
   dialogQueryParams.replaceDocumentNofirst = ''
   dialogQueryParams.replaceDocumentNoSecond = ''
   dialogQueryParams.replaceDocumentNoThree = ''
+  dialogQueryParams.systemContractStatus = [[]]
+  originalDocumentSecondOptions.value = []
+  originalDocumentThreeOptions.value = []
+  replaceDocumentSecondOptions.value = []
+  replaceDocumentThreeOptions.value = []
   if (!formEl) return
   formEl.resetFields()
+  nextTick(() => {
+    cascader.value.$el.nextSibling.getElementsByClassName(
+      'el-input el-input--suffix'
+    )[0].children[0].children[0].style.height = ''
+  })
 }
 const getLabel = (source: string, value: string) => {
   let result = ''
@@ -669,16 +677,17 @@ const getLabel = (source: string, value: string) => {
   })
   return result
 }
-// 页面条数改变
-// const handleSizeChange = (val: number) => {
-//   queryParams.pageSize = val
-//   getList()
-// }
-// // 分页
-// const handleCurrentChange = (val: number) => {
-//   queryParams.pageNo = val
-//   getList()
-// }
+
+const cascader = ref()
+const changeType = (val: CascaderValue) => {
+  if (Array.isArray(val) && !val.length) {
+    nextTick(() => {
+      cascader.value.$el.nextSibling.getElementsByClassName(
+        'el-input el-input--suffix'
+      )[0].children[0].children[0].style.height = ''
+    })
+  }
+}
 
 const init = () => {
   searchHandler()
@@ -686,13 +695,4 @@ const init = () => {
 init()
 </script>
 
-<style lang="scss">
-// .show_start {
-//   position: relative;
-//   .el-form-item__label::before {
-//     margin-right: 4px;
-//     color: #f56c6c;
-//     content: '*';
-//   }
-// }
-</style>
+<style lang="scss"></style>

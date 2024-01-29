@@ -105,7 +105,7 @@
               <el-input
                 v-model.trim="formParams.remark"
                 clearable
-                maxlength="1000"
+                maxlength="500"
               />
             </el-form-item>
           </el-col>

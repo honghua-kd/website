@@ -412,6 +412,10 @@ const changeSwitch = async (row: DocumentPageResponse) => {
   formData.append('id', row.id + '')
   formData.append('status', row.status === 1 ? '0' : '1')
   await API.editStatus(formData)
+  ElMessage({
+    type: 'success',
+    message: '更新成功'
+  })
   getListData()
 }
 

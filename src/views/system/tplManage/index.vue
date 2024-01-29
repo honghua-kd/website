@@ -1,13 +1,12 @@
 <template>
   <div class="page-notice-center">
     <!-- 搜索工作栏 -->
-    <div class="scan-search-container" ref="searchBoxRef">
-      <SearchBar
+    <div class="search-container" ref="searchBoxRef">
+      <SearchField
+        :data="searchConfig"
         v-model="queryParams"
-        :dictArray="dictTypes"
-        :searchConfig="searchConfig"
-        :showExpand="false"
-        @reset="reset"
+        :visibleRows="2"
+        :colNum="3"
         @search="getList"
       >
         <template #businessCategory>
@@ -18,7 +17,7 @@
             clearable
           />
         </template>
-      </SearchBar>
+      </SearchField>
     </div>
     <el-divider border-style="dashed" />
 
@@ -159,7 +158,7 @@ import type {
 } from 'element-plus'
 import { useUserStore } from '@toystory/lotso'
 
-const dictTypes = ['NOTICE_MESSGAE_TYPE', 'NOTICE_STATUS']
+// const dictTypes = ['NOTICE_MESSGAE_TYPE', 'NOTICE_STATUS']
 
 const API = new SystemAPI()
 const commonAPI = new CommonAPI()
@@ -328,13 +327,13 @@ const cascaderProps: CascaderProps = {
 }
 
 // 重置
-const reset = () => {
-  queryParams.fileName = ''
-  queryParams.fileCode = ''
-  queryParams.businessCategory = ''
-  queryParams.businessSubcategory = ''
-  businessCascader.value = []
-}
+// const reset = () => {
+//   queryParams.fileName = ''
+//   queryParams.fileCode = ''
+//   queryParams.businessCategory = ''
+//   queryParams.businessSubcategory = ''
+//   businessCascader.value = []
+// }
 
 const tableLoading = ref(false)
 const tableData = reactive<TemplateListItem[]>([])
@@ -462,6 +461,9 @@ getList()
 </script>
 
 <style lang="scss" scoped>
+.search-container {
+  padding-top: 18px;
+}
 .width-full {
   width: 100%;
 }

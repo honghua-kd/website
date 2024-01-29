@@ -1,33 +1,26 @@
-import type { ISearchUnit } from '@/components/SearchBar/type'
+import type { DynamicFormDataItem } from '@/components/SearchField/type'
 import type { ITableConfigProps } from '@/components/Table/type'
 
-export const searchConfig: ISearchUnit[] = [
-  [
-    {
-      compType: 'el-input',
-      colSpan: 8,
-      label: '模板名称',
-      prop: 'fileName',
-      placeholder: '请输入模板名称',
-      options: 'NOTICE_STATUS'
-    },
-    {
-      compType: 'el-input',
-      colSpan: 8,
-      label: '附件代码',
-      prop: 'fileCode',
-      placeholder: '请输入附件代码'
-    },
-    {
-      compType: 'el-cascader',
-      colSpan: 8,
-      label: '业务类型',
-      prop: 'businessCategory',
-      placeholder: '请选择业务类型',
-      slotName: 'businessCategory'
-      // BUSINESS_TEMPLATE_TYPE
-    }
-  ]
+export const searchConfig: DynamicFormDataItem[] = [
+  {
+    type: 'el-input',
+    label: '模板名称',
+    prop: 'fileName',
+    placeholder: '请输入模板名称'
+  },
+  {
+    type: 'el-input',
+    label: '附件代码',
+    prop: 'fileCode',
+    placeholder: '请输入附件代码'
+  },
+  {
+    slotName: 'businessCategory',
+    label: '业务类型',
+    prop: 'businessCategory',
+    placeholder: '请选择业务类型'
+    // BUSINESS_TEMPLATE_TYPE
+  }
 ]
 
 export const tableConfig: ITableConfigProps[] = [
