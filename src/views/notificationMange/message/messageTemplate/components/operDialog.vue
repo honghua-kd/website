@@ -582,6 +582,7 @@ const handleLiRight = (item: RuleConditionBusiFieldDto) => {
 }
 const handleInput = (e: string) => {
   sysParm.busiFieldCnName = e
+  nowLiRightList.value = []
   getSysList()
 }
 const handleBlur = (e: FocusEvent) => {
