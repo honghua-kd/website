@@ -657,6 +657,11 @@ const closeEditDialog = (formEl: FormInstance | undefined) => {
   replaceDocumentThreeOptions.value = []
   if (!formEl) return
   formEl.resetFields()
+  nextTick(() => {
+    cascader.value.$el.nextSibling.getElementsByClassName(
+      'el-input el-input--suffix'
+    )[0].children[0].children[0].style.height = ''
+  })
 }
 const getLabel = (source: string, value: string) => {
   let result = ''
