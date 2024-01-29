@@ -463,16 +463,20 @@ const changeOriginalDoc = async (
   }))
   if (arr) {
     if (type === 'original') {
+      // 切换原始文书类型
       originalDocumentSecondOptions.value = arr
       if (!isshow) {
         dialogQueryParams.originalDocumentNoSecond = ''
         dialogQueryParams.originalDocumentNoThree = []
+        originalDocumentThreeOptions.value = []
       }
     } else {
+      // 切换替换文书类型
       replaceDocumentSecondOptions.value = arr
       if (!isshow) {
         dialogQueryParams.replaceDocumentNoSecond = ''
         dialogQueryParams.replaceDocumentNoThree = ''
+        replaceDocumentThreeOptions.value = []
       }
     }
   }
