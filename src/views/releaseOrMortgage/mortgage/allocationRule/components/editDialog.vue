@@ -688,13 +688,13 @@ const initOptions = async () => {
   alPerson.value = state.formParams.allocationUserName
     ? state.formParams.allocationUserName.split(',')
     : []
-  alPersonCode.value = state.formParams.allocationUserName
+  alPersonCode.value = state.formParams.allocationUserCode
     ? state.formParams.allocationUserCode.split(',')
     : []
   alEmployee.value = state.formParams.allocationUserName
     ? state.formParams.allocationUserName.split(',')
     : []
-  alEmployeeCode.value = state.formParams.allocationUserName
+  alEmployeeCode.value = state.formParams.allocationUserCode
     ? state.formParams.allocationUserCode.split(',')
     : []
 }
