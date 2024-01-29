@@ -14,7 +14,7 @@ declare module 'vue' {
     DynamicForm: typeof import('./../components/DynamicForm/DynamicForm.vue')['default']
     DynamicFormItem: typeof import('./../components/DynamicForm/DynamicFormItem.vue')['default']
     EditDialog: typeof import('./../components/EditDialog/index.vue')['default']
-     ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
+    ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElBadge: typeof import('element-plus/es')['ElBadge']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
