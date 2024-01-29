@@ -101,7 +101,79 @@
                 :rows="5"
                 type="textarea"
                 placeholder="请输入内容"
+                @blur="handleBlur"
+                ref="contextRef"
               />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col>
+            <el-form-item>
+              <div class="flex-context">
+                <el-row>
+                  <el-col :span="12">
+                    <div class="conf-container">
+                      <div class="title">表列表</div>
+                      <div class="content">
+                        <ul>
+                          <template
+                            v-for="item in sysTable"
+                            :key="item.ruleLibraryTableEnName"
+                          >
+                            <li
+                              :class="`item ${item.active ? 'active' : ''}`"
+                              @click="handleLiLeft(item)"
+                            >
+                              <span class="name">{{
+                                item.ruleLibraryBusiTableCnName
+                              }}</span>
+                            </li>
+                          </template>
+                        </ul>
+                      </div>
+                    </div>
+                  </el-col>
+                  <el-col :span="12">
+                    <div class="conf-container">
+                      <div class="title flx-centers">
+                        <span>字段列表</span>
+                        <div>
+                          <el-input
+                            v-model="tableSearch"
+                            size="small"
+                            placeholder="请输入字典名称进行查询"
+                            @input="handleInput"
+                          />
+                        </div>
+                      </div>
+                      <div class="content">
+                        <ul>
+                          <template
+                            v-for="item in nowLiRightList"
+                            :key="item.ruleLibraryTableEnName"
+                          >
+                            <li
+                              :class="`item ${item.active ? 'active' : ''}`"
+                              @click="handleLiRight(item)"
+                            >
+                              <span class="name">{{
+                                item.ruleLibraryBusiFieldCnName
+                              }}</span>
+                              <el-tag>{{
+                                getLabel(
+                                  'RULE_DATA_TYPE',
+                                  item.ruleLibraryFieldType
+                                )
+                              }}</el-tag>
+                            </li>
+                          </template>
+                        </ul>
+                      </div>
+                    </div>
+                  </el-col>
+                </el-row>
+              </div>
             </el-form-item>
           </el-col>
         </el-row>
@@ -122,10 +194,18 @@
 <script setup lang="ts">
 import { reactive, ref, Ref } from 'vue'
 import { ElForm, ElMessage, ElTree } from 'element-plus'
-import type { List } from '@/api/message/types/response.ts'
+import type {
+  List,
+  RuleConditionBusiConfigDto,
+  RuleConditionBusiFieldDto
+} from '@/api/message/types/response.ts'
 import type { DictItem } from '@/api'
 import type { CascaderOption } from 'element-plus'
 import { MessageAPI } from '@/api'
+import type { BusRequest } from '@/api/message/types/request.ts'
+import { useDictStore } from '@/store/dict'
+const dictStore = useDictStore()
+
 // import type {
 //   TreeNodeData,
 //   TreeKey
@@ -156,7 +236,17 @@ const dialogTitle: Ref<string> = ref('')
 const dialogVisible: Ref<boolean> = ref(false)
 const formLoading: Ref<boolean> = ref(false)
 const currentType: Ref<string> = ref('')
-
+const tableSearch: Ref<string> = ref('')
+const sysParm = reactive<BusRequest>({
+  busiFieldCnName: '',
+  busiType: 'SMS'
+})
+const sysTable: Ref<RuleConditionBusiConfigDto[]> = ref([])
+// const nowLiLeftList: Ref<RuleConditionBusiConfigDto[]> = ref([])
+const nowLiRightList: Ref<RuleConditionBusiFieldDto[]> = ref([])
+const startIndex: Ref<number> = ref(0)
+const blurShow: Ref<boolean> = ref(false)
+const contextRef = ref()
 type children = {
   value: string
   label: string
@@ -389,10 +479,40 @@ const submitForm = async () => {
       })
   }
 }
+const getSysList = () => {
+  API.queryBusiCondition(sysParm)
+    .then((res) => {
+      if (res && res.code === 200) {
+        res?.data?.list.forEach((el: RuleConditionBusiConfigDto) => {
+          el.active = false
+        })
+        sysTable.value = res?.data?.list || []
+      }
+    })
+    .catch((err: Error) => {
+      throw err
+    })
+}
+const getLabel = (source: string, value: string) => {
+  let result = ''
+  const arr = dictStore.dicts[source] || []
+  arr.forEach((i) => {
+    if (i.value === value) {
+      result = i.label
+    }
+  })
+  return result
+}
 const open = (type: string, row: List) => {
   dialogVisible.value = true
   currentType.value = type
   dialogTitle.value = type === 'add' ? '新增' : '编辑'
+  sysTable.value = []
+  nowLiRightList.value = []
+  tableSearch.value = ''
+  sysParm.busiFieldCnName = ''
+  blurShow.value = false
+  getSysList()
   if (type === 'edit') {
     const defList: string[] = []
     if (row?.sourceSystem12List && row?.sourceSystem12List.length > 0) {
@@ -428,6 +548,49 @@ const open = (type: string, row: List) => {
     formParams.sourceSystemWeb = []
   }
 }
+const handleLiLeft = (item: RuleConditionBusiConfigDto) => {
+  sysTable.value.forEach((el: RuleConditionBusiConfigDto) => {
+    el.active = false
+  })
+  item.active = true
+  item.ruleLibraryFieldList.forEach((el: RuleConditionBusiFieldDto) => {
+    el.active = false
+  })
+  nowLiRightList.value = item.ruleLibraryFieldList || []
+}
+const handleLiRight = (item: RuleConditionBusiFieldDto) => {
+  nowLiRightList.value.forEach((el: RuleConditionBusiFieldDto) => {
+    el.active = false
+  })
+  item.active = true
+  let str = '' as string
+  sysTable.value.forEach((el: RuleConditionBusiConfigDto) => {
+    if (el.active) {
+      str = el.ruleLibraryBusiTableCnName
+    }
+  })
+  str = '{' + str + '.' + item.ruleLibraryBusiFieldCnName + '}'
+  formParams.templateContent =
+    formParams.templateContent.slice(
+      0,
+      blurShow.value ? startIndex.value : formParams.templateContent.length
+    ) +
+    str +
+    formParams.templateContent.slice(
+      blurShow.value ? startIndex.value : formParams.templateContent.length
+    )
+}
+const handleInput = (e: string) => {
+  sysParm.busiFieldCnName = e
+  getSysList()
+}
+const handleBlur = (e: FocusEvent) => {
+  const blurObj = (e?.srcElement as HTMLInputElement) || {
+    selectionStart: 0 as number
+  }
+  startIndex.value = blurObj?.selectionStart || 0
+  blurShow.value = true
+}
 defineExpose({ open })
 </script>
 
@@ -447,5 +610,65 @@ defineExpose({ open })
 }
 .tags-overdue {
   margin-right: 10px;
+}
+:deep(.el-dialog--center) {
+  overflow: scroll;
+  max-height: 75%;
+}
+.flex-context {
+  width: 100%;
+}
+.conf-container {
+  overflow: hidden;
+  height: 250px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgb(233 233 233);
+  border-image: initial;
+  ul {
+    display: block;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    margin-block: 0 0;
+    margin-inline: 0 0;
+    padding-inline-start: 0;
+  }
+  li {
+    display: list-item;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 15px;
+    text-align: -webkit-match-parent;
+  }
+  .title {
+    justify-content: space-between;
+    padding: 5px 10px 15px;
+    height: 24px;
+    border-bottom: 1px solid rgb(221 221 221);
+    background: rgb(244 244 244);
+  }
+  .flx-centers {
+    display: flex;
+    :deep(.el-input__inner) {
+      height: 24px;
+    }
+  }
+  .content {
+    overflow: auto;
+    height: 200px;
+    text-align: left;
+    .item {
+      padding: 10px 5px;
+      border-bottom: 1px solid rgb(221 221 221);
+      color: rgb(74 83 138);
+      cursor: pointer;
+      line-height: 16px;
+    }
+    .active {
+      background: rgb(238 238 238);
+    }
+  }
 }
 </style>

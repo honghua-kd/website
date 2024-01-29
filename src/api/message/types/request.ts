@@ -191,3 +191,13 @@ export interface ExportSendRequest {
    */
   templateName: string
 }
+export interface BusRequest {
+  /**
+   * 字段中文名称(模糊查询)
+   */
+  busiFieldCnName?: string
+  /**
+   * 业务模块类型
+   */
+  busiType: string
+}

@@ -170,3 +170,55 @@ export interface SendData {
    */
   total: number
 }
+
+/**
+ * RuleConditionBusiFieldDto
+ */
+export interface RuleConditionBusiFieldDto {
+  /**
+   * 业务扩展字段1
+   */
+  extendField1: string
+  /**
+   * 业务扩展字段2
+   */
+  extendField2: string
+  /**
+   * 业务扩展字段3
+   */
+  extendField3: string
+  /**
+   * 字段的中文名(用户可自定义)
+   */
+  ruleLibraryBusiFieldCnName: string
+  /**
+   * 规则条件库中字段的英文名
+   */
+  ruleLibraryFieldEnName: string
+  /**
+   * 字段类型
+   */
+  ruleLibraryFieldType: string
+  active?: boolean
+}
+export interface RuleConditionBusiConfigDto {
+  /**
+   * 表的中文名称(用户可自定义)
+   */
+  ruleLibraryBusiTableCnName: string
+  /**
+   * 规则条件库中表字段配置列表
+   */
+  ruleLibraryFieldList: RuleConditionBusiFieldDto[]
+  /**
+   * 规则条件库中表的英文名称
+   */
+  ruleLibraryTableEnName: string
+  active?: boolean
+}
+export interface RuleConditionBusiConfigRespVo<RuleConditionBusiConfigDto> {
+  /**
+   * 业务模块可配置条件库列表
+   */
+  list: RuleConditionBusiConfigDto[]
+}
