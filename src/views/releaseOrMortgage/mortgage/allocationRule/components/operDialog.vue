@@ -563,7 +563,7 @@ const submitForm = async () => {
     isAutoAllocation: state.formParams.isAutoAllocation,
     isSendSms: state.formParams.isSendSms,
     smsTemplateCode: state.formParams.smsTemplateCode || '',
-    isUsed: 0,
+    isUsed: 1,
     provinceCode: String(selCity.value[0]),
     provinceName: state.formParams.provinceName
   }
