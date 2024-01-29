@@ -487,7 +487,7 @@ const getListData = async () => {
   const res = await API.getDocumentList(params)
   state.tableLoading = false
   if (res && res.code === 200) {
-    state.tableData = res.data ? res.data.list : []
+    state.tableData = res.data && res.data.list ? res.data.list : []
     state.pageTotal = res.data && res.data.total ? res.data.total : 0
   }
 }

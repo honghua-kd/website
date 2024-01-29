@@ -89,14 +89,14 @@
 
           <span v-if="prop === 'createGatherFlag'"
             ><el-switch
-              :value="row.createGatherFlag"
+              :model-value="row.createGatherFlag"
               :active-value="1"
               :inactive-value="0"
               @click="changeSwitch(row, 'createGatherFlag')"
           /></span>
           <span v-if="prop === 'unpaidNeedApproveFlag'"
             ><el-switch
-              :value="row.unpaidNeedApproveFlag"
+              :model-value="row.unpaidNeedApproveFlag"
               :active-value="1"
               :inactive-value="0"
               @click="changeSwitch(row, 'unpaidNeedApproveFlag')"
