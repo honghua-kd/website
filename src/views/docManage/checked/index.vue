@@ -70,7 +70,7 @@
         }}</span>
         <span v-if="prop === 'status'"
           ><el-switch
-            :value="row.status"
+            :model-value="row.status"
             :active-value="1"
             :inactive-value="0"
             @click="changeSwitch(row)"
@@ -257,7 +257,7 @@ const downloadData = async () => {
     }
   } else {
     const ids = selectIdsArr.value.map((i: string) => i.split('&')[0])
-    params = { ids }
+    params = { ids, pageFlag: 2 }
   }
   const res = await COMMONAPI.exportBySelect({
     bizType: 'SYSTEM_DOCUMENT_EXPORT',
@@ -324,7 +324,7 @@ const getListData = async () => {
   const res = await API.getDocumentList(params)
   state.tableLoading = false
   if (res && res.code === 200) {
-    state.tableData = res.data ? res.data.list : []
+    state.tableData = res.data && res.data.list ? res.data.list : []
     state.pageTotal = res.data && res.data.total ? res.data.total : 0
   }
 }
