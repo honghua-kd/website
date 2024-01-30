@@ -327,7 +327,7 @@ const downloadData = async () => {
     }
   } else {
     const ids = selectIdsArr.value.map((i: string) => i.split('&')[0])
-    params = { ids }
+    params = { ids, pageFlag: 1 }
   }
   const res = await COMMONAPI.exportBySelect({
     bizType: 'SYSTEM_DOCUMENT_EXPORT',
