@@ -13,14 +13,17 @@ import type {
   StatusRequest,
   DeleteRequest,
   SendMessageRequest,
-  ExportSendRequest
+  ExportSendRequest,
+  BusRequest
 } from './types/request'
 import type {
   Data,
   DictDataTreeRespVO,
   CreateResponse,
   UpdateResponse,
-  SendData
+  SendData,
+  RuleConditionBusiConfigRespVo,
+  RuleConditionBusiConfigDto
 } from './types/response'
 
 import type { FileDownload } from '../common/types/response'
@@ -103,6 +106,17 @@ export class MessageAPI {
       url: `${prefix}/system/sms-send/exportExcel`,
       method: 'post',
       responseType: 'blob',
+      data
+    })
+  }
+
+  // 根据条件查询业务模块可配置的条件库
+  queryBusiCondition(
+    data: BusRequest
+  ): Response<RuleConditionBusiConfigRespVo<RuleConditionBusiConfigDto>> {
+    return this.request({
+      url: `${prefix}/ruleLibrary/busiConfig/queryBusiCondition`,
+      method: 'post',
       data
     })
   }

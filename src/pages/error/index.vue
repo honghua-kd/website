@@ -3,19 +3,19 @@
     <div class="exception-text">{{ exceptionText }}</div>
     <img
       v-if="exceptionType === '403'"
-      src="@/assets/error/403.svg"
+      src="@/assets/error/403.png"
       alt=""
       class="exception-img"
     />
     <img
       v-if="exceptionType === '404'"
-      src="@/assets/error/404.svg"
+      src="@/assets/error/404.png"
       alt=""
       class="exception-img"
     />
     <img
       v-if="exceptionType === '500'"
-      src="@/assets/error/500.svg"
+      src="@/assets/error/500.png"
       alt=""
       class="exception-img"
     />

@@ -1,6 +1,6 @@
 <template>
   <!-- <DynamicForm :data="data" v-model="query" />
-  <SearchBarV2
+  <SearchField
     :data="searchData"
     v-model="searchQuery"
     :visibleRows="2"
