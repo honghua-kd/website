@@ -1,16 +1,8 @@
 <template>
-  <el-button
-    :type="type || 'primary'"
-    :size="size || 'default'"
-    :disabled="disabled"
-    :loading="loading"
-    :text="text"
-    :link="link"
-    @click="clickButton"
-  >
-    <slot name="icon"></slot>
+  <el-button v-bind="props" :loading="loading" @click="clickButton">
+    <slot name="icon" />
     {{ name || 'Button' }}
-    <slot></slot>
+    <slot />
   </el-button>
 </template>
 
@@ -23,7 +15,10 @@ const loading = ref<boolean>(false)
 const emit = defineEmits<{
   (e: 'onButtonFn'): void
 }>()
-defineProps<BtnProps>()
+const props = withDefaults(defineProps<BtnProps>(), {
+  type: 'primary',
+  size: 'default'
+})
 const clickButton = debounce(() => {
   emit('onButtonFn')
 }, 300)

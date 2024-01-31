@@ -42,12 +42,12 @@
             <el-button :icon="Plus" type="primary" @click="action('Add')"
               >新增</el-button
             >
-            <el-button
+            <Button
+              ref="downloadButton"
               :icon="Download"
-              type="primary"
-              @click="action('Download')"
-              >下载</el-button
-            >
+              name="下载"
+              @onButtonFn="action('Download')"
+            />
             <el-tooltip content="需勾选要，方可操作" placement="top-start"
               ><el-button
                 :icon="Delete"
@@ -95,7 +95,7 @@ import { reactive, toRefs, ref, computed, onMounted } from 'vue'
 import { searchConfig, tableColumn } from './data'
 import EditModel from './editModel.vue'
 import { Plus, Delete, Download } from '@element-plus/icons-vue'
-import { ElMessageBox, ElMessage } from 'element-plus'
+import { ElMessageBox, ElMessage, ElNotification } from 'element-plus'
 import { handleDownloadFile } from '@/utils'
 import SearchBar from '@/components/SearchBar/index.vue'
 import Table from '@/components/Table/index.vue'
@@ -107,6 +107,7 @@ import { useDictStore } from '@/store/dict'
 const API = new MainPartAPI()
 const COMMONAPI = new CommonAPI()
 const dictStore = useDictStore()
+const downloadButton = ref()
 const state = reactive<StateType>({
   formModel: {
     mortgageSubjectName: '',
@@ -245,7 +246,8 @@ const deleteData = () => {
 }
 
 // 下载数据
-const downloadData = async () => {
+const downloadData = () => {
+  downloadButton.value.changeLoading(true)
   let params = {}
   if (selectIdsArr.value.length === 0) {
     params = {
@@ -256,19 +258,35 @@ const downloadData = async () => {
   } else {
     params = { ids: selectIdsArr.value }
   }
-  const res = await COMMONAPI.exportBySelect({
+  COMMONAPI.exportBySelect({
     // 需要后端走通用下载接口，给出bizType
     bizType: 'SUBJECT_INFO_EXPORT',
     selectParams: JSON.stringify(params)
   })
-  if (res && res.code === 200) {
-    if (res.data?.sync === 1) {
-      const params = { fileCode: res.data.fileCode as string }
-      COMMONAPI.downLoadFiles(params).then((res) =>
-        handleDownloadFile(res, '抵押主体.xlsx')
-      )
-    }
-  }
+    .then((res) => {
+      if (res.data?.sync === 1) {
+        const params = { fileCode: res.data.fileCode as string }
+        COMMONAPI.downLoadFiles(params)
+          .then((response) => {
+            handleDownloadFile(response, res.data?.fileName)
+            downloadButton.value.changeLoading(false)
+          })
+          .catch(() => {
+            downloadButton.value.changeLoading(false)
+          })
+      } else {
+        ElNotification({
+          title: '下载失败',
+          message: res.msg,
+          type: 'error'
+        })
+        downloadButton.value.changeLoading(false)
+      }
+    })
+    .catch((err: Error) => {
+      downloadButton.value.changeLoading(false)
+      throw err
+    })
 }
 
 // 监听新增/编辑弹窗

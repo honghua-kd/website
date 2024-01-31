@@ -46,8 +46,8 @@
             clearable
           />
         </el-form-item>
-        <el-row>
-          <el-col :span="11"
+        <el-row :gutter="20">
+          <el-col :span="12"
             ><el-form-item label="联系人" prop="contact">
               <el-input
                 v-model.trim="editForm.contact"
@@ -56,8 +56,7 @@
                 clearable
               /> </el-form-item
           ></el-col>
-          <el-col :span="2"></el-col>
-          <el-col :span="11"
+          <el-col :span="12"
             ><el-form-item label="联系电话" prop="phone">
               <el-input
                 type="number"
