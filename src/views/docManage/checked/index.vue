@@ -116,11 +116,12 @@ import { Download } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { handleDownloadFile } from '@/utils'
 import { useDictStore } from '@/store/dict'
-import { CommonAPI, DocCheckAPI } from '@/api'
+import { CommonAPI, DocCheckAPI, MessageAPI } from '@/api'
 import dayjs from 'dayjs'
 
 const API = new DocCheckAPI()
 const COMMONAPI = new CommonAPI()
+const MESSAGEAPI = new MessageAPI()
 const dictStore = useDictStore()
 const dictTypes = [
   'SYSTEM_DOCUMENT_TYPE',
@@ -299,9 +300,11 @@ const getDictTreeListData = async () => {
 
 // 获取文书参数配置
 const getDocumentParamConfig = async () => {
-  const res = await API.getDocumentParamConfig({})
+  const res = await MESSAGEAPI.queryBusiCondition({
+    busiType: 'SYSTEM_DOCUMENT'
+  })
   if (res && res.code === 200) {
-    state.paramConfig = res.data || []
+    state.paramConfig = res.data?.list || []
   }
 }
 

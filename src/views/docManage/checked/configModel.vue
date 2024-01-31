@@ -2,7 +2,7 @@
   <el-dialog
     v-model="dialogVisible"
     title="参数配置"
-    width="880px"
+    width="950px"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     destroy-on-close
@@ -71,7 +71,7 @@
           <el-table-column
             prop="tableAndColumn"
             label="变量表达式"
-            :width="200"
+            :width="270"
           >
             <template #default="{ row, $index }">
               <el-form-item
@@ -83,6 +83,7 @@
                   :options="configCascaderOptions"
                   filterable
                   clearable
+                  style="width: 100%"
                 />
               </el-form-item>
             </template>
@@ -161,11 +162,13 @@ import { reactive, watch, toRefs, ref } from 'vue'
 import type { ConfigStateType } from './type'
 import type {
   DictListItem,
-  SystemParamConfigResponse,
-  ColumnList,
   EditParamConfigList,
   GetDocumentParamResponse
 } from '@/api'
+import type {
+  RuleConditionBusiConfigDto,
+  RuleConditionBusiFieldDto
+} from '@/api/message/types/response'
 import type { FormInstance, FormRules, CascaderOption } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import type { InternalRuleItem } from 'async-validator'
@@ -174,7 +177,7 @@ import { DocCheckAPI } from '@/api'
 const API = new DocCheckAPI()
 type Iprops = {
   configVisible: boolean
-  paramConfig: SystemParamConfigResponse[]
+  paramConfig: RuleConditionBusiConfigDto[]
   paramTypeOptions: DictListItem[]
   yesOrNoOptions: DictListItem[]
   documentNo: string
@@ -239,27 +242,28 @@ watch(
       newConfigDetail.forEach((i) => {
         list.push({
           batchBlank: `${i.batchBlank}` as string,
-          bookmarkName: i.bookmarkName as string,
-          bookmarkParam: i.bookmarkParam as string,
-          column: i.column as string,
+          bookmarkName: i.bookmarkName || '',
+          bookmarkParam: i.bookmarkParam || '',
+          column: i.column || '',
           paramType: `${i.paramType}` as string,
-          table: i.table as string,
-          tableAndColumn: [i.table as string, i.column as string]
+          table: i.table || '',
+          tableAndColumn:
+            i.table && i.column ? [i.table as string, i.column as string] : []
         })
       })
       state.saveListForm.saveListInfo = list
     }
     const result: CascaderOption[] = []
-    newConfig.forEach((i: SystemParamConfigResponse) => {
+    newConfig.forEach((i: RuleConditionBusiConfigDto) => {
       const obj: CascaderOption = {
-        label: i.tableName as string,
-        value: i.table as string,
+        label: i.ruleLibraryBusiTableCnName,
+        value: i.ruleLibraryTableEnName,
         children: []
       }
-      i.columnList?.forEach((j: ColumnList) => {
+      i.ruleLibraryFieldList?.forEach((j: RuleConditionBusiFieldDto) => {
         obj.children?.push({
-          label: j.columnName as string,
-          value: j.column as string
+          label: j.ruleLibraryBusiFieldCnName,
+          value: j.ruleLibraryFieldEnName
         })
       })
       result.push(obj)
