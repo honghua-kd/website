@@ -188,7 +188,7 @@ import {
 } from 'element-plus'
 import { handleDownloadFile } from '@/utils'
 import { useDictStore } from '@/store/dict'
-import { CommonAPI, DocCheckAPI } from '@/api'
+import { CommonAPI, DocCheckAPI, SystemAPI } from '@/api'
 import dayjs from 'dayjs'
 import type {
   UploadInstance,
@@ -200,6 +200,7 @@ import ApprovalModel from './approvalModel.vue'
 
 const API = new DocCheckAPI()
 const COMMONAPI = new CommonAPI()
+const SYSTEMAPI = new SystemAPI()
 const dictStore = useDictStore()
 const dictTypes = ['SYSTEM_DOCUMENT_TYPE', 'SYSTEM_DOCUMENT_APPROVAL_STATUS']
 const importButton = ref()
@@ -376,9 +377,10 @@ const downloadData = () => {
 const downloadTemplate = () => {
   downTemButton.value.changeLoading(true)
   const params = {
-    bizType: 'DOCUMENT'
+    businessCategory: 'MORTGAGE_TEMPLATE',
+    businessSubcategory: 'DOCUMENT'
   }
-  COMMONAPI.getDownLoadTemplate(params)
+  SYSTEMAPI.templateImportResult(params)
     .then((res) => {
       handleDownloadFile(res)
       downTemButton.value.changeLoading(false)
