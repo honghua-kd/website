@@ -78,6 +78,9 @@
       <template #column-switch="{ row, prop }">
         <el-switch
           :value="row[prop]"
+          inline-prompt
+          active-text="启用"
+          inactive-text="停用"
           :active-value="1"
           :inactive-value="0"
           @click="switchHandler(row.id, row)"
