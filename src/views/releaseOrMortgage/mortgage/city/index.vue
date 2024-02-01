@@ -91,6 +91,9 @@
             :active-value="1"
             :inactive-value="0"
             @click="changeStatus(row)"
+            inline-prompt
+            active-text="是"
+            inactive-text="否"
           />
         </span>
         <span v-if="prop === 'applyDischarge'">
@@ -99,6 +102,9 @@
             :active-value="1"
             :inactive-value="0"
             @click="changeStatus(row)"
+            inline-prompt
+            active-text="是"
+            inactive-text="否"
           />
         </span>
       </template>
