@@ -41,9 +41,10 @@ import type {
   UploadFile,
   UploadUserFile
 } from 'element-plus'
-import { CommonAPI } from '@/api'
-import fileDownload from 'js-file-download'
+import { CommonAPI, SystemAPI } from '@/api'
+import { handleDownloadFile } from '@/utils'
 const CommonApi = new CommonAPI()
+const SystemApi = new SystemAPI()
 const dialogTitle = ref<string>('批量导入')
 const dialogVisible = ref<boolean>(false)
 const upload = ref<UploadInstance>()
@@ -69,19 +70,12 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
 
 const downloadTemplate = () => {
   const params = {
-    bizType: 'EXPRESS_INFO'
+    businessCategory: 'MORTGAGE_TEMPLATE',
+    businessSubcategory: 'EXPRESS_INFO'
   }
-  CommonApi.getDownLoadTemplate(params)
+  SystemApi.templateImportResult(params)
     .then((res) => {
-      console.error(res)
-      const fileStream = res?.data
-      const headers = res?.headers
-      const files =
-        headers &&
-        headers['content-disposition'] &&
-        decodeURI(headers['content-disposition'].split(';')[1])
-      const fileName = (files && files.split('=')[1]) || ''
-      fileDownload(fileStream, fileName)
+      handleDownloadFile(res)
     })
     .catch((err: Error) => {
       throw err

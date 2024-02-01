@@ -15,7 +15,11 @@
         <el-button v-show="step !== 1" type="primary" @click="importHandler"
           >导入</el-button
         >
-        <ImportForm ref="importFormRef" :biztype="bizType" />
+        <ImportForm
+          ref="importFormRef"
+          :biztype="bizType"
+          :category="category"
+        />
       </div>
       <el-steps
         :active="step"
@@ -1089,11 +1093,19 @@ const submitForm = async () => {
 }
 const importFormRef = ref()
 const bizType = ref('')
+const category = reactive({
+  businessCategory: '',
+  businessSubcategory: ''
+})
 const importHandler = () => {
   if (state.step === 2) {
     bizType.value = 'SUPPLIER_CITY_CONTACTS'
+    category.businessCategory = 'MORTGAGE_TEMPLATE'
+    category.businessSubcategory = 'SUPPLIER_CITY_CONTACTS'
   } else if (state.step === 3) {
     bizType.value = 'SUPPLIER_SETTLEMENT_WAY'
+    category.businessCategory = 'MORTGAGE_TEMPLATE'
+    category.businessSubcategory = 'SUPPLIER_SETTLEMENT_WAY'
   }
   importFormRef.value.open()
 }

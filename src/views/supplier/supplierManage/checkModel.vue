@@ -208,7 +208,7 @@
         <el-button
           type="primary"
           :icon="Upload"
-          @click="importHandler('SUPPLIER_CITY_CONTACTS')"
+          @click="importHandler('SUPPLIER_CITY_CONTACTS', 'MORTGAGE_TEMPLATE')"
         >
           导入
         </el-button>
@@ -262,7 +262,7 @@
         <el-button
           type="primary"
           :icon="Upload"
-          @click="importHandler('SUPPLIER_SETTLEMENT_WAY')"
+          @click="importHandler('SUPPLIER_SETTLEMENT_WAY', 'MORTGAGE_TEMPLATE')"
         >
           导入
         </el-button>
@@ -332,7 +332,7 @@
   <AccountForm ref="accountFormRef" @success="getAccountList" />
   <PersonForm ref="personFormRef" @success="getCityList" />
   <SettlementForm ref="settlementFormRef" @success="getSettlementList" />
-  <ImportForm ref="importFormRef" :biztype="bizType" />
+  <ImportForm ref="importFormRef" :biztype="bizType" :category="category" />
 </template>
 <script lang="ts" setup>
 import { watch, toRefs, reactive, ref, Ref, computed } from 'vue'
@@ -772,8 +772,14 @@ const clickButton = async () => {
 }
 const importFormRef = ref()
 const bizType = ref('')
-const importHandler = (val: string) => {
-  bizType.value = val
+const category = reactive({
+  businessCategory: '',
+  businessSubcategory: ''
+})
+const importHandler = (val1: string, val2: string) => {
+  bizType.value = val1
+  category.businessCategory = val2
+  category.businessSubcategory = val1
   importFormRef.value.open()
 }
 const searchPersonList = () => {
