@@ -95,7 +95,6 @@ watch(
   () => props.modelValue,
   (newVal) => {
     val.value = newVal
-    console.log(props.options, 'watch')
   },
   {
     immediate: true,
@@ -111,8 +110,6 @@ watch(
 )
 
 if (props.type === 'el-select') {
-  // console.log(props, '9999')
-  // console.log(props.options, '333')
   getOptions()
 }
 </script>
