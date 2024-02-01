@@ -140,7 +140,7 @@ import type {
 import { ElMessage, ElMessageBox, genFileId } from 'element-plus'
 import type { getTemplatePageRequest } from '@/api/docCheck/types/request.ts'
 import type { MortgageDocumentVO } from '@/api/docCheck/types/response.ts'
-import { DocCheckAPI, CommonAPI } from '@/api'
+import { DocCheckAPI, CommonAPI, SystemAPI } from '@/api'
 import type { ITableConfigProps } from '@/components/Table/type'
 import AreaCasder from '@/components/AreaCascader/index.vue'
 import OperDialog from './components/operDialog.vue'
@@ -158,6 +158,7 @@ const cityForm: Ref<string[]> = ref([])
 const downBtmLoading: Ref<boolean> = ref(false)
 const CommonApi = new CommonAPI()
 const API = new DocCheckAPI()
+const SYSTEMAPI = new SystemAPI()
 const importVisible: Ref<boolean> = ref(false)
 const fileList = ref<UploadUserFile[]>([])
 const dictTypes = [
@@ -243,10 +244,11 @@ const handleSizeChange = (val: number) => {
 }
 const downTemplate = () => {
   const params = {
-    bizType: 'DOCUMENT_TEMPLATE'
+    businessCategory: 'MORTGAGE_TEMPLATE',
+    businessSubcategory: 'DOCUMENT_TEMPLATE'
   }
   dwonlLoading.value = true
-  CommonApi.getDownLoadTemplate(params)
+  SYSTEMAPI.templateImportResult(params)
     .then((res) => {
       dwonlLoading.value = false
       handleDownloadFile(res)

@@ -175,7 +175,7 @@ import {
   ElNotification
 } from 'element-plus'
 import { handleDownloadFile } from '@/utils'
-import { AgencyAPI, CommonAPI } from '@/api'
+import { AgencyAPI, CommonAPI, SystemAPI } from '@/api'
 import type {
   CascaderValue,
   CascaderOption,
@@ -186,9 +186,9 @@ import type {
 } from 'element-plus'
 import Table from '@/components/Table/index.vue'
 import SearchBar from '@/components/SearchBar/index.vue'
-
 const API = new AgencyAPI()
 const COMMONAPI = new CommonAPI()
+const SYSTEMAPI = new SystemAPI()
 
 type SourceItem = {
   value?: string | null | undefined
@@ -516,9 +516,10 @@ const downloadData = () => {
 const downloadTemplate = () => {
   downTemButton.value.changeLoading(true)
   const params = {
-    bizType: 'AGENCY_CONFIG'
+    businessCategory: 'MORTGAGE_TEMPLATE',
+    businessSubcategory: 'AGENCY_CONFIG'
   }
-  COMMONAPI.getDownLoadTemplate(params)
+  SYSTEMAPI.templateImportResult(params)
     .then((res) => {
       handleDownloadFile(res)
       downTemButton.value.changeLoading(false)
