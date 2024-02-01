@@ -15,8 +15,10 @@
         v-loading="formLoading"
         :label-width="px2rem('120px')"
         :rules="rules"
+        label-position="top"
+        inline
       >
-        <el-row>
+        <el-row style="width: 100%">
           <el-col :span="12">
             <el-form-item
               label="规则名称"
@@ -54,7 +56,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
+        <el-row style="width: 100%">
           <el-col :span="12">
             <el-form-item label="数据来源" prop="sourceSystem" align="center">
               <el-cascader
@@ -84,7 +86,7 @@
           </el-col>
         </el-row>
         <div class="second-title">分配规则</div>
-        <el-row>
+        <el-row style="width: 100%">
           <el-col :span="12">
             <el-form-item
               label="分配类型"
@@ -240,7 +242,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
+        <el-row style="width: 100%">
           <el-col :span="12">
             <el-form-item
               label="是否自动分配"
@@ -286,7 +288,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
+        <el-row style="width: 100%">
           <el-col :span="12">
             <el-form-item
               label="短信模版"

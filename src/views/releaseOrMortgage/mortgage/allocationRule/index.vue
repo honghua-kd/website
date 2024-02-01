@@ -105,6 +105,9 @@
             :active-value="1"
             :inactive-value="0"
             @click="changeStatus(row)"
+            inline-prompt
+            active-text="启用"
+            inactive-text="禁用"
           />
         </span>
       </template>
