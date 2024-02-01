@@ -2,7 +2,7 @@
   <div>
     <!-- 搜索工作栏 -->
     <div class="scan-search-container" ref="searchBoxRef">
-      <SearchBar
+      <!-- <SearchBar
         v-model="queryParams"
         :dictArray="dictTypes"
         :searchConfig="searchConfig"
@@ -12,7 +12,16 @@
         :labelWidth="'120px'"
         :is-search-btn="true"
       >
-      </SearchBar>
+      </SearchBar> -->
+      <SearchField
+        v-model="queryParams"
+        :data="searchConfig"
+        :colNum="2"
+        :labelWidth="'120px'"
+        @search="getList"
+        v-if="childFlag"
+      >
+      </SearchField>
     </div>
     <el-divider border-style="dashed" />
     <Table
@@ -37,10 +46,13 @@
       </template>
       <template #column-switch="{ row, prop }">
         <el-switch
+          class="switch-item"
           :value="row[prop]"
           @click="switchHandler(row.batchNo, row[prop])"
           :active-value="1"
           :inactive-value="0"
+          active-text="启用"
+          inactive-text="禁用"
         />
       </template>
       <template #default="{ row, prop }">
@@ -75,6 +87,7 @@
           :model="dialogQueryParams"
           :label-width="px2rem('80px')"
           :rules="editFormRules"
+          label-position="top"
         >
           <el-form-item
             label="来源系统"
@@ -194,14 +207,16 @@
 
 <script setup lang="ts">
 import { reactive, ref, Ref, computed, nextTick } from 'vue'
-import SearchBar from '@/components/SearchBar/index.vue'
+// import SearchBar from '@/components/SearchBar/index.vue'
+import SearchField from '@/components/SearchField/index.vue'
 import EditDialog from '@/components/EditDialog/index.vue'
-import { searchConfig, tableConfig, dialogContentConfig } from './data'
+import { tableConfig, dialogContentConfig, searchConfig } from './data'
 import { Plus } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage, ElForm, ElFormItem } from 'element-plus'
 import type { FormInstance, CascaderValue } from 'element-plus'
 import { SpecialConfigAPI, SystemAPI } from '@/api'
 import type { InternalRuleItem } from 'async-validator'
+
 import type {
   SpecialListItem,
   ListCell,
@@ -258,15 +273,6 @@ const selectData = reactive<SpecialListItem[]>([])
 const selectionChangeHandler = (item: SpecialListItem[]) => {
   selectData.splice(0, selectData.length)
   selectData.push(...item)
-}
-
-// 重置
-const reset = () => {
-  queryParams.pageNo = 1
-  queryParams.pageSize = 10
-  queryParams.replaceDocumentType = ''
-  queryParams.originalDocumentType = ''
-  getList()
 }
 
 // 查询
@@ -439,15 +445,25 @@ const getOReplaceDocList = async (
   formData.append('documentName', documentName)
   return await API.getOReplaceDoc(formData)
 }
+
+const childFlag = ref(false)
 // 获取一级文书
 const getSingleDictList = async () => {
   const params: DictListRequest = {
     dictType: 'SYSTEM_DOCUMENT_TYPE'
   }
-  const { data } = await systemAPI.getSingleDict(params)
-  const _data = data as OptionType[]
-  originalDocumentOptions.value = _data
-  replaceDocumentOptions.value = _data
+  try {
+    const { data } = await systemAPI.getSingleDict(params)
+    const _data = data as OptionType[]
+    originalDocumentOptions.value = _data
+    replaceDocumentOptions.value = _data
+    searchConfig.forEach((i) => {
+      i.options = _data
+    })
+    childFlag.value = true
+  } catch {
+    childFlag.value = true
+  }
 }
 getSingleDictList()
 // 根据一级文书获取二级文书
@@ -695,4 +711,27 @@ const init = () => {
 init()
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.switch-item {
+  .el-switch__label {
+    position: absolute;
+    display: none;
+    width: 60px !important;
+    color: #ffffff;
+  }
+  .el-switch__label--left {
+    left: 6px;
+    z-index: 9;
+  }
+  .el-switch__label--right {
+    left: -14px;
+    z-index: 9;
+  }
+  .el-switch__label.is-active {
+    display: block;
+  }
+  .el-switch__core {
+    width: 60px !important;
+  }
+}
+</style>

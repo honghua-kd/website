@@ -70,7 +70,7 @@
         }}</span>
         <span v-if="prop === 'status'"
           ><el-switch
-            :value="row.status"
+            :model-value="row.status"
             :active-value="1"
             :inactive-value="0"
             @click="changeSwitch(row)"
@@ -116,11 +116,12 @@ import { Download } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { handleDownloadFile } from '@/utils'
 import { useDictStore } from '@/store/dict'
-import { CommonAPI, DocCheckAPI } from '@/api'
+import { CommonAPI, DocCheckAPI, MessageAPI } from '@/api'
 import dayjs from 'dayjs'
 
 const API = new DocCheckAPI()
 const COMMONAPI = new CommonAPI()
+const MESSAGEAPI = new MessageAPI()
 const dictStore = useDictStore()
 const dictTypes = [
   'SYSTEM_DOCUMENT_TYPE',
@@ -257,7 +258,7 @@ const downloadData = async () => {
     }
   } else {
     const ids = selectIdsArr.value.map((i: string) => i.split('&')[0])
-    params = { ids }
+    params = { ids, pageFlag: 2 }
   }
   const res = await COMMONAPI.exportBySelect({
     bizType: 'SYSTEM_DOCUMENT_EXPORT',
@@ -299,9 +300,11 @@ const getDictTreeListData = async () => {
 
 // 获取文书参数配置
 const getDocumentParamConfig = async () => {
-  const res = await API.getDocumentParamConfig({})
+  const res = await MESSAGEAPI.queryBusiCondition({
+    busiType: 'SYSTEM_DOCUMENT'
+  })
   if (res && res.code === 200) {
-    state.paramConfig = res.data || []
+    state.paramConfig = res.data?.list || []
   }
 }
 
@@ -324,7 +327,7 @@ const getListData = async () => {
   const res = await API.getDocumentList(params)
   state.tableLoading = false
   if (res && res.code === 200) {
-    state.tableData = res.data ? res.data.list : []
+    state.tableData = res.data && res.data.list ? res.data.list : []
     state.pageTotal = res.data && res.data.total ? res.data.total : 0
   }
 }

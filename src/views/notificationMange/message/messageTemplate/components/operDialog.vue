@@ -369,7 +369,6 @@ type CurType = {
 }
 // const handleNodeClick = (currentKeys: TreeNodeData, currentNode: CurType) => {
 const handleNodeClick = (currentKeys: string, currentNode: CurType) => {
-  console.log(currentKeys, currentNode)
   if (currentNode.checkedKeys.length === 0) {
     formParams.sourceSystemWeb = []
     return
@@ -390,7 +389,6 @@ const handleNodeClick = (currentKeys: string, currentNode: CurType) => {
   // }
   // const defaultCheckedkeys = ref<object>([])
   // const handleNodeClick = () => {}
-  console.log('object', currentNode.checkedKeys)
   const sysList: System12List[] = []
   const srotLs = currentNode.checkedKeys.sort((a: string, b: string) => {
     return a.length - b.length
@@ -582,6 +580,7 @@ const handleLiRight = (item: RuleConditionBusiFieldDto) => {
 }
 const handleInput = (e: string) => {
   sysParm.busiFieldCnName = e
+  nowLiRightList.value = []
   getSysList()
 }
 const handleBlur = (e: FocusEvent) => {
