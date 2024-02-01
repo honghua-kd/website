@@ -5,17 +5,18 @@
       v-model="dialogVisible"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
-      width="60%"
     >
       <el-form
         ref="formRef"
         :model="basicInfoForm"
         :label-width="px2rem('100px')"
+        label-position="top"
+        inline
       >
-        <el-row>
-          <el-col :span="8">
+        <el-row style="width: 100%">
+          <el-col :span="12">
             <el-form-item
-              label="联系人名称:"
+              label="联系人名称"
               prop="userName"
               :rules="[
                 { required: true, message: '联系人名称不能为空' },
@@ -33,9 +34,9 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="12">
             <el-form-item
-              label="联系人电话:"
+              label="联系人电话"
               prop="userPhone"
               :rules="[
                 {
@@ -53,9 +54,11 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+        </el-row>
+        <el-row style="width: 100%">
+          <el-col :span="12">
             <el-form-item
-              label="邮箱:"
+              label="邮箱"
               prop="userMail"
               :rules="[
                 {
@@ -72,11 +75,9 @@
               />
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="18">
+          <el-col :span="12">
             <el-form-item
-              label="地址:"
+              label="地址"
               prop="userAddress"
               :rules="[
                 {
