@@ -1,25 +1,24 @@
 import type { ISearchUnit } from '@/components/SearchBar/type'
+import type { DynamicFormDataItem } from '@/components/SearchField/type'
 import type { ITableConfigProps } from '@/components/Table/type'
 
-export const searchConfig: ISearchUnit[] = [
-  [
-    {
-      compType: 'el-select',
-      colSpan: 10,
-      label: '原始文书类型',
-      prop: 'originalDocumentType',
-      placeholder: '请选择',
-      options: 'SYSTEM_DOCUMENT_TYPE'
-    },
-    {
-      compType: 'el-select',
-      colSpan: 10,
-      label: '替换文书类型',
-      prop: 'replaceDocumentType',
-      placeholder: '请选择',
-      options: 'SYSTEM_DOCUMENT_TYPE'
-    }
-  ]
+export const searchConfig: DynamicFormDataItem[] = [
+  {
+    type: 'el-select',
+    // colSpan: 10,
+    label: '原始文书类型',
+    prop: 'originalDocumentType',
+    placeholder: '请选择',
+    options: []
+  },
+  {
+    type: 'el-select',
+    // colSpan: 10,
+    label: '替换文书类型',
+    prop: 'replaceDocumentType',
+    placeholder: '请选择',
+    options: []
+  }
 ]
 
 export const tableConfig: ITableConfigProps[] = [
