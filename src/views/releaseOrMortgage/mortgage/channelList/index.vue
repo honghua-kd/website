@@ -48,21 +48,21 @@
               @click="action('BatchImport')"
               >批量导入</el-button
             >
-            <el-button
+            <Button
+              ref="downTemButton"
               :icon="Download"
-              type="primary"
-              @click="action('DownloadTemplate')"
-              >下载导入模版</el-button
-            >
+              name="下载导入模版"
+              @onButtonFn="action('DownloadTemplate')"
+            />
             <el-button :icon="Plus" type="primary" @click="action('Add')"
               >新增</el-button
             >
-            <el-button
+            <Button
+              ref="downloadButton"
               :icon="Download"
-              type="primary"
-              @click="action('Download')"
-              >下载</el-button
-            >
+              name="下载"
+              @onButtonFn="action('Download')"
+            />
             <el-tooltip content="需勾选要，方可操作" placement="top-start"
               ><el-button
                 :icon="Delete"
@@ -90,6 +90,9 @@
           <span v-if="prop === 'createGatherFlag'"
             ><el-switch
               :model-value="row.createGatherFlag"
+              inline-prompt
+              active-text="是"
+              inactive-text="否"
               :active-value="1"
               :inactive-value="0"
               @click="changeSwitch(row, 'createGatherFlag')"
@@ -97,6 +100,9 @@
           <span v-if="prop === 'unpaidNeedApproveFlag'"
             ><el-switch
               :model-value="row.unpaidNeedApproveFlag"
+              inline-prompt
+              active-text="是"
+              inactive-text="否"
               :active-value="1"
               :inactive-value="0"
               @click="changeSwitch(row, 'unpaidNeedApproveFlag')"
@@ -148,7 +154,7 @@
         </template>
       </el-upload>
       <template #footer>
-        <el-button type="primary" @click="submitUpload">导入</el-button>
+        <Button ref="importButton" name="导 入" @onButtonFn="submitUpload" />
       </template>
     </el-dialog>
   </div>
@@ -162,7 +168,12 @@ import type { StateType } from './type'
 import type { AgencyListResponse } from '@/api/channel/types/response'
 import type { DictDataTreeResponse } from '@/api/common/types/response'
 import { Plus, Delete, Download } from '@element-plus/icons-vue'
-import { ElMessageBox, ElMessage, genFileId } from 'element-plus'
+import {
+  ElMessageBox,
+  ElMessage,
+  genFileId,
+  ElNotification
+} from 'element-plus'
 import { handleDownloadFile } from '@/utils'
 import { AgencyAPI, CommonAPI } from '@/api'
 import type {
@@ -184,6 +195,9 @@ type SourceItem = {
   label?: string | null | undefined
   children?: SourceItem[]
 }
+const importButton = ref()
+const downTemButton = ref()
+const downloadButton = ref()
 const state = reactive<StateType>({
   formModel: {
     agencyName: '',
@@ -458,8 +472,8 @@ const deleteData = () => {
     })
 }
 
-const downloadData = async () => {
-  state.tableLoading = true
+const downloadData = () => {
+  downloadButton.value.changeLoading(true)
   let params = {}
   if (selectIdsArr.value.length === 0) {
     params = {
@@ -469,30 +483,47 @@ const downloadData = async () => {
   } else {
     params = { ids: selectIdsArr.value }
   }
-  const res = await COMMONAPI.exportBySelect({
+  COMMONAPI.exportBySelect({
     bizType: 'AGENCY_CONFIG_EXPORT',
     selectParams: JSON.stringify(params)
   })
-  if (res && res.code === 200) {
-    if (res.data?.sync === 1) {
-      const params = { fileCode: res.data.fileCode as string }
-      COMMONAPI.downLoadFiles(params).then((res) =>
-        handleDownloadFile(res, '渠道商/办事处名单.xlsx')
-      )
-    }
-  }
-  state.tableLoading = false
+    .then((res) => {
+      if (res.data?.sync === 1) {
+        const params = { fileCode: res.data.fileCode as string }
+        COMMONAPI.downLoadFiles(params)
+          .then((response) => {
+            handleDownloadFile(response, res.data?.fileName)
+            downloadButton.value.changeLoading(false)
+          })
+          .catch(() => {
+            downloadButton.value.changeLoading(false)
+          })
+      } else {
+        ElNotification({
+          title: '下载失败',
+          message: res.msg,
+          type: 'error'
+        })
+        downloadButton.value.changeLoading(false)
+      }
+    })
+    .catch((err: Error) => {
+      downloadButton.value.changeLoading(false)
+      throw err
+    })
 }
 
 const downloadTemplate = () => {
-  state.tableLoading = true
+  downTemButton.value.changeLoading(true)
   const params = {
     bizType: 'AGENCY_CONFIG'
   }
-  COMMONAPI.getDownLoadTemplate(params).then((res) => {
-    handleDownloadFile(res)
-    state.tableLoading = false
-  })
+  COMMONAPI.getDownLoadTemplate(params)
+    .then((res) => {
+      handleDownloadFile(res)
+      downTemButton.value.changeLoading(false)
+    })
+    .catch(() => downTemButton.value.changeLoading(false))
 }
 
 const fileList = ref<UploadUserFile[]>([])
@@ -518,6 +549,7 @@ const submitUpload = () => {
     })
     return
   }
+  importButton.value.changeLoading(true)
   const formData = new FormData()
   fileList.value.forEach((item) => {
     formData.append('file', item.raw as File)
@@ -525,6 +557,7 @@ const submitUpload = () => {
   formData.append('bizType', 'AGENCY_CONFIG')
   COMMONAPI.getAsyncImport(formData)
     .then((res) => {
+      importButton.value.changeLoading(false)
       if (res && res.code === 200) {
         ElMessage({
           type: 'success',
@@ -536,6 +569,7 @@ const submitUpload = () => {
       state.importVisible = false
     })
     .catch((err: Error) => {
+      importButton.value.changeLoading(false)
       throw err
     })
 }

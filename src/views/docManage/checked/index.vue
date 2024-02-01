@@ -44,9 +44,13 @@
       @current-change="handleCurrentChange"
     >
       <template #btnsBox>
-        <el-button :icon="Download" type="primary" @click="downloadData"
-          >下载</el-button
-        >
+        <Button
+          ref="downloadButton"
+          type="primary"
+          name="下载"
+          :icon="Download"
+          @onButtonFn="downloadData"
+        />
       </template>
       <template #selection>
         <el-table-column
@@ -71,6 +75,9 @@
         <span v-if="prop === 'status'"
           ><el-switch
             :model-value="row.status"
+            inline-prompt
+            active-text="启用"
+            inactive-text="停用"
             :active-value="1"
             :inactive-value="0"
             @click="changeSwitch(row)"
@@ -113,7 +120,7 @@ import { searchConfig, tableColumn } from './data'
 import type { StateType } from './type'
 import type { DocumentPageResponse } from '@/api/docCheck/types/response'
 import { Download } from '@element-plus/icons-vue'
-import { ElMessageBox, ElMessage } from 'element-plus'
+import { ElMessageBox, ElMessage, ElNotification } from 'element-plus'
 import { handleDownloadFile } from '@/utils'
 import { useDictStore } from '@/store/dict'
 import { CommonAPI, DocCheckAPI, MessageAPI } from '@/api'
@@ -128,7 +135,7 @@ const dictTypes = [
   'SYSTEM_DOCUMENT_APPROVAL_STATUS',
   'START_STOP_TASK_STATUS'
 ]
-
+const downloadButton = ref()
 const state = reactive<StateType>({
   queryParams: {
     pageFlag: 2,
@@ -230,8 +237,8 @@ const handleCurrentChange = (page: number) => {
 }
 
 // 下载数据
-const downloadData = async () => {
-  state.tableLoading = true
+const downloadData = () => {
+  downloadButton.value.changeLoading(true)
   let params = {}
   if (selectIdsArr.value.length === 0) {
     const {
@@ -260,19 +267,34 @@ const downloadData = async () => {
     const ids = selectIdsArr.value.map((i: string) => i.split('&')[0])
     params = { ids, pageFlag: 2 }
   }
-  const res = await COMMONAPI.exportBySelect({
+  COMMONAPI.exportBySelect({
     bizType: 'SYSTEM_DOCUMENT_EXPORT',
     selectParams: JSON.stringify(params)
   })
-  if (res && res.code === 200) {
-    if (res.data?.sync === 1) {
-      const params = { fileCode: res.data.fileCode as string }
-      COMMONAPI.downLoadFiles(params).then((res) =>
-        handleDownloadFile(res, '文书审核.xlsx')
-      )
-    }
-  }
-  state.tableLoading = false
+    .then((res) => {
+      if (res.data?.sync === 1) {
+        const params = { fileCode: res.data.fileCode as string }
+        COMMONAPI.downLoadFiles(params)
+          .then((response) => {
+            handleDownloadFile(response, res.data?.fileName)
+            downloadButton.value.changeLoading(false)
+          })
+          .catch(() => {
+            downloadButton.value.changeLoading(false)
+          })
+      } else {
+        ElNotification({
+          title: '下载失败',
+          message: res.msg,
+          type: 'error'
+        })
+        downloadButton.value.changeLoading(false)
+      }
+    })
+    .catch((err: Error) => {
+      downloadButton.value.changeLoading(false)
+      throw err
+    })
 }
 
 // 关闭配置弹窗回调

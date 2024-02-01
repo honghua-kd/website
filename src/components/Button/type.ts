@@ -1,3 +1,4 @@
+import { Component } from 'vue'
 export type BtnProps = {
   name: string
   size?: 'large' | 'default' | 'small'
@@ -5,5 +6,6 @@ export type BtnProps = {
   text?: boolean
   link?: boolean
   disabled?: boolean
+  icon?: string | Component
   soltName?: string
 }

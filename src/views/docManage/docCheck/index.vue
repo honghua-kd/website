@@ -48,15 +48,21 @@
         <el-button :icon="Select" type="primary" @click="approval"
           >发起审核</el-button
         >
-        <el-button :icon="Download" type="primary" @click="downloadData"
-          >下载</el-button
-        >
+        <Button
+          ref="downloadButton"
+          :icon="Download"
+          name="下载"
+          @onButtonFn="downloadData"
+        />
         <el-button :icon="Plus" type="primary" @click="batchImport"
           >导入</el-button
         >
-        <el-button :icon="Download" type="primary" @click="downloadTemplate"
-          >下载导入模版</el-button
-        >
+        <Button
+          ref="downTemButton"
+          :icon="Download"
+          name="下载导入模版"
+          @onButtonFn="downloadTemplate"
+        />
       </template>
       <template #selection>
         <el-table-column
@@ -151,7 +157,7 @@
         </template>
       </el-upload>
       <template #footer>
-        <el-button type="primary" @click="submitUpload">导入</el-button>
+        <Button ref="importButton" name="导 入" @onButtonFn="submitUpload" />
       </template>
     </el-dialog>
 
@@ -174,7 +180,12 @@ import { searchConfig, tableColumn } from './data'
 import type { StateType } from './type'
 import type { DocumentPageResponse } from '@/api/docCheck/types/response'
 import { Plus, Download, Select } from '@element-plus/icons-vue'
-import { ElMessageBox, ElMessage, genFileId } from 'element-plus'
+import {
+  ElMessageBox,
+  ElMessage,
+  genFileId,
+  ElNotification
+} from 'element-plus'
 import { handleDownloadFile } from '@/utils'
 import { useDictStore } from '@/store/dict'
 import { CommonAPI, DocCheckAPI } from '@/api'
@@ -191,7 +202,9 @@ const API = new DocCheckAPI()
 const COMMONAPI = new CommonAPI()
 const dictStore = useDictStore()
 const dictTypes = ['SYSTEM_DOCUMENT_TYPE', 'SYSTEM_DOCUMENT_APPROVAL_STATUS']
-
+const importButton = ref()
+const downTemButton = ref()
+const downloadButton = ref()
 const state = reactive<StateType>({
   queryParams: {
     pageFlag: 1,
@@ -299,8 +312,8 @@ const handleCurrentChange = (page: number) => {
 }
 
 // 下载数据
-const downloadData = async () => {
-  state.tableLoading = true
+const downloadData = () => {
+  downloadButton.value.changeLoading(true)
   let params = {}
   if (selectIdsArr.value.length === 0) {
     const {
@@ -329,29 +342,48 @@ const downloadData = async () => {
     const ids = selectIdsArr.value.map((i: string) => i.split('&')[0])
     params = { ids, pageFlag: 1 }
   }
-  const res = await COMMONAPI.exportBySelect({
+  COMMONAPI.exportBySelect({
     bizType: 'SYSTEM_DOCUMENT_EXPORT',
     selectParams: JSON.stringify(params)
   })
-  if (res && res.code === 200) {
-    if (res.data?.sync === 1) {
-      const params = { fileCode: res.data.fileCode as string }
-      COMMONAPI.downLoadFiles(params).then((res) =>
-        handleDownloadFile(res, '文书审核.xlsx')
-      )
-    }
-  }
-  state.tableLoading = false
+    .then((res) => {
+      if (res.data?.sync === 1) {
+        const params = { fileCode: res.data.fileCode as string }
+        COMMONAPI.downLoadFiles(params)
+          .then((response) => {
+            handleDownloadFile(response, res.data?.fileName)
+            downloadButton.value.changeLoading(false)
+          })
+          .catch(() => {
+            downloadButton.value.changeLoading(false)
+          })
+      } else {
+        ElNotification({
+          title: '下载失败',
+          message: res.msg,
+          type: 'error'
+        })
+        downloadButton.value.changeLoading(false)
+      }
+    })
+    .catch((err: Error) => {
+      downloadButton.value.changeLoading(false)
+      throw err
+    })
 }
 
 // 下载导入模版
 const downloadTemplate = () => {
+  downTemButton.value.changeLoading(true)
   const params = {
     bizType: 'DOCUMENT'
   }
-  COMMONAPI.getDownLoadTemplate(params).then((res) => {
-    handleDownloadFile(res)
-  })
+  COMMONAPI.getDownLoadTemplate(params)
+    .then((res) => {
+      handleDownloadFile(res)
+      downTemButton.value.changeLoading(false)
+    })
+    .catch(() => downTemButton.value.changeLoading(false))
 }
 
 const fileList = ref<UploadUserFile[]>([])
@@ -377,6 +409,7 @@ const submitUpload = () => {
     })
     return
   }
+  importButton.value.changeLoading(true)
   const formData = new FormData()
   fileList.value.forEach((item) => {
     formData.append('file', item.raw as File)
@@ -384,6 +417,7 @@ const submitUpload = () => {
   formData.append('bizType', 'DOCUMENT')
   COMMONAPI.getAsyncImport(formData)
     .then((res) => {
+      importButton.value.changeLoading(false)
       if (res && res.code === 200) {
         ElMessage({
           type: 'success',
@@ -395,6 +429,7 @@ const submitUpload = () => {
       state.importVisible = false
     })
     .catch((err: Error) => {
+      importButton.value.changeLoading(false)
       throw err
     })
 }

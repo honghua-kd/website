@@ -10,52 +10,67 @@
       :before-close="handleClose"
     >
       <div class="doc-dialog-container">
-        <el-form ref="ruleFormRef" :model="docInfoForm" :rules="rules">
-          <el-form-item label="文书名称" prop="documentName" required>
-            <el-input
-              v-model.trim="docInfoForm.documentName"
-              :maxlength="50"
-              placeholder="请输入"
-              clearable
-            />
-          </el-form-item>
-          <el-form-item label="文书类型" prop="documentType" required>
-            <el-select
-              v-model="docInfoForm.documentType"
-              style="width: 100%"
-              clearable
+        <el-form
+          ref="ruleFormRef"
+          :model="docInfoForm"
+          :rules="rules"
+          label-position="top"
+        >
+          <el-row :gutter="20">
+            <el-col :span="12"
+              ><el-form-item label="文书名称" prop="documentName" required>
+                <el-input
+                  v-model.trim="docInfoForm.documentName"
+                  :maxlength="50"
+                  placeholder="请输入"
+                  clearable
+                /> </el-form-item
+            ></el-col>
+            <el-col :span="12"
+              ><el-form-item label="文书类型" prop="documentType" required>
+                <el-select
+                  v-model="docInfoForm.documentType"
+                  style="width: 100%"
+                  clearable
+                >
+                  <el-option
+                    v-for="item in documentTypeOptions"
+                    :key="(item.value as string)"
+                    :label="(item.label as string)"
+                    :value="(item.value as string)"
+                  />
+                </el-select> </el-form-item
+            ></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12"
+              ><el-form-item label="适用部门" prop="sourceSystem1" required>
+                <el-checkbox-group v-model="docInfoForm.sourceSystem1">
+                  <el-checkbox
+                    v-for="item in systemOptions"
+                    :key="(item.value as string)"
+                    :label="(item.value as string)"
+                    >{{ item.label }}</el-checkbox
+                  >
+                </el-checkbox-group>
+              </el-form-item></el-col
             >
-              <el-option
-                v-for="item in documentTypeOptions"
-                :key="(item.value as string)"
-                :label="(item.label as string)"
-                :value="(item.value as string)"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="适用部门" prop="sourceSystem1" required>
-            <el-checkbox-group v-model="docInfoForm.sourceSystem1">
-              <el-checkbox
-                v-for="item in systemOptions"
-                :key="(item.value as string)"
-                :label="(item.value as string)"
-                >{{ item.label }}</el-checkbox
-              >
-            </el-checkbox-group>
-          </el-form-item>
-          <el-form-item label="用印类型" prop="sealType" required>
-            <el-select
-              v-model="docInfoForm.sealType"
-              multiple
-              style="width: 100%"
-              clearable
-            >
-              <el-option
-                v-for="item in sealOptions"
-                :key="(item.value as string)"
-                :label="(item.label as string)"
-                :value="(item.value as string)" /></el-select
-          ></el-form-item>
+            <el-col :span="12">
+              <el-form-item label="用印类型" prop="sealType" required>
+                <el-select
+                  v-model="docInfoForm.sealType"
+                  multiple
+                  style="width: 100%"
+                  clearable
+                >
+                  <el-option
+                    v-for="item in sealOptions"
+                    :key="(item.value as string)"
+                    :label="(item.label as string)"
+                    :value="(item.value as string)" /></el-select></el-form-item
+            ></el-col>
+          </el-row>
+
           <el-button
             v-if="title === '新增'"
             style="margin-bottom: 10px"
@@ -516,7 +531,7 @@ const handleClose = () => {
 </script>
 <style lang="scss">
 .doc-dialog-container {
-  overflow-y: scroll;
+  overflow: hidden scroll;
   max-height: 600px;
 }
 .save-list-table {

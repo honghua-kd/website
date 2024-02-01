@@ -15,6 +15,7 @@
         :rules="rules"
         :model="editForm"
         label-width="120px"
+        label-position="top"
       >
         <el-form-item
           label="名称"
@@ -111,7 +112,15 @@
             clearable
           />
         </el-form-item>
-        <span style="font-size: 0.9375rem; font-weight: bolder">联系地址</span>
+        <span
+          style="
+            display: block;
+            margin-bottom: 20px;
+            font-size: 0.9375rem;
+            font-weight: bolder;
+          "
+          >联系地址</span
+        >
         <el-form-item label="省/市">
           <AreaCasder :value="areaCode" @changeAreaData="changeAreaData" />
         </el-form-item>
@@ -123,7 +132,7 @@
             clearable
           />
         </el-form-item>
-        <el-row>
+        <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="联系人">
               <el-input
