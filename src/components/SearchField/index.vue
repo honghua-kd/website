@@ -11,7 +11,7 @@
       :gutter="20"
     >
       <template v-for="slotName in slotNames" #[slotName]>
-        <slot :name="slotName"> </slot>
+        <slot :name="slotName"></slot>
       </template>
     </DynamicForm>
     <div class="search-btn">

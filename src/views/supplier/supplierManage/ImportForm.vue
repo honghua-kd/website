@@ -41,9 +41,10 @@ import type {
   UploadFile,
   UploadUserFile
 } from 'element-plus'
-import { CommonAPI } from '@/api'
+import { CommonAPI, SystemAPI } from '@/api'
 import { handleDownloadFile } from '@/utils'
 const CommonApi = new CommonAPI()
+const SystemApi = new SystemAPI()
 const dialogTitle = ref<string>('导入')
 const dialogVisible = ref<boolean>(false)
 const upload = ref<UploadInstance>()
@@ -53,6 +54,10 @@ const props = defineProps({
   biztype: {
     type: String,
     default: ''
+  },
+  category: {
+    type: Object,
+    default: () => {}
   }
 })
 // 上传前校验
@@ -75,9 +80,10 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
 
 const downloadTemplate = () => {
   const params = {
-    bizType: props.biztype
+    businessCategory: props.category.businessCategory,
+    businessSubcategory: props.category.businessSubcategory
   }
-  CommonApi.getDownLoadTemplate(params)
+  SystemApi.templateImportResult(params)
     .then((res) => {
       handleDownloadFile(res)
     })

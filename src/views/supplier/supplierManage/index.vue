@@ -120,7 +120,7 @@
         </template>
       </template>
     </Table>
-    <ImportForm ref="importFormRef" :biztype="bizType" />
+    <ImportForm ref="importFormRef" :biztype="bizType" :category="category" />
     <!-- 供应商弹窗 -->
     <AddModel
       :visible="editModelVisible"
@@ -415,8 +415,14 @@ const delHandler = (id: string) => {
 
 const importFormRef = ref()
 const bizType = ref('')
+const category = reactive({
+  businessCategory: '',
+  businessSubcategory: ''
+})
 const importHandler = () => {
   bizType.value = 'SUPPLIER_DETAIL'
+  category.businessCategory = 'MORTGAGE_TEMPLATE'
+  category.businessSubcategory = 'SUPPLIER_DETAIL'
   importFormRef.value.open()
 }
 const selectData = ref<SupplierListResponse[]>([])
