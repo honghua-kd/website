@@ -277,6 +277,8 @@ defineExpose({ toggleRowSelection, clearSelection })
   align-items: center;
   margin-bottom: 10px;
   .table-btn-box {
+    // display: flex;
+    // overflow-x: scroll;
     max-width: calc(100% - 100px);
   }
 }
