@@ -33,7 +33,7 @@
           />
         </el-form-item>
         <el-form-item label="城市" prop="areaCode" required>
-          <AreaCasder
+          <AreaCascader
             :value="editForm.areaCode"
             @changeAreaData="changeAreaData"
           />
@@ -89,7 +89,6 @@ import type { ModelStateType } from './type'
 import type { AgencyAddressDetailResponse } from '@/api/channel/types/response'
 import type { FormInstance, FormRules, CascaderOption } from 'element-plus'
 import type { InternalRuleItem } from 'async-validator'
-import AreaCasder from '@/components/AreaCascader/index.vue'
 import { AgencyAPI } from '@/api'
 const API = new AgencyAPI()
 

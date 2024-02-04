@@ -11,7 +11,7 @@
         @search="searchHandler"
       >
         <template #area>
-          <AreaCasder
+          <AreaCascader
             :value="areaCode"
             style="width: 100%"
             :multiple="true"
@@ -100,7 +100,6 @@ import { handleDownloadFile } from '@/utils'
 import SearchBar from '@/components/SearchBar/index.vue'
 import Table from '@/components/Table/index.vue'
 import { MainPartAPI, CommonAPI } from '@/api'
-import AreaCasder from '@/components/AreaCascader/index.vue'
 import type { StateType } from './type'
 import type { MortgageSubjectListResponse } from '@/api/mainPart/types/response'
 import { useDictStore } from '@/store/dict'

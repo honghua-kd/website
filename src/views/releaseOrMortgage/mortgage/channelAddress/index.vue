@@ -21,7 +21,7 @@
           />
         </template>
         <template #area>
-          <AreaCasder
+          <AreaCascader
             :value="formModel.areaCodeparams"
             :multiple="true"
             @changeAreaData="changeAreaData"
@@ -169,7 +169,6 @@ import {
 import { Plus, Delete, Download } from '@element-plus/icons-vue'
 import type { DictDataTreeResponse } from '@/api/common/types/response'
 import type { AgencyAddressListResponse } from '@/api/channel/types/response'
-import AreaCasder from '@/components/AreaCascader/index.vue'
 import { handleDownloadFile } from '@/utils'
 import { AgencyAPI, CommonAPI, SystemAPI } from '@/api'
 import Table from '@/components/Table/index.vue'
