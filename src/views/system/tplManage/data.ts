@@ -1,5 +1,5 @@
 import type { DynamicFormDataItem } from '@/components/SearchField/type'
-import type { ITableConfigProps } from '@/components/Table/type'
+import type { ColumnsProps } from '@/components/TableField/type'
 
 export const searchConfig: DynamicFormDataItem[] = [
   {
@@ -23,41 +23,47 @@ export const searchConfig: DynamicFormDataItem[] = [
   }
 ]
 
-export const tableConfig: ITableConfigProps[] = [
+export const columnsConfig: ColumnsProps[] = [
+  {
+    type: 'selection',
+    width: 40,
+    align: 'center'
+  },
   {
     label: '模板名称',
     prop: 'fileName',
     minWidth: 120,
     align: 'left',
-    showOverflowTooltip: true,
-    forbiddenEdit: true,
-    slotName: 'title'
+    showOverflowTooltip: true
   },
   {
     label: '业务大类',
     prop: 'businessCategory',
     minWidth: 120,
     align: 'center',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '业务小类',
     prop: 'businessSubcategory',
     minWidth: 120,
     align: 'center',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '附件代码',
     prop: 'fileCode',
     minWidth: 120,
     align: 'left',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '上传人',
     prop: 'creatorName',
-    width: 100,
+    // width: 100,
     align: 'center',
     showOverflowTooltip: true
   },
@@ -91,7 +97,6 @@ export const tableConfig: ITableConfigProps[] = [
   },
   {
     label: '操作',
-    prop: 'action',
     type: 'action',
     width: 160,
     align: 'center',
