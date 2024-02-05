@@ -574,7 +574,7 @@ export const assignBtnList: Btn[] = [
   },
   {
     name: '确认分配',
-    value: '',
+    value: 'confirmDist',
     type: 'primary',
     icon: Select,
     tip: ''
@@ -588,14 +588,14 @@ export const assignBtnList: Btn[] = [
   },
   {
     name: '修改抵押类型',
-    value: '',
+    value: 'mortType',
     type: 'primary',
     icon: Edit,
     tip: ''
   },
   {
     name: '修改抵押时效',
-    value: '',
+    value: 'mortTime',
     type: 'primary',
     icon: Edit,
     tip: ''
@@ -666,7 +666,7 @@ export const assignedBtnList: Btn[] = [
   },
   {
     name: '修改抵押类型',
-    value: '',
+    value: 'mortType',
     type: 'primary',
     icon: Edit,
     tip: ''

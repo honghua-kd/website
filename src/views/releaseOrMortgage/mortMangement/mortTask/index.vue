@@ -105,7 +105,13 @@
     <!-- 新增抵押任务 -->
     <AddTaskModel ref="addTaskModel" />
     <!-- 修改粉配方 -->
-    <EDistribution ref="eDistribution" />
+    <EDistribution ref="eDistributionModel" />
+    <!-- 修改抵押时效 -->
+    <MortTimeModel ref="mortTimeModel" />
+    <!-- 确认分配 -->
+    <ConfirmDistModel ref="confirmDistModel" />
+    <!-- 修改抵押类型 -->
+    <EMortTypeModel ref="eMortTypeModel" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -122,6 +128,9 @@ import {
 import dayjs from 'dayjs'
 import AddTaskModel from './components/addTaskModel.vue'
 import EDistribution from './components/editDistribution.vue'
+import MortTimeModel from './components/mortTimeModel.vue'
+import ConfirmDistModel from './components/confirmDistModel.vue'
+import EMortTypeModel from './components/editMortTypeModel.vue'
 
 const state = reactive({
   tabActiveName: 'assign',
@@ -144,7 +153,10 @@ const queryParams = reactive({
 })
 const { tabActiveName, tableData, tableLoading, pageTotal } = toRefs(state)
 const addTaskModel = ref()
-const eDistribution = ref()
+const eDistributionModel = ref()
+const mortTimeModel = ref()
+const confirmDistModel = ref()
+const eMortTypeModel = ref()
 
 watch(
   tabActiveName,
@@ -198,7 +210,22 @@ const add = () => {
 
 // 修改分配方
 const editDistribution = () => {
-  eDistribution.value.open()
+  eDistributionModel.value.open()
+}
+
+// 修改抵押时效
+const mortTime = () => {
+  mortTimeModel.value.open()
+}
+
+// 确认分配
+const confirmDist = () => {
+  confirmDistModel.value.open()
+}
+
+// 修改抵押类型
+const mortType = () => {
+  eMortTypeModel.value.open()
 }
 
 // 按钮函数映射
@@ -206,7 +233,10 @@ const BTNFUNCTION: {
   [T: string]: () => void
 } = {
   add,
-  editDistribution
+  editDistribution,
+  mortTime,
+  confirmDist,
+  mortType
 }
 
 // 操作
