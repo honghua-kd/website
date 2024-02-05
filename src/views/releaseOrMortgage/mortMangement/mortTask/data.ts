@@ -567,7 +567,7 @@ export const assignBtnList: Btn[] = [
   },
   {
     name: '下载',
-    value: '',
+    value: 'download',
     type: 'primary',
     icon: Download,
     tip: ''
@@ -581,7 +581,7 @@ export const assignBtnList: Btn[] = [
   },
   {
     name: '退回',
-    value: '',
+    value: 'backMort',
     type: 'primary',
     icon: DArrowLeft,
     tip: ''
@@ -609,14 +609,14 @@ export const assignBtnList: Btn[] = [
   },
   {
     name: '执行自动分配结果',
-    value: '',
+    value: 'autoDist',
     type: 'primary',
     icon: Select,
     tip: ''
   },
   {
     name: '取消',
-    value: '',
+    value: 'cancel',
     type: 'primary',
     icon: Close,
     tip: ''
@@ -631,35 +631,35 @@ export const assignedBtnList: Btn[] = [
   },
   {
     name: '下载',
-    value: '',
+    value: 'download',
     type: 'primary',
     icon: Download,
     tip: ''
   },
   {
     name: '转派',
-    value: '',
+    value: 'transfer',
     type: 'primary',
     icon: Select,
     tip: ''
   },
   {
     name: '退回',
-    value: '',
+    value: 'backMort',
     type: 'primary',
     icon: DArrowLeft,
     tip: ''
   },
   {
     name: '催办',
-    value: '',
+    value: 'hurry',
     type: 'primary',
     icon: Bell,
     tip: ''
   },
   {
     name: '发短信',
-    value: '',
+    value: 'sendMessage',
     type: 'primary',
     icon: ChatDotRound,
     tip: ''
@@ -673,35 +673,35 @@ export const assignedBtnList: Btn[] = [
   },
   {
     name: '完成抵押',
-    value: '',
+    value: 'completeMort',
     type: 'primary',
     icon: Select,
     tip: ''
   },
   {
     name: '移交登记证书',
-    value: '',
+    value: 'transferDoc',
     type: 'primary',
     icon: DArrowRight,
     tip: ''
   },
   {
     name: '新增办理进度',
-    value: '',
+    value: 'addProgress',
     type: 'primary',
     icon: Plus,
     tip: ''
   },
   {
     name: '导入办理进度',
-    value: '',
+    value: 'importProgress',
     type: 'primary',
     icon: Upload,
     tip: ''
   },
   {
     name: '取消',
-    value: '',
+    value: 'cancel',
     type: 'primary',
     icon: Close,
     tip: ''

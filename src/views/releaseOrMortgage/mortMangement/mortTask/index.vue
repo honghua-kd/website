@@ -57,8 +57,10 @@
             :key="i.name"
             :type="i.type"
             :icon="i.icon"
+            :loading="btnLoading[i.value]"
             @click="action(i.value)"
-            >{{ i.name }}</el-button
+            >{{ i.name
+            }}<span v-if="i.value === 'autoDist'">（20） </span></el-button
           ></template
         >
         <template v-if="tabActiveName === 'assigned'"
@@ -112,6 +114,18 @@
     <ConfirmDistModel ref="confirmDistModel" />
     <!-- 修改抵押类型 -->
     <EMortTypeModel ref="eMortTypeModel" />
+    <!-- 退回抵押任务 -->
+    <BackMortModel ref="backMortModel" />
+    <!-- 取消 -->
+    <CancelModel ref="cancelModel" />
+    <!-- 发送短信 -->
+    <SendMessageModel ref="sendMessageModel" />
+    <!-- 转派 -->
+    <TransferModel ref="transferModel" />
+    <!-- 完成抵押 -->
+    <CompleteMortModel ref="completeMortModel" />
+    <!-- 移交登记证书 -->
+    <TransferDocModel ref="transferDocModel" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -131,6 +145,12 @@ import EDistribution from './components/editDistribution.vue'
 import MortTimeModel from './components/mortTimeModel.vue'
 import ConfirmDistModel from './components/confirmDistModel.vue'
 import EMortTypeModel from './components/editMortTypeModel.vue'
+import BackMortModel from './components/backMortModel.vue'
+import CancelModel from './components/cancelModel.vue'
+import SendMessageModel from './components/sendMessageModel.vue'
+import TransferModel from './components/transferModel.vue'
+import CompleteMortModel from './components/completeMortModel.vue'
+import TransferDocModel from './components/transferDocModel.vue'
 
 const state = reactive({
   tabActiveName: 'assign',
@@ -157,6 +177,12 @@ const eDistributionModel = ref()
 const mortTimeModel = ref()
 const confirmDistModel = ref()
 const eMortTypeModel = ref()
+const backMortModel = ref()
+const cancelModel = ref()
+const sendMessageModel = ref()
+const transferModel = ref()
+const completeMortModel = ref()
+const transferDocModel = ref()
 
 watch(
   tabActiveName,
@@ -228,6 +254,51 @@ const mortType = () => {
   eMortTypeModel.value.open()
 }
 
+// 退回抵押任务
+const backMort = () => {
+  backMortModel.value.open()
+}
+
+// 下载
+const download = () => {}
+
+// 执行自动分配结果
+const autoDist = () => {}
+
+// 取消
+const cancel = () => {
+  cancelModel.value.open()
+}
+
+// 发送短信
+const sendMessage = () => {
+  sendMessageModel.value.open()
+}
+
+// 转派
+const transfer = () => {
+  transferModel.value.open()
+}
+
+// 完成抵押
+const completeMort = () => {
+  completeMortModel.value.open()
+}
+
+// 移交登记证书
+const transferDoc = () => {
+  transferDocModel.value.open()
+}
+
+// 催办
+const hurry = () => {}
+
+// 新增办理进度
+const addProgress = () => {}
+
+// 导入办理进度
+const importProgress = () => {}
+
 // 按钮函数映射
 const BTNFUNCTION: {
   [T: string]: () => void
@@ -236,8 +307,25 @@ const BTNFUNCTION: {
   editDistribution,
   mortTime,
   confirmDist,
-  mortType
+  mortType,
+  backMort,
+  download,
+  autoDist,
+  cancel,
+  sendMessage,
+  transfer,
+  completeMort,
+  transferDoc,
+  hurry,
+  addProgress,
+  importProgress
 }
+
+// 按钮loading
+const btnLoading = reactive<Record<string, boolean>>({
+  download: false,
+  autoDist: false
+})
 
 // 操作
 const action = (value: string) => {
