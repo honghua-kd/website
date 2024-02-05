@@ -25,11 +25,11 @@ const frameSetting: FrameSetting = {
   // 默认主题颜色
   themeColor: '#005BAC',
   // 默认左侧菜单背景颜色
-  leftMenuBgColor: '#fff', // #f2f3f5
+  leftMenuBgColor: '#fff', // #0d153c
   // 默认顶部菜单背景颜色
   topMenuBgColor: '#fff',
   // 默认左侧菜单文字颜色
-  leftMenuTextColor: '#4e5969',
+  leftMenuTextColor: '#4e5969', // '#FFF'
   // 默认顶部菜单文字颜色
   topMenuTextColor: '#333',
   // 是否显示用户名

@@ -21,15 +21,12 @@
     </div>
     <el-divider border-style="dashed" />
 
-    <Table
+    <TableField
       :data="tableData"
       :loading="tableLoading"
-      :columnConfig="tableConfig"
-      :isSelected="true"
+      :columns="columnsConfig"
       :page-total="pageTotal"
-      :setColumnEnable="true"
       :height="tableHeight"
-      :actionWidth="px2rem('100px')"
       v-model:pageSize="queryParams.pageSize"
       v-model:pageNo="queryParams.pageNo"
       @selection-change="selectionChangeHandler"
@@ -37,7 +34,7 @@
       @current-change="getList"
     >
       <!-- 批量操作 -->
-      <template #btnsBox>
+      <template #buttons>
         <el-button type="primary" :icon="Plus" @click="addTemplate">
           新增
         </el-button>
@@ -62,7 +59,7 @@
           删除
         </el-button>
       </template>
-    </Table>
+    </TableField>
     <el-dialog
       :title="dialogTitle"
       v-model="dialogVisible"
@@ -140,7 +137,7 @@
 </template>
 
 <script lang="ts" setup>
-import { searchConfig, tableConfig } from './data'
+import { searchConfig, columnsConfig } from './data'
 import { reactive, ref, computed, watch } from 'vue'
 import { SystemAPI, CommonAPI } from '@/api'
 import { TemplateListItem } from '@/api/system/types/response'
@@ -148,6 +145,7 @@ import { Plus, Delete, UploadFilled } from '@element-plus/icons-vue'
 // import { useDictStore } from '@/store/dict'
 import { px2rem, handleDownloadFile } from '@/utils'
 import { ElMessageBox, ElMessage, genFileId } from 'element-plus'
+import TableField from '@/components/TableField/index.vue'
 import type {
   UploadRawFile,
   UploadRequestOptions,

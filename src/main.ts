@@ -117,5 +117,6 @@ const { handlePermission } = usePermission({
   }
 })
 router.beforeEach((to, from, next) => {
+  document.title = String(to.meta.title || '运营系统')
   handlePermission(to, from, next)
 })

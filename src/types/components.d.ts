@@ -90,6 +90,7 @@ declare module 'vue' {
     SideTree: typeof import('./../components/SideTree/index.vue')['default']
     SvgIcon: typeof import('./../components/SvgIcon/index.vue')['default']
     Table: typeof import('./../components/Table/index.vue')['default']
+    TableField: typeof import('./../components/TableField/index.vue')['default']
   }
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']
