@@ -1,5 +1,5 @@
 <template>
-  <div class="task-details">
+  <div class="task-details" id="taskDetails">
     <Line name="任务详情" :botBorder="false"></Line>
     <el-descriptions :column="4" :width="100">
       <el-descriptions-item
@@ -10,6 +10,7 @@
         {{ item.value }}
       </el-descriptions-item>
     </el-descriptions>
+    <div class="bottom-line"></div>
   </div>
 </template>
 

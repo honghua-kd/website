@@ -41,6 +41,7 @@ import originData from './data'
   .custom-label-special {
     font-weight: 700;
     color: $base-color-primary;
+    cursor: pointer;
   }
   .custom-border {
     position: relative;

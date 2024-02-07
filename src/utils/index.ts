@@ -425,3 +425,43 @@ export function px2rem(pxUnit?: string) {
     return pxUnit
   }
 }
+// /**
+//  *
+//  * @param url
+//  * @param name
+//  * @returns
+//  */
+// export const downloadBlodFile = (
+//   data: any,
+//   name: any,
+//   typeBlod: string = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,charset=UTF-8'
+// ) => {
+//   const fileName = name // 导出名字
+//   const blob = new Blob([data], { type: typeBlod }) // 转成blob格式
+//   const link = document.createElement('a')
+//   link.download = fileName
+//   link.href = URL.createObjectURL(blob)
+//   link.style.display = 'none'
+//   document.body.appendChild(link)
+//   link.click()
+//   URL.revokeObjectURL(link.href)
+//   document.body.removeChild(link)
+// }
+/**
+ *
+ * @param url
+ * @param name
+ * @returns
+ */
+export const downloadFile = (url: string, name: string) => {
+  fetch(url).then((res) =>
+    res.blob().then((blob) => {
+      const a = document.createElement('a')
+      const url = window.URL.createObjectURL(blob)
+      a.href = url
+      a.download = name
+      a.click()
+      window.URL.revokeObjectURL(url)
+    })
+  )
+}

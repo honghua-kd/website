@@ -1,15 +1,18 @@
 <template>
   <div class="approval-record">
     <Line name="审批记录" :botBorder="false" />
-    <el-timeline>
+    <el-timeline v-if="activities.length > 0">
       <el-timeline-item
         v-for="(activity, index) in activities"
         :key="index"
-        :timestamp="activity.timestamp"
+        :hollow="true"
+        type="info"
       >
         {{ activity.content }}
       </el-timeline-item>
     </el-timeline>
+    <el-empty :image-size="100" v-else description="暂无审批记录"></el-empty>
+    <div class="bottom-line"></div>
   </div>
 </template>
 

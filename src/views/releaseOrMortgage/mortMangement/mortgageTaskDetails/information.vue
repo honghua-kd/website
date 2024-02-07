@@ -1,5 +1,5 @@
 <template>
-  <div class="basic-information">
+  <div class="basic-information" id="information">
     <Line name="基本信息" :botBorder="false"></Line>
     <el-descriptions :column="4">
       <el-descriptions-item
@@ -10,6 +10,7 @@
         {{ item.value }}
       </el-descriptions-item>
     </el-descriptions>
+    <div class="bottom-line"></div>
   </div>
 </template>
 

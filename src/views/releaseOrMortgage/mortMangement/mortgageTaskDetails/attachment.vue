@@ -1,9 +1,11 @@
 <template>
   <div class="attachment">
     <Line name="附件" :botBorder="false">
-      <el-button type="primary" link>全部下载 </el-button>
+      <el-button type="primary" link @click="handleAllDownload"
+        >全部下载
+      </el-button>
     </Line>
-    <div class="wrap">
+    <div class="wrap" v-if="images.length > 0">
       <div
         class="item"
         v-for="(image, index) in images"
@@ -21,13 +23,17 @@
             >
               <el-icon><CirclePlus /></el-icon>
             </span>
-            <span class="item-delete" @click="handleDownload(image)">
+            <span
+              class="item-delete"
+              @click="downloadFile(image.url, image.name)"
+            >
               <el-icon><Download /></el-icon>
             </span>
           </span>
         </div>
       </div>
     </div>
+    <el-empty :image-size="100" v-else description="暂无附件" />
     <el-dialog v-model="dialogVisible">
       <img
         w-full
@@ -36,29 +42,31 @@
         style="width: 100%"
       />
     </el-dialog>
+    <div class="bottom-line"></div>
   </div>
 </template>
 
 <script setup lang="ts">
 import Line from './components/line.vue'
 import { CirclePlus, Download } from '@element-plus/icons-vue'
-import { ref, nextTick } from 'vue'
+import { downloadFile } from '@/utils/index'
+import { ref } from 'vue'
 
 const images = ref([
   {
-    name: 'food.jpeg',
+    name: 'food11.jpeg',
     url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
   },
   {
-    name: 'food.jpeg',
+    name: 'food2.jpeg',
     url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
   },
   {
-    name: 'food.jpeg',
+    name: 'food33.jpeg',
     url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
   },
   {
-    name: 'food.jpeg',
+    name: 'food555.jpeg',
     url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
   }
 ])
@@ -77,30 +85,10 @@ const handlePictureCardPreview = (uploadFile: string) => {
   dialogImageUrl.value = uploadFile!
   dialogVisible.value = true
 }
-interface FileItem {
-  url: string // 文件的URL，用于下载
-  name: string // 文件的名称，用于设置下载后的文件名
-}
 // 下载  imgage图片blob类型下载
-const handleDownload = (file: FileItem) => {
-  debugger
-  const link = document.createElement('a')
-  link.href = file.url
-  link.download = file.name
-  // 阻止默认的点击事件行为
-  link.addEventListener(
-    'click',
-    (event) => {
-      event.preventDefault()
-    },
-    { once: true }
-  )
-
-  // 确保DOM元素已经挂载
-  nextTick(() => {
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+const handleAllDownload = () => {
+  images.value.forEach((element) => {
+    downloadFile(element.url, element.name)
   })
 }
 </script>
@@ -112,6 +100,7 @@ const handleDownload = (file: FileItem) => {
     .item {
       position: relative;
       margin-right: 20px;
+      height: 100%;
     }
     .item-mask {
       position: absolute;

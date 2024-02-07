@@ -34,7 +34,7 @@
               </span>
               <span
                 class="el-upload-list__item-delete"
-                @click="handleDownload(file)"
+                @click="downloadFile(file.url, file.name)"
               >
                 <el-icon><Download /></el-icon>
               </span>
@@ -44,8 +44,14 @@
       </div>
     </div>
     <el-dialog v-model="dialogVisible">
-      <img w-full :src="dialogImageUrl" alt="Preview Image" />
+      <img
+        w-full
+        style="width: 100%"
+        :src="dialogImageUrl"
+        alt="Preview Image"
+      />
     </el-dialog>
+    <div class="bottom-line"></div>
   </div>
 </template>
 
@@ -53,6 +59,7 @@
 import Line from './components/line.vue'
 import type { UploadProps, UploadUserFile } from 'element-plus'
 import { Plus, CirclePlus, Download } from '@element-plus/icons-vue'
+import { downloadFile } from '@/utils/index'
 import { ref } from 'vue'
 
 const fileList = ref<UploadUserFile[]>([
@@ -75,22 +82,11 @@ const fileList = ref<UploadUserFile[]>([
 ])
 const dialogImageUrl = ref('')
 const dialogVisible = ref(false)
-interface FileItem {
-  url: string // 文件的URL，用于下载
-  name: string // 文件的名称，用于设置下载后的文件名
-}
 
 const handlePictureCardPreview: UploadProps['onPreview'] = (uploadFile) => {
   console.log(uploadFile, 'uploadFile111')
   dialogImageUrl.value = uploadFile.url!
   dialogVisible.value = true
-}
-// 下载  imgage图片blob类型下载
-const handleDownload = (file: FileItem) => {
-  const a = document.createElement('a')
-  a.href = file.url
-  a.download = file.name
-  a.click()
 }
 </script>
 

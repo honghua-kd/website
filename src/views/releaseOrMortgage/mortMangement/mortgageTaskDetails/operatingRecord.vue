@@ -7,12 +7,10 @@
     </Line>
     <el-drawer v-model="drawer" title="I am the title" :with-header="false">
       <el-timeline>
-        <el-timeline-item
-          v-for="(activity, index) in activities"
-          :key="index"
-          :timestamp="activity.timestamp"
-        >
-          {{ activity.content }}
+        <el-timeline-item v-for="(activity, index) in activities" :key="index">
+          <p>{{ activity.person }}</p>
+          <p>{{ activity.content }}</p>
+          <p>{{ activity.img }}</p>
         </el-timeline-item>
       </el-timeline>
     </el-drawer>
@@ -26,16 +24,21 @@ import { ref } from 'vue'
 const drawer = ref(false)
 const activities = [
   {
-    content: 'Event start',
-    timestamp: '2018-04-15'
+    person: '姜领    2023-12-12  12:21',
+    content: '转派给 恒运-业务运营部-102345张三',
+    img: ''
   },
   {
-    content: 'Approved',
-    timestamp: '2018-04-13'
+    person: '姜领    2023-12-12  12:21',
+    content: '发起抵押材料申请'
   },
   {
-    content: 'Success',
-    timestamp: '2018-04-11'
+    person: '姜领    2023-12-12  12:21',
+    content: '发起委托业务运营办理抵押'
+  },
+  {
+    person: '姜领    2023-12-12  12:2',
+    content: '修改补充信息    车牌号：12334445更改为12334446'
   }
 ]
 </script>

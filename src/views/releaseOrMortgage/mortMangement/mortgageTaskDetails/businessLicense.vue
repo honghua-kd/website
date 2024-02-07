@@ -6,40 +6,45 @@
     <div class="wrap">
       <div class="left-table">
         <div class="title">营业执照历史流转情况</div>
-        <Table
-          :data="tableData"
+        <TableField
+          :data="leftTableData"
           :loading="tableLoading"
-          :columnConfig="tableConfig"
+          :columns="businessLeftTableConfig"
           :height="200"
           :setColumnEnable="false"
         >
-        </Table>
+        </TableField>
       </div>
       <div class="right-table">
         <div class="title">营业执照排期情况</div>
-        <Table
-          :data="tableData"
+        <TableField
+          :data="rightTableData"
           :loading="tableLoading"
-          :columnConfig="tableConfig"
+          :columns="businessRightTableConfig"
           :height="200"
           :setColumnEnable="false"
         >
-        </Table>
+        </TableField>
       </div>
     </div>
+    <div class="bottom-line"></div>
   </div>
 </template>
 
 <script setup lang="ts">
 import Line from './components/line.vue'
-import Table from '@/components/Table/index.vue'
 import { ref, onMounted, reactive } from 'vue'
-import { tableConfig } from './data'
-import type { tableDataType } from './type'
+import { businessRightTableConfig, businessLeftTableConfig } from './data'
+import TableField from '@/components/TableField/index.vue'
+import type {
+  businessRightTableDataType,
+  businessLeftTableDataType
+} from './type'
 import { SupplierAPI } from '@/api'
 
 const API = new SupplierAPI()
-let tableData = reactive<tableDataType[]>([{}])
+let rightTableData = reactive<businessRightTableDataType[]>([])
+let leftTableData = reactive<businessLeftTableDataType[]>([])
 const tableLoading = ref(false)
 const pageTotal = ref(100)
 const queryFormList = reactive({
@@ -56,16 +61,18 @@ const getList = async () => {
   await API.getSupplierList(queryFormList)
     .then((res) => {
       if (res && res.code === 200) {
-        tableData || [].splice(0, tableData || [].length)
-        console.log(res.data, '22222')
-        const list: tableDataType[] = (res?.data?.list || []).map((i) => ({
-          supplierName: i.supplierName,
-          supplierTypeName: i.supplierTypeName,
-          coverArea: i.coverArea,
-          contactName: i.contactName,
-          phone: i.phone
-        }))
-        tableData = [...list]
+        rightTableData || [].splice(0, rightTableData || [].length)
+        const list: businessRightTableDataType[] = (res?.data?.list || []).map(
+          (i) => ({
+            supplierName: i.supplierName,
+            supplierTypeName: i.supplierTypeName,
+            coverArea: i.coverArea,
+            contactName: i.contactName,
+            phone: i.phone
+          })
+        )
+        rightTableData = [...list]
+        leftTableData = [...list]
         pageTotal.value = res?.data?.total || 0
         tableLoading.value = false
       }

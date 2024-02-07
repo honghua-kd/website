@@ -1,12 +1,13 @@
 <template>
   <div class="settlement-record">
     <Line name="结算记录" :botBorder="false" />
-    <Table
+    <TableField
       :data="tableData"
       :loading="tableLoading"
-      :columnConfig="tableConfig"
+      :columns="settlementTableConfig"
       :height="250"
       :setColumnEnable="false"
+      v-if="tableData.length > 0"
     >
       <template #action="scope">
         <template v-if="scope.row.id">
@@ -14,19 +15,22 @@
           <el-button link type="danger">删除</el-button>
         </template>
       </template>
-    </Table>
+    </TableField>
+    <el-empty :image-size="100" v-else description="暂无结算记录" />
+    <div class="bottom-line"></div>
   </div>
 </template>
 
 <script setup lang="ts">
 import Line from './components/line.vue'
-import type { tableDataType } from './type'
+import type { settlementTableDataType } from './type'
 import { ref, onMounted, reactive } from 'vue'
-import { tableConfig } from './data'
+import { settlementTableConfig } from './data'
 import { SupplierAPI } from '@/api'
+import TableField from '@/components/TableField/index.vue'
 
 const API = new SupplierAPI()
-let tableData = reactive<tableDataType[]>([{}])
+let tableData = reactive<settlementTableDataType[]>([{}])
 const tableLoading = ref(false)
 const pageTotal = ref(100)
 const queryFormList = reactive({
@@ -43,13 +47,16 @@ const getList = async () => {
     .then((res) => {
       if (res && res.code === 200) {
         tableData || [].splice(0, tableData || [].length)
-        const list: tableDataType[] = (res?.data?.list || []).map((i) => ({
-          supplierName: i.supplierName,
-          supplierTypeName: i.supplierTypeName,
-          coverArea: i.coverArea,
-          contactName: i.contactName,
-          phone: i.phone
-        }))
+        const list: settlementTableDataType[] = (res?.data?.list || []).map(
+          (i) => ({
+            supplierName: i.supplierName,
+            supplierTypeName: i.supplierTypeName || '-',
+            coverArea: i.coverArea,
+            contactName: i.contactName || '-',
+            phone: i.phone,
+            time: '2121212'
+          })
+        )
         tableData = [...list]
         pageTotal.value = res?.data?.total || 0
         tableLoading.value = false

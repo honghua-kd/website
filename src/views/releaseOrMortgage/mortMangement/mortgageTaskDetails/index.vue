@@ -1,37 +1,41 @@
 <template>
   <div class="mort-mangement-details-container">
-    <div class="breadcrumb">抵押管理>抵押详情</div>
-    <HeaderTable></HeaderTable>
-    <div class="link">
-      <span
-        v-for="item in linkData"
-        :key="item.value"
-        @click="scrollTo('#' + item.value)"
-        >{{ item.name }}</span
-      >
+    <div class="top">
+      <div class="breadcrumb">抵押管理>抵押详情</div>
+      <HeaderTable></HeaderTable>
+      <div class="link">
+        <span
+          v-for="(item, index) in linkData"
+          :key="item.value"
+          @click="scrollTo(index)"
+          >{{ item.name }}</span
+        >
+      </div>
     </div>
-    <!-- 基本信息 -->
-    <Information id="information"></Information>
-    <!-- 任务详情 -->
-    <TaskDetails id="taskDetails"></TaskDetails>
-    <!-- 材料明细 -->
-    <MaterialDetail id="materialDetail"></MaterialDetail>
-    <!-- 进度信息 -->
-    <Progress id="progress"></Progress>
-    <!-- 营业执照 -->
-    <BusinessLicense id="businessLicense"></BusinessLicense>
-    <!-- 完成凭证 -->
-    <ProofCompletion id="proofCompletion"></ProofCompletion>
-    <!-- 催办记录 -->
-    <CallRecord id="callRecord"></CallRecord>
-    <!-- 审批记录 -->
-    <ApprovalRecord id="approvalRecord"></ApprovalRecord>
-    <!-- 附件 -->
-    <Attachment id="attachment"></Attachment>
-    <!-- 结算记录 -->
-    <SettlementRecord id="settlementRecord"></SettlementRecord>
-    <!-- 操作记录 -->
-    <OperationRecord id="operatingRecord"></OperationRecord>
+    <div class="container" ref="container">
+      <!-- 基本信息 -->
+      <Information ref="information"></Information>
+      <!-- 任务详情 -->
+      <TaskDetails ref="taskDetails"></TaskDetails>
+      <!-- 材料明细 -->
+      <MaterialDetail ref="materialDetail"></MaterialDetail>
+      <!-- 进度信息 -->
+      <Progress ref="progress"></Progress>
+      <!-- 营业执照 -->
+      <BusinessLicense ref="businessLicense"></BusinessLicense>
+      <!-- 完成凭证 -->
+      <ProofCompletion ref="proofCompletion"></ProofCompletion>
+      <!-- 催办记录 -->
+      <CallRecord ref="callRecord"></CallRecord>
+      <!-- 审批记录 -->
+      <ApprovalRecord ref="approvalRecord"></ApprovalRecord>
+      <!-- 附件 -->
+      <Attachment ref="attachment"></Attachment>
+      <!-- 结算记录 -->
+      <SettlementRecord ref="settlementRecord"></SettlementRecord>
+      <!-- 操作记录 -->
+      <OperationRecord ref="operatingRecord"></OperationRecord>
+    </div>
   </div>
 </template>
 
@@ -52,12 +56,25 @@ import SettlementRecord from './settlementRecord.vue'
 import OperationRecord from './operatingRecord.vue'
 
 const linkData = ref(originData.linkData)
+const tabchecked = ref(0)
+const container = ref<null | HTMLElement>(null)
 
-const scrollTo = (selector: string) => {
-  const element = document.querySelector(selector)
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth' })
+const scrollTo = (index: number) => {
+  if (index !== tabchecked.value) {
+    tabchecked.value = index
   }
+  const children = container.value?.children[0] as HTMLElement
+
+  const excLength = children.offsetTop
+  console.log(children)
+  // const no = index + 1
+
+  const scrollTopType = container.value as HTMLElement
+  const containerHeight = container.value?.children[index] as HTMLElement
+
+  console.log(containerHeight)
+
+  scrollTopType.scrollTop = containerHeight.offsetTop - excLength
 }
 </script>
 
@@ -69,7 +86,7 @@ const scrollTo = (selector: string) => {
   .link {
     display: flex;
     justify-content: space-between;
-    margin: 0 20px;
+    margin: 0 20px 20px;
     font-size: 16px;
     font-weight: 700;
     span {
@@ -77,18 +94,30 @@ const scrollTo = (selector: string) => {
       cursor: pointer;
     }
   }
-}
-:deep(.el-descriptions__cell) {
-  padding-bottom: 5px !important;
-}
-:deep(.el-descriptions__label) {
-  display: inline-block;
-  width: 150px;
-  font-weight: 500;
-  text-align: right;
-  color: #aaaaaa;
-}
-:deep(.el-descriptions__content) {
-  text-align: left;
+  .container {
+    overflow: scroll;
+    height: 600px;
+  }
+  :deep(.bottom-line) {
+    margin-top: 15px;
+    width: 100%;
+    border: 1px solid #e6e6e6;
+  }
+  :deep(.el-empty) {
+    height: 150px;
+  }
+  :deep(.el-descriptions__cell) {
+    padding-bottom: 5px !important;
+  }
+  :deep(.el-descriptions__label) {
+    display: inline-block;
+    width: 150px;
+    font-weight: 500;
+    text-align: right;
+    color: #aaaaaa;
+  }
+  :deep(.el-descriptions__content) {
+    text-align: left;
+  }
 }
 </style>

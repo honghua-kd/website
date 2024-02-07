@@ -1,4 +1,4 @@
-import type { ITableConfigProps } from '@/components/Table/type'
+import type { ColumnsProps } from '@/components/TableField/type'
 export default {
   headerTableData: [
     { name: 'DY2300001', value: '待分配' },
@@ -52,54 +52,352 @@ export default {
     { name: '操作记录', value: 'operatingRecord' }
   ]
 }
-export const tableConfig: ITableConfigProps[] = [
+export const tableConfig: ColumnsProps[] = [
   {
     label: '公司名称',
     prop: 'supplierName',
-    width: '150',
-    minWidth: '',
-    fixed: true,
+    minWidth: '150',
     showOverflowTooltip: true
   },
   {
     label: '类型',
     prop: 'supplierTypeName',
-    minWidth: '120',
     fixed: false,
     showOverflowTooltip: true
   },
   {
     label: '归属公司',
     prop: 'belongCompanyName',
-    width: '120',
-    minWidth: '',
     fixed: false
   },
   {
     label: '负责区域',
     prop: 'coverArea',
-    minWidth: '240',
     fixed: false
   },
   {
     label: '联系人',
     prop: 'contactName',
-    width: '100',
     align: 'center',
     fixed: false
   },
   {
     label: '联系电话',
     prop: 'phone',
-    width: '150',
     align: 'center',
     fixed: false
   },
   {
     label: '电子邮箱',
     prop: 'email',
-    width: '150',
-    minWidth: '',
+    fixed: false
+  },
+  {
+    label: '操作',
+    fixed: false,
+    type: 'action',
+    width: '100'
+  }
+]
+export const progressTableConfig: ColumnsProps[] = [
+  {
+    label: '进度人',
+    prop: 'supplierName',
+    minWidth: '150',
+    showOverflowTooltip: true
+  },
+  {
+    label: '进度人所属公司',
+    prop: 'supplierTypeName',
+    fixed: false,
+    showOverflowTooltip: true
+  },
+  {
+    label: '进度时间',
+    prop: 'belongCompanyName',
+    fixed: false
+  },
+  {
+    label: '操作时间',
+    prop: 'coverArea',
+    fixed: false
+  },
+  {
+    label: '进度结果（一级)',
+    prop: 'contactName',
+    align: 'center',
+    fixed: false
+  },
+  {
+    label: '进度结果（二级)',
+    prop: 'phone',
+    align: 'center',
+    fixed: false
+  },
+  {
+    label: '补充说明',
+    prop: 'email',
+    fixed: false
+  },
+  {
+    label: '操作',
+    fixed: false,
+    type: 'action',
+    width: '100'
+  }
+]
+export const MaterialDetailTableConfig: ColumnsProps[] = [
+  {
+    label: '最终去向',
+    prop: 'supplierName',
+    minWidth: '150',
+    showOverflowTooltip: true,
+    align: 'center'
+  },
+  {
+    label: '邮寄人',
+    prop: 'supplierTypeName',
+    align: 'center',
+    fixed: false,
+    showOverflowTooltip: true
+  },
+  {
+    label: '接受人',
+    prop: 'belongCompanyName',
+    align: 'center',
+    fixed: false
+  },
+  {
+    label: '邮寄时间',
+    prop: 'coverArea',
+    align: 'center',
+    fixed: false
+  },
+  {
+    label: '邮寄地址',
+    prop: 'contactName',
+    align: 'center',
+    fixed: false
+  },
+  {
+    label: '接收地址',
+    prop: 'phone',
+    align: 'center',
+    fixed: false
+  },
+  {
+    label: '操作',
+    fixed: false,
+    type: 'action',
+    width: '60',
+    align: 'center'
+  }
+]
+export const MaterialDetailSecondTableConfig: ColumnsProps[] = [
+  {
+    label: '任务编号',
+    prop: 'uid',
+    minWidth: '150',
+    showOverflowTooltip: true,
+    align: 'center'
+  },
+  {
+    label: '材料清单',
+    prop: 'list',
+    align: 'center',
+    fixed: false,
+    showOverflowTooltip: true
+  },
+  {
+    label: '材料去向',
+    prop: 'belongCompanyName',
+    align: 'center',
+    fixed: false
+  },
+  {
+    label: '最终材料去向',
+    prop: 'coverArea',
+    align: 'center',
+    fixed: false
+  },
+  {
+    label: '任务生成时间',
+    prop: 'startTime',
+    align: 'center',
+    fixed: false
+  },
+  {
+    label: '任务完成时间',
+    prop: 'endTime',
+    align: 'center',
+    fixed: false
+  },
+  {
+    label: '抵押材料状态',
+    prop: 'status',
+    align: 'center',
+    fixed: false
+  },
+  {
+    label: '材料出具时间',
+    prop: 'time',
+    align: 'center',
+    fixed: false
+  },
+  {
+    label: '寄送地址',
+    prop: 'adress',
+    align: 'center',
+    fixed: false
+  },
+  {
+    label: '寄送联系人',
+    prop: 'name',
+    align: 'center',
+    fixed: false
+  },
+  {
+    label: '寄送联系电话',
+    prop: 'phone',
+    align: 'center',
+    fixed: false
+  },
+  {
+    label: '寄出状态',
+    prop: 'mailingStatus',
+    align: 'center',
+    fixed: false
+  },
+  {
+    label: '寄出时间',
+    prop: 'mailingTime',
+    align: 'center',
+    fixed: false
+  },
+  {
+    label: '操作',
+    fixed: false,
+    type: 'action',
+    width: '60',
+    align: 'center'
+  }
+]
+export const businessLeftTableConfig: ColumnsProps[] = [
+  {
+    label: '营业执照编号',
+    prop: 'supplierName',
+    minWidth: '150',
+    showOverflowTooltip: true
+  },
+  {
+    label: '执照主体',
+    prop: 'supplierTypeName',
+    fixed: false,
+    showOverflowTooltip: true
+  },
+  {
+    label: '供应商',
+    prop: 'belongCompanyName',
+    fixed: false
+  },
+  {
+    label: '历史流转城',
+    prop: 'coverArea',
+    fixed: false
+  },
+  {
+    label: '所在日期',
+    prop: 'contactName',
+    align: 'center',
+    fixed: false
+  },
+  {
+    label: '目前状态',
+    prop: 'phone',
+    align: 'center',
+    fixed: false
+  },
+  {
+    label: '距离今天已',
+    prop: 'email',
+    fixed: false
+  }
+]
+export const businessRightTableConfig: ColumnsProps[] = [
+  {
+    label: '营业执照编号',
+    prop: 'supplierName',
+    minWidth: '150',
+    showOverflowTooltip: true
+  },
+  {
+    label: '执照主体',
+    prop: 'supplierTypeName',
+    fixed: false,
+    showOverflowTooltip: true
+  },
+  {
+    label: '供应商',
+    prop: 'belongCompanyName',
+    fixed: false
+  },
+  {
+    label: '预计流转城市',
+    prop: 'coverArea',
+    fixed: false
+  },
+  {
+    label: '预计调度日期',
+    prop: 'contactName',
+    align: 'center',
+    fixed: false
+  },
+  {
+    label: '距离今天',
+    prop: 'phone',
+    align: 'center',
+    fixed: false
+  }
+]
+export const settlementTableConfig: ColumnsProps[] = [
+  {
+    label: '应付金额',
+    prop: 'supplierName',
+    minWidth: '150',
+    showOverflowTooltip: true
+  },
+  {
+    label: '实付金额',
+    prop: 'supplierTypeName',
+    fixed: false,
+    showOverflowTooltip: true
+  },
+  {
+    label: '结算方式',
+    prop: 'belongCompanyName',
+    fixed: false
+  },
+  {
+    label: '应收方',
+    prop: 'coverArea',
+    fixed: false
+  },
+  {
+    label: '是否支付',
+    prop: 'contactName',
+    align: 'center',
+    fixed: false
+  },
+  {
+    label: '支付时间',
+    prop: 'phone',
+    align: 'center',
+    fixed: false
+  },
+  {
+    label: '生成时间',
+    prop: 'time',
+    align: 'center',
     fixed: false
   }
 ]
