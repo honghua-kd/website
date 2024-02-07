@@ -12,7 +12,7 @@
           trigger="click"
         >
           <el-carousel-item v-for="(item, index) in images" :key="index">
-            <div class="carousel-container">
+            <div class="carousel-container" style="width: 100%">
               <img style="width: 100%" :src="item.url" alt="轮播图片" />
               <div class="carousel-buttons">
                 <el-button type="text" @click.prevent="previewImage(item.url)"

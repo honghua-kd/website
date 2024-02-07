@@ -13,7 +13,7 @@
         @mouseover="showMask(index)"
         @mouseleave="hideMask"
       >
-        <img style="width: 100px; height: 100%" :src="image.url" />
+        <img class="attachment-image" :src="image.url" />
         <div class="text">{{ image.name }}</div>
         <div ref="mask" class="item-mask" v-show="currentHoverIndex === index">
           <span class="item-actions">
@@ -127,6 +127,10 @@ const handleAllDownload = () => {
         font-size: 20px;
       }
     }
+  }
+  .attachment-image {
+    width: 100px;
+    height: 100%;
   }
 }
 :deep(.el-upload-list--picture-card .el-upload-list__item) {

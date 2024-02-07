@@ -96,7 +96,8 @@ const scrollTo = (index: number) => {
   }
   .container {
     overflow: scroll;
-    height: 600px;
+    height: 800px;
+    // height: calc(100vh - 150px);
   }
   :deep(.bottom-line) {
     margin-top: 15px;
