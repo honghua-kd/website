@@ -238,17 +238,24 @@ export default [
     children: [
       {
         children: [
+          // {
+          //   children: [],
+          //   elements: [],
+          //   menuType: 3,
+          //   menu: 'mortMangement',
+          //   sort: 1
+          // },
           {
             children: [],
             elements: [],
             menuType: 3,
-            menu: 'mortMangement',
+            menu: 'mortMangementDetails',
             sort: 1
           }
         ],
         elements: [],
         menuType: 5,
-        menu: 'mortMangementMenu'
+        menu: 'mortMangement'
       },
       {
         children: [
