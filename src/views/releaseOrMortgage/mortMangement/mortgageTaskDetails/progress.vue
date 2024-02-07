@@ -8,7 +8,8 @@
       :data="tableData"
       :loading="tableLoading"
       :columns="progressTableConfig"
-      :height="300"
+      :height="200"
+      name="progressTable"
     >
       <template #action="scope">
         <el-button link type="primary" @click="editHandler(scope.row)">

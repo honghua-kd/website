@@ -8,6 +8,7 @@
       :height="250"
       :setColumnEnable="false"
       v-if="tableData.length > 0"
+      name="settlementTable"
     >
       <template #action="scope">
         <template v-if="scope.row.id">

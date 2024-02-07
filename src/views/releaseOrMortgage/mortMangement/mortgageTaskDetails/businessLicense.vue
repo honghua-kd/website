@@ -12,6 +12,7 @@
           :columns="businessLeftTableConfig"
           :height="200"
           :setColumnEnable="false"
+          name="leftTable"
         >
         </TableField>
       </div>
@@ -23,6 +24,7 @@
           :columns="businessRightTableConfig"
           :height="200"
           :setColumnEnable="false"
+          name="rightTable"
         >
         </TableField>
       </div>

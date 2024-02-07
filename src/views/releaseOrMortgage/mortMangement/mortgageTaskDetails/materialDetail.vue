@@ -34,6 +34,7 @@
             :columns="MaterialDetailTableConfig"
             :height="150"
             v-if="firstTableData.length > 0"
+            name="firstTable"
           >
             <template #action="scope">
               <el-button
@@ -59,6 +60,7 @@
         :columns="MaterialDetailSecondTableConfig"
         :height="200"
         :setColumnEnable="false"
+        name="secondTable"
       >
         <template #action="scope">
           <el-button link type="primary" @click="handleDetails(scope.row.id)"
