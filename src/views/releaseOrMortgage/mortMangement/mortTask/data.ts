@@ -1,5 +1,4 @@
 import type { DynamicFormDataItem } from '@/components/DynamicForm/type'
-import type { ITableConfigProps } from '@/components/Table/type'
 import type { Btn } from './type'
 import {
   Upload,
@@ -14,6 +13,7 @@ import {
   ChatDotRound
 } from '@element-plus/icons-vue'
 import { useOptions } from '@/hooks'
+import type { ColumnsProps } from '@/components/TableField/type'
 
 export const searchAssignConfig: DynamicFormDataItem[] = [
   {
@@ -194,49 +194,59 @@ export const searchAssignedConfig: DynamicFormDataItem[] = [
     colspan: 2
   }
 ]
-export const assignTableColumn: ITableConfigProps[] = [
+export const assignTableColumn: ColumnsProps[] = [
+  {
+    type: 'selection',
+    width: 40,
+    align: 'center',
+    fixed: 'left'
+  },
   {
     label: '抵押任务编号',
     prop: '',
     minWidth: 120,
     align: 'center',
-    forbiddenEdit: true,
     showOverflowTooltip: true
   },
   {
     label: '合同编号',
-    prop: '',
+    prop: 'documentNo',
     width: 120,
     align: 'center',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '车架号',
-    prop: '',
+    prop: 'carNo',
     width: 120,
     align: 'center',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '租赁物名称',
-    prop: '',
+    prop: 'leaseName',
     width: 120,
     align: 'left',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '租赁物类型',
-    prop: '',
+    prop: 'leaseType',
     width: 120,
     align: 'left',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '租赁物状态',
-    prop: '',
+    prop: 'leaseStatus',
     width: 120,
     align: 'center',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '放款类型',
@@ -366,49 +376,59 @@ export const assignTableColumn: ITableConfigProps[] = [
     align: 'center'
   }
 ]
-export const assignedTableColumn: ITableConfigProps[] = [
+export const assignedTableColumn: ColumnsProps[] = [
+  {
+    type: 'selection',
+    width: 40,
+    align: 'center',
+    fixed: 'left'
+  },
   {
     label: '抵押任务编号',
     prop: '',
     minWidth: 120,
     align: 'center',
-    forbiddenEdit: true,
     showOverflowTooltip: true
   },
   {
     label: '合同编号',
-    prop: '',
+    prop: 'documentNo',
     width: 120,
     align: 'center',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '车架号',
-    prop: '',
+    prop: 'carNo',
     width: 120,
     align: 'center',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '租赁物名称',
-    prop: '',
+    prop: 'leaseName',
     width: 120,
     align: 'left',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '租赁物类型',
-    prop: '',
+    prop: 'leaseType',
     width: 120,
     align: 'left',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '租赁物状态',
-    prop: '',
+    prop: 'leaseStatus',
     width: 120,
     align: 'center',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '放款类型',
@@ -741,20 +761,24 @@ export const addTaskQueryConfig: DynamicFormDataItem[] = [
     options: useOptions('YESNO')
   }
 ]
-export const addTaskQueryTableColumn: ITableConfigProps[] = [
+export const addTaskQueryTableColumn: ColumnsProps[] = [
+  {
+    type: 'selection',
+    width: 40,
+    align: 'center',
+    fixed: 'left'
+  },
   {
     label: '合同编号',
     prop: '',
     minWidth: 120,
-    align: 'center',
-    forbiddenEdit: true
+    align: 'center'
   },
   {
     label: '车架号',
     prop: '',
     minWidth: 120,
-    align: 'center',
-    forbiddenEdit: true
+    align: 'center'
   },
   {
     label: '租赁物名称',
@@ -835,13 +859,18 @@ export const supplierQueryConfig: DynamicFormDataItem[] = [
     placeholder: '请输入'
   }
 ]
-export const supplierTableColumn: ITableConfigProps[] = [
+export const supplierTableColumn: ColumnsProps[] = [
+  {
+    type: 'selection',
+    width: 40,
+    align: 'center',
+    fixed: 'left'
+  },
   {
     label: '名称',
     prop: '',
     minWidth: 120,
     align: 'center',
-    forbiddenEdit: true,
     showOverflowTooltip: true
   },
   {

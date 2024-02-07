@@ -18,10 +18,10 @@
         @search="searchHandler"
         @reset="reset"
       />
-      <Table
+      <TableField
         :loading="tableLoading"
         :data="tableData"
-        :columnConfig="addTaskQueryTableColumn"
+        :columns="addTaskQueryTableColumn"
         :page-total="pageTotal"
         v-model:pageSize="queryParams.pageSize"
         v-model:pageNo="queryParams.pageNo"
@@ -29,19 +29,10 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       >
-        <template #selection>
-          <el-table-column
-            type="selection"
-            :width="40"
-            :selectable="() => true"
-            :fixed="true"
-            align="center"
-          />
-        </template>
         <template #action>
           <el-button link type="primary" @click="edit">编辑</el-button>
         </template>
-      </Table>
+      </TableField>
     </div>
     <template #footer>
       <span class="dialog-footer">

@@ -38,10 +38,11 @@
     </div>
     <el-divider border-style="dashed" />
     <!--  -->
-    <Table
+    <TableField
+      :name="tabActiveName"
       :loading="tableLoading"
       :data="tableData"
-      :columnConfig="
+      :columns="
         tabActiveName === 'assign' ? assignTableColumn : assignedTableColumn
       "
       :height="tableHeight"
@@ -52,7 +53,7 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     >
-      <template #btnsBox>
+      <template #buttons>
         <el-button
           v-for="i in btnList"
           :key="i.name"
@@ -63,15 +64,6 @@
           >{{ i.name
           }}<span v-if="i.value === 'autoDist'">（20） </span></el-button
         >
-      </template>
-      <template #selection>
-        <el-table-column
-          type="selection"
-          :width="40"
-          :selectable="() => true"
-          :fixed="true"
-          align="center"
-        />
       </template>
       <template #default="{ prop }">
         <template v-if="prop === 'handle'">
@@ -93,7 +85,7 @@
         <el-button link type="primary">重新发起</el-button>
         <el-button link type="primary" @click="goDetail">详情</el-button>
       </template>
-    </Table>
+    </TableField>
     <!-- 新增抵押任务 -->
     <AddTaskModel ref="addTaskModel" />
     <!-- 修改粉配方 -->
