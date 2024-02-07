@@ -5,6 +5,7 @@
         <el-tab-pane label="待分配" name="assign" />
         <el-tab-pane label="已分配" name="assigned" />
       </el-tabs>
+      <!--  -->
       <SearchField
         :data="
           tabActiveName === 'assign' ? searchAssignConfig : searchAssignedConfig
@@ -36,6 +37,7 @@
       </SearchField>
     </div>
     <el-divider border-style="dashed" />
+    <!--  -->
     <Table
       :loading="tableLoading"
       :data="tableData"
@@ -51,27 +53,15 @@
       @current-change="handleCurrentChange"
     >
       <template #btnsBox>
-        <template v-if="tabActiveName === 'assign'"
-          ><el-button
-            v-for="i in assignBtnList"
-            :key="i.name"
-            :type="i.type"
-            :icon="i.icon"
-            :loading="btnLoading[i.value]"
-            @click="action(i.value)"
-            >{{ i.name
-            }}<span v-if="i.value === 'autoDist'">（20） </span></el-button
-          ></template
-        >
-        <template v-if="tabActiveName === 'assigned'"
-          ><el-button
-            v-for="i in assignedBtnList"
-            :key="i.name"
-            :type="i.type"
-            :icon="i.icon"
-            @click="action(i.value)"
-            >{{ i.name }}</el-button
-          ></template
+        <el-button
+          v-for="i in btnList"
+          :key="i.name"
+          :type="i.type"
+          :icon="i.icon"
+          :loading="btnLoading[i.value]"
+          @click="action(i.value)"
+          >{{ i.name
+          }}<span v-if="i.value === 'autoDist'">（20） </span></el-button
         >
       </template>
       <template #selection>
@@ -92,8 +82,8 @@
             </div>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item>查看</el-dropdown-item>
-                <el-dropdown-item>反馈</el-dropdown-item>
+                <el-dropdown-item @click="hurryRecord">查看</el-dropdown-item>
+                <el-dropdown-item @click="feedback">反馈</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -126,11 +116,19 @@
     <CompleteMortModel ref="completeMortModel" />
     <!-- 移交登记证书 -->
     <TransferDocModel ref="transferDocModel" />
+    <!-- 催办 -->
+    <HurryModel ref="hurryModel" :type="hurryModelType" />
+    <!-- 催办记录 -->
+    <HurryRecordModel ref="hurryRecordModel" />
+    <!-- 新增办理进度信息 -->
+    <AddProgressModel ref="addProgressModel" />
+    <!-- 导入办理进度 -->
+    <ImportProgressModel ref="importProgressModel" />
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive, toRefs, watch, ref, computed } from 'vue'
-// import type { StateType } from './type'
+import { reactive, toRefs, watch, ref, computed, shallowRef } from 'vue'
+import type { Btn } from './type'
 import {
   searchAssignConfig,
   searchAssignedConfig,
@@ -140,6 +138,7 @@ import {
   assignedBtnList
 } from './data'
 import dayjs from 'dayjs'
+import { ElNotification } from 'element-plus'
 import AddTaskModel from './components/addTaskModel.vue'
 import EDistribution from './components/editDistribution.vue'
 import MortTimeModel from './components/mortTimeModel.vue'
@@ -151,12 +150,21 @@ import SendMessageModel from './components/sendMessageModel.vue'
 import TransferModel from './components/transferModel.vue'
 import CompleteMortModel from './components/completeMortModel.vue'
 import TransferDocModel from './components/transferDocModel.vue'
+import HurryModel from './components/hurryModel.vue'
+import HurryRecordModel from './components/hurryRecordModel.vue'
+import AddProgressModel from './components/addProgressModel.vue'
+import ImportProgressModel from './components/importProgressModel.vue'
+import { CommonAPI } from '@/api'
+import { handleDownloadFile } from '@/utils'
 
+const COMMONAPI = new CommonAPI()
 const state = reactive({
   tabActiveName: 'assign',
   tableData: [{}],
   tableLoading: false,
-  pageTotal: 0
+  pageTotal: 0,
+  hurryModelType: 'hurry',
+  selectIdsArr: []
 })
 const queryParams = reactive({
   createTime: [
@@ -171,7 +179,9 @@ const queryParams = reactive({
   pageSize: 10,
   pageNo: 1
 })
-const { tabActiveName, tableData, tableLoading, pageTotal } = toRefs(state)
+const btnList = shallowRef<Btn[]>([])
+const { tabActiveName, tableData, tableLoading, pageTotal, hurryModelType } =
+  toRefs(state)
 const addTaskModel = ref()
 const eDistributionModel = ref()
 const mortTimeModel = ref()
@@ -183,11 +193,16 @@ const sendMessageModel = ref()
 const transferModel = ref()
 const completeMortModel = ref()
 const transferDocModel = ref()
+const hurryModel = ref()
+const hurryRecordModel = ref()
+const addProgressModel = ref()
+const importProgressModel = ref()
 
 watch(
   tabActiveName,
   (newValue) => {
     console.log(newValue)
+    btnList.value = newValue === 'assign' ? assignBtnList : assignedBtnList
   },
   { immediate: true }
 )
@@ -208,11 +223,19 @@ const tableHeight = computed(() => {
   }
 })
 
+// 获取列表数据
+const getListData = () => {}
+
 // 查询
-const searchHandler = () => {}
+const searchHandler = () => {
+  getListData()
+}
 
 // 重置
-const reset = () => {}
+const reset = () => {
+  queryParams.pageNo = 1
+  getListData()
+}
 
 // 选择地区
 const changeAreaData = () => {}
@@ -221,10 +244,16 @@ const changeAreaData = () => {}
 const selectData = () => {}
 
 // 分页条数改变
-const handleSizeChange = () => {}
+const handleSizeChange = (size: number) => {
+  queryParams.pageSize = size
+  getListData()
+}
 
 // 翻页
-const handleCurrentChange = () => {}
+const handleCurrentChange = (page: number) => {
+  queryParams.pageNo = page
+  getListData()
+}
 
 // 前往详情
 const goDetail = () => {}
@@ -260,7 +289,43 @@ const backMort = () => {
 }
 
 // 下载
-const download = () => {}
+const download = () => {
+  btnLoading.download = true
+  let params = {}
+  if (state.selectIdsArr.length === 0) {
+    params = {}
+  } else {
+    params = { ids: state.selectIdsArr }
+  }
+  COMMONAPI.exportBySelect({
+    bizType: '',
+    selectParams: JSON.stringify(params)
+  })
+    .then((res) => {
+      if (res.data?.sync === 1) {
+        const params = { fileCode: res.data.fileCode as string }
+        COMMONAPI.downLoadFiles(params)
+          .then((response) => {
+            handleDownloadFile(response, res.data?.fileName)
+            btnLoading.download = false
+          })
+          .catch(() => {
+            btnLoading.download = false
+          })
+      } else {
+        ElNotification({
+          title: '下载失败',
+          message: res.msg,
+          type: 'error'
+        })
+        btnLoading.download = false
+      }
+    })
+    .catch((err: Error) => {
+      btnLoading.download = false
+      throw err
+    })
+}
 
 // 执行自动分配结果
 const autoDist = () => {}
@@ -291,18 +356,34 @@ const transferDoc = () => {
 }
 
 // 催办
-const hurry = () => {}
+const hurry = () => {
+  state.hurryModelType = 'hurry'
+  hurryModel.value.open()
+}
+
+// 催办反馈
+const feedback = () => {
+  state.hurryModelType = ''
+  hurryModel.value.open()
+}
+
+// 催办记录
+const hurryRecord = () => {
+  hurryRecordModel.value.open()
+}
 
 // 新增办理进度
-const addProgress = () => {}
+const addProgress = () => {
+  addProgressModel.value.open()
+}
 
 // 导入办理进度
-const importProgress = () => {}
+const importProgress = () => {
+  importProgressModel.value.open()
+}
 
 // 按钮函数映射
-const BTNFUNCTION: {
-  [T: string]: () => void
-} = {
+const BTNFUNCTION: Record<string, () => void> = {
   add,
   editDistribution,
   mortTime,
