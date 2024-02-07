@@ -106,9 +106,11 @@ watch(
   () => props.value,
   (newValue) => {
     state.value = newValue
-    state.provinceCode = newValue[0]
-    state.cityCode = newValue[1]
-    state.areaCode = newValue[2] ? newValue[2] : ''
+    if (newValue) {
+      state.provinceCode = newValue[0]
+      state.cityCode = newValue[1]
+      state.areaCode = newValue[2] ? newValue[2] : ''
+    }
   },
   {
     immediate: true

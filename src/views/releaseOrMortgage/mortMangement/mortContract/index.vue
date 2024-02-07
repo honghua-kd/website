@@ -31,20 +31,28 @@
         <el-button type="primary" :icon="Download" @click="download">
           下载
         </el-button>
-        <el-button type="primary" :icon="Document" @click="entrust">
+        <el-button
+          type="primary"
+          :icon="Document"
+          @click="entrust('抵押', selectIds)"
+        >
           委托业务运营办理抵押
-        </el-button>
-        <el-button type="primary" :icon="Document" @click="applyData">
-          申请抵押材料
-        </el-button>
-        <el-button type="primary" :icon="Document" @click="applyCommonData">
-          申请通用抵押材料
         </el-button>
         <el-button
           type="primary"
-          :icon="Plus"
-          @click="addSupplement(selectIds)"
+          :icon="Document"
+          @click="entrust('材料', selectIds)"
         >
+          申请抵押材料
+        </el-button>
+        <el-button
+          type="primary"
+          :icon="Document"
+          @click="applyCommonData(selectIds)"
+        >
+          申请通用抵押材料
+        </el-button>
+        <el-button type="primary" :icon="Plus" @click="addSupplement()">
           新增补充信息
         </el-button>
         <el-button type="primary" :icon="Upload" @click="importSupplement">
@@ -57,13 +65,13 @@
         >
           签约后补
         </el-button>
-        <el-button type="primary" :icon="Check" @click="costApproval">
+        <el-button type="primary" :icon="Check" @click="mortCost(selectIds)">
           抵押费用减免审批
         </el-button>
         <el-button type="primary" :icon="Edit" @click="editSign">
           修改签约/付费结果
         </el-button>
-        <el-button type="primary" :icon="Plus" @click="feedback">
+        <el-button type="primary" :icon="Plus" @click="feedback(selectIds)">
           情况反馈
         </el-button>
         <el-button type="primary" :icon="Upload" @click="importFeedback">
@@ -71,6 +79,9 @@
         </el-button>
       </template>
       <template #action="scope">
+        <el-button link type="primary" @click="addSupplement(scope.row)">
+          补充信息
+        </el-button>
         <el-button link type="primary" @click="record('check', scope.row.id)">
           查看补充信息
         </el-button>
@@ -83,6 +94,9 @@
         </el-button>
         <el-button link type="primary" @click="record('approve', scope.row.id)">
           审批记录
+        </el-button>
+        <el-button link type="primary" @click="feedback([scope.row.id])">
+          情况反馈
         </el-button>
       </template>
     </Table>
@@ -103,18 +117,7 @@
               prop=""
               :rules="[{ required: true, message: '办理阶段不能为空' }]"
             >
-              <el-select
-                v-model="a"
-                clearable
-                placeholder="请选择"
-                style="width: 100%"
-              >
-                <el-option
-                  v-for="item in taskTypeOpts"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
+              <el-select clearable placeholder="请选择" style="width: 100%">
               </el-select>
             </el-form-item>
           </el-col>
@@ -122,7 +125,11 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="备注" prop="">
-              <el-input v-model="a" placeholder="请输入" style="width: 100%" />
+              <el-input
+                placeholder="请输入"
+                style="width: 100%"
+                maxlength="500"
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -133,7 +140,7 @@
       </template>
     </el-dialog>
     <!-- 审批操作 -->
-    <el-dialog
+    <!-- <el-dialog
       title="审批"
       v-model="approveVisible"
       :close-on-click-modal="false"
@@ -180,45 +187,9 @@
         <el-button @click="approveVisible = false"> 取消 </el-button>
         <el-button type="primary" @click="submitApprove"> 确认 </el-button>
       </template>
-    </el-dialog>
-    <!-- 修改签约/付费结果 -->
-    <el-dialog
-      title="修改签约/付费结果"
-      v-model="signVisible"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      width="25%"
-    >
-      <el-form ref="approveFormRef" :label-width="px2rem('130px')">
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="是否完成签约" prop="">
-              <el-radio-group v-model="radio">
-                <el-radio :label="3">是</el-radio>
-                <el-radio :label="6">否</el-radio>
-                <el-radio :label="9">减免</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="是否完成签约" prop="">
-              <el-radio-group v-model="radio">
-                <el-radio :label="3">是</el-radio>
-                <el-radio :label="6">否</el-radio>
-                <el-radio :label="9">减免</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-      <template #footer>
-        <el-button @click="signVisible = false"> 取消 </el-button>
-        <el-button type="primary" @click="submitSign"> 确认 </el-button>
-      </template>
-    </el-dialog>
+    </el-dialog> -->
 
+    <SignForm ref="signFormRef" />
     <AlertForm :data="selectIds" ref="alertFormRef" />
     <ImportForm
       ref="importFormRef"
@@ -226,16 +197,23 @@
       :biztype="bizType"
       :category="category"
     />
-    <SupplementForm ref="checkFormRef" />
+    <SupplementForm
+      ref="supplementFormRef"
+      :formValue="formValue"
+      :visible="supplymentVisible"
+      @closeModel="closeSupplyModel"
+    />
     <RecordForm ref="recordFormRef" />
+    <MortCostForm ref="costFormRef" />
+    <CommonMort ref="commonMortRef" />
   </div>
 </template>
 <script lang="ts" setup>
 import SearchField from '@/components/SearchField/index.vue'
-import { reactive, ref, Ref, computed, nextTick } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import { searchConfig, tableConfig } from './data'
 import Table from '@/components/Table/index.vue'
-import { ElMessageBox, ElMessage, genFileId } from 'element-plus'
+import { ElMessageBox, ElMessage } from 'element-plus'
 import { px2rem, handleDownloadFile } from '@/utils'
 import {
   Download,
@@ -250,6 +228,12 @@ import AlertForm from './components/AlertForm.vue'
 import ImportForm from './components/ImportForm.vue'
 import SupplementForm from './components/SupplementForm.vue'
 import RecordForm from './components/RecordForm.vue'
+import MortCostForm from './components/MortCostForm.vue'
+import SignForm from './components/SignForm.vue'
+import CommonMort from './components/CommonMort.vue'
+import dayjs from 'dayjs'
+import { CommonAPI } from '@/api'
+const CommonApi = new CommonAPI()
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10
@@ -277,7 +261,7 @@ const tableHeight = computed(() => {
   }
 })
 // 选择的数据
-const selectData = reactive([])
+const selectData = reactive<string[]>([])
 const selectionChangeHandler = (item: string[]) => {
   selectData.splice(0, selectData.length)
   selectData.push(...item)
@@ -285,9 +269,51 @@ const selectionChangeHandler = (item: string[]) => {
 
 const selectIds = computed(() => {
   return selectData.map((item) => {
-    return String(item.id)
+    // return String(item.id)
+    return String(item)
   })
 })
+
+// 下载
+const download = () => {
+  const ids = selectIds.value.map((item) => String(item))
+  const params = {
+    selectParams: '',
+    bizType: 'MORTGAGE_ALLOCATION_RULE_TEMPLATE_EXPORT'
+  }
+  if (selectIds.value.length) {
+    params.selectParams = JSON.stringify({
+      ids: ids
+    })
+  } else {
+    params.selectParams = JSON.stringify({
+      ...queryParams
+    })
+  }
+  CommonApi.exportBySelect(params).then((res) => {
+    if (res && res.code === 200) {
+      if (res?.data?.sync === 1) {
+        CommonApi.downLoadFiles({
+          fileCode: res?.data?.fileCode as string
+        }).then((res) => {
+          const fileName = `合同管理${dayjs().format('YYYYMMDD')}.xlsx`
+          handleDownloadFile(res, fileName)
+          ElMessage.success('操作成功')
+        })
+      } else if (res?.data?.sync === 0) {
+        ElMessage.success(
+          '导出任务已经产生，前面有任务待处理，请至我的下载中查看'
+        )
+      }
+    }
+  })
+}
+
+// 抵押费用减免审批
+const costFormRef = ref()
+const mortCost = (ids: string[]) => {
+  costFormRef.value.open(ids)
+}
 
 // 签约后补
 const sign = (ids: string[]) => {
@@ -295,22 +321,21 @@ const sign = (ids: string[]) => {
   //   ElMessage.error('请选择信息')
   //   return
   // }
+  // const mes = `您已选择${ids.length}个合同进行签约后补，其中10个已完成签约，5个在签约中。`
+  const mes = `您已选择${ids.length}个合同进行签约后补，我们将为客户发送签约短信，客户在小程序签约完成后，系统将自动同步签约状态。`
   // 二次确认
-  ElMessageBox.confirm(
-    `您已选择${ids.length}个合同进行签约后补，我们将为客户发送签约短信，客户在小程序签约完成后，系统将自动同步签约状态。`,
-    '签约后补',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消'
-    }
-  ).then(() => {})
+  ElMessageBox.confirm(mes, '签约后补', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消'
+  }).then(() => {})
 }
 
 // 情况反馈
 const feebackVisible = ref(false)
 const feebackFormRef = ref()
-const feedback = () => {
+const feedback = (ids: string[]) => {
   feebackVisible.value = true
+  console.log(ids)
 }
 const submitFeeback = async () => {
   if (!feebackFormRef.value) return
@@ -320,25 +345,22 @@ const submitFeeback = async () => {
 }
 
 // 审批操作
-const approveVisible = ref(false)
-const approveFormRef = ref()
-const costApproval = () => {
-  approveVisible.value = true
-}
-const submitApprove = async () => {
-  if (!approveFormRef.value) return
-  const valid = await approveFormRef.value.validate()
-  if (!valid) return
-  approveVisible.value = false
-}
+// const approveVisible = ref(false)
+// const approveFormRef = ref()
+// const approvalOperation = () => {
+//   approveVisible.value = true
+// }
+// const submitApprove = async () => {
+//   if (!approveFormRef.value) return
+//   const valid = await approveFormRef.value.validate()
+//   if (!valid) return
+//   approveVisible.value = false
+// }
 
 // 修改签约/付费结果
-const signVisible = ref(false)
+const signFormRef = ref()
 const editSign = () => {
-  signVisible.value = true
-}
-const submitSign = () => {
-  signVisible.value = false
+  signFormRef.value.open()
 }
 
 // 导入情况反馈
@@ -367,11 +389,17 @@ const importSupplement = () => {
 
 // 委托办理抵押、申请抵押材料
 const alertFormRef = ref()
-const applyData = () => {
-  alertFormRef.value.open('材料')
+// const applyData = () => {
+//   alertFormRef.value.open('材料')
+// }
+const entrust = (type: string, ids: string[]) => {
+  alertFormRef.value.open(type, ids)
 }
-const entrust = () => {
-  alertFormRef.value.open('抵押')
+
+// 申请通用抵押材料
+const commonMortRef = ref()
+const applyCommonData = (ids: string[]) => {
+  commonMortRef.value.open(ids)
 }
 
 // 表格操作
@@ -388,8 +416,18 @@ const record = (type: string, id: string) => {
 }
 
 // 新增补充信息
-const addSupplement = (id: string) => {
-  checkFormRef.value.open(id)
+const supplymentVisible = ref(false)
+let formValue = reactive({})
+const addSupplement = (column?: string) => {
+  if (column) {
+    formValue = column
+  } else {
+    formValue = {}
+  }
+  supplymentVisible.value = true
+}
+const closeSupplyModel = () => {
+  supplymentVisible.value = false
 }
 const getList = () => {}
 getList()

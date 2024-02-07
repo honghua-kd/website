@@ -7,7 +7,7 @@ export const searchConfig: DynamicFormDataItem[] = [
     label: '合同编号',
     prop: '',
     placeholder: '请输入'
-  } ,
+  },
   {
     type: 'el-input',
     label: '承租人',
@@ -245,5 +245,128 @@ export const tableConfig: ITableConfigProps[] = [
     width: 260,
     align: 'center',
     fixed: 'right'
+  }
+]
+export const tableCostConfig: ITableConfigProps[] = [
+  {
+    label: '合同编号',
+    prop: 'contractNo',
+    width: 120,
+    align: 'center',
+    showOverflowTooltip: true,
+    forbiddenEdit: true
+  },
+  {
+    label: '车架号',
+    prop: 'businessCategory',
+    minWidth: 120,
+    align: 'center',
+    showOverflowTooltip: true
+  },
+  {
+    label: '租赁物名称',
+    prop: 'businessSubcategory',
+    minWidth: 120,
+    align: 'center',
+    showOverflowTooltip: true
+  },
+  {
+    label: '租赁物类型',
+    prop: '',
+    minWidth: 120,
+    align: 'left',
+    showOverflowTooltip: true
+  },
+  {
+    label: '承租人',
+    prop: 'createTime',
+    width: 120,
+    align: 'center',
+    showOverflowTooltip: true
+  },
+  {
+    label: '车牌号',
+    prop: 'updateTime',
+    width: 120,
+    align: 'center',
+    showOverflowTooltip: true
+  },
+  {
+    label: '上牌省份',
+    prop: 'remark',
+    width: 180,
+    align: 'left',
+    showOverflowTooltip: true
+  },
+  {
+    label: '上牌城市',
+    prop: 'remark',
+    width: 180,
+    align: 'left',
+    showOverflowTooltip: true
+  },
+  {
+    label: '材料寄送地址',
+    prop: 'remark',
+    width: 180,
+    align: 'left',
+    showOverflowTooltip: true
+  },
+  {
+    label: '是否完成抵押签约',
+    prop: 'remark',
+    width: 180,
+    align: 'left',
+    showOverflowTooltip: true
+  },
+  {
+    label: '是否付费',
+    prop: 'remark',
+    width: 180,
+    align: 'left',
+    showOverflowTooltip: true
+  },
+  {
+    label: '是否委托运营',
+    prop: 'remark',
+    width: 180,
+    align: 'left',
+    showOverflowTooltip: true
+  },
+  {
+    label: '是否申请抵押材料',
+    prop: 'remark',
+    width: 180,
+    align: 'left',
+    showOverflowTooltip: true
+  },
+  {
+    label: '是否完成抵押办理',
+    prop: 'remark',
+    width: 180,
+    align: 'left',
+    showOverflowTooltip: true
+  },
+  {
+    label: '起租日期',
+    prop: 'remark',
+    width: 180,
+    align: 'left',
+    showOverflowTooltip: true
+  },
+  {
+    label: '项目经理',
+    prop: 'remark',
+    width: 180,
+    align: 'left',
+    showOverflowTooltip: true
+  },
+  {
+    label: '项目经理所属部门',
+    prop: 'remark',
+    // width: 180,
+    minWidth: 180,
+    align: 'left',
+    showOverflowTooltip: true
   }
 ]

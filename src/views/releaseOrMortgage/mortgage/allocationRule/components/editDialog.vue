@@ -702,14 +702,14 @@ const initOptions = async () => {
 }
 watch(
   [() => props.visible, () => props.formValue],
-  async ([newVisible, newValue]) => {
+  ([newVisible, newValue]) => {
     state.formParams = { ...newValue } as RuleItem
-    if (newVisible) {
-      await getDicts()
-      await getDictsListData()
-      await initOptions()
-    }
     dialogVisible.value = Boolean(newVisible)
+    if (newVisible) {
+      getDicts()
+      getDictsListData()
+      initOptions()
+    }
   },
   { deep: true }
 )

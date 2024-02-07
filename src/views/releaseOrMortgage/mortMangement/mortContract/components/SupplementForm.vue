@@ -5,6 +5,8 @@
       :title="title"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
+      :destroy-on-close="true"
+      :before-close="handleClose"
       width="40%"
       top="10vh"
     >
@@ -24,12 +26,7 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="抵押主体" prop="">
-              <el-select
-                v-model="a"
-                clearable
-                placeholder="请选择"
-                style="width: 100%"
-              >
+              <el-select clearable placeholder="请选择" style="width: 100%">
                 <el-option
                   v-for="item in mortSubjectOpts"
                   :key="String(item.value)"
@@ -43,12 +40,7 @@
         <el-row :gutter="5">
           <el-col :span="9">
             <el-form-item label="车牌号" prop="">
-              <el-select
-                v-model="a"
-                clearable
-                placeholder="请选择"
-                style="width: 100%"
-              >
+              <el-select clearable placeholder="请选择" style="width: 100%">
                 <el-option
                   v-for="item in dictStore.dicts.MORTGAGE_CITYCONFIG"
                   :key="String(item.value)"
@@ -60,12 +52,7 @@
           </el-col>
           <el-col :span="5">
             <el-form-item label="" prop="" label-width="0px">
-              <el-select
-                v-model="a"
-                clearable
-                placeholder="请选择"
-                style="width: 100%"
-              >
+              <el-select clearable placeholder="请选择" style="width: 100%">
                 <el-option
                   v-for="item in dictStore.dicts.MORTGAGE_CITYCONFIG_NO"
                   :key="String(item.value)"
@@ -85,6 +72,7 @@
           <el-col :span="24">
             <el-form-item label="预估上牌城市" prop="">
               <Area
+                v-model="formParams.plateCity"
                 :value="formParams.plateCity"
                 :level="1"
                 @changeAreaData="changeArea"
@@ -94,8 +82,12 @@
         </el-row>
         <el-row :gutter="5">
           <el-col :span="12">
-            <el-form-item label="抵解押办理联系人" prop="">
-              <el-input style="width: 100%" placeholder="请输入联系人姓名" />
+            <el-form-item label="抵押办理联系人" prop="">
+              <el-input
+                style="width: 100%"
+                placeholder="请输入联系人姓名"
+                :maxlength="50"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -128,6 +120,7 @@
             <el-col :span="24">
               <el-form-item label="材料寄送地址" prop="">
                 <Area
+                  v-model="formParams.sendAdderss"
                   :value="formParams.sendAdderss"
                   :level="2"
                   @changeAreaData="changeAddress"
@@ -138,14 +131,22 @@
           <el-row>
             <el-col :span="24">
               <el-form-item label="" prop="">
-                <el-input style="width: 100%" placeholder="请输入详细地址" />
+                <el-input
+                  style="width: 100%"
+                  placeholder="请输入详细地址"
+                  :maxlength="100"
+                />
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12">
               <el-form-item label="联系人" prop="">
-                <el-input style="width: 100%" placeholder="请输入联系人" />
+                <el-input
+                  style="width: 100%"
+                  placeholder="请输入联系人"
+                  :maxlength="50"
+                />
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -212,7 +213,7 @@
         </div>
       </el-form>
       <template #footer>
-        <el-button @click="alertVisible = false"> 取消 </el-button>
+        <el-button @click="handleClose"> 取消 </el-button>
         <el-button type="primary" @click="submit"> 确认 </el-button>
       </template>
     </el-dialog>
@@ -220,17 +221,25 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, Ref, computed, nextTick } from 'vue'
-import type {
-  SupplierDetailResponse,
-  SupplierListResponse,
-  DictDataTreeResponse
-} from '@/api'
+import { reactive, ref, watch } from 'vue'
+import type { DictDataTreeResponse } from '@/api'
 import { CommonAPI } from '@/api'
 const CommonApi = new CommonAPI()
 import { useDictStore } from '@/store/dict'
-import { px2rem, handleDownloadFile } from '@/utils'
+import { px2rem } from '@/utils'
 import Area from './Area.vue'
+
+const props = defineProps({
+  formValue: {
+    type: Object,
+    default: () => ({})
+  },
+  visible: {
+    type: Boolean,
+    default: true
+  }
+})
+
 const alertVisible = ref(false)
 const title = ref<string>('补充信息')
 const formParams = reactive({
@@ -284,12 +293,22 @@ const getDicts = () => {
     })
 }
 const dictStore = useDictStore()
-const open = (id: string) => {
-  alertVisible.value = true
-  getDicts()
-  // id请求
+watch(
+  [() => props.visible, () => props.formValue],
+  async ([newVisible]) => {
+    // formParams = { ...newValue }
+    await getDicts()
+    alertVisible.value = newVisible
+  },
+  { deep: true }
+)
+const emit = defineEmits(['closeModel'])
+const handleClose = () => {
+  emit('closeModel', {
+    visible: false
+  })
 }
-defineExpose({ open })
+const submit = () => {}
 </script>
 <style lang="scss" scoped>
 .text-al {

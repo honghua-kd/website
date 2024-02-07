@@ -27,6 +27,9 @@
             <span class="text-blue">{{ Data.lease.length }}</span>
           </el-tooltip>
           个租赁物未完成抵押付费
+          <div style="margin-top: 10px">
+            请先完成抵押签约并确认收到款项或按照制度进行审批
+          </div>
         </el-col>
       </el-row>
       <el-row>
@@ -38,17 +41,11 @@
           个租赁物信息不全，无法发起，请先补充
         </el-col>
       </el-row>
-      <el-row class="text-al" v-if="type === '抵押'">
+      <el-row class="text-al" v-if="types === '抵押'">
         <el-col>是否确认委托业务运营办理抵押 </el-col>
       </el-row>
-      <el-row class="text-al" v-if="type === '材料'">
+      <el-row class="text-al" v-if="types === '材料'">
         <el-col>是否确认申请抵押材料 </el-col>
-      </el-row>
-      <el-row class="text-al" v-if="type === ''">
-        <el-col>请先完成抵押签约并确认收到款项或按照制度进行审批 </el-col>
-      </el-row>
-      <el-row class="text-al" v-if="type === ''">
-        <el-col>是否确认发起未付费审批 </el-col>
       </el-row>
       <el-table
         :data="tableData"
@@ -74,14 +71,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, Ref, computed, nextTick } from 'vue'
-
-const props = defineProps({
-  data: {
-    type: Array,
-    default: () => {}
-  }
-})
+import { reactive, ref } from 'vue'
 
 const Data = {
   contracts: ['12', '13', '14'],
@@ -100,16 +90,17 @@ const tableData = reactive([
   }
 ])
 const alertVisible = ref(false)
-const type = ref('')
-const open = (val: string) => {
+const types = ref('')
+const open = (type: string) => {
   alertVisible.value = true
-  type.value = val
-  if (val === '抵押') {
-  } else if (val === '材料') {
-  }
+  types.value = type
+  // if (type === '抵押') {
+  // } else if (type === '材料') {
+  // }
 }
 defineExpose({ open })
 const download = () => {}
+const submit = () => {}
 </script>
 <style lang="scss" scoped>
 .text-al {

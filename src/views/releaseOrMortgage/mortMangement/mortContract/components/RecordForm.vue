@@ -37,19 +37,8 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, Ref, computed, nextTick } from 'vue'
+import { reactive, ref } from 'vue'
 
-const props = defineProps({
-  data: {
-    type: Array,
-    default: () => {}
-  }
-})
-
-const Data = {
-  contracts: ['12', '13', '14'],
-  lease: ['12', '13', '14']
-}
 const tableData = reactive([
   {
     node: '开始',
@@ -103,7 +92,7 @@ const routes = reactive([
 ])
 const alertVisible = ref(false)
 const title = ref<string>('')
-const open = (type: string, id: string) => {
+const open = (type: string) => {
   alertVisible.value = true
   if (type === 'operation') {
     title.value = '操作记录'
