@@ -58,6 +58,7 @@ declare module 'vue' {
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElStep: typeof import('element-plus/es')['ElStep']
     ElSteps: typeof import('element-plus/es')['ElSteps']
+    ElSubMenu: typeof import('element-plus/es')['ElSubMenu']
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
@@ -85,6 +86,7 @@ declare module 'vue' {
     SideTree: typeof import('./../components/SideTree/index.vue')['default']
     SvgIcon: typeof import('./../components/SvgIcon/index.vue')['default']
     Table: typeof import('./../components/Table/index.vue')['default']
+    TableField: typeof import('./../components/TableField/index.vue')['default']
   }
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']

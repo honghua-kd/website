@@ -3,6 +3,7 @@ import DynamicDatePicker from './components/DynamicDatePicker/index.vue'
 
 import type { InputProps, ISelectProps, DatePickerProps } from 'element-plus'
 
+// 注册组件
 export const componentsMap = {
   'el-select': ElSelect,
   'el-input': ElInput,
@@ -10,18 +11,12 @@ export const componentsMap = {
   'dynamic-date-picker': DynamicDatePicker
 }
 
-export const componentsList = [
-  ElSelect,
-  ElInput,
-  ElDatePicker,
-  DynamicDatePicker
-]
-
 import type { DynamicDatePickerProps } from './components/DynamicDatePicker/type'
 
 export type ElSelectProps = ISelectProps
 export type ElInputProps = InputProps
 export type ElDatePickerProps = DatePickerProps
+// 注册组件类型
 export interface ComponentsProps {
   'el-select': ISelectProps
   'el-input': InputProps
