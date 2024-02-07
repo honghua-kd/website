@@ -144,7 +144,6 @@ const props = withDefaults(defineProps<IProps>(), {
   columnConfig: () => [],
   data: () => [],
   loading: false,
-  height: 300,
   isSelected: false,
   pageTotal: 0,
   setColumnEnable: true
@@ -264,6 +263,7 @@ watch(
     deep: true
   }
 )
+
 const tableRef = ref()
 const toggleRowSelection = (row: string, selected: boolean) => {
   tableRef.value.toggleRowSelection(row, selected)
@@ -271,6 +271,13 @@ const toggleRowSelection = (row: string, selected: boolean) => {
 const clearSelection = () => {
   tableRef.value.clearSelection()
 }
+
+watch(
+  () => props.height,
+  () => {
+    tableRef.value.doLayout()
+  }
+)
 defineExpose({ toggleRowSelection, clearSelection })
 </script>
 

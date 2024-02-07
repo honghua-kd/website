@@ -189,17 +189,11 @@ const tableLoading: Ref<boolean> = ref(false)
 const tableData = reactive<RuleItemResponse[]>([])
 const searchBoxRef = ref()
 const tableHeight = computed(() => {
-  console.log(document.documentElement.clientHeight)
+  const baseHeight = Number(document.documentElement.clientHeight - 220)
   if (searchBoxRef.value?.clientHeight) {
-    const height = Number(
-      document.documentElement.clientHeight -
-        200 -
-        searchBoxRef.value?.clientHeight
-    )
-    return height
+    return Number(baseHeight - searchBoxRef.value?.clientHeight)
   } else {
-    const height = Number(document.documentElement.clientHeight - 200)
-    return height
+    return baseHeight
   }
 })
 const selectData: Ref<RuleItemResponse[]> = ref([])

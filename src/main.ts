@@ -1,6 +1,7 @@
 import options from '@/config/setting'
 import requestConfig from '@/config/request.config'
 import compileConfig from '@/config/compile.config'
+import { debounce } from './utils'
 
 // framework
 import {
@@ -9,7 +10,6 @@ import {
   usePermission,
   useUserStore,
   useRoutesStore,
-  usePx2Rem,
   store
 } from '@toystory/lotso'
 import '@toystory/lotso/dist/style.css'
@@ -30,7 +30,20 @@ import { setActivePinia } from 'pinia'
 // px2rem
 const { usePx2Rem: usePx2RemFlag } = compileConfig
 if (usePx2RemFlag) {
-  usePx2Rem()
+  const setDomFontSize = () => {
+    const width =
+      document.documentElement.clientWidth || document.body.clientWidth
+    const minWidth = 1536
+    const maxWidth = 1920
+    const fontsize =
+      (width <= minWidth ? minWidth : width >= maxWidth ? maxWidth : width) /
+        100 +
+      'px'
+    document.getElementsByTagName('html')[0].style.fontSize = fontsize
+  }
+  setDomFontSize()
+  const setDomFontSizeDebounce = debounce(setDomFontSize, 400)
+  window.addEventListener('resize', setDomFontSizeDebounce)
 }
 
 // 注册框架，传入项目配置和store，页面路径

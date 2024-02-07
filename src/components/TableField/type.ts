@@ -11,6 +11,7 @@ export interface ColumnsProps extends Partial<TableColumn> {
 
 export interface TableFieldProps extends TableProps<TableDataItem> {
   columns: ColumnsProps[]
+  name?: string
   loading?: boolean
   pagination?: boolean
   pageSize?: number

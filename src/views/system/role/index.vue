@@ -203,8 +203,8 @@ const formatTag = (status: number): string => {
   return title
 }
 
-const fromatTagStatus = (status: number): '' | 'info' => {
-  const type = status === 1 ? '' : 'info'
+const fromatTagStatus = (status: number) => {
+  const type = status === 1 ? undefined : 'info'
   return type
 }
 const init = () => {
