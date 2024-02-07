@@ -12,13 +12,11 @@
       </SearchField>
     </div>
     <el-divider border-style="dashed" style="margin-top: 10px" />
-    <Table
+    <TableField
       :data="tableData"
       :loading="tableLoading"
-      :columnConfig="tableConfig"
-      :isSelected="true"
+      :columns="tableConfig"
       :page-total="pageTotal"
-      :setColumnEnable="true"
       :height="tableHeight"
       v-model:pageSize="queryParams.pageSize"
       v-model:pageNo="queryParams.pageNo"
@@ -27,7 +25,7 @@
       @current-change="getList"
     >
       <!-- 批量操作 -->
-      <template #btnsBox>
+      <template #buttons>
         <el-button type="primary" :icon="Download" @click="download">
           下载
         </el-button>
@@ -99,7 +97,7 @@
           情况反馈
         </el-button>
       </template>
-    </Table>
+    </TableField>
 
     <!-- 情况反馈 -->
     <el-dialog
@@ -212,7 +210,7 @@
 import SearchField from '@/components/SearchField/index.vue'
 import { reactive, ref, computed } from 'vue'
 import { searchConfig, tableConfig } from './data'
-import Table from '@/components/Table/index.vue'
+import TableField from '@/components/TableField/index.vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { px2rem, handleDownloadFile } from '@/utils'
 import {

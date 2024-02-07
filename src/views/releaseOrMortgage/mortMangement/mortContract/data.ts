@@ -1,6 +1,6 @@
 import type { DynamicFormDataItem } from '@/components/SearchField/type'
-import type { ITableConfigProps } from '@/components/Table/type'
 import { useOptions } from '@/hooks'
+import type { ColumnsProps } from '@/components/TableField/type'
 export const searchConfig: DynamicFormDataItem[] = [
   {
     type: 'el-input',
@@ -89,284 +89,187 @@ export const searchConfig: DynamicFormDataItem[] = [
     placeholder: '请选择'
   }
 ]
-export const tableConfig: ITableConfigProps[] = [
+export const tableConfig: ColumnsProps[] = [
+  {
+    type: 'selection',
+    width: 40,
+    align: 'center',
+    fixed: true
+  },
   {
     label: '合同编号',
     prop: 'contractNo',
     width: 120,
     align: 'center',
     showOverflowTooltip: true,
-    forbiddenEdit: true
+    fixed: true,
+    isDynamic: true
   },
   {
     label: '车架号',
     prop: 'businessCategory',
     minWidth: 120,
     align: 'center',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '租赁物名称',
     prop: 'businessSubcategory',
     minWidth: 120,
     align: 'center',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '租赁物类型',
-    prop: '',
+    prop: 'type',
     minWidth: 120,
     align: 'left',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '放款类型',
-    prop: 'creatorName',
+    prop: 'moneyType',
     width: 100,
     align: 'center',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '承租人',
-    prop: 'createTime',
+    prop: 'rent',
     width: 120,
     align: 'center',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '挂靠商',
-    prop: 'updaterName',
+    prop: 'bussiness',
     width: 120,
     align: 'center',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '车牌号',
-    prop: 'updateTime',
+    prop: 'card',
     width: 120,
     align: 'center',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '上牌省份',
-    prop: 'remark',
+    prop: 'province',
     width: 180,
     align: 'left',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '上牌城市',
-    prop: 'remark',
+    prop: 'city',
     width: 180,
     align: 'left',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '材料去向',
-    prop: 'remark',
+    prop: 'direction',
     width: 180,
     align: 'left',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '审批状态',
-    prop: 'remark',
+    prop: 'status',
     width: 180,
     align: 'left',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '是否完成抵押签约',
-    prop: 'remark',
+    prop: 'isMort',
     width: 180,
     align: 'left',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '抵押是否付费',
-    prop: 'remark',
+    prop: 'isPay',
     width: 180,
     align: 'left',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '是否委托运营',
-    prop: 'remark',
+    prop: 'isEntrust',
     width: 180,
     align: 'left',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '是否申请抵押材料',
-    prop: 'remark',
+    prop: 'isApply',
     width: 180,
     align: 'left',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '是否完成抵押办理',
-    prop: 'remark',
+    prop: 'isFinish',
     width: 180,
     align: 'left',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '客户自愿自助解抵押',
-    prop: 'remark',
+    prop: 'client',
     width: 180,
     align: 'left',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '起租日期',
-    prop: 'remark',
+    prop: 'startDate',
     width: 180,
     align: 'left',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '项目经理',
-    prop: 'remark',
+    prop: 'manager',
     width: 180,
     align: 'left',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '项目经理所属部门',
-    prop: 'remark',
+    prop: 'dept',
     width: 180,
     align: 'left',
-    showOverflowTooltip: true
+    showOverflowTooltip: true,
+    isDynamic: true
   },
   {
     label: '操作',
-    prop: 'action',
     type: 'action',
     width: 260,
     align: 'center',
     fixed: 'right'
-  }
-]
-export const tableCostConfig: ITableConfigProps[] = [
-  {
-    label: '合同编号',
-    prop: 'contractNo',
-    width: 120,
-    align: 'center',
-    showOverflowTooltip: true,
-    forbiddenEdit: true
-  },
-  {
-    label: '车架号',
-    prop: 'businessCategory',
-    minWidth: 120,
-    align: 'center',
-    showOverflowTooltip: true
-  },
-  {
-    label: '租赁物名称',
-    prop: 'businessSubcategory',
-    minWidth: 120,
-    align: 'center',
-    showOverflowTooltip: true
-  },
-  {
-    label: '租赁物类型',
-    prop: '',
-    minWidth: 120,
-    align: 'left',
-    showOverflowTooltip: true
-  },
-  {
-    label: '承租人',
-    prop: 'createTime',
-    width: 120,
-    align: 'center',
-    showOverflowTooltip: true
-  },
-  {
-    label: '车牌号',
-    prop: 'updateTime',
-    width: 120,
-    align: 'center',
-    showOverflowTooltip: true
-  },
-  {
-    label: '上牌省份',
-    prop: 'remark',
-    width: 180,
-    align: 'left',
-    showOverflowTooltip: true
-  },
-  {
-    label: '上牌城市',
-    prop: 'remark',
-    width: 180,
-    align: 'left',
-    showOverflowTooltip: true
-  },
-  {
-    label: '材料寄送地址',
-    prop: 'remark',
-    width: 180,
-    align: 'left',
-    showOverflowTooltip: true
-  },
-  {
-    label: '是否完成抵押签约',
-    prop: 'remark',
-    width: 180,
-    align: 'left',
-    showOverflowTooltip: true
-  },
-  {
-    label: '是否付费',
-    prop: 'remark',
-    width: 180,
-    align: 'left',
-    showOverflowTooltip: true
-  },
-  {
-    label: '是否委托运营',
-    prop: 'remark',
-    width: 180,
-    align: 'left',
-    showOverflowTooltip: true
-  },
-  {
-    label: '是否申请抵押材料',
-    prop: 'remark',
-    width: 180,
-    align: 'left',
-    showOverflowTooltip: true
-  },
-  {
-    label: '是否完成抵押办理',
-    prop: 'remark',
-    width: 180,
-    align: 'left',
-    showOverflowTooltip: true
-  },
-  {
-    label: '起租日期',
-    prop: 'remark',
-    width: 180,
-    align: 'left',
-    showOverflowTooltip: true
-  },
-  {
-    label: '项目经理',
-    prop: 'remark',
-    width: 180,
-    align: 'left',
-    showOverflowTooltip: true
-  },
-  {
-    label: '项目经理所属部门',
-    prop: 'remark',
-    // width: 180,
-    minWidth: 180,
-    align: 'left',
-    showOverflowTooltip: true
   }
 ]
