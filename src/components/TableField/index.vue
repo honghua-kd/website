@@ -121,7 +121,7 @@ import { formatDate, px2rem } from '@/utils'
 
 import type { TableFieldProps, TableColumn, TableDataItem } from './type'
 const route = useRoute()
-const pathName = 'TableField:' + route?.value.path
+const pathName = 'TableField:' + route?.value.fullPath
 
 const props = withDefaults(defineProps<TableFieldProps>(), {
   loading: false,
@@ -167,7 +167,9 @@ const isAllColumnsVisible = ref(false)
 const columnsVisible: Record<string, boolean> = reactive({})
 
 const getColumnCache = () => {
-  const cacheData = localStorage.getItem(pathName)
+  const cacheData = localStorage.getItem(
+    props.name ? `${pathName}:${props.name}` : pathName
+  )
   if (cacheData) {
     return JSON.parse(cacheData)
   }
@@ -175,7 +177,10 @@ const getColumnCache = () => {
 }
 
 const setColumnCache = () => {
-  localStorage.setItem(pathName, JSON.stringify(columnsVisible))
+  localStorage.setItem(
+    props.name ? `${pathName}:${props.name}` : pathName,
+    JSON.stringify(columnsVisible)
+  )
 }
 
 const initDynamicColumns = () => {
