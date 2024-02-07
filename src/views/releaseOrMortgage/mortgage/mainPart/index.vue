@@ -146,16 +146,11 @@ const {
 // 表格最大高度
 const searchBoxRef = ref()
 const tableHeight = computed(() => {
+  const baseHeight = Number(document.documentElement.clientHeight - 220)
   if (searchBoxRef.value?.clientHeight) {
-    const height = Number(
-      document.documentElement.clientHeight -
-        200 -
-        searchBoxRef.value?.clientHeight
-    )
-    return height
+    return Number(baseHeight - searchBoxRef.value?.clientHeight)
   } else {
-    const height = Number(document.documentElement.clientHeight - 200)
-    return height
+    return baseHeight
   }
 })
 
