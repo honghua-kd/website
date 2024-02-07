@@ -64,6 +64,8 @@ html {
 }
 .page-container {
   padding: $base-main-padding !important;
+  min-height: calc(100vh - 86px);
+  box-sizing: border-box;
   background-color: $base-color-white;
 }
 .table-page {
