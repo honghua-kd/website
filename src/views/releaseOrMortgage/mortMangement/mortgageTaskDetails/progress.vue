@@ -1,0 +1,77 @@
+<template>
+  <div class="progress">
+    <Line name="进度信息" :botBorder="false">
+      <el-button type="primary" link>新增</el-button>
+      <el-button type="primary" link>导入</el-button>
+    </Line>
+    <TableField
+      :data="tableData"
+      :loading="tableLoading"
+      :columns="progressTableConfig"
+      :height="200"
+      name="progressTable"
+    >
+      <template #action="scope">
+        <el-button link type="primary" @click="editHandler(scope.row)">
+          编辑
+        </el-button>
+        <el-button link type="danger"> 删除 </el-button>
+      </template>
+    </TableField>
+    <div class="bottom-line"></div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import Line from './components/line.vue'
+import TableField from '@/components/TableField/index.vue'
+import { ref, onMounted, reactive } from 'vue'
+import { progressTableConfig } from './data'
+import type { progressTableDataType } from './type'
+import { SupplierAPI } from '@/api'
+
+const API = new SupplierAPI()
+let tableData = reactive<progressTableDataType[]>([{}])
+const tableLoading = ref(false)
+const pageTotal = ref(100)
+const queryFormList = reactive({
+  pageNo: 1,
+  pageSize: 10
+})
+
+onMounted(() => {
+  getList()
+})
+// 获取列表数据
+const getList = async () => {
+  tableLoading.value = true
+  await API.getSupplierList(queryFormList)
+    .then((res) => {
+      if (res && res.code === 200) {
+        tableData || [].splice(0, tableData || [].length)
+        console.log(res.data, '22222')
+        const list: progressTableDataType[] = (res?.data?.list || []).map(
+          (i) => ({
+            supplierName: i.supplierName,
+            supplierTypeName: i.supplierTypeName,
+            coverArea: i.coverArea,
+            contactName: i.contactName,
+            phone: i.phone
+          })
+        )
+        tableData = [...list]
+        pageTotal.value = res?.data?.total || 0
+        tableLoading.value = false
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+// 编辑
+const editHandler = (id: number) => {
+  console.log(id)
+}
+</script>
+
+<style lang="scss" scoped></style>

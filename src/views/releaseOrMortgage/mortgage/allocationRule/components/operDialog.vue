@@ -675,7 +675,7 @@ const cityProps: CascaderProps = {
 }
 const sourceSystem = ref<string[][]>([[]])
 const selCity = ref<string[] | number[]>([])
-const initOptions = async () => {
+const initOptions = () => {
   state.formParams.sourceSystem = []
   sourceSystem.value = []
   selCity.value = []
@@ -684,14 +684,14 @@ const initOptions = async () => {
 }
 watch(
   [() => props.visible, () => props.formValue],
-  async ([newVisible, newValue]) => {
+  ([newVisible, newValue]) => {
     state.formParams = { ...newValue } as RuleItem
-    if (newVisible) {
-      await getDicts()
-      await getDictsListData()
-      await initOptions()
-    }
     dialogVisible.value = Boolean(newVisible)
+    if (newVisible) {
+      getDicts()
+      getDictsListData()
+      initOptions()
+    }
   },
   { deep: true }
 )

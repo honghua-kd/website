@@ -122,7 +122,7 @@
           >联系地址</span
         >
         <el-form-item label="省/市">
-          <AreaCasder :value="areaCode" @changeAreaData="changeAreaData" />
+          <AreaCascader :value="areaCode" @changeAreaData="changeAreaData" />
         </el-form-item>
         <el-form-item label="详细地址">
           <el-input
@@ -184,7 +184,6 @@ import type { ModelStateType } from './type'
 import type { MortgageSubjectDetailResponse } from '@/api/mainPart/types/response'
 import type { FormInstance, FormRules } from 'element-plus'
 import type { InternalRuleItem } from 'async-validator'
-import AreaCasder from '@/components/AreaCascader/index.vue'
 import type { DictListItem, MortgageSubjectAddEditRequest } from '@/api'
 import { MainPartAPI } from '@/api'
 const API = new MainPartAPI()

@@ -31,6 +31,7 @@ export default {
 </script>
 
 <script setup lang="ts">
+import DynamicForm from '@/components/DynamicForm/DynamicForm.vue'
 import { ref, watch, computed } from 'vue'
 import { Refresh, Search } from '@element-plus/icons-vue'
 import type { SearchBarProps } from './type'

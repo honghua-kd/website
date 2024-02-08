@@ -252,6 +252,10 @@ watch(
   () => props.columnConfig,
   () => {
     setColumnState.tableConfig = props.columnConfig
+    //
+    setColumnState.checkboxTableConfig = props.columnConfig
+    localStorage.removeItem(pathName)
+    //
     getCheckConfig()
   },
   {
@@ -284,6 +288,8 @@ defineExpose({ toggleRowSelection, clearSelection })
   align-items: center;
   margin-bottom: 10px;
   .table-btn-box {
+    // display: flex;
+    // overflow-x: scroll;
     max-width: calc(100% - 100px);
   }
 }
