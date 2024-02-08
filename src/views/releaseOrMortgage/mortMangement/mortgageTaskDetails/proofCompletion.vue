@@ -20,7 +20,6 @@
               <img
                 class="el-upload-list__item-thumbnail"
                 :src="file.url"
-                style="width: 148px; height: 148px; border-radius: 6px"
                 alt=""
               />
               <div class="file-name">{{ file.name }}</div>
@@ -102,5 +101,10 @@ const handlePictureCardPreview: UploadProps['onPreview'] = (uploadFile) => {
 }
 :deep(.el-upload-list--picture-card .el-upload-list__item) {
   overflow: visible;
+}
+:deep(.el-upload-list__item-thumbnail) {
+  width: 148px;
+  height: 148px;
+  border-radius: 6px;
 }
 </style>
