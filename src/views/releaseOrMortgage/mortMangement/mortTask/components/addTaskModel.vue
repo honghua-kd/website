@@ -15,6 +15,7 @@
         :labelWidth="130"
         :visibleRows="2"
         :colNum="3"
+        position="bottom"
         @search="searchHandler"
         @reset="reset"
       />

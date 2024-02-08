@@ -1,5 +1,5 @@
 <template>
-  <div class="form-container">
+  <div :class="`form-container ${props.position}`">
     <DynamicForm
       class="search-form"
       ref="dynamicFormRef"
@@ -34,9 +34,11 @@ export default {
 import DynamicForm from '@/components/DynamicForm/DynamicForm.vue'
 import { ref, watch, computed } from 'vue'
 import { Refresh, Search } from '@element-plus/icons-vue'
-import type { SearchBarProps } from './type'
+import type { SearchFieldProps } from './type'
 const emit = defineEmits(['update:modelValue', 'search', 'reset'])
-const props = withDefaults(defineProps<SearchBarProps>(), {})
+const props = withDefaults(defineProps<SearchFieldProps>(), {
+  position: 'right'
+})
 
 const searchQuery = ref(props.modelValue)
 
@@ -88,18 +90,22 @@ watch(
 
 <style lang="scss" scoped>
 .form-container {
-  display: flex;
-  align-items: flex-end;
   width: 100%;
+  &.right {
+    display: flex;
+    align-items: flex-end;
+    .search-form {
+      width: 220px;
+      text-align: left;
+      flex: 1;
+    }
+  }
 }
 .search-btn {
   padding: 0 10px 18px;
-  width: 220px;
+  text-align: center;
   .has-expand + & {
     padding-bottom: 36px;
   }
-}
-.search-form {
-  flex: 1;
 }
 </style>
