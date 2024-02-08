@@ -438,8 +438,8 @@ defineExpose({
 .table-field {
   :deep(th.table-field-header) {
     text-align: center;
-    color: #606266;
-    background: #eef1f6;
+    color: #606266 !important;
+    background: #eef1f6 !important;
   }
   :deep(td.table-field-cell) {
     border-right: 1px solid #ffffff;
