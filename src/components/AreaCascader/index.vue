@@ -48,39 +48,39 @@ interface OptionsItem {
   leaf: boolean
 }
 const areaOption = ref<OptionsItem[]>([])
-const initOptions = async () => {
-  const resParent = await API.getAllProvince()
-  if (resParent && resParent?.data) {
-    resParent.data.map(async (item: AllProvinceResponse) => {
-      const children: OptionsItem[] = []
-      if (item.code === Number(state.provinceCode)) {
-        const params = {
-          code: Number(state.provinceCode)
-        }
-        const res = await API.getChildrenArea(params)
-        if (res && res.data) {
-          res.data.map((item: AreaChildrenResponse) => {
-            const area = {
-              value: String(item.code),
-              label: item.name,
-              leaf: true
-            }
-            children.push(area)
-          })
-        }
-      }
-      const resArea = {
-        value: String(item.code),
-        label: item.name,
-        children: children,
-        leaf: false
-      }
-      areaOption.value.push(resArea)
-    })
-  }
-}
+// const initOptions = async () => {
+//   const resParent = await API.getAllProvince()
+//   if (resParent && resParent?.data) {
+//     resParent.data.map(async (item: AllProvinceResponse) => {
+//       const children: OptionsItem[] = []
+//       if (item.code === Number(state.provinceCode)) {
+//         const params = {
+//           code: Number(state.provinceCode)
+//         }
+//         const res = await API.getChildrenArea(params)
+//         if (res && res.data) {
+//           res.data.map((item: AreaChildrenResponse) => {
+//             const area = {
+//               value: String(item.code),
+//               label: item.name,
+//               leaf: true
+//             }
+//             children.push(area)
+//           })
+//         }
+//       }
+//       const resArea = {
+//         value: String(item.code),
+//         label: item.name,
+//         children: children,
+//         leaf: false
+//       }
+//       areaOption.value.push(resArea)
+//     })
+//   }
+// }
 onMounted(() => {
-  initOptions()
+  // initOptions()
 })
 const areaProps: CascaderProps = {
   lazy: true,

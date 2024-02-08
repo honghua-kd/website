@@ -252,6 +252,10 @@ watch(
   () => props.columnConfig,
   () => {
     setColumnState.tableConfig = props.columnConfig
+    //
+    setColumnState.checkboxTableConfig = props.columnConfig
+    localStorage.removeItem(pathName)
+    //
     getCheckConfig()
   },
   {
