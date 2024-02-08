@@ -4,21 +4,21 @@ include:
     ref: ${INCLUDE_REF_BRANCH}
     file: 
       - ${INCLUDE_SCA}
-      - ${INCLUDE_SONAR_CLI}
+      # - ${INCLUDE_SONAR_CLI}
       - ${INCLUDE_JOBS}
 
 stages:
-  # - test
-  # - xcheck
-  # - scan
+  - test
+  - xcheck
+  - scan
   - build
   - deploy  
   - oss
 
-# sast:
-#   stage: test
-#   tags:
-#     - RANCHER
+sast:
+  stage: test
+  tags:
+    - RANCHER
 
 build-dev:
   extends: .build
