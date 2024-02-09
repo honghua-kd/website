@@ -1,6 +1,11 @@
 <template>
   <el-config-provider :locale="localLanguage">
-    <el-scrollbar height="100vh" ref="scroll">
+    <el-scrollbar
+      id="scrollbar"
+      height="100vh"
+      ref="scrollbarRef"
+      @scroll="handleScroll"
+    >
       <router-view></router-view>
     </el-scrollbar>
   </el-config-provider>
@@ -21,6 +26,10 @@ const scrollbarRef = ref<InstanceType<typeof ElScrollbar>>()
 
 const { router } = useRouter()
 
+type scrollType = {
+  scrollTop: number
+  scrollLeft: number
+}
 // 获取字典
 useDicts(DICT_TYPES)
 
@@ -48,6 +57,13 @@ mitt.on('logout', () => {
     .catch((err) => {
       console.error(err)
     })
+})
+const handleScroll = (data: scrollType) => {
+  mitt.emit('outSideScorllTop', data.scrollTop)
+}
+mitt.on('scrollTo', (res) => {
+  const top = res as number
+  scrollbarRef.value?.setScrollTop(top - 110)
 })
 </script>
 

@@ -1,6 +1,6 @@
 <template>
   <div class="settlement-record">
-    <Line name="结算记录" :botBorder="false" />
+    <SecondaryTitle title="结算记录" />
     <TableField
       :data="tableData"
       :loading="tableLoading"
@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import Line from './components/line.vue'
+import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
 import type { settlementTableDataType } from './type'
 import { ref, onMounted, reactive } from 'vue'
 import { settlementTableConfig } from './data'

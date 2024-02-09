@@ -321,6 +321,13 @@ export default [
             menuType: 3,
             menu: 'mainPart',
             sort: 5
+          },
+          {
+            children: [],
+            elements: [],
+            menuType: 3,
+            menu: 'materialAllocation',
+            sort: 6
           }
         ],
         elements: [],
