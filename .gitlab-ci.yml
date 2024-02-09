@@ -4,7 +4,7 @@ include:
     ref: ${INCLUDE_REF_BRANCH}
     file: 
       - ${INCLUDE_SCA}
-      - ${INCLUDE_SONAR_CLI}
+      # - ${INCLUDE_SONAR_CLI}
       - ${INCLUDE_JOBS}
 
 stages:
