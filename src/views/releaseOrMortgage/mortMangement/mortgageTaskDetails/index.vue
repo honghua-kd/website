@@ -109,10 +109,14 @@ const list = [
   .top {
     position: fixed;
     top: 85px;
+    right: 0;
+    left: 250px;
     z-index: 20;
+    display: flex;
     padding-right: 20px;
-    width: fill-available;
+    // width: fill-available;
     background-color: #ffffff;
+    flex-direction: column;
   }
   .link {
     display: flex;
