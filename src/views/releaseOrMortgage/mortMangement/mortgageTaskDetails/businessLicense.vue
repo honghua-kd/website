@@ -1,8 +1,12 @@
 <template>
   <div class="business-license">
-    <Line name="营业执照" :botBorder="false">
-      <el-button type="primary" link>查看详情</el-button>
-    </Line>
+    <SecondaryTitle title="营业执照">
+      <template #more>
+        <el-button type="primary" link @click="handleDetails"
+          >查看详情</el-button
+        >
+      </template>
+    </SecondaryTitle>
     <div class="wrap">
       <div class="left-table">
         <div class="title">营业执照历史流转情况</div>
@@ -34,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import Line from './components/line.vue'
+import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
 import { ref, onMounted, reactive } from 'vue'
 import { businessRightTableConfig, businessLeftTableConfig } from './data'
 import TableField from '@/components/TableField/index.vue'
@@ -83,6 +87,7 @@ const getList = async () => {
       console.log(err)
     })
 }
+const handleDetails = () => {}
 </script>
 
 <style lang="scss" scoped>

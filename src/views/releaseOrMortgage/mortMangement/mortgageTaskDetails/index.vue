@@ -1,46 +1,47 @@
 <template>
   <div class="mort-mangement-details-container">
     <div class="top">
-      <div class="breadcrumb">抵押管理>抵押详情</div>
       <HeaderTable></HeaderTable>
       <div class="link">
         <span
           v-for="(item, index) in linkData"
-          :key="item.value"
-          @click="scrollTo(index)"
+          :key="index"
+          @click="scrollTo(item.value)"
+          :class="{ active: activeIndex === index }"
           >{{ item.name }}</span
         >
       </div>
     </div>
-    <div class="container" ref="container">
+    <div ref="container">
       <!-- 基本信息 -->
-      <Information ref="information"></Information>
+      <Information id="information"></Information>
       <!-- 任务详情 -->
-      <TaskDetails ref="taskDetails"></TaskDetails>
+      <TaskDetails id="taskDetails"></TaskDetails>
       <!-- 材料明细 -->
-      <MaterialDetail ref="materialDetail"></MaterialDetail>
+      <MaterialDetail id="materialDetail"></MaterialDetail>
       <!-- 进度信息 -->
-      <Progress ref="progress"></Progress>
+      <Progress id="progress"></Progress>
       <!-- 营业执照 -->
-      <BusinessLicense ref="businessLicense"></BusinessLicense>
+      <BusinessLicense id="businessLicense"></BusinessLicense>
       <!-- 完成凭证 -->
-      <ProofCompletion ref="proofCompletion"></ProofCompletion>
+      <ProofCompletion id="proofCompletion"></ProofCompletion>
       <!-- 催办记录 -->
-      <CallRecord ref="callRecord"></CallRecord>
+      <CallRecord id="callRecord"></CallRecord>
       <!-- 审批记录 -->
-      <ApprovalRecord ref="approvalRecord"></ApprovalRecord>
+      <ApprovalRecord id="approvalRecord"></ApprovalRecord>
       <!-- 附件 -->
-      <Attachment ref="attachment"></Attachment>
+      <Attachment id="attachment"></Attachment>
       <!-- 结算记录 -->
-      <SettlementRecord ref="settlementRecord"></SettlementRecord>
+      <SettlementRecord id="settlementRecord"></SettlementRecord>
       <!-- 操作记录 -->
-      <OperationRecord ref="operatingRecord"></OperationRecord>
+      <OperationRecord id="operatingRecord"></OperationRecord>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { mitt } from '@toystory/lotso'
 import HeaderTable from './hearderTable.vue'
 import Information from './information.vue'
 import TaskDetails from './taskDetails.vue'
@@ -56,32 +57,66 @@ import SettlementRecord from './settlementRecord.vue'
 import OperationRecord from './operatingRecord.vue'
 
 const linkData = ref(originData.linkData)
-const tabchecked = ref(0)
-const container = ref<null | HTMLElement>(null)
+const activeIndex = ref(0)
 
-const scrollTo = (index: number) => {
-  if (index !== tabchecked.value) {
-    tabchecked.value = index
-  }
-  const children = container.value?.children[0] as HTMLElement
-
-  const excLength = children.offsetTop
-  console.log(children)
-  // const no = index + 1
-
-  const scrollTopType = container.value as HTMLElement
-  const containerHeight = container.value?.children[index] as HTMLElement
-
-  console.log(containerHeight)
-
-  scrollTopType.scrollTop = containerHeight.offsetTop - excLength
+const scrollTo = (name: string) => {
+  const childOffsetTop = getChildOffsetTop(name)
+  const index = list.findIndex((item) => item === name)
+  requestAnimationFrame(() => {
+    console.log(list.length - index - 1)
+    activeIndex.value = list.length - index - 1
+  })
+  mitt.emit('scrollTo', childOffsetTop)
 }
+// 获取父组件的滚动高度
+mitt.on('outSideScorllTop', (res) => {
+  const updated = list.some((item, index) => {
+    const childOffsetTop = getChildOffsetTop(item)!
+    const parentScrollTop = res as number
+    if (parentScrollTop + 130 >= childOffsetTop) {
+      activeIndex.value = list.length - index - 1
+      // console.log(list.length, index, parentScrollTop + 130, childOffsetTop)
+
+      return true
+    }
+  })
+  if (!updated) {
+    activeIndex.value = 0
+  }
+})
+const getChildOffsetTop = (itemId: string) => {
+  const childElement = document.getElementById(itemId)
+  return childElement?.offsetTop
+}
+const list = [
+  'information',
+  'taskDetails',
+  'materialDetail',
+  'progress',
+  'businessLicense',
+  'proofCompletion',
+  'callRecord',
+  'approvalRecord',
+  'attachment',
+  'settlementRecord',
+  'operatingRecord'
+].reverse()
 </script>
 
 <style lang="scss" scoped>
 .mort-mangement-details-container {
-  .breadcrumb {
-    margin: 10px;
+  padding-top: 110px;
+  .top {
+    position: fixed;
+    top: 85px;
+    right: 0;
+    left: 250px;
+    z-index: 20;
+    display: flex;
+    padding-right: 20px;
+    // width: fill-available;
+    background-color: #ffffff;
+    flex-direction: column;
   }
   .link {
     display: flex;
@@ -93,16 +128,15 @@ const scrollTo = (index: number) => {
       color: #7f7f7f;
       cursor: pointer;
     }
-  }
-  .container {
-    overflow: scroll;
-    height: 800px;
-    // height: calc(100vh - 150px);
+    .active {
+      color: $base-color-primary;
+    }
   }
   :deep(.bottom-line) {
     margin-top: 15px;
     width: 100%;
     border: 1px solid #e6e6e6;
+    box-sizing: border-box;
   }
   :deep(.el-empty) {
     height: 150px;

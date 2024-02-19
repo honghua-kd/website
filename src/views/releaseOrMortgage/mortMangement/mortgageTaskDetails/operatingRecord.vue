@@ -1,10 +1,12 @@
 <template>
   <div class="material-detail">
-    <Line name="操作记录" :botBorder="false">
-      <el-button type="primary" link @click="drawer = true"
-        >操作记录详情</el-button
+    <SecondaryTitle title="操作记录">
+      <template #more>
+        <el-button type="primary" link @click="drawer = true"
+          >操作记录详情</el-button
+        ></template
       >
-    </Line>
+    </SecondaryTitle>
     <el-drawer v-model="drawer" title="I am the title" :with-header="false">
       <el-timeline>
         <el-timeline-item v-for="(activity, index) in activities" :key="index">
@@ -18,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import Line from './components/line.vue'
+import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
 import { ref } from 'vue'
 
 const drawer = ref(false)

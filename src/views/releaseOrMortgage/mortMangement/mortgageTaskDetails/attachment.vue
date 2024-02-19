@@ -1,10 +1,12 @@
 <template>
   <div class="attachment">
-    <Line name="附件" :botBorder="false">
-      <el-button type="primary" link @click="handleAllDownload"
-        >全部下载
-      </el-button>
-    </Line>
+    <SecondaryTitle title="附件">
+      <template #more>
+        <el-button type="primary" link @click="handleAllDownload"
+          >全部下载
+        </el-button>
+      </template>
+    </SecondaryTitle>
     <div class="wrap" v-if="images.length > 0">
       <div
         class="item"
@@ -47,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import Line from './components/line.vue'
+import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
 import { CirclePlus, Download } from '@element-plus/icons-vue'
 import { downloadFile } from '@/utils/index'
 import { ref } from 'vue'

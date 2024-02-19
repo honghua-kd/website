@@ -1,9 +1,11 @@
 <template>
   <div class="progress">
-    <Line name="进度信息" :botBorder="false">
-      <el-button type="primary" link>新增</el-button>
-      <el-button type="primary" link>导入</el-button>
-    </Line>
+    <SecondaryTitle title="进度信息">
+      <template #more>
+        <el-button type="primary" link>新增</el-button>
+        <el-button type="primary" link>导入</el-button>
+      </template>
+    </SecondaryTitle>
     <TableField
       :data="tableData"
       :loading="tableLoading"
@@ -23,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import Line from './components/line.vue'
+import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
 import TableField from '@/components/TableField/index.vue'
 import { ref, onMounted, reactive } from 'vue'
 import { progressTableConfig } from './data'

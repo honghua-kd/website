@@ -1,6 +1,6 @@
 <template>
   <div class="approval-record">
-    <Line name="审批记录" :botBorder="false" />
+    <SecondaryTitle title="审批记录" />
     <el-timeline v-if="activities.length > 0">
       <el-timeline-item
         v-for="(activity, index) in activities"
@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import Line from './components/line.vue'
+import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
 
 const activities = [
   {
