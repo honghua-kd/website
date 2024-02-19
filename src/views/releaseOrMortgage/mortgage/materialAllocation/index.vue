@@ -128,7 +128,7 @@ onMounted(() => {
 
 // 选择的数据
 const selectData = reactive<tableDataType[]>([])
-const selectionChangeHandler = (item: string[]) => {
+const selectionChangeHandler = (item: tableDataType[]) => {
   selectData.splice(0, selectData.length)
   selectData.push(...item)
 }
