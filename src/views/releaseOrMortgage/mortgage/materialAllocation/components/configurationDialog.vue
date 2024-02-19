@@ -10,7 +10,7 @@
     :before-close="handleClose"
   >
     <div>
-      <el-form ref="ruleFormRef" :model="editForm">
+      <el-form ref="ruleFormRef" :model="editForm" :rules="rules">
         <el-form-item
           label="规则名称"
           prop="agencyName"
@@ -226,6 +226,45 @@ const sourceSystem = [
   { label: '湖北', value: '3' },
   { label: '湖南', value: '4' }
 ]
+const rules = {
+  agencyName: [{ required: true, message: '请输入规则名称', trigger: 'blur' }],
+  sourceSystem: [
+    { required: true, message: '请选择来源系统', trigger: ['change', 'blur'] }
+  ],
+  Contract: [
+    { required: true, message: '请选择合同状态', trigger: ['change', 'blur'] }
+  ],
+  taskType: [
+    { required: true, message: '请选择任务类型', trigger: ['change', 'blur'] }
+  ],
+  DischargeCharge: [
+    { required: true, message: '请选择解押费用', trigger: ['change', 'blur'] }
+  ],
+  certificateStatus: [
+    {
+      required: true,
+      message: '请选择登记证件状态',
+      trigger: ['change', 'blur']
+    }
+  ],
+  channel: [
+    { required: true, message: '请选择渠道', trigger: ['change', 'blur'] }
+  ],
+  Submission: [
+    {
+      required: true,
+      message: '请选择渠道商提交状态',
+      trigger: ['change', 'blur']
+    }
+  ],
+  MaterialDestination: [
+    {
+      required: true,
+      message: '请选择材料去向',
+      trigger: ['change', 'blur']
+    }
+  ]
+}
 
 const emit = defineEmits<{
   (e: 'closeModel', { visible, type }: { visible: boolean; type: string }): void

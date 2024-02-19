@@ -1,13 +1,13 @@
 <template>
   <div class="material-allocation">
-    <!-- <SearchField
+    <SearchField
       v-model="queryParams"
       :data="searchConfig"
       :colNum="4"
       :labelWidth="'120px'"
       @search="getList"
     >
-    </SearchField> -->
+    </SearchField>
     <TableField
       :loading="tableLoading"
       :data="tableData"
@@ -57,10 +57,10 @@
 </template>
 
 <script setup lang="ts">
-// import SearchField from '@/components/SearchField/index.vue'
+import SearchField from '@/components/SearchField/index.vue'
 import TableField from '@/components/TableField/index.vue'
 import ConfigurationDialog from './components/configurationDialog.vue'
-import { tableConfig } from './data'
+import { tableConfig, searchConfig } from './data'
 import { StateType, tableDataType } from './type'
 import { reactive, ref, computed, toRefs, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -106,6 +106,8 @@ const tableHeight = computed(() => {
 })
 const getList = () => {
   // tableLoading.value = true
+  console.log(queryParams.value, 'queryParams.value')
+
   state.tableData = Array.from({ length: 10 }).map((item, index) => ({
     name: `我是第${index}项`,
     status: 1,
@@ -195,7 +197,7 @@ const handleEdit = () => {
     certificateStatus: ['3'],
     channel: 1,
     Submission: ['1', '4'],
-    MaterialDestination: 2
+    MaterialDestination: 1
   }
   detailData.value = JSON.parse(JSON.stringify(obj))
   dialogTitle.value = '编辑'
