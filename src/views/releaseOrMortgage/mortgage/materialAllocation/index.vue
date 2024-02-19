@@ -8,6 +8,7 @@
       @search="getList"
     >
     </SearchField>
+    <el-divider border-style="dashed" />
     <TableField
       :loading="tableLoading"
       :data="tableData"
