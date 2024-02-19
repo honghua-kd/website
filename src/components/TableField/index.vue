@@ -77,7 +77,7 @@
         #default="scope"
       >
         <!-- 自定义列-添加插槽 -->
-        <slot name="default" v-bind="scope">
+        <slot name="default" v-bind="scope" :prop="item.prop">
           <!-- 普通展示列 -->
           <template v-if="!item.type">
             {{ item.prop && scope.row[item.prop] }}
