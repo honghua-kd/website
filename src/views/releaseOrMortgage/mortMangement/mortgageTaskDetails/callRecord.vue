@@ -45,6 +45,6 @@ p {
 }
 .special {
   font-weight: 400;
-  color: rgb(215 215 215);
+  color: #999999;
 }
 </style>

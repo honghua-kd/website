@@ -81,9 +81,9 @@ const state = reactive<StateType>({
     sourceSystem: '',
     Contract: [],
     taskType: [],
-    DischargeCharge: 0,
+    DischargeCharge: null,
     certificateStatus: [],
-    channel: 0,
+    channel: null,
     Submission: [],
     MaterialDestination: 1
   }

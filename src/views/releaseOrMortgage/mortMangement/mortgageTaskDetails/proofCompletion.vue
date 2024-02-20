@@ -29,7 +29,7 @@
                 class="el-upload-list__item-preview"
                 @click="handlePictureCardPreview(file)"
               >
-                <el-icon><CirclePlus /></el-icon>
+                <el-icon><ZoomIn /></el-icon>
               </span>
               <span
                 class="el-upload-list__item-delete"
@@ -57,7 +57,7 @@
 <script setup lang="ts">
 import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
 import type { UploadProps, UploadUserFile } from 'element-plus'
-import { Plus, CirclePlus, Download } from '@element-plus/icons-vue'
+import { Plus, Download, ZoomIn } from '@element-plus/icons-vue'
 import { downloadFile } from '@/utils/index'
 import { ref } from 'vue'
 
@@ -95,7 +95,7 @@ const handlePictureCardPreview: UploadProps['onPreview'] = (uploadFile) => {
     height: 190px;
   }
   .file-name {
-    margin-top: 8px;
+    // margin-top: 8px;
     text-align: center;
   }
 }
@@ -104,7 +104,5 @@ const handlePictureCardPreview: UploadProps['onPreview'] = (uploadFile) => {
 }
 :deep(.el-upload-list__item-thumbnail) {
   width: 148px;
-  height: 148px;
-  border-radius: 6px;
 }
 </style>

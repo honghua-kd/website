@@ -45,9 +45,9 @@ export const tableConfig: ColumnsProps[] = [
     label: '创建人',
     prop: 'person',
     minWidth: 120,
-    align: 'left',
     showOverflowTooltip: true,
-    isDynamic: true
+    isDynamic: true,
+    align: 'center'
   },
   {
     label: '创建时间',

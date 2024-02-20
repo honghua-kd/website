@@ -106,9 +106,15 @@ const list = [
 <style lang="scss" scoped>
 .mort-mangement-details-container {
   padding-top: 110px;
+  :deep(.clearfix) {
+    margin-bottom: 10px;
+    .word {
+      margin-right: 5px;
+    }
+  }
   .top {
     position: fixed;
-    top: 85px;
+    top: 80px;
     right: 0;
     left: 250px;
     z-index: 20;
@@ -133,7 +139,7 @@ const list = [
     }
   }
   :deep(.bottom-line) {
-    margin-top: 15px;
+    margin: 10px 0;
     width: 100%;
     border: 1px solid #e6e6e6;
     box-sizing: border-box;
@@ -149,10 +155,13 @@ const list = [
     width: 150px;
     font-weight: 500;
     text-align: right;
-    color: #aaaaaa;
+    color: #999999;
   }
   :deep(.el-descriptions__content) {
     text-align: left;
+  }
+  :deep(.title) {
+    margin-bottom: 10px;
   }
 }
 </style>

@@ -2,7 +2,7 @@
   <div class="progress">
     <SecondaryTitle title="进度信息">
       <template #more>
-        <el-button type="primary" link>新增</el-button>
+        <el-button type="primary" link @click="addProgress">新增</el-button>
         <el-button type="primary" link>导入</el-button>
       </template>
     </SecondaryTitle>
@@ -21,6 +21,7 @@
       </template>
     </TableField>
     <div class="bottom-line"></div>
+    <HandlingProgressInfoModel ref="addProgressModel" />
   </div>
 </template>
 
@@ -31,6 +32,7 @@ import { ref, onMounted, reactive } from 'vue'
 import { progressTableConfig } from './data'
 import type { progressTableDataType } from './type'
 import { SupplierAPI } from '@/api'
+import HandlingProgressInfoModel from './components/handlingProgressInfoModel.vue'
 
 const API = new SupplierAPI()
 let tableData = reactive<progressTableDataType[]>([{}])
@@ -40,6 +42,7 @@ const queryFormList = reactive({
   pageNo: 1,
   pageSize: 10
 })
+const addProgressModel = ref()
 
 onMounted(() => {
   getList()
@@ -73,6 +76,10 @@ const getList = async () => {
 // 编辑
 const editHandler = (id: number) => {
   console.log(id)
+}
+// 新增办理进度
+const addProgress = () => {
+  addProgressModel.value.open()
 }
 </script>
 
