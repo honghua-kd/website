@@ -1,6 +1,6 @@
 <template>
   <div class="task-details" id="taskDetails">
-    <Line name="任务详情" :botBorder="false"></Line>
+    <SecondaryTitle title="任务详情"></SecondaryTitle>
     <el-descriptions :column="4" :width="100">
       <el-descriptions-item
         v-for="item in originData.informationData"
@@ -15,12 +15,8 @@
 </template>
 
 <script setup lang="ts">
-import Line from './components/line.vue'
+import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
 import originData from './data'
 </script>
 
-<style lang="scss" scoped>
-.task-details {
-  margin: 0 20px;
-}
-</style>
+<style lang="scss" scoped></style>

@@ -1,6 +1,6 @@
 <template>
   <div class="basic-information" id="information">
-    <Line name="基本信息" :botBorder="false"></Line>
+    <SecondaryTitle title="基本信息" />
     <el-descriptions :column="4">
       <el-descriptions-item
         v-for="item in originData.informationData"
@@ -15,12 +15,8 @@
 </template>
 
 <script setup lang="ts">
-import Line from './components/line.vue'
+import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
 import originData from './data'
 </script>
 
-<style lang="scss" scoped>
-.basic-information {
-  margin: 0 20px;
-}
-</style>
+<style lang="scss" scoped></style>

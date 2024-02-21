@@ -1,6 +1,6 @@
 <template>
   <div class="call-record">
-    <Line name="催办记录" :botBorder="false" />
+    <SecondaryTitle title="催办记录" />
     <el-timeline v-if="activities.length > 0">
       <el-timeline-item
         v-for="(activity, index) in activities"
@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import Line from './components/line.vue'
+import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
 
 const activities = [
   {

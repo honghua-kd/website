@@ -1,6 +1,6 @@
 <template>
   <div class="proof-completion">
-    <Line name="完成凭证" :botBorder="false" />
+    <SecondaryTitle title="完成凭证" />
     <div class="wrap">
       <div class="title">
         <span>已归档</span>
@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import Line from './components/line.vue'
+import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
 import type { UploadProps, UploadUserFile } from 'element-plus'
 import { Plus, CirclePlus, Download } from '@element-plus/icons-vue'
 import { downloadFile } from '@/utils/index'

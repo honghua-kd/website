@@ -1,6 +1,6 @@
 <template>
   <div class="material-detail" id="materialDetail">
-    <Line name="材料明细" :botBorder="false" />
+    <SecondaryTitle title="材料明细" />
     <div class="wrap">
       <div class="title">登记证书 │ 已归档 2023-12-23</div>
       <div class="top-table">
@@ -82,7 +82,7 @@
 </template>
 
 <script setup lang="ts">
-import Line from './components/line.vue'
+import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
 import { ref, onMounted, reactive } from 'vue'
 import {
   MaterialDetailTableConfig,
