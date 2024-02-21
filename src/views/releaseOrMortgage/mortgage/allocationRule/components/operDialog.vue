@@ -773,7 +773,7 @@ watch(
     } else {
       disDialog.value = false
     }
-    const option = allocatonTypeOpts.value.find(
+    const option = allocatonTypeOpts.value?.find(
       (o) => o.value === val1
     ) as DictItem
     const label = option ? option.label : ''
