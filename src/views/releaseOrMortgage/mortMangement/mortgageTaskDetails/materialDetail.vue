@@ -12,17 +12,28 @@
           trigger="click"
         >
           <el-carousel-item v-for="(item, index) in images" :key="index">
-            <div class="carousel-container" style="width: 100%">
+            <div
+              class="carousel-container"
+              style="position: relative; width: 100%"
+              @mouseover="handleMouseOver(index)"
+              @mouseleave="handleMouseLeave"
+            >
               <img style="width: 100%" :src="item.url" alt="轮播图片" />
-              <div class="carousel-buttons">
-                <el-button type="text" @click.prevent="previewImage(item.url)"
-                  >预览</el-button
-                >
-                <el-button
-                  type="text"
-                  @click="downloadFile(item.url, '登记证书')"
-                  >下载</el-button
-                >
+              <div class="carousel-mask" v-show="currentHoverIndex === index">
+                <div class="carousel-buttons">
+                  <span
+                    class="item-preview"
+                    @click.prevent="previewImage(item.url)"
+                  >
+                    <el-icon><ZoomIn /></el-icon>
+                  </span>
+                  <span
+                    class="item-delete"
+                    @click.prevent="downloadFile(item.url, '登记证书')"
+                  >
+                    <el-icon><Download /></el-icon>
+                  </span>
+                </div>
               </div>
             </div>
           </el-carousel-item>
@@ -92,6 +103,7 @@ import { SupplierAPI } from '@/api'
 import type { firstTableDataType, secondTableDataType } from './type'
 import TableField from '@/components/TableField/index.vue'
 import { downloadFile } from '@/utils/index'
+import { ZoomIn, Download } from '@element-plus/icons-vue'
 
 const API = new SupplierAPI()
 let firstTableData = reactive<firstTableDataType[]>([])
@@ -109,9 +121,21 @@ const images = ref([
     url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
   },
   {
-    url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+    url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
   }
 ])
+
+const currentHoverIndex = ref(-1)
+
+// 鼠标悬停事件处理函数
+const handleMouseOver = (index: number) => {
+  currentHoverIndex.value = index
+}
+
+// 鼠标离开事件处理函数
+const handleMouseLeave = () => {
+  currentHoverIndex.value = -1
+}
 
 onMounted(() => {
   getList()
@@ -201,6 +225,7 @@ const handleDetails = (id: number) => {
 .material-detail {
   .title {
     font-weight: 900;
+    // margin-bottom: 10px;
   }
   .top-table {
     display: flex;
@@ -219,14 +244,30 @@ const handleDetails = (id: number) => {
   }
   .carousel-buttons {
     position: absolute;
-    bottom: 10px;
+    top: 50%;
+    left: 50%;
     display: flex;
     justify-content: space-around;
-    align-items: center;
     width: 100%;
+    color: #ffffff;
+    transform: translate(-50%, -50%);
+    .item-preview,
+    .item-delete {
+      font-size: 20px;
+    }
   }
   :deep(.operation-row) {
     margin: 0;
+  }
+  .carousel-mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(
+      0 0 0 / 50%
+    ); /* 这里是半透明黑色作为遮罩颜色，可自定义 */
   }
 }
 </style>

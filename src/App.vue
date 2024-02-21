@@ -58,7 +58,7 @@ const handleScroll = (data: scrollType) => {
 }
 mitt.on('scrollTo', (res) => {
   const top = res as number
-  scrollbarRef.value?.setScrollTop(top - 110)
+  scrollbarRef.value?.setScrollTop(top - 120)
 })
 </script>
 

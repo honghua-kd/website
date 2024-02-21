@@ -36,7 +36,7 @@ import originData from './data'
 .header-box {
   margin-bottom: 20px;
   .custom-label-color {
-    color: #cccccc;
+    color: #999999;
   }
   .custom-label-special {
     font-weight: 700;

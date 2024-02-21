@@ -23,7 +23,7 @@
               class="item-preview"
               @click="handlePictureCardPreview(image.url)"
             >
-              <el-icon><CirclePlus /></el-icon>
+              <el-icon><ZoomIn /></el-icon>
             </span>
             <span
               class="item-delete"
@@ -50,7 +50,7 @@
 
 <script setup lang="ts">
 import SecondaryTitle from '@/components/SecondaryTitle/index.vue'
-import { CirclePlus, Download } from '@element-plus/icons-vue'
+import { ZoomIn, Download } from '@element-plus/icons-vue'
 import { downloadFile } from '@/utils/index'
 import { ref } from 'vue'
 

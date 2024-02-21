@@ -11,12 +11,7 @@
   >
     <div>
       <el-form ref="ruleFormRef" :model="editForm" :rules="rules">
-        <el-form-item
-          label="规则名称"
-          prop="agencyName"
-          required
-          class="special-item"
-        >
+        <el-form-item label="规则名称" prop="agencyName" class="special-item">
           <el-input
             v-model.trim="editForm.agencyName"
             :maxlength="50"
@@ -30,8 +25,8 @@
             <el-form-item
               label="来源系统"
               prop="sourceSystem"
-              required
               label-width="130"
+              placeholder="请选择"
             >
               <el-select v-model="editForm.sourceSystem" style="width: 100%">
                 <el-option
@@ -47,8 +42,8 @@
             <el-form-item
               label="合同状态"
               prop="Contract"
-              required
               label-width="130"
+              placeholder="请选择"
             >
               <el-select
                 v-model="editForm.Contract"
@@ -69,8 +64,8 @@
             <el-form-item
               label="任务类型"
               prop="taskType"
-              required
               label-width="130"
+              placeholder="请选择"
             >
               <el-select
                 v-model="editForm.taskType"
@@ -90,8 +85,8 @@
             <el-form-item
               label="解押费用是否收取"
               prop="DischargeCharge"
-              required
               label-width="130"
+              placeholder="请选择"
             >
               <el-select v-model="editForm.DischargeCharge" style="width: 100%">
                 <el-option label="是" :value="1" />
@@ -105,8 +100,8 @@
             <el-form-item
               label="登记证书状态"
               prop="certificateStatus"
-              required
               label-width="130"
+              placeholder="请选择"
             >
               <el-select
                 v-model="editForm.certificateStatus"
@@ -127,7 +122,7 @@
               label-width="130"
               label="渠道商是否为委外"
               prop="channel"
-              required
+              placeholder="请选择"
             >
               <el-select v-model="editForm.channel" style="width: 100%">
                 <el-option label="是" :value="1" />
@@ -142,19 +137,15 @@
               label-width="130"
               label="渠道商提报状态"
               prop="Submission"
-              required
+              placeholder="请选择"
             >
               <el-select
                 v-model="editForm.Submission"
                 style="width: 100%"
                 multiple
               >
-                <el-option
-                  :label="item.label"
-                  :value="item.value"
-                  v-for="item in sourceSystem"
-                  :key="item.value"
-                />
+                <el-option label="有效" :value="1" />
+                <el-option label="无效" :value="0" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -163,7 +154,7 @@
         <el-row>
           <el-col :span="4"></el-col>
           <el-col :span="16">
-            <el-form-item required prop="MaterialDestination">
+            <el-form-item prop="MaterialDestination">
               <el-radio-group v-model="editForm.MaterialDestination">
                 <el-radio :label="1">移交运营档案管理部</el-radio>
                 <el-radio :label="2">移交解押任务分配方</el-radio>
@@ -221,10 +212,10 @@ const state = reactive<ModelStateType>({
 const { editForm } = toRefs(state)
 
 const sourceSystem = [
-  { label: '天津', value: '1' },
-  { label: '武汉', value: '2' },
-  { label: '湖北', value: '3' },
-  { label: '湖南', value: '4' }
+  { label: '抵押', value: '1' },
+  { label: '解押', value: '2' },
+  { label: '补证', value: '3' },
+  { label: '抵押通用任务出具', value: '4' }
 ]
 const rules = {
   agencyName: [{ required: true, message: '请输入规则名称', trigger: 'blur' }],

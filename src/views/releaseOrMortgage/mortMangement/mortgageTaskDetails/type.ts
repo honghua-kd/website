@@ -59,3 +59,9 @@ export type settlementTableDataType = {
   emails?: string
   time?: string
 }
+export type operatingTableType = {
+  id: number
+  Fileds: string
+  beforeUpdate: string
+  update: string
+}

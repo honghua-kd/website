@@ -401,3 +401,23 @@ export const settlementTableConfig: ColumnsProps[] = [
     fixed: false
   }
 ]
+export const operatingTableConfig: ColumnsProps[] = [
+  {
+    label: '字段',
+    prop: 'Fileds',
+    minWidth: '150',
+    showOverflowTooltip: true
+  },
+  {
+    label: '修改前',
+    prop: 'beforeUpdate',
+    minWidth: '150',
+    showOverflowTooltip: true
+  },
+  {
+    label: '修改后',
+    prop: 'update',
+    minWidth: '150',
+    showOverflowTooltip: true
+  }
+]
